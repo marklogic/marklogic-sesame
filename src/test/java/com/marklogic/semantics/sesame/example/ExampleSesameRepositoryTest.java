@@ -14,7 +14,7 @@
  * implied. See the License for the specific language governing permissions
  * and limitations under the License.
  */
-package com.marklogic.semantic.sesame.example;
+package com.marklogic.semantics.sesame.example;
 
 import org.junit.After;
 import org.junit.Before;
