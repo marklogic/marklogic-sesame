@@ -27,3 +27,5 @@ public
 bin
 src/main/resources/test-server.ldif~
 creds
+
+.idea/
