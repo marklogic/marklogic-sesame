@@ -1,4 +1,4 @@
-package com.marklogic.semantic.sesame;
+package com.marklogic.semantic.sesame.example;
 
 import org.junit.Test;
 

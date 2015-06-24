@@ -11,14 +11,11 @@ repositories {
 
 dependencies {
     compile('org.openrdf.sesame:sesame-repository-api:2.8.3')
-    compile('com.marklogic:java-client-api:4.0-SNAPSHOT') {
-        exclude(group: 'ch.qos.logback')
-    }
+    compile('com.marklogic:java-client-api:4.0-SNAPSHOT')
 
     testCompile 'com.jayway.restassured:rest-assured:2.4.1'
     testCompile 'org.hamcrest:hamcrest-all:1.3'
     testCompile 'junit:junit:4.12'
-
 }
 
 sourceSets {
