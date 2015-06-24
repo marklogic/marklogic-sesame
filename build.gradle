@@ -11,8 +11,7 @@ repositories {
 
 dependencies {
     compile('org.openrdf.sesame:sesame-repository-api:2.8.3')
-    compile('com.marklogic:client-java-api:3.0-SNAPSHOT') {
-        exclude(group: 'org.slf4j')
+    compile('com.marklogic:client-api-java:3.0-SNAPSHOT') {
         exclude(group: 'ch.qos.logback')
     }
 
