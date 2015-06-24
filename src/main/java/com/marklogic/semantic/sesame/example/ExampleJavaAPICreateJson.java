@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.marklogic.client.example;
+package com.marklogic.semantic.sesame.example;
 
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
@@ -27,7 +27,7 @@ import java.io.InputStream;
 /**
  * CreateJSON illustrates how to write JSON content to a database document.
  */
-public class Example_01_CreateJSON {
+public class ExampleJavaAPICreateJson {
 
 
 	protected static String host = "localhost";
@@ -44,13 +44,13 @@ public class Example_01_CreateJSON {
 
 	public static void main() throws IOException {
 
-		System.out.println("example: "+Example_01_CreateJSON.class.getName());
+		System.out.println("example: "+ExampleJavaAPICreateJson.class.getName());
 
 		// create the client
 		DatabaseClient client = DatabaseClientFactory.newClient(host, port, user, password, authType);
 		
 		// acquire the content
-		InputStream docStream = Example_01_CreateJSON.class.getClassLoader().getResourceAsStream(
+		InputStream docStream = ExampleJavaAPICreateJson.class.getClassLoader().getResourceAsStream(
 			"data"+File.separator+"flipper.json");
 
 		// create a manager for JSON documents

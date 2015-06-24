@@ -1,6 +1,5 @@
-package com.marklogic.semantic.sesame;
+package com.marklogic.semantic.sesame.example;
 
-import com.marklogic.client.example.Example_01_CreateJSON;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -19,7 +18,7 @@ public class ExampleJunitTest {
     @Test
     public void testObject() throws IOException {
 
-        Example_01_CreateJSON.main();
+        ExampleJavaAPICreateJson.main();
         Assert.assertEquals("test","test");
     }
 }
