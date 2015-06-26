@@ -1,5 +1,6 @@
 package com.marklogic.semantics.sesame.example;
 
+import com.marklogic.semantics.sesame.example.toberemoved.ExampleJavaAPICreateJson;
 import org.junit.Assert;
 import org.junit.Test;
 
