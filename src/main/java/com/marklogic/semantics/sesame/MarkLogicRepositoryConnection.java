@@ -1,5 +1,6 @@
 package com.marklogic.semantics.sesame;
 
+import com.marklogic.semantics.sesame.client.MarkLogicSession;
 import info.aduna.iteration.Iteration;
 import org.openrdf.IsolationLevel;
 import org.openrdf.model.*;
@@ -17,10 +18,28 @@ import java.net.URL;
  * Created by jfuller on 6/24/15.
  */
 public class MarkLogicRepositoryConnection implements RepositoryConnection {
-    public MarkLogicRepositoryConnection(Repository markLogicSesameRepository, Object p1) {
 
+    private static final String EVERYTHING = "CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o }";
+
+    private static final String EVERYTHING_WITH_GRAPH = "SELECT * WHERE {  ?s ?p ?o . OPTIONAL { GRAPH ?ctx { ?s ?p ?o } } }";
+
+    private static final String SOMETHING = "ASK { ?s ?p ?o }";
+
+    private static final String NAMEDGRAPHS = "SELECT DISTINCT ?_ WHERE { GRAPH ?_ { ?s ?p ?o } }";
+
+    private final MarkLogicSession client;
+
+    private final boolean quadMode;
+
+    public MarkLogicRepositoryConnection(MarkLogicRepository repository,MarkLogicSession client) {
+        this(repository,client,false);
     }
 
+    public MarkLogicRepositoryConnection(MarkLogicRepository repository, MarkLogicSession client, boolean quadMode) {
+        //super(repository);
+        this.client = client;
+        this.quadMode = quadMode;
+    }
     @Override
     public Repository getRepository() {
         return null;
