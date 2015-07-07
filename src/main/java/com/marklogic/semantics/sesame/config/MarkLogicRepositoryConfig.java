@@ -20,6 +20,7 @@ import org.openrdf.model.Graph;
 import org.openrdf.model.URI;
 import org.openrdf.model.Resource;
 import org.openrdf.model.ValueFactory;
+import org.openrdf.model.impl.ValueFactoryImpl;
 import org.openrdf.model.util.GraphUtil;
 import org.openrdf.model.util.GraphUtilException;
 import org.openrdf.repository.config.RepositoryConfigException;
@@ -32,10 +33,11 @@ import org.openrdf.repository.config.RepositoryImplConfigBase;
  */
 public class MarkLogicRepositoryConfig extends RepositoryImplConfigBase {
 
-	public static final URI QUERY_ENDPOINT = URI("test");
+    public static ValueFactory vf= new ValueFactoryImpl();
 
-	public static final URI UPDATE_ENDPOINT = new SimpleURI(
-			"http://www.openrdf.org/config/repository/sparql#update-endpoint");
+	public static final URI QUERY_ENDPOINT = vf.createURI("test");
+
+	public static final URI UPDATE_ENDPOINT = vf.createURI("http://www.openrdf.org/config/repository/sparql#update-endpoint");
 
 	private String queryEndpointUrl;
 	private String updateEndpointUrl;

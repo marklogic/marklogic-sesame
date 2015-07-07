@@ -1,6 +1,7 @@
 package com.marklogic.semantics.sesame;
 
-import com.marklogic.semantics.sesame.client.MarkLogicSession;
+import com.marklogic.semantics.sesame.client.MarkLogicClient;
+import com.marklogic.semantics.sesame.query.MarkLogicTupleQuery;
 import info.aduna.iteration.Iteration;
 import org.openrdf.IsolationLevel;
 import org.openrdf.model.*;
@@ -14,35 +15,28 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.net.URL;
 
-/**
- * Created by jfuller on 6/24/15.
- */
+
 public class MarkLogicRepositoryConnection implements RepositoryConnection {
 
     private static final String EVERYTHING = "CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o }";
-
     private static final String EVERYTHING_WITH_GRAPH = "SELECT * WHERE {  ?s ?p ?o . OPTIONAL { GRAPH ?ctx { ?s ?p ?o } } }";
-
     private static final String SOMETHING = "ASK { ?s ?p ?o }";
-
     private static final String NAMEDGRAPHS = "SELECT DISTINCT ?_ WHERE { GRAPH ?_ { ?s ?p ?o } }";
 
-    private final MarkLogicSession client;
+    private MarkLogicClient client;
+    private MarkLogicRepository repository;
 
-    private final boolean quadMode;
-
-    public MarkLogicRepositoryConnection(MarkLogicRepository repository,MarkLogicSession client) {
+    public MarkLogicRepositoryConnection(MarkLogicRepository repository,MarkLogicClient client) {
         this(repository,client,false);
     }
 
-    public MarkLogicRepositoryConnection(MarkLogicRepository repository, MarkLogicSession client, boolean quadMode) {
-        //super(repository);
+    public MarkLogicRepositoryConnection(MarkLogicRepository repository, MarkLogicClient client, boolean quadMode) {
         this.client = client;
-        this.quadMode = quadMode;
+        this.repository=repository;
     }
     @Override
     public Repository getRepository() {
-        return null;
+        return repository;
     }
 
     @Override
@@ -82,12 +76,17 @@ public class MarkLogicRepositoryConnection implements RepositoryConnection {
 
     @Override
     public TupleQuery prepareTupleQuery(QueryLanguage ql, String query) throws RepositoryException, MalformedQueryException {
-        return null;
+        if (QueryLanguage.SPARQL.equals(ql))
+            return prepareTupleQuery(ql, query, "");
+        throw new UnsupportedQueryLanguageException("Unsupported query language " + ql);
     }
 
     @Override
     public TupleQuery prepareTupleQuery(QueryLanguage ql, String query, String baseURI) throws RepositoryException, MalformedQueryException {
-        return null;
+        if (QueryLanguage.SPARQL.equals(ql)) {
+            return (TupleQuery)new MarkLogicTupleQuery(client,baseURI,query);
+        }
+        throw new UnsupportedQueryLanguageException("Unsupported query language " + ql);
     }
 
     @Override

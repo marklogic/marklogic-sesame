@@ -18,6 +18,12 @@ repositories {
 
 dependencies {
     compile('org.openrdf.sesame:sesame-repository-api:2.8.3')
+    compile('org.openrdf.sesame:sesame-queryresultio-api:2.8.4')
+    compile('org.openrdf.sesame:sesame-model:2.8.4')
+    compile('org.openrdf.sesame:sesame-queryparser-sparql:2.8.4')
+    compile('org.openrdf.sesame:sesame-queryresultio-sparqlxml:2.8.4')
+    compile('org.openrdf.sesame:sesame-http-client:2.8.4')
+    compile('org.openrdf.sesame:sesame-runtime:2.8.4')
     compile('com.marklogic:java-client-api:4.0-SNAPSHOT')
 
     testCompile 'com.jayway.restassured:rest-assured:2.4.1'

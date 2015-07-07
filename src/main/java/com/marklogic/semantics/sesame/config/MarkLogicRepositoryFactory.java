@@ -17,10 +17,12 @@
 package com.marklogic.semantics.sesame.config;
 
 import com.marklogic.semantics.sesame.MarkLogicRepository;
+import org.openrdf.model.ValueFactory;
+import org.openrdf.model.impl.ValueFactoryImpl;
+import org.openrdf.repository.Repository;
 import org.openrdf.repository.config.RepositoryConfigException;
 import org.openrdf.repository.config.RepositoryFactory;
 import org.openrdf.repository.config.RepositoryImplConfig;
-import org.openrdf.repository.sparql.SPARQLRepository;
 
 /**
  * Creates {@link MarkLogicRepository} from a configuration.
@@ -28,6 +30,8 @@ import org.openrdf.repository.sparql.SPARQLRepository;
  * @author James Fuller
  */
 public class MarkLogicRepositoryFactory implements RepositoryFactory {
+
+	public static ValueFactory vf= new ValueFactoryImpl();
 
 	public static final String REPOSITORY_TYPE = "marklogic:MarkLogicRepository";
 
@@ -39,23 +43,10 @@ public class MarkLogicRepositoryFactory implements RepositoryFactory {
 		return new MarkLogicRepositoryConfig();
 	}
 
-	public MarkLogicRepository getRepository(RepositoryImplConfig config)
-		throws RepositoryConfigException
-	{
-		MarkLogicRepository result = null;
-
-		if (config instanceof MarkLogicRepositoryConfig) {
-			MarkLogicRepositoryConfig httpConfig = (MarkLogicRepositoryConfig)config;
-			if (httpConfig.getUpdateEndpointUrl() != null) {
-				result = new MarkLogicRepository(httpConfig.getQueryEndpointUrl(), httpConfig.getUpdateEndpointUrl());
-			}
-			else {
-				result = new MarkLogicRepository(httpConfig.getQueryEndpointUrl());
-			}
-		}
-		else {
-			throw new RepositoryConfigException("Invalid configuration class: " + config.getClass());
-		}
-		return result;
+	@Override
+	public Repository getRepository(RepositoryImplConfig config) throws RepositoryConfigException {
+		return null;
 	}
+
+
 }
