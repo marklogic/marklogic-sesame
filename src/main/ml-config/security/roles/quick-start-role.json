@@ -1,0 +1,4 @@
+{
+  "role-name" : "quick-start-role",
+  "role" : [ "rest-writer" ]
+}
