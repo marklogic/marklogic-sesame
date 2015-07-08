@@ -37,7 +37,7 @@ public class MarkLogicClient {
 
 	public TupleQueryResult sendTupleQuery(String querystring){
 		mcimpl.databaseClient = DatabaseClientFactory.newClient(
-				"127.0.0.1", 8012, "admin", "admin", DatabaseClientFactory.Authentication.DIGEST);
+				"127.0.0.1", 8200, "admin", "admin", DatabaseClientFactory.Authentication.DIGEST);
 
 		SPARQLQueryManager smgr = mcimpl.databaseClient.newSPARQLQueryManager();
 		SPARQLQueryDefinition qdef = smgr.newQueryDefinition(querystring);

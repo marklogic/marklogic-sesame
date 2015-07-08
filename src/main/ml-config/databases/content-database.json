@@ -1,5 +1,0 @@
-{
-  "database-name" : "%%DATABASE%%",
-  "triple-index": true,
-  "collection-lexicon": true
-}
