@@ -3,6 +3,9 @@ package com.marklogic.semantics.sesame.client;
 
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
+import com.marklogic.client.semantics.SPARQLQueryDefinition;
+import com.marklogic.client.semantics.SPARQLQueryManager;
+import com.marklogic.client.semantics.SPARQLTupleResults;
 
 /**
  * implements client using MarkLogic java api client
@@ -13,7 +16,7 @@ public class MarkLogicClientImpl {
 
     protected static String host = "localhost";
 
-    protected static int port = 8012;
+    protected static int port = 8200;
 
     protected static String user = "admin";
 
@@ -73,6 +76,12 @@ public class MarkLogicClientImpl {
         this.databaseClient = DatabaseClientFactory.newClient(host, port, user, password, authType);
     }
 
+    public SPARQLTupleResults performSPARQLQuery(String queryString){
+        this.databaseClient = DatabaseClientFactory.newClient(
+                "127.0.0.1", 8200, "admin", "admin", DatabaseClientFactory.Authentication.DIGEST);
 
-
+        SPARQLQueryManager smgr = this.databaseClient.newSPARQLQueryManager();
+        SPARQLQueryDefinition qdef = smgr.newQueryDefinition(queryString);
+        return smgr.executeSelect(qdef);
+    }
 }

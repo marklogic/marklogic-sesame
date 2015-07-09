@@ -1,7 +1,8 @@
 package com.marklogic.semantics.sesame.client;
 
-import com.marklogic.client.DatabaseClientFactory;
-import com.marklogic.client.semantics.*;
+import com.marklogic.client.semantics.SPARQLBinding;
+import com.marklogic.client.semantics.SPARQLTuple;
+import com.marklogic.client.semantics.SPARQLTupleResults;
 import org.openrdf.model.Literal;
 import org.openrdf.model.URI;
 import org.openrdf.model.ValueFactory;
@@ -32,16 +33,9 @@ public class MarkLogicClient {
 		return f;
 	}
 
-	public TupleQueryResult sendTupleQuery(String querystring){
+	public TupleQueryResult sendTupleQuery(String queryString){
 
-        // to be extruded
-		mcimpl.databaseClient = DatabaseClientFactory.newClient(
-				"127.0.0.1", 8200, "admin", "admin", DatabaseClientFactory.Authentication.DIGEST);
-
-		SPARQLQueryManager smgr = mcimpl.databaseClient.newSPARQLQueryManager();
-		SPARQLQueryDefinition qdef = smgr.newQueryDefinition(querystring);
-		SPARQLTupleResults results = smgr.executeSelect(qdef);
-        // to be extruded
+        SPARQLTupleResults results = mcimpl.performSPARQLQuery(queryString);
 
 		List<String> bindingNames = new ArrayList<String>();
         String bindingnames[]= results.getBindingNames();
