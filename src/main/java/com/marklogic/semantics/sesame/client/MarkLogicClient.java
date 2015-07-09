@@ -34,12 +34,14 @@ public class MarkLogicClient {
 
 	public TupleQueryResult sendTupleQuery(String querystring){
 
+        // to be extruded
 		mcimpl.databaseClient = DatabaseClientFactory.newClient(
 				"127.0.0.1", 8200, "admin", "admin", DatabaseClientFactory.Authentication.DIGEST);
 
 		SPARQLQueryManager smgr = mcimpl.databaseClient.newSPARQLQueryManager();
 		SPARQLQueryDefinition qdef = smgr.newQueryDefinition(querystring);
 		SPARQLTupleResults results = smgr.executeSelect(qdef);
+        // to be extruded
 
 		List<String> bindingNames = new ArrayList<String>(3);
 
@@ -53,7 +55,7 @@ public class MarkLogicClient {
 		ValueFactory f = new ValueFactoryImpl();
 
         for ( SPARQLTuple tuple : results ) {
-			MapBindingSet mbs = new MapBindingSet(1);
+			MapBindingSet mbs = new MapBindingSet();
             ValueFactory factory = ValueFactoryImpl.getInstance();
 
             for(String name : bindingNames){
