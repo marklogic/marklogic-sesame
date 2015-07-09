@@ -21,15 +21,15 @@ public class MarkLogicClient {
 
 	private MarkLogicClientImpl mcimpl;
 
-	private ValueFactory valueFactory;
+	private ValueFactory f;
 
 	public MarkLogicClient() {
 		this.mcimpl = new MarkLogicClientImpl();
-		valueFactory = new ValueFactoryImpl();
+		this.f = new ValueFactoryImpl();
 	}
 
 	public ValueFactory getValueFactory() {
-		return valueFactory;
+		return f;
 	}
 
 	public TupleQueryResult sendTupleQuery(String querystring){
@@ -43,32 +43,24 @@ public class MarkLogicClient {
 		SPARQLTupleResults results = smgr.executeSelect(qdef);
         // to be extruded
 
-		List<String> bindingNames = new ArrayList<String>(3);
-
+		List<String> bindingNames = new ArrayList<String>();
         String bindingnames[]= results.getBindingNames();
-
 		for ( String bindingName: bindingnames ) {
 			bindingNames.add(bindingName);
 		}
 
 		List<BindingSet> bindingSetList = new ArrayList<BindingSet>();
-		ValueFactory f = new ValueFactoryImpl();
-
         for ( SPARQLTuple tuple : results ) {
 			MapBindingSet mbs = new MapBindingSet();
-            ValueFactory factory = ValueFactoryImpl.getInstance();
-
             for(String name : bindingNames){
                 SPARQLBinding binding = tuple.get(name);
                 String bindingtype = binding.getType().toString();
                 if (bindingtype.equals("uri")) {
-                    URI s = factory.createURI(binding.getValue());
+                    URI s = f.createURI(binding.getValue());
                     mbs.addBinding(name, s);
-
                 } else if (bindingtype.equals("literal")) {
-                    Literal o = factory.createLiteral(tuple.get("o").getValue());
+                    Literal o = f.createLiteral(tuple.get("o").getValue());
                     mbs.addBinding(name, o);
-
                 } else {
                 }
             }
