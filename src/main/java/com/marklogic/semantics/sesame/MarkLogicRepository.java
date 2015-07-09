@@ -13,8 +13,11 @@ public class MarkLogicRepository extends RepositoryBase implements MarkLogicClie
 
     private MarkLogicClient client;
 
+    private boolean quadMode = false;
+
     public MarkLogicRepository() {
         super();
+        this.client =getMarkLogicClient();
     }
 
     public MarkLogicRepository(String endpointUrl) {
@@ -22,17 +25,14 @@ public class MarkLogicRepository extends RepositoryBase implements MarkLogicClie
 
     @Override
     protected void initializeInternal() throws RepositoryException {
-
     }
 
     @Override
     protected void shutDownInternal() throws RepositoryException {
-
     }
 
     @Override
     public void setDataDir(File dataDir) {
-
     }
 
     @Override
@@ -51,7 +51,7 @@ public class MarkLogicRepository extends RepositoryBase implements MarkLogicClie
         if (!isInitialized()) {
             throw new RepositoryException("MarkLogicRepository not initialized.");
         }
-        return new MarkLogicRepositoryConnection(this,client);
+        return new MarkLogicRepositoryConnection(this,client,quadMode);
     }
 
     @Override
@@ -70,5 +70,13 @@ public class MarkLogicRepository extends RepositoryBase implements MarkLogicClie
     @Override
     public synchronized void setMarkLogicClient(MarkLogicClient client) {
         this.client = client;
+    }
+
+    public boolean isQuadMode() {
+        return quadMode;
+    }
+
+    public void setQuadMode(boolean quadMode) {
+        this.quadMode = quadMode;
     }
 }

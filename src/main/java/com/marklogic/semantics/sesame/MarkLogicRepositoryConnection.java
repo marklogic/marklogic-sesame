@@ -2,6 +2,8 @@ package com.marklogic.semantics.sesame;
 
 import com.marklogic.semantics.sesame.client.MarkLogicClient;
 import com.marklogic.semantics.sesame.query.MarkLogicTupleQuery;
+import info.aduna.iteration.ConvertingIteration;
+import info.aduna.iteration.ExceptionConvertingIteration;
 import info.aduna.iteration.Iteration;
 import org.openrdf.IsolationLevel;
 import org.openrdf.model.*;
@@ -15,6 +17,7 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.net.URL;
 
+import static org.openrdf.query.QueryLanguage.SPARQL;
 
 public class MarkLogicRepositoryConnection implements RepositoryConnection {
 
@@ -23,6 +26,7 @@ public class MarkLogicRepositoryConnection implements RepositoryConnection {
     private static final String SOMETHING = "ASK { ?s ?p ?o }";
     private static final String NAMEDGRAPHS = "SELECT DISTINCT ?_ WHERE { GRAPH ?_ { ?s ?p ?o } }";
 
+    private final boolean quadMode;
     private MarkLogicClient client;
     private MarkLogicRepository repository;
 
@@ -33,7 +37,9 @@ public class MarkLogicRepositoryConnection implements RepositoryConnection {
     public MarkLogicRepositoryConnection(MarkLogicRepository repository, MarkLogicClient client, boolean quadMode) {
         this.client = client;
         this.repository=repository;
+        this.quadMode=quadMode;
     }
+
     @Override
     public Repository getRepository() {
         return repository;
@@ -41,7 +47,6 @@ public class MarkLogicRepositoryConnection implements RepositoryConnection {
 
     @Override
     public void setParserConfig(ParserConfig config) {
-
     }
 
     @Override
@@ -61,7 +66,6 @@ public class MarkLogicRepositoryConnection implements RepositoryConnection {
 
     @Override
     public void close() throws RepositoryException {
-
     }
 
     @Override
@@ -69,26 +73,33 @@ public class MarkLogicRepositoryConnection implements RepositoryConnection {
         return null;
     }
 
+    // prepareQuery entrypoint
     @Override
     public Query prepareQuery(QueryLanguage ql, String query, String baseURI) throws RepositoryException, MalformedQueryException {
         return null;
     }
 
+    // prepareTupleQuery
+    public TupleQuery prepareTupleQuery(String queryString) throws RepositoryException, MalformedQueryException {
+        return prepareTupleQuery(QueryLanguage.SPARQL,queryString);
+    }
+
     @Override
-    public TupleQuery prepareTupleQuery(QueryLanguage ql, String query) throws RepositoryException, MalformedQueryException {
+    public TupleQuery prepareTupleQuery(QueryLanguage ql, String queryString) throws RepositoryException, MalformedQueryException {
         if (QueryLanguage.SPARQL.equals(ql))
-            return prepareTupleQuery(ql, query, "");
+            return prepareTupleQuery(ql, queryString, "");
         throw new UnsupportedQueryLanguageException("Unsupported query language " + ql);
     }
 
     @Override
-    public TupleQuery prepareTupleQuery(QueryLanguage ql, String query, String baseURI) throws RepositoryException, MalformedQueryException {
+    public TupleQuery prepareTupleQuery(QueryLanguage ql, String queryString, String baseURI) throws RepositoryException, MalformedQueryException {
         if (QueryLanguage.SPARQL.equals(ql)) {
-            return (TupleQuery)new MarkLogicTupleQuery(client,baseURI,query);
+            return (TupleQuery)new MarkLogicTupleQuery(client,baseURI,queryString);
         }
         throw new UnsupportedQueryLanguageException("Unsupported query language " + ql);
     }
 
+    //prepareGraphQuery
     @Override
     public GraphQuery prepareGraphQuery(QueryLanguage ql, String query) throws RepositoryException, MalformedQueryException {
         return null;
@@ -99,6 +110,7 @@ public class MarkLogicRepositoryConnection implements RepositoryConnection {
         return null;
     }
 
+    //prepareBooleanQuery
     @Override
     public BooleanQuery prepareBooleanQuery(QueryLanguage ql, String query) throws RepositoryException, MalformedQueryException {
         return null;
@@ -109,6 +121,7 @@ public class MarkLogicRepositoryConnection implements RepositoryConnection {
         return null;
     }
 
+    //prepareUpdate
     @Override
     public Update prepareUpdate(QueryLanguage ql, String update) throws RepositoryException, MalformedQueryException {
         return null;
@@ -121,7 +134,34 @@ public class MarkLogicRepositoryConnection implements RepositoryConnection {
 
     @Override
     public RepositoryResult<Resource> getContextIDs() throws RepositoryException {
-        return null;
+        try {
+            TupleQuery query = prepareTupleQuery(SPARQL, NAMEDGRAPHS, "");
+            TupleQueryResult result = query.evaluate();
+            return new RepositoryResult<Resource>(
+                    new ExceptionConvertingIteration<Resource, RepositoryException>(
+                            new ConvertingIteration<BindingSet, Resource, QueryEvaluationException>(result) {
+
+                                @Override
+                                protected Resource convert(BindingSet bindings)
+                                        throws QueryEvaluationException
+                                {
+                                    return (Resource)bindings.getValue("_");
+                                }
+                            })
+                    {
+
+                        @Override
+                        protected RepositoryException convert(Exception e) {
+                            return new RepositoryException(e);
+                        }
+                    });
+        }
+        catch (MalformedQueryException e) {
+            throw new RepositoryException(e);
+        }
+        catch (QueryEvaluationException e) {
+            throw new RepositoryException(e);
+        }
     }
 
     @Override

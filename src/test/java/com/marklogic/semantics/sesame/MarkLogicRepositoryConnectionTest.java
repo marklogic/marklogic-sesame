@@ -1,12 +1,16 @@
 package com.marklogic.semantics.sesame;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
+import org.openrdf.model.Statement;
 import org.openrdf.model.Value;
+import org.openrdf.model.vocabulary.RDF;
 import org.openrdf.query.BindingSet;
 import org.openrdf.query.QueryLanguage;
 import org.openrdf.query.TupleQuery;
 import org.openrdf.query.TupleQueryResult;
+import org.openrdf.repository.RepositoryResult;
 
 public class MarkLogicRepositoryConnectionTest {
 
@@ -55,4 +59,29 @@ public class MarkLogicRepositoryConnectionTest {
         }
         con.close();
         }
+
+    @Ignore
+    public void testContextIDs()
+            throws Exception
+    {
+
+        MarkLogicRepository mr = new MarkLogicRepository();
+        mr.initialize();
+        MarkLogicRepositoryConnection con = (MarkLogicRepositoryConnection) mr.getConnection();
+        RepositoryResult<Statement> result = con.getStatements(RDF.TYPE, RDF.TYPE, null, true);
+        try {
+            Assert.assertTrue("result should not be empty", result.hasNext());
+        }
+        finally {
+            result.close();
+        }
+
+        result = con.getStatements(RDF.TYPE, RDF.TYPE, null, false);
+        try {
+            Assert.assertFalse("result should be empty", result.hasNext());
+        }
+        finally {
+            result.close();
+        }
     }
+}
