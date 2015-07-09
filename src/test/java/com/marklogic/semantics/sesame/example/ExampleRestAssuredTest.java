@@ -1,6 +1,6 @@
 package com.marklogic.semantics.sesame.example;
 
-import org.junit.Test;
+import org.junit.Ignore;
 
 import static com.jayway.restassured.RestAssured.given;
 
@@ -9,7 +9,7 @@ import static com.jayway.restassured.RestAssured.given;
  * Created by jfuller on 31/03/14.
  */
 public class ExampleRestAssuredTest {
-    @Test
+    @Ignore
     public void testGetEndpoint() {
         given().
                 auth().digest("admin", "admin").

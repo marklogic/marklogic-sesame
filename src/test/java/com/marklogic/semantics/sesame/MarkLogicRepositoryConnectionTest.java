@@ -14,6 +14,7 @@ public class MarkLogicRepositoryConnectionTest {
     public void testSPARQLQuery()
             throws Exception
     {
+
         MarkLogicRepository mr = new MarkLogicRepository();
 
         mr.shutDown();
@@ -30,8 +31,6 @@ public class MarkLogicRepositoryConnectionTest {
             while (results.hasNext()) {
                 BindingSet bindingSet = results.next();
 
-                System.out.println(bindingSet.size());
-                Assert.assertTrue(bindingSet.size() > 1);
                 Value sV = bindingSet.getValue("s");
                 Value pV = bindingSet.getValue("p");
                 Value oV = bindingSet.getValue("o");

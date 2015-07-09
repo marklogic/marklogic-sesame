@@ -4,7 +4,7 @@ import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
 import com.marklogic.client.semantics.*;
 import org.junit.Assert;
-import org.junit.Test;
+import org.junit.Ignore;
 
 /**
  * Created by jfuller on 7/2/15.
@@ -12,7 +12,7 @@ import org.junit.Test;
 public class MarkLogicSessionTest {
 
 
-    @Test
+    @Ignore
     public void testDatabaseClientForSanity() throws Exception {
         DatabaseClient mc = DatabaseClientFactory.newClient(
                 "localhost", 8012, "admin", "admin", DatabaseClientFactory.Authentication.DIGEST);

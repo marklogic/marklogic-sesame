@@ -18,8 +18,8 @@ package com.marklogic.semantics.sesame.example;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
-import org.junit.Test;
 import org.junit.rules.Timeout;
 import org.openrdf.model.Literal;
 import org.openrdf.model.Resource;
@@ -123,7 +123,7 @@ public abstract class ExampleSesameRepositoryTest {
     protected abstract Repository createRepository()
             throws Exception;
 
-    @Test
+    @Ignore
     public void testShutdownFollowedByInit()
             throws Exception
     {

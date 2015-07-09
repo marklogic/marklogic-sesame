@@ -1,7 +1,7 @@
 package com.marklogic.semantics.sesame.example;
 
 import com.marklogic.semantics.sesame.MarkLogicRepository;
-import org.junit.Test;
+import org.junit.Ignore;
 import org.openrdf.model.ValueFactory;
 import org.openrdf.repository.Repository;
 import org.openrdf.repository.RepositoryException;
@@ -12,7 +12,7 @@ import org.openrdf.rio.RDFHandlerException;
  */
 public class ExampleMarkLogicRepositoryTest {
 
-    @Test
+    @Ignore
     public void testHello() throws RepositoryException, RDFHandlerException {
 
         Repository rep = new MarkLogicRepository("test");

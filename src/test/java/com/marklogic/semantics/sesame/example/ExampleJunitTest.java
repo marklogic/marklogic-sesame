@@ -2,7 +2,7 @@ package com.marklogic.semantics.sesame.example;
 
 import com.marklogic.semantics.sesame.example.toberemoved.ExampleJavaAPICreateJson;
 import org.junit.Assert;
-import org.junit.Test;
+import org.junit.Ignore;
 
 import java.io.IOException;
 
@@ -10,13 +10,13 @@ import java.io.IOException;
  * Created by jfuller on 6/24/15.
  */
 public class ExampleJunitTest {
-    @Test
+    @Ignore
     public void testHello() {
         String message = "Hello World!";
         Assert.assertEquals(message,"Hello World!");
     }
 
-    @Test
+    @Ignore
     public void testObject() throws IOException {
 
         ExampleJavaAPICreateJson.main();

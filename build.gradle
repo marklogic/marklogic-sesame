@@ -4,19 +4,20 @@ buildscript {
         maven {url "http://developer.marklogic.com/maven2/"}
         maven {url "http://rjrudin.github.io/marklogic-java/releases"}
     }
-
-    dependencies { classpath "com.marklogic:ml-gradle:2.0a8" }
+    dependencies {
+        classpath "com.marklogic:ml-gradle:2.0a9"
+    }
 }
 
 plugins {
     id 'me.champeau.gradle.jmh' version '0.2.0'
 }
 
-apply plugin: 'ml-gradle'
-apply plugin: 'java'
+//apply plugin: 'ml-gradle'
 apply plugin: 'eclipse'
-
+apply plugin: 'java'
 apply plugin: 'me.champeau.gradle.jmh'
+
 
 sourceCompatibility = "1.7"
 targetCompatibility = "1.7"
