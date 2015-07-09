@@ -77,9 +77,6 @@ public class MarkLogicClientImpl {
     }
 
     public SPARQLTupleResults performSPARQLQuery(String queryString){
-        this.databaseClient = DatabaseClientFactory.newClient(
-                "127.0.0.1", 8200, "admin", "admin", DatabaseClientFactory.Authentication.DIGEST);
-
         SPARQLQueryManager smgr = this.databaseClient.newSPARQLQueryManager();
         SPARQLQueryDefinition qdef = smgr.newQueryDefinition(queryString);
         return smgr.executeSelect(qdef);
