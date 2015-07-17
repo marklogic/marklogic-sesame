@@ -1,31 +1,42 @@
 package com.marklogic.semantics.sesame.client;
 
-import com.marklogic.client.semantics.SPARQLBinding;
-import com.marklogic.client.semantics.SPARQLTuple;
-import com.marklogic.client.semantics.SPARQLTupleResults;
-import org.openrdf.model.Literal;
-import org.openrdf.model.URI;
+import org.openrdf.http.client.BackgroundTupleResult;
 import org.openrdf.model.ValueFactory;
 import org.openrdf.model.impl.ValueFactoryImpl;
-import org.openrdf.query.BindingSet;
 import org.openrdf.query.TupleQueryResult;
 import org.openrdf.query.impl.MapBindingSet;
-import org.openrdf.query.impl.TupleQueryResultImpl;
+import org.openrdf.query.resultio.QueryResultIO;
+import org.openrdf.query.resultio.TupleQueryResultFormat;
+import org.openrdf.query.resultio.TupleQueryResultParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
+/**
+ *
+ * @author James Fuller
+ */
 public class MarkLogicClient {
+
+	protected final Logger logger = LoggerFactory.getLogger(MarkLogicClient.class);
 
 	protected static final Charset UTF8 = Charset.forName("UTF-8");
 
-	private MarkLogicClientImpl mcimpl;
+	protected  static final TupleQueryResultFormat format = TupleQueryResultFormat.JSON;
+
+	private static Executor executor = Executors.newCachedThreadPool();
+
+	private MarkLogicClientImpl _client;
 
 	private ValueFactory f;
 
-	public MarkLogicClient() {
-		this.mcimpl = new MarkLogicClientImpl();
+	public MarkLogicClient(String host, int port, String user, String password,String auth) {
+		this._client = new MarkLogicClientImpl(host,port,user,password,auth);
 		this.f = new ValueFactoryImpl();
 	}
 
@@ -33,34 +44,18 @@ public class MarkLogicClient {
 		return f;
 	}
 
-	public TupleQueryResult sendTupleQuery(String queryString){
+    public TupleQueryResult sendTupleQuery(String queryString) throws IOException {
+        return sendTupleQuery(queryString,new MapBindingSet());
+    }
+	public TupleQueryResult sendTupleQuery(String queryString,MapBindingSet bindings) throws IOException {
+		InputStream stream = _client.performSPARQLQuery(queryString,bindings);
+		TupleQueryResultParser parser = QueryResultIO.createParser(format, getValueFactory());
+		BackgroundTupleResult tRes = new BackgroundTupleResult(parser,stream);
+		execute(tRes);
+		return tRes;
+	}
 
-        SPARQLTupleResults results = mcimpl.performSPARQLQuery(queryString);
-
-		List<String> bindingNames = new ArrayList<String>();
-        String bindingnames[]= results.getBindingNames();
-		for ( String bindingName: bindingnames ) {
-			bindingNames.add(bindingName);
-		}
-
-		List<BindingSet> bindingSetList = new ArrayList<BindingSet>();
-        for ( SPARQLTuple tuple : results ) {
-			MapBindingSet mbs = new MapBindingSet();
-            for(String name : bindingNames){
-                SPARQLBinding binding = tuple.get(name);
-                String bindingtype = binding.getType().toString();
-                if (bindingtype.equals("uri")) {
-                    URI s = f.createURI(binding.getValue());
-                    mbs.addBinding(name, s);
-                } else if (bindingtype.equals("literal")) {
-                    Literal o = f.createLiteral(tuple.get("o").getValue());
-                    mbs.addBinding(name, o);
-                } else {
-                }
-            }
-			bindingSetList.add(mbs);
-		}
-
-		return (TupleQueryResult) new TupleQueryResultImpl(bindingNames,bindingSetList);
+	protected void execute(Runnable command) {
+		executor.execute(command);
 	}
 }

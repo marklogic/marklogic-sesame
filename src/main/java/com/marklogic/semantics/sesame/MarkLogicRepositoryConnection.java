@@ -2,14 +2,18 @@ package com.marklogic.semantics.sesame;
 
 import com.marklogic.semantics.sesame.client.MarkLogicClient;
 import com.marklogic.semantics.sesame.query.MarkLogicTupleQuery;
-import info.aduna.iteration.ConvertingIteration;
-import info.aduna.iteration.ExceptionConvertingIteration;
-import info.aduna.iteration.Iteration;
+import info.aduna.iteration.*;
 import org.openrdf.IsolationLevel;
 import org.openrdf.model.*;
+import org.openrdf.model.impl.StatementImpl;
+import org.openrdf.model.impl.ValueFactoryImpl;
 import org.openrdf.query.*;
+import org.openrdf.query.impl.DatasetImpl;
+import org.openrdf.query.impl.MapBindingSet;
 import org.openrdf.repository.*;
 import org.openrdf.rio.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,23 +25,35 @@ import static org.openrdf.query.QueryLanguage.SPARQL;
 
 public class MarkLogicRepositoryConnection implements RepositoryConnection {
 
+    protected final Logger logger = LoggerFactory.getLogger(MarkLogicRepositoryConnection.class);
+
     private static final String EVERYTHING = "CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o }";
+
     private static final String EVERYTHING_WITH_GRAPH = "SELECT * WHERE {  ?s ?p ?o . OPTIONAL { GRAPH ?ctx { ?s ?p ?o } } }";
+
     private static final String SOMETHING = "ASK { ?s ?p ?o }";
+
     private static final String NAMEDGRAPHS = "SELECT DISTINCT ?_ WHERE { GRAPH ?_ { ?s ?p ?o } }";
 
+    private StringBuffer sparqlTransaction;
+
+    private Object transactionLock = new Object();
+
     private final boolean quadMode;
+
     private MarkLogicClient client;
+
     private MarkLogicRepository repository;
 
-    public MarkLogicRepositoryConnection(MarkLogicRepository repository,MarkLogicClient client) {
-        this(repository,client,false);
-    }
+//    public MarkLogicRepositoryConnection(MarkLogicRepository repository,MarkLogicClient client) {
+//        this(repository, client, false);
+//    }
 
     public MarkLogicRepositoryConnection(MarkLogicRepository repository, MarkLogicClient client, boolean quadMode) {
+        super();
         this.client = client;
-        this.repository=repository;
-        this.quadMode=quadMode;
+        this.repository = repository;
+        this.quadMode = quadMode;
     }
 
     @Override
@@ -46,12 +62,12 @@ public class MarkLogicRepositoryConnection implements RepositoryConnection {
     }
 
     @Override
-    public void setParserConfig(ParserConfig config) {
+    public ParserConfig getParserConfig() {
+        return null;
     }
 
     @Override
-    public ParserConfig getParserConfig() {
-        return null;
+    public void setParserConfig(ParserConfig config) {
     }
 
     @Override
@@ -81,22 +97,22 @@ public class MarkLogicRepositoryConnection implements RepositoryConnection {
 
     // prepareTupleQuery
     public TupleQuery prepareTupleQuery(String queryString) throws RepositoryException, MalformedQueryException {
-        return prepareTupleQuery(QueryLanguage.SPARQL,queryString);
+        return prepareTupleQuery(QueryLanguage.SPARQL, queryString);
     }
 
     @Override
-    public TupleQuery prepareTupleQuery(QueryLanguage ql, String queryString) throws RepositoryException, MalformedQueryException {
-        if (QueryLanguage.SPARQL.equals(ql))
-            return prepareTupleQuery(ql, queryString, "");
-        throw new UnsupportedQueryLanguageException("Unsupported query language " + ql);
+    public TupleQuery prepareTupleQuery(QueryLanguage queryLanguage, String queryString) throws RepositoryException, MalformedQueryException {
+        if (QueryLanguage.SPARQL.equals(queryLanguage))
+            return prepareTupleQuery(queryLanguage, queryString, "");
+        throw new UnsupportedQueryLanguageException("Unsupported query language " + queryLanguage.getName());
     }
 
     @Override
-    public TupleQuery prepareTupleQuery(QueryLanguage ql, String queryString, String baseURI) throws RepositoryException, MalformedQueryException {
-        if (QueryLanguage.SPARQL.equals(ql)) {
-            return (TupleQuery)new MarkLogicTupleQuery(client,baseURI,queryString);
+    public TupleQuery prepareTupleQuery(QueryLanguage queryLanguage, String queryString, String baseURI) throws RepositoryException, MalformedQueryException {
+        if (QueryLanguage.SPARQL.equals(queryLanguage)) {
+            return new MarkLogicTupleQuery(client, new MapBindingSet(), baseURI, queryString);
         }
-        throw new UnsupportedQueryLanguageException("Unsupported query language " + ql);
+        throw new UnsupportedQueryLanguageException("Unsupported query language " + queryLanguage.getName());
     }
 
     //prepareGraphQuery
@@ -132,6 +148,7 @@ public class MarkLogicRepositoryConnection implements RepositoryConnection {
         return null;
     }
 
+    //
     @Override
     public RepositoryResult<Resource> getContextIDs() throws RepositoryException {
         try {
@@ -143,32 +160,69 @@ public class MarkLogicRepositoryConnection implements RepositoryConnection {
 
                                 @Override
                                 protected Resource convert(BindingSet bindings)
-                                        throws QueryEvaluationException
-                                {
-                                    return (Resource)bindings.getValue("_");
+                                        throws QueryEvaluationException {
+                                    return (Resource) bindings.getValue("_");
                                 }
-                            })
-                    {
+                            }) {
 
                         @Override
                         protected RepositoryException convert(Exception e) {
                             return new RepositoryException(e);
                         }
                     });
-        }
-        catch (MalformedQueryException e) {
+        } catch (MalformedQueryException e) {
             throw new RepositoryException(e);
-        }
-        catch (QueryEvaluationException e) {
+        } catch (QueryEvaluationException e) {
             throw new RepositoryException(e);
         }
     }
 
     @Override
     public RepositoryResult<Statement> getStatements(Resource subj, URI pred, Value obj, boolean includeInferred, Resource... contexts) throws RepositoryException {
-        return null;
+        try {
+            if (isQuadMode()) {
+                TupleQuery tupleQuery = prepareTupleQuery(SPARQL, EVERYTHING_WITH_GRAPH);
+                setBindings(tupleQuery, subj, pred, obj, contexts);
+                tupleQuery.setIncludeInferred(includeInferred);
+                TupleQueryResult qRes = tupleQuery.evaluate();
+                return new RepositoryResult<Statement>(
+                        new ExceptionConvertingIteration<Statement, RepositoryException>(
+                                toStatementIteration(qRes, subj, pred, obj)) {
+                            @Override
+                            protected RepositoryException convert(Exception e) {
+                                return new RepositoryException(e);
+                            }
+                        });
+            }
+            if (subj != null && pred != null && obj != null) {
+                if (hasStatement(subj, pred, obj, includeInferred, contexts)) {
+                    Statement st = new StatementImpl(subj, pred, obj);
+                    CloseableIteration<Statement, RepositoryException> cursor;
+                    cursor = new SingletonIteration<Statement, RepositoryException>(st);
+                    return new RepositoryResult<Statement>(cursor);
+                } else {
+                    return new RepositoryResult<Statement>(new EmptyIteration<Statement, RepositoryException>());
+                }
+            }
+            GraphQuery query = prepareGraphQuery(SPARQL, EVERYTHING, "");
+            setBindings(query, subj, pred, obj, contexts);
+            GraphQueryResult result = query.evaluate();
+            return new RepositoryResult<Statement>(
+                    new ExceptionConvertingIteration<Statement, RepositoryException>(result) {
+
+                        @Override
+                        protected RepositoryException convert(Exception e) {
+                            return new RepositoryException(e);
+                        }
+                    });
+        } catch (MalformedQueryException e) {
+            throw new RepositoryException(e);
+        } catch (QueryEvaluationException e) {
+            throw new RepositoryException(e);
+        }
     }
 
+    //
     @Override
     public boolean hasStatement(Resource subj, URI pred, Value obj, boolean includeInferred, Resource... contexts) throws RepositoryException {
         return false;
@@ -184,6 +238,7 @@ public class MarkLogicRepositoryConnection implements RepositoryConnection {
 
     }
 
+    //
     @Override
     public void export(RDFHandler handler, Resource... contexts) throws RepositoryException, RDFHandlerException {
 
@@ -200,13 +255,13 @@ public class MarkLogicRepositoryConnection implements RepositoryConnection {
     }
 
     @Override
-    public void setAutoCommit(boolean autoCommit) throws RepositoryException {
-
+    public boolean isAutoCommit() throws RepositoryException {
+        return false;
     }
 
     @Override
-    public boolean isAutoCommit() throws RepositoryException {
-        return false;
+    public void setAutoCommit(boolean autoCommit) throws RepositoryException {
+
     }
 
     @Override
@@ -215,13 +270,13 @@ public class MarkLogicRepositoryConnection implements RepositoryConnection {
     }
 
     @Override
-    public void setIsolationLevel(IsolationLevel level) throws IllegalStateException {
-
+    public IsolationLevel getIsolationLevel() {
+        return null;
     }
 
     @Override
-    public IsolationLevel getIsolationLevel() {
-        return null;
+    public void setIsolationLevel(IsolationLevel level) throws IllegalStateException {
+
     }
 
     @Override
@@ -309,6 +364,7 @@ public class MarkLogicRepositoryConnection implements RepositoryConnection {
 
     }
 
+    //
     @Override
     public RepositoryResult<Namespace> getNamespaces() throws RepositoryException {
         return null;
@@ -332,5 +388,51 @@ public class MarkLogicRepositoryConnection implements RepositoryConnection {
     @Override
     public void clearNamespaces() throws RepositoryException {
 
+    }
+
+    private void setBindings(Query query, Resource subj, URI pred, Value obj, Resource... contexts)
+            throws RepositoryException {
+        if (subj != null) {
+            query.setBinding("s", subj);
+        }
+        if (pred != null) {
+            query.setBinding("p", pred);
+        }
+        if (obj != null) {
+            query.setBinding("o", obj);
+        }
+        if (contexts != null && contexts.length > 0) {
+            DatasetImpl dataset = new DatasetImpl();
+            for (Resource ctx : contexts) {
+                if (ctx == null || ctx instanceof URI) {
+                    dataset.addDefaultGraph((URI) ctx);
+                } else {
+                    throw new RepositoryException("Contexts must be URIs");
+                }
+            }
+            query.setDataset(dataset);
+        }
+    }
+
+    protected boolean isQuadMode() {
+        return quadMode;
+    }
+
+    protected Iteration<Statement, QueryEvaluationException> toStatementIteration(TupleQueryResult iter, final Resource subj, final URI pred, final Value obj) {
+
+        return new ConvertingIteration<BindingSet, Statement, QueryEvaluationException>(iter) {
+
+            @Override
+            protected Statement convert(BindingSet b) throws QueryEvaluationException {
+
+                Resource s = subj == null ? (Resource) b.getValue("s") : subj;
+                URI p = pred == null ? ValueFactoryImpl.getInstance().createURI(b.getValue("o").stringValue()) : pred;
+                Value o = obj == null ? b.getValue("o") : obj;
+                Resource ctx = (Resource) b.getValue("ctx");
+
+                return ValueFactoryImpl.getInstance().createStatement(s, p, o, ctx);
+            }
+
+        };
     }
 }
