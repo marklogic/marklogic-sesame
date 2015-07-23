@@ -2,7 +2,9 @@ package com.marklogic.semantics.sesame.benchmarks;
 
 import com.marklogic.semantics.sesame.MarkLogicRepository;
 import org.openjdk.jmh.annotations.Benchmark;
+import org.openrdf.model.Value;
 import org.openrdf.model.ValueFactory;
+import org.openrdf.query.BindingSet;
 import org.openrdf.query.QueryLanguage;
 import org.openrdf.query.TupleQuery;
 import org.openrdf.query.TupleQueryResult;
@@ -28,8 +30,8 @@ public class MarkLogicRepositoryConnectionNaivePerfTest {
         }
         String host = props.getProperty("mlHost");
         int port = Integer.parseInt(props.getProperty("mlRestPort"));
-        String user = props.getProperty("adminUser");
-        String pass = props.getProperty("adminPassword");
+        String user = props.getProperty("mlUsername");
+        String pass = props.getProperty("mlPassword");
         // extrude to semantics.utils
 
         Repository rep = new MarkLogicRepository(host,port,user,pass,"DIGEST");
@@ -40,26 +42,15 @@ public class MarkLogicRepositoryConnectionNaivePerfTest {
         rep.shutDown();
         rep.initialize();
 
-        String queryString = "select ?s ?p ?o { ?s ?p ?o } limit 2 ";
+        String queryString = "select ?s ?p ?o { ?s ?p ?o } limit 100 ";
         TupleQuery tupleQuery = conn.prepareTupleQuery(QueryLanguage.SPARQL, queryString);
         TupleQueryResult results = tupleQuery.evaluate();
 
-        conn.close();
-
-        //rep.shutDown();
-//        results.hasNext();
-//        BindingSet bindingSet = results.next();
-//
-//        Value sV = bindingSet.getValue("s");
-//        Value pV = bindingSet.getValue("p");
-//        Value oV = bindingSet.getValue("o");
-//
-//        results.hasNext();
-//        BindingSet bindingSet1 = results.next();
-//
-//        Value sV1 = bindingSet1.getValue("s");
-//        Value pV1 = bindingSet1.getValue("p");
-//        Value oV1 = bindingSet1.getValue("o");
+        while(results.hasNext()) {
+            BindingSet bindingSet = results.next();
+            Value sV = bindingSet.getValue("s");
+            Value pV = bindingSet.getValue("p");
+            Value oV = bindingSet.getValue("o");
+        }
     }
-
 }

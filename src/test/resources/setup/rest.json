@@ -61,7 +61,7 @@
     "ssl-hostname": "",
     "ssl-ciphers": "ALL:!LOW:@STRENGTH",
     "ssl-require-client-certificate": true,
-    "content-database": "Documents",
+    "content-database": "marklogic-sesame-test-content",
     "modules-database": "Modules",
     "default-user": "nobody"
 }

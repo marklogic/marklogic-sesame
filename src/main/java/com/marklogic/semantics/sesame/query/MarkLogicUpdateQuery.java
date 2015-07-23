@@ -4,20 +4,17 @@ import com.marklogic.semantics.sesame.client.MarkLogicClient;
 import org.openrdf.model.Value;
 import org.openrdf.model.impl.ValueFactoryImpl;
 import org.openrdf.query.*;
-import org.openrdf.query.impl.AbstractQuery;
 import org.openrdf.query.impl.MapBindingSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
 
 /**
  *
  * @author James Fuller
  */
-public class MarkLogicTupleQuery extends AbstractQuery implements TupleQuery {
+public class MarkLogicUpdateQuery implements Update {
 
-    protected final Logger logger = LoggerFactory.getLogger(MarkLogicTupleQuery.class);
+    protected final Logger logger = LoggerFactory.getLogger(MarkLogicUpdateQuery.class);
 
     private MarkLogicClient client;
 
@@ -29,7 +26,7 @@ public class MarkLogicTupleQuery extends AbstractQuery implements TupleQuery {
 
     private MapBindingSet mapBindingSet;
 
-    public MarkLogicTupleQuery(MarkLogicClient client, MapBindingSet mapBindingSet, String baseUri, String queryString) {
+    public MarkLogicUpdateQuery(MarkLogicClient client, MapBindingSet mapBindingSet, String baseUri, String queryString) {
         super();
         this.client = client;
         this.queryLanguage = QueryLanguage.SPARQL;
@@ -65,57 +62,51 @@ public class MarkLogicTupleQuery extends AbstractQuery implements TupleQuery {
 
     //evaluate
     @Override
-    public TupleQueryResult evaluate() throws QueryEvaluationException {
-        return evaluate(-1,-1);
-    }
-    public TupleQueryResult evaluate(long start, long pageLength)
-            throws QueryEvaluationException {
+    public void execute(){
         MarkLogicClient mc = getClient();
-        try {
-            return mc.sendTupleQuery(getQueryString(),mapBindingSet,start,pageLength);
-        } catch (IOException e) {
-            throw new QueryEvaluationException(e);
-        }
-    }
-    @Override
-    public void evaluate(TupleQueryResultHandler resultHandler) throws QueryEvaluationException, TupleQueryResultHandlerException {
-        TupleQueryResult queryResult = evaluate();
-        QueryResults.report(queryResult, resultHandler);
+        mc.sendUpdateQuery(getQueryString(), mapBindingSet);
     }
 
     // bindings
     public void setBinding(String name, String stringValue) {
         mapBindingSet.addBinding(name, ValueFactoryImpl.getInstance().createURI(stringValue));
     }
-    @Override
     public void setBinding(String name, Value value) {
-        mapBindingSet.addBinding(name,value);
+        mapBindingSet.addBinding(name, value);
     }
-    @Override
     public void removeBinding(String name) {
         mapBindingSet.removeBinding(name);
     }
-    @Override
     public void clearBindings() {
         mapBindingSet.clear();
     }
 
-
     @Override
+    public BindingSet getBindings() {
+        return null;
+    }
+
     public void setDataset(Dataset dataset) {
     }
-    @Override
     public Dataset getDataset() {
         return null;
     }
 
+    @Override
+    public void setIncludeInferred(boolean includeInferred) {
+
+    }
 
     @Override
+    public boolean getIncludeInferred() {
+        return false;
+    }
+
     public void setMaxExecutionTime(int maxExecTime) {
     }
-    @Override
     public int getMaxExecutionTime() {
         return 0;
     }
+
 
 }

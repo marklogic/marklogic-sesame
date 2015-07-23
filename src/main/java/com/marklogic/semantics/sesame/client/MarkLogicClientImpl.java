@@ -4,6 +4,7 @@ package com.marklogic.semantics.sesame.client;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
+import com.marklogic.client.Transaction;
 import com.marklogic.client.impl.SPARQLBindingsImpl;
 import com.marklogic.client.io.InputStreamHandle;
 import com.marklogic.client.semantics.SPARQLBindings;
@@ -33,10 +34,6 @@ public class MarkLogicClientImpl {
     private String password;
 
     private String auth;
-
-    // tbd
-    private long start = 1;
-    private long pageLength = 1000;
 
     static public SPARQLQueryManager sparqlManager;
 
@@ -105,20 +102,56 @@ public class MarkLogicClientImpl {
         return databaseClient;
     }
 
-    public InputStream performSPARQLQuery(String queryString, MapBindingSet bindings) throws JsonProcessingException {
-        return performSPARQLQuery(queryString, bindings, new InputStreamHandle());
+    public InputStream performSPARQLQuery(String queryString, MapBindingSet bindings, long start, long pageLength, Transaction transaction) throws JsonProcessingException {
+        return performSPARQLQuery(queryString, bindings, new InputStreamHandle(),start,pageLength,transaction);
     }
-
-    public InputStream performSPARQLQuery(String queryString, MapBindingSet bindings, InputStreamHandle handle) throws JsonProcessingException {
+    public InputStream performSPARQLQuery(String queryString, MapBindingSet bindings, InputStreamHandle handle, long start, long pageLength, Transaction transaction) throws JsonProcessingException {
         sparqlManager = getDatabaseClient().newSPARQLQueryManager();
         SPARQLQueryDefinition qdef = sparqlManager.newQueryDefinition(queryString);
+        qdef.setBindings(getSPARQLBindings(bindings));
+        sparqlManager.executeSelect(qdef, handle, start, pageLength, transaction);
+        return handle.get();
+    }
+
+    public InputStream performGraphQuery(String queryString, MapBindingSet bindings, Transaction transaction) throws JsonProcessingException {
+        return performGraphQuery(queryString, bindings, new InputStreamHandle(), transaction);
+    }
+    public InputStream performGraphQuery(String queryString, MapBindingSet bindings, InputStreamHandle handle, Transaction transaction) throws JsonProcessingException {
+        sparqlManager = getDatabaseClient().newSPARQLQueryManager();
+
+        SPARQLQueryDefinition qdef = sparqlManager.newQueryDefinition(queryString);
+        qdef.setBindings(getSPARQLBindings(bindings));
+        sparqlManager.executeDescribe(qdef, handle, transaction);
+        return handle.get();
+    }
+
+    public boolean performBooleanQuery(String queryString, MapBindingSet bindings) {
+        return performBooleanQuery(queryString,bindings,null);
+    }
+    public boolean performBooleanQuery(String queryString, MapBindingSet bindings, Transaction transaction) {
+        sparqlManager = getDatabaseClient().newSPARQLQueryManager();
+        SPARQLQueryDefinition qdef = sparqlManager.newQueryDefinition(queryString);
+
+        qdef.setBindings(getSPARQLBindings(bindings));
+        return sparqlManager.executeAsk(qdef, transaction);
+    }
+
+    public void performUpdateQuery(String queryString, MapBindingSet bindings) {
+        performUpdateQuery(queryString,bindings,null);
+    }
+    public void performUpdateQuery(String queryString, MapBindingSet bindings, Transaction transaction) {
+        sparqlManager = getDatabaseClient().newSPARQLQueryManager();
+        SPARQLQueryDefinition qdef = sparqlManager.newQueryDefinition(queryString);
+        qdef.setBindings(getSPARQLBindings(bindings));
+        sparqlManager.executeUpdate(qdef, transaction);
+    }
+
+    protected SPARQLBindings getSPARQLBindings(MapBindingSet bindings){
         SPARQLBindings sps = new SPARQLBindingsImpl();
         for (Binding binding : bindings) {
             sps.bind(binding.getName(), binding.getValue().stringValue());
             logger.debug("binding:" + binding.getName() + "=" + binding.getValue());
         }
-        qdef.setBindings(sps);
-        sparqlManager.executeSelect(qdef, handle);
-        return handle.get();
+        return sps;
     }
 }
