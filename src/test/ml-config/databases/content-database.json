@@ -2,25 +2,5 @@
   "database-name": "%%DATABASE%%",
   "maintain-last-modified": true,
   "triple-index": true,
-  "collection-lexicon":true,
-  "range-element-index": [
-    {
-      "invalid-values": "reject",
-      "collation": "",
-      "localname": "testDateTime",
-      "namespace-uri": "http://marklogic.com/test",
-      "range-value-positions": false,
-      "scalar-type": "dateTime"
-    },
-    {
-      "invalid-values": "reject",
-      "collation": "",
-      "localname": "secondTestDateTime",
-      "namespace-uri": "http://marklogic.com/test",
-      "range-value-positions": false,
-      "scalar-type": "dateTime"
-    }
-   ],
-  "schema-database": "%%SCHEMAS_DATABASE%%",
-  "triggers-database": "%%TRIGGERS_DATABASE%%"
+  "collection-lexicon":true
 }

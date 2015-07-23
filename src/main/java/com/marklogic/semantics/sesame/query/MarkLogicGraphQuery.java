@@ -6,6 +6,8 @@ import org.openrdf.model.impl.ValueFactoryImpl;
 import org.openrdf.query.*;
 import org.openrdf.query.impl.AbstractQuery;
 import org.openrdf.query.impl.MapBindingSet;
+import org.openrdf.rio.RDFHandler;
+import org.openrdf.rio.RDFHandlerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,9 +17,9 @@ import java.io.IOException;
  *
  * @author James Fuller
  */
-public class MarkLogicTupleQuery extends AbstractQuery implements TupleQuery {
+public class MarkLogicGraphQuery extends AbstractQuery implements GraphQuery {
 
-    protected final Logger logger = LoggerFactory.getLogger(MarkLogicTupleQuery.class);
+    protected final Logger logger = LoggerFactory.getLogger(MarkLogicGraphQuery.class);
 
     private MarkLogicClient client;
 
@@ -29,7 +31,7 @@ public class MarkLogicTupleQuery extends AbstractQuery implements TupleQuery {
 
     private MapBindingSet mapBindingSet;
 
-    public MarkLogicTupleQuery(MarkLogicClient client, MapBindingSet mapBindingSet, String baseUri, String queryString) {
+    public MarkLogicGraphQuery(MarkLogicClient client, MapBindingSet mapBindingSet, String baseUri, String queryString) {
         super();
         this.client = client;
         this.queryLanguage = QueryLanguage.SPARQL;
@@ -65,21 +67,18 @@ public class MarkLogicTupleQuery extends AbstractQuery implements TupleQuery {
 
     //evaluate
     @Override
-    public TupleQueryResult evaluate() throws QueryEvaluationException {
-        return evaluate(-1,-1);
-    }
-    public TupleQueryResult evaluate(long start, long pageLength)
+    public GraphQueryResult evaluate()
             throws QueryEvaluationException {
         MarkLogicClient mc = getClient();
         try {
-            return mc.sendTupleQuery(getQueryString(),mapBindingSet,start,pageLength);
+            return mc.sendGraphQuery(getQueryString(),mapBindingSet);
         } catch (IOException e) {
             throw new QueryEvaluationException(e);
         }
     }
     @Override
-    public void evaluate(TupleQueryResultHandler resultHandler) throws QueryEvaluationException, TupleQueryResultHandlerException {
-        TupleQueryResult queryResult = evaluate();
+    public void evaluate(RDFHandler resultHandler) throws QueryEvaluationException, RDFHandlerException {
+        GraphQueryResult queryResult = evaluate();
         QueryResults.report(queryResult, resultHandler);
     }
 
@@ -100,7 +99,6 @@ public class MarkLogicTupleQuery extends AbstractQuery implements TupleQuery {
         mapBindingSet.clear();
     }
 
-
     @Override
     public void setDataset(Dataset dataset) {
     }
@@ -108,7 +106,6 @@ public class MarkLogicTupleQuery extends AbstractQuery implements TupleQuery {
     public Dataset getDataset() {
         return null;
     }
-
 
     @Override
     public void setMaxExecutionTime(int maxExecTime) {

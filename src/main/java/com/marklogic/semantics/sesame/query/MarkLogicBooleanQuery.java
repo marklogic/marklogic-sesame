@@ -3,21 +3,22 @@ package com.marklogic.semantics.sesame.query;
 import com.marklogic.semantics.sesame.client.MarkLogicClient;
 import org.openrdf.model.Value;
 import org.openrdf.model.impl.ValueFactoryImpl;
-import org.openrdf.query.*;
+import org.openrdf.query.BooleanQuery;
+import org.openrdf.query.Dataset;
+import org.openrdf.query.QueryLanguage;
+import org.openrdf.query.UnsupportedQueryLanguageException;
 import org.openrdf.query.impl.AbstractQuery;
 import org.openrdf.query.impl.MapBindingSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-
 /**
  *
  * @author James Fuller
  */
-public class MarkLogicTupleQuery extends AbstractQuery implements TupleQuery {
+public class MarkLogicBooleanQuery extends AbstractQuery implements BooleanQuery {
 
-    protected final Logger logger = LoggerFactory.getLogger(MarkLogicTupleQuery.class);
+    protected final Logger logger = LoggerFactory.getLogger(MarkLogicBooleanQuery.class);
 
     private MarkLogicClient client;
 
@@ -29,7 +30,7 @@ public class MarkLogicTupleQuery extends AbstractQuery implements TupleQuery {
 
     private MapBindingSet mapBindingSet;
 
-    public MarkLogicTupleQuery(MarkLogicClient client, MapBindingSet mapBindingSet, String baseUri, String queryString) {
+    public MarkLogicBooleanQuery(MarkLogicClient client, MapBindingSet mapBindingSet, String baseUri, String queryString) {
         super();
         this.client = client;
         this.queryLanguage = QueryLanguage.SPARQL;
@@ -65,22 +66,9 @@ public class MarkLogicTupleQuery extends AbstractQuery implements TupleQuery {
 
     //evaluate
     @Override
-    public TupleQueryResult evaluate() throws QueryEvaluationException {
-        return evaluate(-1,-1);
-    }
-    public TupleQueryResult evaluate(long start, long pageLength)
-            throws QueryEvaluationException {
+    public boolean evaluate(){
         MarkLogicClient mc = getClient();
-        try {
-            return mc.sendTupleQuery(getQueryString(),mapBindingSet,start,pageLength);
-        } catch (IOException e) {
-            throw new QueryEvaluationException(e);
-        }
-    }
-    @Override
-    public void evaluate(TupleQueryResultHandler resultHandler) throws QueryEvaluationException, TupleQueryResultHandlerException {
-        TupleQueryResult queryResult = evaluate();
-        QueryResults.report(queryResult, resultHandler);
+        return mc.sendBooleanQuery(getQueryString(), mapBindingSet);
     }
 
     // bindings
@@ -100,7 +88,6 @@ public class MarkLogicTupleQuery extends AbstractQuery implements TupleQuery {
         mapBindingSet.clear();
     }
 
-
     @Override
     public void setDataset(Dataset dataset) {
     }
@@ -108,7 +95,6 @@ public class MarkLogicTupleQuery extends AbstractQuery implements TupleQuery {
     public Dataset getDataset() {
         return null;
     }
-
 
     @Override
     public void setMaxExecutionTime(int maxExecTime) {

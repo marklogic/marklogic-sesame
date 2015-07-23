@@ -52,8 +52,9 @@ dependencies {
     testCompile 'com.jayway.restassured:rest-assured:2.4.1'
     testCompile 'org.hamcrest:hamcrest-all:1.3'
     testCompile 'junit:junit:4.12'
+    testCompile 'org.openjdk.jmh:jmh-core:1.3.2'
+    testCompile 'org.openjdk.jmh:jmh-generator-annprocess:1.3.2'
 }
-
 
 sourceSets {
     test {
@@ -63,8 +64,48 @@ sourceSets {
     }
 }
 
-
 task wrapper(type: Wrapper) {
     gradleVersion = '2.4'
 }
 
+task removeTestData <<{
+    exec{
+        commandLine 'curl --anyauth --user admin:admin -i -X DELETE http://localhost:8200/v1/graphs?graph=http://marklogic.com/test/my-graph'.tokenize()
+    }
+    exec {
+        commandLine 'curl --anyauth --user admin:admin -i -X DELETE http://localhost:8200/v1/graphs?graph=http://marklogic.com/test/g27'.tokenize()
+    }
+}
+
+task loadTestData << {
+    exec {
+        commandLine 'curl --anyauth --user admin:admin -i -X POST -H Content-type:application/rdf+xml -d@src/test/resources/setup/test.owl http://localhost:8200/v1/graphs?graph=http://marklogic.com/test/my-graph'.tokenize()
+    }
+}
+
+loadTestData.dependsOn([removeTestData])
+
+test.dependsOn([loadTestData])
+
+clean.dependsOn([removeTestData])
+
+jmh {
+    //include = 'some regular expression' // include pattern (regular expression) for benchmarks to be executed
+    //exclude = 'some regular expression' // exclude pattern (regular expression) for benchmarks to be executed
+    iterations = 5 // Number of measurement iterations to do.
+    forceGC = false // Should JMH force GC between iterations?
+    //jvmArgs = 'Custom JVM args to use when forking.'
+    //jvmArgsAppend = 'Custom JVM args to use when forking (append these)'
+    //jvmArgsPrepend = 'Custom JVM args to use when forking (prepend these)'
+    humanOutputFile = project.file("${project.buildDir}/reports/jmh/human.txt") // human-readable output file
+    resultsFile = project.file("${project.buildDir}/reports/jmh/results.txt") // results file
+    resultFormat = 'JSON' // Result format type (one of CSV, JSON, NONE, SCSV, TEXT)
+    timeUnit = 'ms' // Output time unit. Available time units are: [m, s, ms, us, ns].
+    verbosity = 'NORMAL' // Verbosity mode. Available modes are: [SILENT, NORMAL, EXTRA]
+    warmup = '1s' // Time to spend at each warmup iteration.
+    warmupBatchSize = 2 // Warmup batch size: number of benchmark method calls per operation.
+    warmupForks = 0 // How many warmup forks to make for a single benchmark. 0 to disable warmup forks.
+    warmupIterations = 1 // Number of warmup iterations to do.
+    warmupMode = 'INDI' // Warmup mode for warming up selected benchmarks. Warmup modes are: [INDI, BULK, BULK_INDI].
+    warmupBenchmarks = ['.*Warmup'] // Warmup benchmarks to include in the run in addition to already selected. JMH will not measure these benchmarks, but only use them for the warmup.
+}
