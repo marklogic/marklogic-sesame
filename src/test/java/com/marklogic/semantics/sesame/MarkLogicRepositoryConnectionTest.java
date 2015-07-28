@@ -1,14 +1,31 @@
+/*
+ * Copyright 2015 MarkLogic Corporation
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/**
+ * A library that enables access to a MarkLogic-backed triple-store via the
+ * Sesame API.
+ */
 package com.marklogic.semantics.sesame;
 
 import com.marklogic.semantics.sesame.query.MarkLogicTupleQuery;
 import info.aduna.iteration.ConvertingIteration;
 import info.aduna.iteration.ExceptionConvertingIteration;
 import org.junit.*;
-import org.openrdf.model.Resource;
-import org.openrdf.model.Statement;
-import org.openrdf.model.Value;
-import org.openrdf.model.ValueFactory;
+import org.openrdf.model.*;
 import org.openrdf.model.impl.ValueFactoryImpl;
+import org.openrdf.model.vocabulary.RDF;
 import org.openrdf.query.*;
 import org.openrdf.repository.Repository;
 import org.openrdf.repository.RepositoryConnection;
@@ -24,6 +41,10 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
 
+/**
+ *
+ * @author James Fuller
+ */
 public class MarkLogicRepositoryConnectionTest {
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -80,6 +101,11 @@ public class MarkLogicRepositoryConnectionTest {
         logger.info("tearDown complete.");
     }
 
+    @Test
+    public void testMarkLogicRepositoryConnectionOpen()
+            throws Exception {
+        Assert.assertEquals(true, conn.isOpen());
+    }
 
     @Test
     public void testMarkLogicRepositoryConnection()
@@ -137,6 +163,39 @@ public class MarkLogicRepositoryConnectionTest {
         TupleQuery tupleQuery = conn.prepareTupleQuery(QueryLanguage.SPARQL, queryString);
         TupleQueryResult results = tupleQuery.evaluate();
 
+        Assert.assertEquals(results.getBindingNames().get(0), "s");
+        Assert.assertEquals(results.getBindingNames().get(1), "p");
+        Assert.assertEquals(results.getBindingNames().get(2), "o");
+
+        BindingSet bindingSet = results.next();
+
+        Value sV = bindingSet.getValue("s");
+        Value pV = bindingSet.getValue("p");
+        Value oV = bindingSet.getValue("o");
+
+        Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#AlexandriaGeodata", sV.stringValue());
+        Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#altitude", pV.stringValue());
+        Assert.assertEquals("0", oV.stringValue());
+
+        BindingSet bindingSet1 = results.next();
+
+        Value sV1 = bindingSet1.getValue("s");
+        Value pV1 = bindingSet1.getValue("p");
+        Value oV1 = bindingSet1.getValue("o");
+
+        Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#AmphipolisGeodata", sV1.stringValue());
+        Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#altitude", pV1.stringValue());
+        Assert.assertEquals("0", oV1.stringValue());
+    }
+
+    @Test
+    public void testSPARQLQueryWithInferred()
+            throws Exception {
+
+        String queryString = "select ?s ?p ?o { ?s ?p ?o } limit 2 ";
+        TupleQuery tupleQuery = conn.prepareTupleQuery(QueryLanguage.SPARQL, queryString);
+        tupleQuery.setIncludeInferred(true);
+        TupleQueryResult results = tupleQuery.evaluate();
         Assert.assertEquals(results.getBindingNames().get(0), "s");
         Assert.assertEquals(results.getBindingNames().get(1), "p");
         Assert.assertEquals(results.getBindingNames().get(2), "o");
@@ -388,7 +447,7 @@ public class MarkLogicRepositoryConnectionTest {
         String queryString = "ASK { <http://semanticbible.org/ns/2006/NTNames#Shelah1> ?p ?o}";
         BooleanQuery booleanQuery = conn.prepareBooleanQuery(QueryLanguage.SPARQL, queryString);
         boolean results = booleanQuery.evaluate();
-        Assert.assertEquals(false,results);
+        Assert.assertEquals(false, results);
         queryString = "ASK { <http://semanticbible.org/ns/2006/NTNames#Shelah> ?p ?o}";
         booleanQuery = conn.prepareBooleanQuery(QueryLanguage.SPARQL, queryString);
         results = booleanQuery.evaluate();
@@ -407,37 +466,76 @@ public class MarkLogicRepositoryConnectionTest {
         Assert.assertEquals(true, results);
     }
 
-    @Ignore
-    public void testTransactions() throws Exception{
-        File inputFile1 = new File("src/test/resources/testdata/default-graph-1.ttl");
-        String baseURI1 = "http://example.org/example1/";
+    @Test
+    public void testClear()
+            throws Exception {
+        String defGraphQuery = "INSERT DATA { GRAPH <http://marklogic.com/test/ns/cleartest> { <http://marklogic.com/cleartest> <pp1> <oo1> } }";
+        String checkQuery = "ASK WHERE { <http://marklogic.com/cleartest> <pp1> <oo1> }";
+        Update updateQuery = conn.prepareUpdate(QueryLanguage.SPARQL, defGraphQuery);
+        updateQuery.execute();
+        BooleanQuery booleanQuery = conn.prepareBooleanQuery(QueryLanguage.SPARQL, checkQuery);
+        boolean results = booleanQuery.evaluate();
+        Assert.assertEquals(true, results);
 
-        File inputFile2 = new File("src/test/resources/testdata/default-graph-2.ttl");
-        String baseURI2 = "http://example.org/example2/";
-
-        try {
-            conn.begin();
-
-            // Add the first file
-            conn.add(inputFile1, baseURI1, RDFFormat.TURTLE);
-
-
-            // Add the second file
-            conn.add(inputFile2, baseURI2, RDFFormat.TURTLE);
-
-            // If everything went as planned, we can commit the result
-            conn.commit();
-        }
-        catch (RepositoryException e) {
-            // Something went wrong during the transaction, so we roll it back
-            conn.rollback();
-        }
-        finally {
-            // Whatever happens, we want to close the connection when we are done.
-            conn.close();
-        }
+        conn.clear(conn.getValueFactory().createURI("http://marklogic.com/test/ns/cleartest"));
+        booleanQuery = conn.prepareBooleanQuery(QueryLanguage.SPARQL, checkQuery);
+        results = booleanQuery.evaluate();
+        Assert.assertEquals(false, results);
 
     }
+
+    @Test
+    public void testAdd() throws Exception{
+        File inputFile = new File("src/test/resources/testdata/default-graph-1.ttl");
+
+        String baseURI = "http://example.org/example1/";
+
+        Resource context1 = conn.getValueFactory().createURI("http://marklogic.com/test/context1");
+        Resource context2 = conn.getValueFactory().createURI("http://marklogic.com/test/context2");
+        conn.add(inputFile, baseURI, RDFFormat.TURTLE,context1,context2);
+        conn.clear(context1, context2);
+    }
+
+    @Test
+    public void testAddWithInputStream() throws Exception{
+        File inputFile = new File("src/test/resources/testdata/default-graph-1.ttl");
+        FileInputStream is = new FileInputStream(inputFile);
+        String baseURI = "http://example.org/example1/";
+        Resource context3 = conn.getValueFactory().createURI("http://marklogic.com/test/context3");
+        Resource context4 = conn.getValueFactory().createURI("http://marklogic.com/test/context4");
+        conn.add(is, baseURI, RDFFormat.TURTLE,context3,context4);
+        conn.clear(context3, context4);
+    }
+
+    @Test
+    public void testAddStatement() throws Exception{
+
+        Resource context5 = conn.getValueFactory().createURI("http://marklogic.com/test/context5");
+
+        URI alice = conn.getValueFactory().createURI("http://example.org/people/alice");
+        URI bob = conn.getValueFactory().createURI("http://example.org/people/bob");
+        URI name = conn.getValueFactory().createURI("http://example.org/ontology/name");
+        URI person = conn.getValueFactory().createURI("http://example.org/ontology/Person");
+        Literal bobsName = conn.getValueFactory().createLiteral("Bob");
+        Literal alicesName = conn.getValueFactory().createLiteral("Alice");
+
+        conn.add(alice, RDF.TYPE, person,context5);
+        conn.add(alice, name, alicesName,context5);
+        conn.add(bob, RDF.TYPE, person,context5);
+        conn.add(bob, name, bobsName, context5);
+
+        conn.clear(context5);
+
+        conn.remove(alice, RDF.TYPE, person, context5);
+        conn.remove(alice, name, alicesName, context5);
+        conn.remove(bob, RDF.TYPE, person, context5);
+        conn.remove(bob, name, bobsName, context5);
+
+        Resource defaultcontext = conn.getValueFactory().createURI("http://marklogic.com/semantics#default-graph");
+        conn.clear(defaultcontext);
+
+    }
+
     @Test
     public void testContextIDs()
             throws Exception {
@@ -455,5 +553,61 @@ public class MarkLogicRepositoryConnectionTest {
     @Test
     public void testHasStatement(){
 
+    }
+
+    @Test
+    public void testTransaction1() throws Exception{
+        File inputFile = new File("src/test/resources/testdata/default-graph-1.ttl");
+        String baseURI = "http://example.org/example1/";
+        Resource context1 = conn.getValueFactory().createURI("http://marklogic.com/test/transactiontest");
+        conn.begin();
+        conn.add(inputFile, baseURI, RDFFormat.TURTLE, context1);
+        conn.rollback();
+    }
+
+    @Test
+    public void testTransaction2() throws Exception{
+        File inputFile = new File("src/test/resources/testdata/default-graph-1.ttl");
+
+        String baseURI = "http://example.org/example1/";
+
+        Resource context1 = conn.getValueFactory().createURI("http://marklogic.com/test/transactiontest");
+        conn.begin();
+        conn.add(inputFile, baseURI, RDFFormat.TURTLE, context1);
+        conn.commit();
+        conn.clear(context1);
+    }
+
+    @Test
+    public void testTransaction3() throws Exception{
+        Resource context1 = conn.getValueFactory().createURI("http://marklogic.com/test/my-graph");
+        conn.begin();
+        conn.clear(context1);
+        conn.rollback();
+    }
+
+    @Test
+    public void testOpen() throws Exception{
+        Assert.assertEquals(true, conn.isOpen());
+        conn.close();
+        Assert.assertEquals(false, conn.isOpen());
+    }
+
+    @Test
+    public void testActive() throws Exception{
+        Assert.assertEquals(false, conn.isActive());
+        conn.begin();
+        Assert.assertEquals(true, conn.isActive());
+    }
+
+    @Ignore
+    public void testSize() throws Exception{
+        File inputFile = new File("src/test/resources/testdata/default-graph-1.ttl");
+        String baseURI = "http://example.org/example1/";
+        Resource context1 = conn.getValueFactory().createURI("http://marklogic.com/test/sizetest");
+        conn.add(inputFile, baseURI, RDFFormat.TURTLE, context1);
+        conn.clear(context1);
+        Assert.assertEquals(10, conn.size(context1));
+        conn.clear(context1);
     }
 }

@@ -1,18 +1,47 @@
+/*
+ * Copyright 2015 MarkLogic Corporation
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/**
+ * A library that enables access to a MarkLogic-backed triple-store via the
+ * Sesame API.
+ */
 package com.marklogic.semantics.sesame;
 
 import com.marklogic.semantics.sesame.client.MarkLogicClient;
-import com.marklogic.semantics.sesame.query.*;
+import com.marklogic.semantics.sesame.query.MarkLogicBooleanQuery;
+import com.marklogic.semantics.sesame.query.MarkLogicGraphQuery;
+import com.marklogic.semantics.sesame.query.MarkLogicTupleQuery;
+import com.marklogic.semantics.sesame.query.MarkLogicUpdateQuery;
 import info.aduna.iteration.*;
 import org.openrdf.IsolationLevel;
+import org.openrdf.IsolationLevels;
 import org.openrdf.model.*;
 import org.openrdf.model.impl.StatementImpl;
-import org.openrdf.model.impl.ValueFactoryImpl;
 import org.openrdf.query.*;
 import org.openrdf.query.impl.DatasetImpl;
-import org.openrdf.query.impl.MapBindingSet;
 import org.openrdf.query.parser.QueryParserUtil;
-import org.openrdf.repository.*;
-import org.openrdf.rio.*;
+import org.openrdf.repository.RepositoryConnection;
+import org.openrdf.repository.RepositoryException;
+import org.openrdf.repository.RepositoryResult;
+import org.openrdf.repository.UnknownTransactionStateException;
+import org.openrdf.repository.base.RepositoryConnectionBase;
+import org.openrdf.repository.sparql.query.SPARQLQueryBindingSet;
+import org.openrdf.rio.RDFFormat;
+import org.openrdf.rio.RDFHandler;
+import org.openrdf.rio.RDFHandlerException;
+import org.openrdf.rio.RDFParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,7 +53,11 @@ import java.net.URL;
 
 import static org.openrdf.query.QueryLanguage.SPARQL;
 
-public class MarkLogicRepositoryConnection implements RepositoryConnection {
+/**
+ *
+ * @author James Fuller
+ */
+public class MarkLogicRepositoryConnection extends RepositoryConnectionBase implements RepositoryConnection {
 
     protected final Logger logger = LoggerFactory.getLogger(MarkLogicRepositoryConnection.class);
 
@@ -36,57 +69,25 @@ public class MarkLogicRepositoryConnection implements RepositoryConnection {
 
     private static final String NAMEDGRAPHS = "SELECT DISTINCT ?_ WHERE { GRAPH ?_ { ?s ?p ?o } }";
 
-    private StringBuffer sparqlTransaction;
-
-    private final Object transactionLock = new Object();
-
     private final boolean quadMode;
 
     private MarkLogicClient client;
 
-    private MarkLogicRepository repository;
-
-//    public MarkLogicRepositoryConnection(MarkLogicRepository repository,MarkLogicClient client) {
-//        this(repository, new MarkLogicClient(),false);
-//    }
-
+    //constructor
     public MarkLogicRepositoryConnection(MarkLogicRepository repository, MarkLogicClient client, boolean quadMode) {
-        super();
+        super(repository);
         this.client = client;
-        this.repository = repository;
         this.quadMode = quadMode;
+        client.setValueFactory(repository.getValueFactory());
     }
 
-    @Override
-    public Repository getRepository() {
-        return repository;
-    }
-
-    @Override
-    public ParserConfig getParserConfig() {
-        return client.getParserConfig();
-    }
-
-    @Override
-    public void setParserConfig(ParserConfig config) {
-        client.setParserConfig(config);
-    }
-
+    // valuefactory
     @Override
     public ValueFactory getValueFactory() {
         return client.getValueFactory();
     }
     public void setValueFactory(ValueFactory f) {
         client.setValueFactory(f);
-    }
-
-    @Override
-    public boolean isOpen() throws RepositoryException {
-        return false;
-    }
-
-    @Override
-    public void close() throws RepositoryException {
     }
 
     // prepareQuery entrypoint
@@ -113,7 +114,6 @@ public class MarkLogicRepositoryConnection implements RepositoryConnection {
         throw new UnsupportedOperationException("Unsupported query language " + queryLanguage.getName());
     }
 
-
     // prepareTupleQuery
     public TupleQuery prepareTupleQuery(String queryString) throws RepositoryException, MalformedQueryException {
         return prepareTupleQuery(QueryLanguage.SPARQL, queryString);
@@ -125,12 +125,12 @@ public class MarkLogicRepositoryConnection implements RepositoryConnection {
     @Override
     public TupleQuery prepareTupleQuery(QueryLanguage queryLanguage, String queryString, String baseURI) throws RepositoryException, MalformedQueryException {
         if (QueryLanguage.SPARQL.equals(queryLanguage)) {
-            return new MarkLogicTupleQuery(client, new MapBindingSet(), baseURI, queryString);
+            return new MarkLogicTupleQuery(client, new SPARQLQueryBindingSet(), baseURI, queryString);
         }
         throw new UnsupportedQueryLanguageException("Unsupported query language " + queryLanguage.getName());
     }
 
-    //prepareGraphQuery
+    // prepareGraphQuery
     public GraphQuery prepareGraphQuery(String queryString) throws RepositoryException, MalformedQueryException {
         return prepareGraphQuery(QueryLanguage.SPARQL, queryString, "");
     }
@@ -143,12 +143,12 @@ public class MarkLogicRepositoryConnection implements RepositoryConnection {
             throws RepositoryException, MalformedQueryException
     {
         if (QueryLanguage.SPARQL.equals(queryLanguage)) {
-            return new MarkLogicGraphQuery(client, new MapBindingSet(), baseURI, queryString);
+            return new MarkLogicGraphQuery(client, new SPARQLQueryBindingSet(), baseURI, queryString);
         }
         throw new UnsupportedQueryLanguageException("Unsupported query language " + queryLanguage.getName());
     }
 
-    //prepareBooleanQuery
+    // prepareBooleanQuery
     public BooleanQuery prepareBooleanQuery(String queryString) throws RepositoryException, MalformedQueryException {
         return prepareBooleanQuery(QueryLanguage.SPARQL,queryString, "");
     }
@@ -159,12 +159,12 @@ public class MarkLogicRepositoryConnection implements RepositoryConnection {
     @Override
     public BooleanQuery prepareBooleanQuery(QueryLanguage queryLanguage, String queryString, String baseURI) throws RepositoryException, MalformedQueryException {
         if (QueryLanguage.SPARQL.equals(queryLanguage)) {
-            return new MarkLogicBooleanQuery(client, new MapBindingSet(), baseURI, queryString);
+            return new MarkLogicBooleanQuery(client, new SPARQLQueryBindingSet(), baseURI, queryString);
         }
         throw new UnsupportedQueryLanguageException("Unsupported query language " + queryLanguage.getName());
     }
 
-    //prepareUpdate
+    // prepareUpdate
     @Override
     public Update prepareUpdate(QueryLanguage queryLanguage, String queryString) throws RepositoryException, MalformedQueryException {
        return prepareUpdate(queryLanguage,queryString,"");
@@ -172,7 +172,7 @@ public class MarkLogicRepositoryConnection implements RepositoryConnection {
     @Override
     public Update prepareUpdate(QueryLanguage queryLanguage, String queryString, String baseURI) throws RepositoryException, MalformedQueryException {
         if (QueryLanguage.SPARQL.equals(queryLanguage)) {
-            return (Update) new MarkLogicUpdateQuery(client, new MapBindingSet(), baseURI, queryString);
+            return (Update) new MarkLogicUpdateQuery(client, new SPARQLQueryBindingSet(), baseURI, queryString);
         }
         throw new UnsupportedQueryLanguageException("Unsupported query language " + queryLanguage.getName());
     }
@@ -210,6 +210,7 @@ public class MarkLogicRepositoryConnection implements RepositoryConnection {
         }
     }
 
+    // statements
     @Override
     public RepositoryResult<Statement> getStatements(Resource subj, URI pred, Value obj, boolean includeInferred, Resource... contexts) throws RepositoryException {
         try {
@@ -237,6 +238,7 @@ public class MarkLogicRepositoryConnection implements RepositoryConnection {
                     return new RepositoryResult<Statement>(new EmptyIteration<Statement, RepositoryException>());
                 }
             }
+
             GraphQuery query = prepareGraphQuery(SPARQL, EVERYTHING, "");
             setBindings(query, subj, pred, obj, contexts);
             GraphQueryResult result = query.evaluate();
@@ -254,8 +256,6 @@ public class MarkLogicRepositoryConnection implements RepositoryConnection {
             throw new RepositoryException(e);
         }
     }
-
-    //
     @Override
     public boolean hasStatement(Resource subj, URI pred, Value obj, boolean includeInferred, Resource... contexts) throws RepositoryException {
         try {
@@ -270,205 +270,172 @@ public class MarkLogicRepositoryConnection implements RepositoryConnection {
             throw new RepositoryException(e);
         }
     }
-
     @Override
     public boolean hasStatement(Statement st, boolean includeInferred, Resource... contexts) throws RepositoryException {
         return false;
     }
-
     @Override
     public void exportStatements(Resource subj, URI pred, Value obj, boolean includeInferred, RDFHandler handler, Resource... contexts) throws RepositoryException, RDFHandlerException {
-
     }
 
     //
     @Override
     public void export(RDFHandler handler, Resource... contexts) throws RepositoryException, RDFHandlerException {
-
     }
 
+    //
     @Override
     public long size(Resource... contexts) throws RepositoryException {
-        return 0;
+        RepositoryResult<Statement> stmts = getStatements(null, null, null, true, contexts);
+        try {
+            long i = 0;
+            while (stmts.hasNext()) {
+                stmts.next();
+                i++;
+            }
+            return i;
+        }
+        finally {
+            stmts.close();
+        }
     }
 
     @Override
     public boolean isEmpty() throws RepositoryException {
-        return false;
+        return size() == 0;
     }
 
     @Override
     public boolean isAutoCommit() throws RepositoryException {
-        return false;
+        return client.isActiveTransaction() == false;
     }
-
     @Override
     public void setAutoCommit(boolean autoCommit) throws RepositoryException {
-
+        client.setAutoCommit();
     }
-
     @Override
     public boolean isActive() throws UnknownTransactionStateException, RepositoryException {
-        return false;
+        return client.isActiveTransaction();
     }
-
     @Override
     public IsolationLevel getIsolationLevel() {
-        return null;
+        return IsolationLevels.SNAPSHOT;
     }
-
     @Override
     public void setIsolationLevel(IsolationLevel level) throws IllegalStateException {
-
+        if(level != IsolationLevels.SNAPSHOT){
+         throw new IllegalStateException();
+        }
     }
-
     @Override
     public void begin() throws RepositoryException {
-        synchronized (transactionLock) {
-            if (!isActive()) {
-                synchronized (transactionLock) {
-                    sparqlTransaction = new StringBuffer();
-                }
-            }
-            else {
-                throw new RepositoryException("active transaction already exists");
-            }
-        }
+        client.openTransaction();
     }
-
     @Override
     public void begin(IsolationLevel level) throws RepositoryException {
-
+        setIsolationLevel(level);
+        begin();
     }
-
     @Override
     public void commit() throws RepositoryException {
-        synchronized (transactionLock) {
-            if (isActive()) {
-                synchronized (transactionLock) {
-                    MarkLogicUpdate transaction = new MarkLogicUpdate(client, null,
-                            sparqlTransaction.toString());
-                    try {
-                        transaction.execute();
-                    }
-                    catch (UpdateExecutionException e) {
-                        throw new RepositoryException("error executing transaction", e);
-                    }
-
-                    sparqlTransaction = null;
-                }
-            }
-            else {
-                throw new RepositoryException("no transaction active.");
-            }
-        }
+        client.commitTransaction();
     }
-
     @Override
     public void rollback() throws RepositoryException {
-        synchronized (transactionLock) {
-            if (isActive()) {
-                synchronized (transactionLock) {
-                    sparqlTransaction = null;
-                }
-            }
-            else {
-                throw new RepositoryException("no transaction active.");
-            }
-        }
+        client.rollbackTransaction();
     }
 
+    // add
     @Override
     public void add(InputStream in, String baseURI, RDFFormat dataFormat, Resource... contexts) throws IOException, RDFParseException, RepositoryException {
-
+        client.sendAdd(in,baseURI,dataFormat,contexts);
     }
-
+    @Override
+    public void add(File file, String baseURI, RDFFormat dataFormat, Resource... contexts) throws IOException, RDFParseException, RepositoryException {
+        client.sendAdd(file,baseURI,dataFormat,contexts);
+    }
     @Override
     public void add(Reader reader, String baseURI, RDFFormat dataFormat, Resource... contexts) throws IOException, RDFParseException, RepositoryException {
 
     }
-
     @Override
     public void add(URL url, String baseURI, RDFFormat dataFormat, Resource... contexts) throws IOException, RDFParseException, RepositoryException {
 
     }
-
-    @Override
-    public void add(File file, String baseURI, RDFFormat dataFormat, Resource... contexts) throws IOException, RDFParseException, RepositoryException {
-
-    }
-
     @Override
     public void add(Resource subject, URI predicate, Value object, Resource... contexts) throws RepositoryException {
-
+        client.sendAdd(subject,predicate,object,contexts);
     }
-
     @Override
     public void add(Statement st, Resource... contexts) throws RepositoryException {
 
     }
-
     @Override
     public void add(Iterable<? extends Statement> statements, Resource... contexts) throws RepositoryException {
 
     }
-
     @Override
     public <E extends Exception> void add(Iteration<? extends Statement, E> statements, Resource... contexts) throws RepositoryException, E {
 
     }
 
+    // remove
     @Override
     public void remove(Resource subject, URI predicate, Value object, Resource... contexts) throws RepositoryException {
-
+        client.sendRemove(subject,predicate,object,contexts);
     }
-
     @Override
     public void remove(Statement st, Resource... contexts) throws RepositoryException {
 
     }
-
     @Override
     public void remove(Iterable<? extends Statement> statements, Resource... contexts) throws RepositoryException {
 
     }
-
     @Override
     public <E extends Exception> void remove(Iteration<? extends Statement, E> statements, Resource... contexts) throws RepositoryException, E {
 
     }
 
+    //
     @Override
     public void clear(Resource... contexts) throws RepositoryException {
-
+        client.sendClear(contexts);
     }
 
+    //
+    @Override
+    protected void addWithoutCommit(Resource subject, URI predicate, Value object, Resource... contexts) throws RepositoryException {
+    }
+    @Override
+    protected void removeWithoutCommit(Resource subject, URI predicate, Value object, Resource... contexts) throws RepositoryException {
+    }
 
+    // TBD - not in scope for 1.0.0
     @Override
     public RepositoryResult<Namespace> getNamespaces() throws RepositoryException {
         return null;
     }
 
+    // TBD - not in scope for 1.0.0
     @Override
     public String getNamespace(String prefix) throws RepositoryException {
         return null;
     }
-
+    // TBD - not in scope for 1.0.0
     @Override
     public void setNamespace(String prefix, String name) throws RepositoryException {
-
     }
-
+    // TBD - not in scope for 1.0.0
     @Override
     public void removeNamespace(String prefix) throws RepositoryException {
-
     }
-
+    // TBD - not in scope for 1.0.0
     @Override
     public void clearNamespaces() throws RepositoryException {
-
     }
 
+    //
     private void setBindings(Query query, Resource subj, URI pred, Value obj, Resource... contexts)
             throws RepositoryException {
         if (subj != null) {
@@ -493,10 +460,12 @@ public class MarkLogicRepositoryConnection implements RepositoryConnection {
         }
     }
 
+    //
     protected boolean isQuadMode() {
         return quadMode;
     }
 
+    //
     protected Iteration<Statement, QueryEvaluationException> toStatementIteration(TupleQueryResult iter, final Resource subj, final URI pred, final Value obj) {
 
         return new ConvertingIteration<BindingSet, Statement, QueryEvaluationException>(iter) {
@@ -505,11 +474,11 @@ public class MarkLogicRepositoryConnection implements RepositoryConnection {
             protected Statement convert(BindingSet b) throws QueryEvaluationException {
 
                 Resource s = subj == null ? (Resource) b.getValue("s") : subj;
-                URI p = pred == null ? ValueFactoryImpl.getInstance().createURI(b.getValue("o").stringValue()) : pred;
+                URI p = pred == null ? getValueFactory().createURI(b.getValue("o").stringValue()) : pred;
                 Value o = obj == null ? b.getValue("o") : obj;
                 Resource ctx = (Resource) b.getValue("ctx");
 
-                return ValueFactoryImpl.getInstance().createStatement(s, p, o, ctx);
+                return getValueFactory().createStatement(s, p, o, ctx);
             }
 
         };

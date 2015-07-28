@@ -7,7 +7,7 @@ buildscript {
         maven {url "http://rjrudin.github.io/marklogic-java/releases"}
     }
     dependencies {
-        classpath "com.marklogic:ml-gradle:2.0a12b"
+        classpath "com.marklogic:ml-gradle:2.0a14"
     }
 }
 
@@ -79,13 +79,13 @@ task removeTestData <<{
 
 task loadTestData << {
     exec {
-        commandLine 'curl --anyauth --user admin:admin -i -X POST -H Content-type:application/rdf+xml -d@src/test/resources/setup/test.owl http://localhost:8200/v1/graphs?graph=http://marklogic.com/test/my-graph'.tokenize()
+        commandLine "curl --anyauth --user admin:admin -i -X POST -H Content-type:application/rdf+xml -d@$testData http://localhost:8200/v1/graphs?graph=http://marklogic.com/test/my-graph".tokenize()
     }
 }
 
-loadTestData.dependsOn([removeTestData])
-
 test.dependsOn([loadTestData])
+
+test.finalizedBy([removeTestData])
 
 clean.dependsOn([removeTestData])
 

@@ -18,13 +18,3 @@
  * Sesame API.
  */
 package com.marklogic.semantics.sesame;
-
-/**
- *
- * @author James Fuller
- */
-public class MarkLogicSesameException extends Exception {
-    public MarkLogicSesameException(String message) {
-        super(message);
-    }
-}

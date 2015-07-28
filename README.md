@@ -32,9 +32,7 @@ To use the API in your maven project, include the following in your pom.xml:
 
 # Development Notes
 
-IMPORTANT- These notes will be purged after initial release.
-
-Latest _develop_ branch Javadocs and test results are accessible here
+_develop_ branch Javadocs and test results are accessible here
 
 [http://xquery.github.io/marklogic-sesame/](http://xquery.github.io/marklogic-sesame/)
 
@@ -81,22 +79,6 @@ curl -v -X POST --anyauth --user admin:admin --header "Content-Type: application
 
 ```
 
-2) manually load test data
-
-```
-gradle loadTestData
-```
-
-you are not required to run this task as it is run automatically before testing.
-
-(note- this gradle task requires Curl to be installed and available on your system's PATH)
-
-alternately you may load manually
-```
-//load data triples
-curl --anyauth --user admin:admin -i -X POST -d@src/test/resources/setup/test.owl -H "Content-type: application/rdf+xml" http://localhost:8200/v1/graphs?graph=my-graph
-```
-
 #### Setup and Test MarkLogic Sesame Repository
 
 1) clone or download marklogic-sesame _develop_ branch
@@ -112,12 +94,29 @@ gradle test
 
 ```
 
-will build and run unit tests.
+will load test data, build and run unit tests.
 
+2) optionally load test data
+
+```
+gradle loadTestData
+```
+
+to be clear, you are not required to run this task as it is run automatically before testing.
+
+(note- this gradle requires Curl to be installed and available on your system's PATH)
+
+alternately you may load directly via curl
+```
+//load data triples
+curl --anyauth --user admin:admin -i -X POST -d@src/test/resources/setup/test.owl -H "Content-type: application/rdf+xml" http://localhost:8200/v1/graphs?graph=my-graph
+```
 
 ### Usage
 
 To use in your own code, deploy into local maven repo or copy snapshot jars from /build directory.
+
+(TBD - not impl yet)
 
 ```
 gradle deploy
@@ -142,6 +141,7 @@ RepositoryConnection con = mr.getConnection();
 
 String queryString = "select ?s ?p ?o { ?s ?p ?o } limit 2 ";
 TupleQuery tupleQuery =  con.prepareTupleQuery(QueryLanguage.SPARQL, queryString);
+tupleQuery.setIncludeInferred(true); // enable default ruleset
 TupleQueryResult results = tupleQuery.evaluate();
 
 try {
@@ -314,15 +314,84 @@ Assert.assertEquals(true, results);
 ```
 
 #### add/remove examples
+
+add statements with file
 ```
+File inputFile = new File("src/test/resources/testdata/default-graph-1.ttl");
+String baseURI = "http://example.org/example1/";
+Resource context1 = conn.getValueFactory().createURI("http://marklogic.com/test/context1");
+Resource context2 = conn.getValueFactory().createURI("http://marklogic.com/test/context2");
+conn.add(inputFile, baseURI, RDFFormat.TURTLE,context1,context2);
+conn.clear(context1, context2);
+```
+
+add statements with InputStream
+```
+File inputFile = new File("src/test/resources/testdata/default-graph-1.ttl");
+FileInputStream is = new FileInputStream(inputFile);
+String baseURI = "http://example.org/example1/";
+Resource context3 = conn.getValueFactory().createURI("http://marklogic.com/test/context3");
+Resource context4 = conn.getValueFactory().createURI("http://marklogic.com/test/context4");
+conn.add(is, baseURI, RDFFormat.TURTLE,context3,context4);
+conn.clear(context3, context4);
 ```
 
 #### get/clear graph examples
+
 ```
+  public void testTransaction3() throws Exception{
+        Resource context1 = conn.getValueFactory().createURI("http://marklogic.com/test/my-graph");
+        conn.begin();
+        conn.clear(context1);
+        conn.rollback();
+    }
+```
+
+#### is active / is open examples
+
+close connection, check if open
+```
+Assert.assertEquals(true, conn.isOpen());
+conn.close();
+Assert.assertEquals(false, conn.isOpen());
+```
+
+start transaction see if connection is active
+```
+Assert.assertEquals(false, conn.isActive());
+conn.begin();
+Assert.assertEquals(true, conn.isActive());
 ```
 
 #### transactions examples
+
+begin transaction, add statement, then rollback
 ```
+File inputFile = new File("src/test/resources/testdata/default-graph-1.ttl");
+String baseURI = "http://example.org/example1/";
+Resource context1 = conn.getValueFactory().createURI("http://marklogic.com/test/transactiontest");
+conn.begin();
+conn.add(inputFile, baseURI, RDFFormat.TURTLE, context1);
+conn.rollback();
+```
+
+begin transaction, add statement and commit
+```
+File inputFile = new File("src/test/resources/testdata/default-graph-1.ttl");
+String baseURI = "http://example.org/example1/";
+Resource context1 = conn.getValueFactory().createURI("http://marklogic.com/test/transactiontest");
+conn.begin();
+conn.add(inputFile, baseURI, RDFFormat.TURTLE, context1);
+conn.commit();
+conn.clear(context1);
+```
+
+begin transaction, clear context (graph) and rollback
+```
+Resource context1 = conn.getValueFactory().createURI("http://marklogic.com/test/my-graph");
+conn.begin();
+conn.clear(context1);
+conn.rollback();
 ```
 
 #### get/export statements examples
@@ -330,5 +399,24 @@ Assert.assertEquals(true, results);
 ```
 
 #### pagination examples
+
+return 1 triple, starting from the third triple;
 ```
+String queryString = "select ?s ?p ?o { ?s ?p ?o } limit 100 ";
+MarkLogicTupleQuery tupleQuery = (MarkLogicTupleQuery) conn.prepareTupleQuery(QueryLanguage.SPARQL, queryString);
+TupleQueryResult results = tupleQuery.evaluate(3, 1);
+
+Assert.assertEquals(results.getBindingNames().get(0), "s");
+Assert.assertEquals(results.getBindingNames().get(1), "p");
+Assert.assertEquals(results.getBindingNames().get(2), "o");
+
+BindingSet bindingSet = results.next();
+
+Value sV = bindingSet.getValue("s");
+Value pV = bindingSet.getValue("p");
+Value oV = bindingSet.getValue("o");
+
+Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#AntiochGeodata", sV.stringValue());
+Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#altitude", pV.stringValue());
+Assert.assertEquals("0", oV.stringValue());
 ```
