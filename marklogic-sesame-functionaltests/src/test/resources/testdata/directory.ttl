@@ -1,0 +1,31 @@
+@prefix p0: <http://marklogicsparql.com/addressbook#> .
+
+<http://marklogicsparql.com/id#3333>
+                p0:lastName     "Ling" ;
+                p0:firstName    "Fei" ;
+                p0:workemail    "Fei.Ling@marklogic.com" ;
+                p0:personalemail "FeiLing@yahoo.com" .
+
+<http://marklogicsparql.com/id#1111>
+                p0:lastName     "Snelson" ;
+                p0:firstName    "John" ;
+                p0:homeTel      "(111) 111-1111" ;
+                p0:workemail    "John.Snelson@marklogic.com" .
+
+<http://marklogicsparql.com/id#5555>
+                p0:lastName     "Xiang" ;
+                p0:firstName    "Fei" ;
+                p0:workemail    "Fei.Xiang@marklogic.com" ;
+                p0:personalemail ""FeiXiang@yahoo.com" .
+
+<http://marklogicsparql.com/id#2222>
+                p0:lastName     "Dubinko" ;
+                p0:firstName    "Micah" ;
+                p0:homeTel      "(222) 222-2222" ;
+                p0:workemail    "Micah.Dubinko@marklogic.com" .
+
+<http://marklogicsparql.com/id#4444>
+                p0:lastName     "Ling" ;
+                p0:firstName    "Ling" ;
+                p0:workemail    "Ling.Ling@marklogic.com" ;
+                p0:personalemail "lingling@yahoo.com" .

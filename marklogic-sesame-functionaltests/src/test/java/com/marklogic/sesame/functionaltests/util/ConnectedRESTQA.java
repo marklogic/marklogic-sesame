@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.marklogic.semantics.sesame.util;
+package com.marklogic.sesame.functionaltests.util;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetAddress;

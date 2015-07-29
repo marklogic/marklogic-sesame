@@ -14,7 +14,7 @@
  * implied. See the License for the specific language governing permissions
  * and limitations under the License.
  */
-package com.marklogic.semantics.sesame;
+package com.marklogic.sesame.functionaltests;
 
 import static org.junit.Assert.assertTrue;
 
