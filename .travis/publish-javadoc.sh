@@ -3,9 +3,6 @@
 if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
   echo -e "Starting to update gh-pages\n"
 
-  #copy data we're interested in to other place
-  cp -R dist/packages.xml $HOME/packages.xml
-
   #go to home and setup git
   cd $HOME
   git config --global user.email "travis@travis-ci.org"
@@ -16,9 +13,9 @@ if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
 
   #go into diractory and copy data we're interested in to that directory
   cd gh-pages
-  cp -Rf $HOME/build/docs ./build/docs
-  cp -Rf $HOME/build/test-results ./build/test-results
-  cp -Rf $HOME/build/reports ./build/reports
+  cp -Rf $HOME/build/docs ./marklogic-sesame/build/docs
+  cp -Rf $HOME/build/test-results ./marklogic-sesame/build/test-results
+  cp -Rf $HOME/build/reports ./marklogic-sesame/build/reports
 
   #add, commit and push files
   git add -f ./build

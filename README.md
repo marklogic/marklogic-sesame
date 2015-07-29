@@ -1,10 +1,10 @@
-# Marklogic-Sesame-Repository v1.0.0
+# marklogic-sesame-repository v1.0.0
 
 _IMPORTANT_ - NO RELEASE HAS BEEN MADE YET
 
 ## Introduction
 
-MarkLogic-Sesame is a [Sesame](http://rdf4j.org/) Repository implementation that exposes MarkLogic semantic capabilities.
+markLogic-sesame-repository is a [Sesame](http://rdf4j.org/) Repository implementation that exposes MarkLogic semantic capabilities.
 
 ## Quick Start (draft, for final release version)
 
@@ -28,19 +28,10 @@ To use the API in your maven project, include the following in your pom.xml:
 </dependency>
 ```
 
-## Support (draft, for final release version)
-
-# Development Notes
-
-_develop_ branch Javadocs and test results are accessible here
-
-[http://xquery.github.io/marklogic-sesame/](http://xquery.github.io/marklogic-sesame/)
-
-### Building and Testing
+### Build and Test
 
 _Note: To use this library prior to the release of MarkLogic Server 8.0-4 and Java Client API 3.0.4,
 you must have contacted MarkLogic Product Management for access to an early version of the server._
-
 
 #### Setup Java API Client
 
@@ -114,21 +105,27 @@ curl --anyauth --user admin:admin -i -X POST -d@src/test/resources/setup/test.ow
 
 ### Usage
 
-To use in your own code, deploy into local maven repo or copy snapshot jars from /build directory.
+To use in your own software, deploy into local maven repo or copy snapshot jars from /build directory.
 
 (TBD - not impl yet)
 
 ```
-gradle deploy
+gradle install
 
 ```
 
-The following examples demonstrate idiomatic Sesame usage of the MarkLogic Sesame Repository.
+### Links
 
-(TBD - provide /samples dir)
+[Repo](https://github.com/marklogic/marklogic-sesame)
+[Javadocs] (http://marklogic.github.io/marklogic-sesame/build/docs/javadoc/)
+[JHM perf results](http://marklogic.github.io/marklogic-sesame/build/reports/jhm/human.txt)
 
+#### Examples
 
-#### query examples
+The marklogic-sesame-examples subproject demonstrate idiomatic Sesame usage of the MarkLogic Sesame Repository.
+
+#### query
+
 
 using tupleQuery.evalute();
 ```
@@ -235,7 +232,7 @@ tupleQuery.setBinding("c", ValueFactoryImpl.getInstance().createURI("http://sema
 TupleQueryResult results = tupleQuery.evaluate();
 ```
 
-#### boolean examples
+#### boolean
 
 simple boolean example;
 ```
@@ -254,7 +251,7 @@ results = booleanQuery.evaluate(); // should be true
 Assert.assertEquals(true,results);
 ```
 
-#### graph examples
+#### graph 
 
 CONSTRUCT example;
 ```
@@ -292,7 +289,7 @@ Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#CainanSonOfArphaxa
 
 ```
 
-#### update examples
+#### update 
 
 INSERT update example;
 ```
@@ -313,7 +310,7 @@ boolean results = booleanQuery.evaluate();
 Assert.assertEquals(true, results);
 ```
 
-#### add/remove examples
+#### add/remove 
 
 add statements with file
 ```
@@ -336,7 +333,7 @@ conn.add(is, baseURI, RDFFormat.TURTLE,context3,context4);
 conn.clear(context3, context4);
 ```
 
-#### get/clear graph examples
+#### get/clear graph 
 
 ```
   public void testTransaction3() throws Exception{
@@ -347,7 +344,7 @@ conn.clear(context3, context4);
     }
 ```
 
-#### is active / is open examples
+#### is active / is open 
 
 close connection, check if open
 ```
@@ -363,7 +360,7 @@ conn.begin();
 Assert.assertEquals(true, conn.isActive());
 ```
 
-#### transactions examples
+#### transactions
 
 begin transaction, add statement, then rollback
 ```
@@ -394,11 +391,11 @@ conn.clear(context1);
 conn.rollback();
 ```
 
-#### get/export statements examples
+#### get/export statements 
 ```
 ```
 
-#### pagination examples
+#### pagination
 
 return 1 triple, starting from the third triple;
 ```
@@ -420,3 +417,17 @@ Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#AntiochGeodata", s
 Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#altitude", pV.stringValue());
 Assert.assertEquals("0", oV.stringValue());
 ```
+
+#### other
+
+### FAQ
+
+* How to contribute ? Pull requests should be made against _develop_ branch.
+
+### Support
+
+TBD
+
+### License
+
+TBD
