@@ -31,12 +31,12 @@ import java.io.IOException;
  *
  * @author James Fuller
  */
-public class MarkLogicTupleQuery extends MarkLogicQuery implements TupleQuery {
+public class MarkLogicTupleQuery extends MarkLogicQuery implements TupleQuery,MarkLogicQueryDependent {
 
     protected final Logger logger = LoggerFactory.getLogger(MarkLogicTupleQuery.class);
 
-    public MarkLogicTupleQuery(MarkLogicClient client, SPARQLQueryBindingSet mapBindingSet, String baseUri, String queryString) {
-        super(client, mapBindingSet, baseUri, queryString);
+    public MarkLogicTupleQuery(MarkLogicClient client, SPARQLQueryBindingSet bindingSet, String baseUri, String queryString) {
+        super(client, bindingSet, baseUri, queryString);
     }
 
     //evaluate
@@ -47,7 +47,7 @@ public class MarkLogicTupleQuery extends MarkLogicQuery implements TupleQuery {
     public TupleQueryResult evaluate(long start, long pageLength)
             throws QueryEvaluationException {
         try {
-            return getClient().sendTupleQuery(getQueryString(),getBindingSet(),start,pageLength,getIncludeInferred());
+            return getMarkLogicClient().sendTupleQuery(getQueryString(),getBindings(),start,pageLength,getIncludeInferred(),getBaseURI());
         } catch (IOException e) {
             throw new QueryEvaluationException(e);
         }
@@ -57,5 +57,4 @@ public class MarkLogicTupleQuery extends MarkLogicQuery implements TupleQuery {
         TupleQueryResult queryResult = evaluate();
         QueryResults.report(queryResult, resultHandler);
     }
-
 }

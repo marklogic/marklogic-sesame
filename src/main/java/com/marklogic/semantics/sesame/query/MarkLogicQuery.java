@@ -20,12 +20,15 @@
 package com.marklogic.semantics.sesame.query;
 
 import com.marklogic.semantics.sesame.client.MarkLogicClient;
+import com.marklogic.semantics.sesame.client.MarkLogicClientDependent;
 import org.openrdf.model.Value;
 import org.openrdf.model.impl.ValueFactoryImpl;
 import org.openrdf.query.Dataset;
+import org.openrdf.query.Query;
 import org.openrdf.query.QueryLanguage;
 import org.openrdf.query.UnsupportedQueryLanguageException;
 import org.openrdf.query.impl.AbstractQuery;
+import org.openrdf.repository.sparql.query.QueryStringUtil;
 import org.openrdf.repository.sparql.query.SPARQLQueryBindingSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +37,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author James Fuller
  */
-public class MarkLogicQuery extends AbstractQuery {
+public class MarkLogicQuery extends AbstractQuery implements Query,MarkLogicClientDependent,MarkLogicQueryDependent {
 
     protected final Logger logger = LoggerFactory.getLogger(MarkLogicQuery.class);
 
@@ -46,28 +49,36 @@ public class MarkLogicQuery extends AbstractQuery {
 
     private String baseURI;
 
-    private SPARQLQueryBindingSet mapBindingSet;
+    private SPARQLQueryBindingSet bindingSet;
 
     private boolean includeInferred;
 
-    public MarkLogicQuery(MarkLogicClient client, SPARQLQueryBindingSet mapBindingSet, String baseUri, String queryString) {
+    // constructor
+    public MarkLogicQuery(MarkLogicClient client, SPARQLQueryBindingSet bindingSet, String baseUri, String queryString) {
         super();
+        setBaseURI(baseURI);
         setQueryString(queryString);
-        setClient(client);
-        setBindingSet(mapBindingSet);
+        setMarkLogicClient(client);
+        setBindings(bindingSet);
         setIncludeInferred(true); // is default set true
     }
-    public void setClient(MarkLogicClient client) {
+
+    // MarkLogicClient
+    @Override
+    public void setMarkLogicClient(MarkLogicClient client) {
         this.client=client;
     }
-    public MarkLogicClient getClient() {
-        return client;
+    @Override
+    public MarkLogicClient getMarkLogicClient() {
+        return this.client;
     }
 
     // base uri
+    @Override
     public String getBaseURI() {
         return baseURI;
     }
+    @Override
     public void setBaseURI(String baseURI) {
         this.baseURI = baseURI;
     }
@@ -84,33 +95,36 @@ public class MarkLogicQuery extends AbstractQuery {
 
     // query string
     public String getQueryString() {
-        return queryString;
+        return QueryStringUtil.getQueryString(this.queryString, getBindings());
     }
     public void setQueryString(String queryString) {
         this.queryString = queryString;
     }
 
     // bindings
-    public void setBindingSet(SPARQLQueryBindingSet mapBindingSet) {
-        this.mapBindingSet=mapBindingSet;
-    }
-    public SPARQLQueryBindingSet getBindingSet() {
-        return this.mapBindingSet;
-    }
-    public void setBinding(String name, String stringValue) {
-        mapBindingSet.addBinding(name, ValueFactoryImpl.getInstance().createURI(stringValue));
+    public void setBindings(SPARQLQueryBindingSet bindingSet) {
+        this.bindingSet=bindingSet;
     }
     @Override
+    public SPARQLQueryBindingSet getBindings() {
+        return this.bindingSet;
+    }
+    public void setBinding(String name, String stringValue) {
+        bindingSet.addBinding(name, ValueFactoryImpl.getInstance().createURI(stringValue));
+    }
+
+    // binding
+    @Override
     public void setBinding(String name, Value value) {
-        mapBindingSet.addBinding(name,value);
+        bindingSet.addBinding(name,value);
     }
     @Override
     public void removeBinding(String name) {
-        mapBindingSet.removeBinding(name);
+        bindingSet.removeBinding(name);
     }
     @Override
     public void clearBindings() {
-        mapBindingSet.removeAll(mapBindingSet.getBindingNames());
+        bindingSet.removeAll(bindingSet.getBindingNames());
     }
 
     // include inferred
@@ -124,18 +138,28 @@ public class MarkLogicQuery extends AbstractQuery {
     }
 
     // dataset
+    @Override
     public void setDataset(Dataset dataset) {
     }
+    @Override
     public Dataset getDataset() {
         return null;
     }
 
     // execution time
+    @Override
     public void setMaxExecutionTime(int maxExecTime) {
     }
+    @Override
     public int getMaxExecutionTime() {
         return 0;
     }
 
-
+    // rulesets
+    public void setRulesets(Object rulesets){
+        getMarkLogicClient().setRulesets(rulesets);
+    }
+    public Object getRulesets(){
+        return getMarkLogicClient().getRulesets();
+    }
 }

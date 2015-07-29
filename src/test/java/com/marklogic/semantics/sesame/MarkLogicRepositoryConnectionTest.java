@@ -19,6 +19,7 @@
  */
 package com.marklogic.semantics.sesame;
 
+import com.marklogic.client.semantics.SPARQLRuleset;
 import com.marklogic.semantics.sesame.query.MarkLogicTupleQuery;
 import info.aduna.iteration.ConvertingIteration;
 import info.aduna.iteration.ExceptionConvertingIteration;
@@ -189,7 +190,7 @@ public class MarkLogicRepositoryConnectionTest {
     }
 
     @Test
-    public void testSPARQLQueryWithInferred()
+    public void testSPARQLQueryWithDefaultInferred()
             throws Exception {
 
         String queryString = "select ?s ?p ?o { ?s ?p ?o } limit 2 ";
@@ -283,6 +284,30 @@ public class MarkLogicRepositoryConnectionTest {
     }
 
     @Test
+    public void testSPARQLQueryWithRuleset()
+            throws Exception {
+        String queryString = "select ?s ?p ?o { ?s ?p ?o } limit 100 ";
+        MarkLogicTupleQuery tupleQuery = (MarkLogicTupleQuery) conn.prepareTupleQuery(QueryLanguage.SPARQL, queryString);
+
+        tupleQuery.setRulesets(SPARQLRuleset.RDFS_FULL);
+        TupleQueryResult results = tupleQuery.evaluate();
+
+        Assert.assertEquals(results.getBindingNames().get(0), "s");
+        Assert.assertEquals(results.getBindingNames().get(1), "p");
+        Assert.assertEquals(results.getBindingNames().get(2), "o");
+
+        BindingSet bindingSet = results.next();
+
+        Value sV = bindingSet.getValue("s");
+        Value pV = bindingSet.getValue("p");
+        Value oV = bindingSet.getValue("o");
+
+        Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#AlexandriaGeodata", sV.stringValue());
+        Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#altitude", pV.stringValue());
+        Assert.assertEquals("0", oV.stringValue());
+
+    }
+    @Test
     public void testSPARQLQueryWithResultsHandler()
             throws Exception {
         String queryString = "select ?s ?p ?o { ?s ?p ?o } limit 10";
@@ -332,7 +357,7 @@ public class MarkLogicRepositoryConnectionTest {
 
         // TBD -  Assert. for confirmation of removal
 
-        Assert.assertEquals(null,tupleQuery.getBindings().getBinding("c"));
+        Assert.assertEquals(null, tupleQuery.getBindings().getBinding("c"));
 
         tupleQuery.clearBindings();
 
@@ -349,7 +374,7 @@ public class MarkLogicRepositoryConnectionTest {
 
         logger.info(results.getBindingNames().toString());
 
-        results.hasNext();
+        Assert.assertTrue(results.hasNext());
         BindingSet bindingSet = results.next();
 
         Value sV = bindingSet.getValue("s");
@@ -455,7 +480,7 @@ public class MarkLogicRepositoryConnectionTest {
     }
 
     @Test
-    public void testUpdateQuery()
+    public void testUpdateQuery1()
             throws Exception {
         String defGraphQuery = "INSERT DATA { GRAPH <http://marklogic.com/test/g27> { <http://marklogic.com/test> <pp1> <oo1> } }";
         String checkQuery = "ASK WHERE { <http://marklogic.com/test> <pp1> <oo1> }";
@@ -464,6 +489,28 @@ public class MarkLogicRepositoryConnectionTest {
         BooleanQuery booleanQuery = conn.prepareBooleanQuery(QueryLanguage.SPARQL, checkQuery);
         boolean results = booleanQuery.evaluate();
         Assert.assertEquals(true, results);
+    }
+
+    @Ignore
+    public void testUpdateQuery2() throws MalformedQueryException, RepositoryException, UpdateExecutionException {
+        String defGraphQuery1 = "INSERT DATA { <s2> <p1> <o1> }";
+        Update updateQuery = conn.prepareUpdate(QueryLanguage.SPARQL, defGraphQuery1);
+        updateQuery.execute();
+        String defGraphQuery4 ="CREATE GRAPH <http://example/update1>";
+        updateQuery = conn.prepareUpdate(QueryLanguage.SPARQL, defGraphQuery4);
+        updateQuery.execute();
+        String defGraphQuery5 ="BASE <http://example.org/> INSERT DATA { GRAPH <http://example.org/update2> { <s1> <p1> <o1>  } }";
+        updateQuery = conn.prepareUpdate(QueryLanguage.SPARQL, defGraphQuery5);
+        updateQuery.execute();
+        String defGraphQuery6 ="BASE <http://example.org/> INSERT DATA { GRAPH <http://example.org/update3> { <s1> <p1> <o1>  } }";
+        updateQuery = conn.prepareUpdate(QueryLanguage.SPARQL, defGraphQuery6);
+        updateQuery.execute();
+
+        Resource update1 = conn.getValueFactory().createURI("http://example.org/update1>");
+        Resource update2 = conn.getValueFactory().createURI("http://example.org/update2>");
+        Resource update3 = conn.getValueFactory().createURI("http://example.org/update3>");
+
+        conn.clear(update1,update2,update3);
     }
 
     @Test
@@ -484,8 +531,27 @@ public class MarkLogicRepositoryConnectionTest {
 
     }
 
+    @Ignore
+    public void testAddQuads() throws Exception{
+        File inputFile = new File("src/test/resources/testdata/nquads1.nq");
+        String baseURI = "http://example.org/example1/";
+        Resource context1 = conn.getValueFactory().createURI("http://marklogic.com/test/context1");
+        Resource graph1 = conn.getValueFactory().createURI("http://example.org/graph1");
+        Resource graph2 = conn.getValueFactory().createURI("http://example.org/graph2");
+        Resource graph3 = conn.getValueFactory().createURI("http://example.org/graph3");
+        Resource graph4 = conn.getValueFactory().createURI("http://example.org/graph4");
+
+        conn.add(inputFile, baseURI, RDFFormat.NQUADS,graph3);
+
+        String checkQuery = "ASK {GRAPH <http://example.org/graph3> { <http://example.org/kennedy/person1> <http://example.org/kennedy/death-year> '1969'' . } }";
+        BooleanQuery booleanQuery = conn.prepareBooleanQuery(QueryLanguage.SPARQL, checkQuery);
+        Assert.assertTrue(booleanQuery.evaluate());
+
+        conn.clear(graph3);
+    }
+
     @Test
-    public void testAdd() throws Exception{
+    public void testAddTurtle() throws Exception{
         File inputFile = new File("src/test/resources/testdata/default-graph-1.ttl");
 
         String baseURI = "http://example.org/example1/";
@@ -543,8 +609,9 @@ public class MarkLogicRepositoryConnectionTest {
         try {
             Assert.assertTrue("result should not be empty", result.hasNext());
             logger.debug("ContextIDs");
-            Assert.assertEquals("http://marklogic.com/test/my-graph", result.next().stringValue());
-            Assert.assertEquals("http://marklogic.com/test/g27",result.next().stringValue());
+            Resource result1 = result.next();
+            logger.debug(result1.stringValue());
+            Assert.assertEquals("http://marklogic.com/test/my-graph", result1.stringValue());
         } finally {
             result.close();
         }

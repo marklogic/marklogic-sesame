@@ -19,28 +19,15 @@
  */
 package com.marklogic.semantics.sesame.query;
 
-import com.marklogic.semantics.sesame.client.MarkLogicClient;
-import org.openrdf.query.Update;
-import org.openrdf.repository.sparql.query.SPARQLQueryBindingSet;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  *
  * @author James Fuller
  */
-public class MarkLogicUpdateQuery extends MarkLogicQuery implements Update,MarkLogicQueryDependent {
+public interface MarkLogicQueryDependent {
 
-    protected final Logger logger = LoggerFactory.getLogger(MarkLogicUpdateQuery.class);
+    Object getRulesets();
+    void setRulesets(Object rulesets);
 
-    public MarkLogicUpdateQuery(MarkLogicClient client, SPARQLQueryBindingSet bindingSet, String baseUri, String queryString) {
-        super(client, bindingSet, baseUri, queryString);
-    }
-
-    //evaluate
-    @Override
-    public void execute(){
-        getMarkLogicClient().sendUpdateQuery(getQueryString(), getBindings(), getIncludeInferred(),getBaseURI());
-    }
-
+    String getBaseURI();
+    void setBaseURI(String baseURI);
 }
