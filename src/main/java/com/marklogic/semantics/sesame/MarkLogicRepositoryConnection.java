@@ -150,7 +150,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
 
     // prepareBooleanQuery
     public BooleanQuery prepareBooleanQuery(String queryString) throws RepositoryException, MalformedQueryException {
-        return prepareBooleanQuery(QueryLanguage.SPARQL,queryString, "");
+        return prepareBooleanQuery(QueryLanguage.SPARQL, queryString, "");
     }
     @Override
     public BooleanQuery prepareBooleanQuery(QueryLanguage queryLanguage, String queryString) throws RepositoryException, MalformedQueryException {
@@ -165,9 +165,12 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     }
 
     // prepareUpdate
+    public Update prepareUpdate(String queryString) throws RepositoryException, MalformedQueryException {
+        return prepareUpdate(QueryLanguage.SPARQL, queryString, "");
+    }
     @Override
     public Update prepareUpdate(QueryLanguage queryLanguage, String queryString) throws RepositoryException, MalformedQueryException {
-       return prepareUpdate(queryLanguage,queryString,"");
+       return prepareUpdate(queryLanguage, queryString, "");
     }
     @Override
     public Update prepareUpdate(QueryLanguage queryLanguage, String queryString, String baseURI) throws RepositoryException, MalformedQueryException {
@@ -272,15 +275,17 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     }
     @Override
     public boolean hasStatement(Statement st, boolean includeInferred, Resource... contexts) throws RepositoryException {
-        return false;
+        return false; //TBD
     }
     @Override
     public void exportStatements(Resource subj, URI pred, Value obj, boolean includeInferred, RDFHandler handler, Resource... contexts) throws RepositoryException, RDFHandlerException {
+    //TBD
     }
 
     //
     @Override
     public void export(RDFHandler handler, Resource... contexts) throws RepositoryException, RDFHandlerException {
+    //TBD
     }
 
     //
@@ -364,7 +369,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     }
     @Override
     public void add(Resource subject, URI predicate, Value object, Resource... contexts) throws RepositoryException {
-        client.sendAdd(subject,predicate,object,contexts);
+        client.sendAdd(subject, predicate, object, contexts); // TBD - no baseURI ?
     }
     @Override
     public void add(Statement st, Resource... contexts) throws RepositoryException {
@@ -406,9 +411,11 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     //
     @Override
     protected void addWithoutCommit(Resource subject, URI predicate, Value object, Resource... contexts) throws RepositoryException {
+    //TBD
     }
     @Override
     protected void removeWithoutCommit(Resource subject, URI predicate, Value object, Resource... contexts) throws RepositoryException {
+    //TBD
     }
 
     // TBD - not in scope for 1.0.0
@@ -417,6 +424,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
         return null;
     }
 
+    ////////////////////////////////////////////////////////////////////////////////////
     // TBD - not in scope for 1.0.0
     @Override
     public String getNamespace(String prefix) throws RepositoryException {
@@ -434,8 +442,9 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     @Override
     public void clearNamespaces() throws RepositoryException {
     }
+    ////////////////////////////////////////////////////////////////////////////////////
 
-    //
+    // private
     private void setBindings(Query query, Resource subj, URI pred, Value obj, Resource... contexts)
             throws RepositoryException {
         if (subj != null) {
@@ -461,12 +470,12 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     }
 
     //
-    protected boolean isQuadMode() {
+    private boolean isQuadMode() {
         return quadMode;
     }
 
     //
-    protected Iteration<Statement, QueryEvaluationException> toStatementIteration(TupleQueryResult iter, final Resource subj, final URI pred, final Value obj) {
+    private Iteration<Statement, QueryEvaluationException> toStatementIteration(TupleQueryResult iter, final Resource subj, final URI pred, final Value obj) {
 
         return new ConvertingIteration<BindingSet, Statement, QueryEvaluationException>(iter) {
 

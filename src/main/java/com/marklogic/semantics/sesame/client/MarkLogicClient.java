@@ -57,11 +57,11 @@ public class MarkLogicClient {
 	protected final Logger logger = LoggerFactory.getLogger(MarkLogicClient.class);
 
 	protected static final Charset UTF8 = Charset.forName("UTF-8");
+	protected static final Charset charset = UTF8;
 
 	protected static final TupleQueryResultFormat format = TupleQueryResultFormat.JSON;
-	protected static final RDFFormat rdfFormat = RDFFormat.NTRIPLES;
 
-    protected static final Charset charset = UTF8;
+	protected static final RDFFormat rdfFormat = RDFFormat.NTRIPLES;
 
 	private static Executor executor = Executors.newCachedThreadPool();
 
@@ -73,21 +73,22 @@ public class MarkLogicClient {
 
 	private Transaction tx = null;
 
+	// constructor
 	public MarkLogicClient(String host, int port, String user, String password,String auth) {
 		this._client = new MarkLogicClientImpl(host,port,user,password,auth);
 	}
 
+	// valuefactory
 	public ValueFactory getValueFactory() {
 		return this.f;
 	}
-
 	public void setValueFactory(ValueFactory f) {
 		this.f=f;
 	}
 
 	//tuple query
-	public TupleQueryResult sendTupleQuery(String queryString,SPARQLQueryBindingSet bindings, long start, long pageLength, boolean includeInferred) throws IOException {
-		InputStream stream = _client.performSPARQLQuery(queryString, bindings, start, pageLength, this.tx, includeInferred);
+	public TupleQueryResult sendTupleQuery(String queryString,SPARQLQueryBindingSet bindings, long start, long pageLength, boolean includeInferred, String baseURI) throws IOException {
+		InputStream stream = getClient().performSPARQLQuery(queryString, bindings, start, pageLength, this.tx, includeInferred, baseURI);
 		TupleQueryResultParser parser = QueryResultIO.createParser(format, getValueFactory());
 		BackgroundTupleResult tRes = new BackgroundTupleResult(parser,stream);
 		execute(tRes);
@@ -95,8 +96,8 @@ public class MarkLogicClient {
 	}
 
 	//graph query
-	public GraphQueryResult sendGraphQuery(String queryString, SPARQLQueryBindingSet bindings, boolean includeInferred) throws IOException {
-		InputStream stream = _client.performGraphQuery(queryString, bindings, this.tx, includeInferred);
+	public GraphQueryResult sendGraphQuery(String queryString, SPARQLQueryBindingSet bindings, boolean includeInferred, String baseURI) throws IOException {
+		InputStream stream = getClient().performGraphQuery(queryString, bindings, this.tx, includeInferred, baseURI);
 		RDFParser parser = Rio.createParser(rdfFormat, getValueFactory());
 		parser.setParserConfig(getParserConfig());
 		parser.setParseErrorListener(new ParseErrorLogger());
@@ -106,42 +107,42 @@ public class MarkLogicClient {
 	}
 
 	//boolean query
-	public boolean sendBooleanQuery(String queryString, SPARQLQueryBindingSet bindings, boolean includeInferred) {
-		return _client.performBooleanQuery(queryString, bindings,this.tx,includeInferred);
+	public boolean sendBooleanQuery(String queryString, SPARQLQueryBindingSet bindings, boolean includeInferred, String baseURI) {
+		return getClient().performBooleanQuery(queryString, bindings, this.tx, includeInferred, baseURI);
 	}
 
 	//update query
-	public void sendUpdateQuery(String queryString, SPARQLQueryBindingSet bindings, boolean includeInferred) {
-		_client.performUpdateQuery(queryString, bindings, this.tx, includeInferred);
+	public void sendUpdateQuery(String queryString, SPARQLQueryBindingSet bindings, boolean includeInferred, String baseURI) {
+		getClient().performUpdateQuery(queryString, bindings, this.tx, includeInferred, baseURI);
 	}
 
 	//add
     public void sendAdd(File file, String baseURI, RDFFormat dataFormat, Resource... contexts){
-        _client.performAdd(file, baseURI, dataFormat, this.tx, contexts);
+		getClient().performAdd(file, baseURI, dataFormat, this.tx, contexts);
     }
 	public void sendAdd(InputStream in, String baseURI, RDFFormat dataFormat, Resource... contexts){
-		_client.performAdd(in, baseURI, dataFormat, this.tx, contexts);
+		getClient().performAdd(in, baseURI, dataFormat, this.tx, contexts);
 	}
 	public void sendAdd(Resource subject,URI predicate, Value object, Resource... contexts){
-		_client.performAdd(subject, predicate, object, this.tx, contexts);
+		getClient().performAdd(subject, predicate, object, this.tx, contexts);
 	}
 
 	//remove
 	public void sendRemove(Resource subject,URI predicate, Value object, Resource... contexts){
-		_client.performRemove(subject, predicate, object, this.tx, contexts);
+		getClient().performRemove(subject, predicate, object, this.tx, contexts);
 	}
 
 	//clear
 	public void sendClear(Resource... contexts){
-		_client.performClear(this.tx, contexts);
+		getClient().performClear(this.tx, contexts);
 	}
 	public void sendClearAll(){
-		_client.performClearAll(this.tx);
+		getClient().performClearAll(this.tx);
 	}
 
 	//transaction
 	public void openTransaction(){
-		tx = _client.getDatabaseClient().openTransaction();
+		tx = getClient().getDatabaseClient().openTransaction();
 	}
 	public void commitTransaction(){
 		tx.commit();
@@ -167,9 +168,22 @@ public class MarkLogicClient {
 		this.parserConfig=parserConfig;
 	}
 
+	// rulesets
+	public void setRulesets(Object rulesets){
+		getClient().setRulesets(rulesets);
+	}
+	public Object getRulesets(){
+		return getClient().getRulesets();
+	}
+
 	//execute
 	protected void execute(Runnable command) {
 		executor.execute(command);
+	}
+
+	// private
+	private MarkLogicClientImpl getClient(){
+		return this._client;
 	}
 
 	private Value skolemize(Value s) {

@@ -29,19 +29,19 @@ import org.slf4j.LoggerFactory;
  *
  * @author James Fuller
  */
-public class MarkLogicBooleanQuery extends MarkLogicQuery implements BooleanQuery {
+public class MarkLogicBooleanQuery extends MarkLogicQuery implements BooleanQuery,MarkLogicQueryDependent {
 
     protected final Logger logger = LoggerFactory.getLogger(MarkLogicBooleanQuery.class);
 
     // constructor
-    public MarkLogicBooleanQuery(MarkLogicClient client, SPARQLQueryBindingSet mapBindingSet, String baseUri, String queryString) {
-        super(client, mapBindingSet, baseUri, queryString);
+    public MarkLogicBooleanQuery(MarkLogicClient client, SPARQLQueryBindingSet bindingSet, String baseUri, String queryString) {
+        super(client, bindingSet, baseUri, queryString);
     }
 
     //evaluate
     @Override
     public boolean evaluate(){
-        return getClient().sendBooleanQuery(getQueryString(), getBindingSet(), getIncludeInferred());
+        return getMarkLogicClient().sendBooleanQuery(getQueryString(), getBindings(), getIncludeInferred(),getBaseURI());
     }
 
 }

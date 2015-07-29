@@ -36,13 +36,13 @@ import java.io.IOException;
  *
  * @author James Fuller
  */
-public class MarkLogicGraphQuery extends MarkLogicQuery implements GraphQuery {
+public class MarkLogicGraphQuery extends MarkLogicQuery implements GraphQuery,MarkLogicQueryDependent {
 
     protected final Logger logger = LoggerFactory.getLogger(MarkLogicGraphQuery.class);
 
     // constructor
-    public MarkLogicGraphQuery(MarkLogicClient client, SPARQLQueryBindingSet mapBindingSet, String baseUri, String queryString) {
-        super(client, mapBindingSet, baseUri, queryString);
+    public MarkLogicGraphQuery(MarkLogicClient client, SPARQLQueryBindingSet bindingSet, String baseUri, String queryString) {
+        super(client, bindingSet, baseUri, queryString);
     }
 
     //evaluate
@@ -50,7 +50,7 @@ public class MarkLogicGraphQuery extends MarkLogicQuery implements GraphQuery {
     public GraphQueryResult evaluate()
             throws QueryEvaluationException {
         try {
-            return getClient().sendGraphQuery(getQueryString(),getBindingSet(),getIncludeInferred());
+            return getMarkLogicClient().sendGraphQuery(getQueryString(),getBindings(),getIncludeInferred(),getBaseURI());
         } catch (IOException e) {
             throw new QueryEvaluationException(e);
         }

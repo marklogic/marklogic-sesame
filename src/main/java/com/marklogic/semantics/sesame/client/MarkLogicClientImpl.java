@@ -26,10 +26,7 @@ import com.marklogic.client.Transaction;
 import com.marklogic.client.impl.SPARQLBindingsImpl;
 import com.marklogic.client.io.FileHandle;
 import com.marklogic.client.io.InputStreamHandle;
-import com.marklogic.client.semantics.GraphManager;
-import com.marklogic.client.semantics.SPARQLBindings;
-import com.marklogic.client.semantics.SPARQLQueryDefinition;
-import com.marklogic.client.semantics.SPARQLQueryManager;
+import com.marklogic.client.semantics.*;
 import org.openrdf.model.Resource;
 import org.openrdf.model.URI;
 import org.openrdf.model.Value;
@@ -60,6 +57,8 @@ public class MarkLogicClientImpl {
 
     private String auth;
 
+    private SPARQLRuleset rulesets;
+
     static public SPARQLQueryManager sparqlManager;
 
     protected static DatabaseClientFactory.Authentication authType = DatabaseClientFactory.Authentication.valueOf(
@@ -72,8 +71,6 @@ public class MarkLogicClientImpl {
     public MarkLogicClientImpl(String host, int port, String user, String password, String auth) {
         this.databaseClient = DatabaseClientFactory.newClient(host, port, user, password, DatabaseClientFactory.Authentication.valueOf(auth));
     }
-
-
 
     // host
     public String getHost() {
@@ -133,48 +130,51 @@ public class MarkLogicClientImpl {
     }
 
     // performSPARQLQuery
-    public InputStream performSPARQLQuery(String queryString, SPARQLQueryBindingSet bindings, long start, long pageLength, Transaction tx, boolean includeInferred) throws JsonProcessingException {
-        return performSPARQLQuery(queryString, bindings, new InputStreamHandle(), start, pageLength, tx,includeInferred);
+    public InputStream performSPARQLQuery(String queryString, SPARQLQueryBindingSet bindings, long start, long pageLength, Transaction tx, boolean includeInferred, String baseURI) throws JsonProcessingException {
+        return performSPARQLQuery(queryString, bindings, new InputStreamHandle(), start, pageLength, tx,includeInferred,baseURI);
     }
-    public InputStream performSPARQLQuery(String queryString, SPARQLQueryBindingSet bindings, InputStreamHandle handle, long start, long pageLength, Transaction tx, boolean includeInferred) throws JsonProcessingException {
+    public InputStream performSPARQLQuery(String queryString, SPARQLQueryBindingSet bindings, InputStreamHandle handle, long start, long pageLength, Transaction tx, boolean includeInferred, String baseURI) throws JsonProcessingException {
         sparqlManager = getDatabaseClient().newSPARQLQueryManager();
         SPARQLQueryDefinition qdef = sparqlManager.newQueryDefinition(queryString);
+        if(rulesets instanceof SPARQLRuleset){qdef.setRulesets(rulesets);};
         qdef.setIncludeDefaultRulesets(includeInferred);
-
         qdef.setBindings(getSPARQLBindings(bindings));
         sparqlManager.executeSelect(qdef, handle, start, pageLength, tx);
         return handle.get();
     }
 
     // performGraphQuery
-    public InputStream performGraphQuery(String queryString, SPARQLQueryBindingSet bindings, Transaction tx, boolean includeInferred) throws JsonProcessingException {
-        return performGraphQuery(queryString, bindings, new InputStreamHandle(), tx, includeInferred);
+    public InputStream performGraphQuery(String queryString, SPARQLQueryBindingSet bindings, Transaction tx, boolean includeInferred, String baseURI) throws JsonProcessingException {
+        return performGraphQuery(queryString, bindings, new InputStreamHandle(), tx, includeInferred, baseURI);
     }
-    public InputStream performGraphQuery(String queryString, SPARQLQueryBindingSet bindings, InputStreamHandle handle, Transaction tx, boolean includeInferred) throws JsonProcessingException {
+    public InputStream performGraphQuery(String queryString, SPARQLQueryBindingSet bindings, InputStreamHandle handle, Transaction tx, boolean includeInferred, String baseURI) throws JsonProcessingException {
         sparqlManager = getDatabaseClient().newSPARQLQueryManager();
-
         SPARQLQueryDefinition qdef = sparqlManager.newQueryDefinition(queryString);
+        if(rulesets instanceof SPARQLRuleset){qdef.setRulesets(rulesets);};
         qdef.setIncludeDefaultRulesets(includeInferred);
-
         qdef.setBindings(getSPARQLBindings(bindings));
         sparqlManager.executeDescribe(qdef, handle, tx);
         return handle.get();
     }
 
     // performBooleanQuery
-    public boolean performBooleanQuery(String queryString, SPARQLQueryBindingSet bindings, Transaction tx, boolean includeInferred) {
+    public boolean performBooleanQuery(String queryString, SPARQLQueryBindingSet bindings, Transaction tx, boolean includeInferred, String baseURI) {
         sparqlManager = getDatabaseClient().newSPARQLQueryManager();
         SPARQLQueryDefinition qdef = sparqlManager.newQueryDefinition(queryString);
-        qdef.setIncludeDefaultRulesets(includeInferred);
 
+        logger.debug("QUERY STRING");
+        logger.debug(queryString);
+        qdef.setIncludeDefaultRulesets(includeInferred);
+        if(rulesets instanceof SPARQLRuleset){qdef.setRulesets(rulesets);};
         qdef.setBindings(getSPARQLBindings(bindings));
         return sparqlManager.executeAsk(qdef, tx);
     }
 
     // performUpdateQuery
-    public void performUpdateQuery(String queryString, SPARQLQueryBindingSet bindings, Transaction tx, boolean includeInferred) {
+    public void performUpdateQuery(String queryString, SPARQLQueryBindingSet bindings, Transaction tx, boolean includeInferred, String baseURI) {
         sparqlManager = getDatabaseClient().newSPARQLQueryManager();
         SPARQLQueryDefinition qdef = sparqlManager.newQueryDefinition(queryString);
+        if(rulesets instanceof SPARQLRuleset){qdef.setRulesets(rulesets);};
         qdef.setIncludeDefaultRulesets(includeInferred);
         qdef.setBindings(getSPARQLBindings(bindings));
         sparqlManager.executeUpdate(qdef, tx);
@@ -185,6 +185,7 @@ public class MarkLogicClientImpl {
         GraphManager gmgr = getDatabaseClient().newGraphManager();
         gmgr.setDefaultMimetype(dataFormat.getDefaultMIMEType());
         //TBD- must be more efficient method to deal with this
+
         for(Resource context: contexts) {
             gmgr.write(context.toString(), new FileHandle(file),tx);
         }
@@ -205,7 +206,7 @@ public class MarkLogicClientImpl {
         qdef.withBinding("s", subject.stringValue());
         qdef.withBinding("p", predicate.stringValue());
         qdef.withBinding("o", object.stringValue());
-        sparqlManager.executeUpdate(qdef,tx);
+        sparqlManager.executeUpdate(qdef, tx);
     }
 
     // performRemove
@@ -219,7 +220,7 @@ public class MarkLogicClientImpl {
         qdef.withBinding("s", subject.stringValue());
         qdef.withBinding("p", predicate.stringValue());
         qdef.withBinding("o", object.stringValue());
-        sparqlManager.executeUpdate(qdef,tx);
+        sparqlManager.executeUpdate(qdef, tx);
     }
 
     // performClear
@@ -232,6 +233,14 @@ public class MarkLogicClientImpl {
     public void performClearAll(Transaction tx){
         GraphManager gmgr = getDatabaseClient().newGraphManager();
         gmgr.deleteGraphs();
+    }
+
+    public void setRulesets(Object rulesets){
+        this.rulesets=(SPARQLRuleset) rulesets;
+    }
+
+    public SPARQLRuleset getRulesets(){
+        return this.rulesets;
     }
 
     // getSPARQLBindings
