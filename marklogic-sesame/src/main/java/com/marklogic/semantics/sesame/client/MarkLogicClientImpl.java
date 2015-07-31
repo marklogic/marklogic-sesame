@@ -61,6 +61,8 @@ public class MarkLogicClientImpl {
 
     static public SPARQLQueryManager sparqlManager;
 
+    private String defaultGraphUri="http://marklogic.com/semantics#default-graph";
+
     protected static DatabaseClientFactory.Authentication authType = DatabaseClientFactory.Authentication.valueOf(
             "DIGEST"
     );
@@ -131,11 +133,14 @@ public class MarkLogicClientImpl {
 
     // performSPARQLQuery
     public InputStream performSPARQLQuery(String queryString, SPARQLQueryBindingSet bindings, long start, long pageLength, Transaction tx, boolean includeInferred, String baseURI) throws JsonProcessingException {
-        return performSPARQLQuery(queryString, bindings, new InputStreamHandle(), start, pageLength, tx,includeInferred,baseURI);
+        return performSPARQLQuery(queryString, bindings, new InputStreamHandle(), start, pageLength, tx, includeInferred, baseURI);
     }
     public InputStream performSPARQLQuery(String queryString, SPARQLQueryBindingSet bindings, InputStreamHandle handle, long start, long pageLength, Transaction tx, boolean includeInferred, String baseURI) throws JsonProcessingException {
         sparqlManager = getDatabaseClient().newSPARQLQueryManager();
-        SPARQLQueryDefinition qdef = sparqlManager.newQueryDefinition(queryString);
+        StringBuilder sb = new StringBuilder();
+        if(baseURI != null) sb.append("BASE <"+baseURI+">\n");
+        sb.append(queryString);
+        SPARQLQueryDefinition qdef = sparqlManager.newQueryDefinition(sb.toString());
         if(rulesets instanceof SPARQLRuleset){qdef.setRulesets(rulesets);};
         qdef.setIncludeDefaultRulesets(includeInferred);
         qdef.setBindings(getSPARQLBindings(bindings));
@@ -149,7 +154,10 @@ public class MarkLogicClientImpl {
     }
     public InputStream performGraphQuery(String queryString, SPARQLQueryBindingSet bindings, InputStreamHandle handle, Transaction tx, boolean includeInferred, String baseURI) throws JsonProcessingException {
         sparqlManager = getDatabaseClient().newSPARQLQueryManager();
-        SPARQLQueryDefinition qdef = sparqlManager.newQueryDefinition(queryString);
+        StringBuilder sb = new StringBuilder();
+        if(baseURI != null) sb.append("BASE <"+baseURI+">\n");
+        sb.append(queryString);
+        SPARQLQueryDefinition qdef = sparqlManager.newQueryDefinition(sb.toString());
         if(rulesets instanceof SPARQLRuleset){qdef.setRulesets(rulesets);};
         qdef.setIncludeDefaultRulesets(includeInferred);
         qdef.setBindings(getSPARQLBindings(bindings));
@@ -160,10 +168,10 @@ public class MarkLogicClientImpl {
     // performBooleanQuery
     public boolean performBooleanQuery(String queryString, SPARQLQueryBindingSet bindings, Transaction tx, boolean includeInferred, String baseURI) {
         sparqlManager = getDatabaseClient().newSPARQLQueryManager();
-        SPARQLQueryDefinition qdef = sparqlManager.newQueryDefinition(queryString);
-
-        logger.debug("QUERY STRING");
-        logger.debug(queryString);
+        StringBuilder sb = new StringBuilder();
+        if(baseURI != null) sb.append("BASE <"+baseURI+">\n");
+        sb.append(queryString);
+        SPARQLQueryDefinition qdef = sparqlManager.newQueryDefinition(sb.toString());
         qdef.setIncludeDefaultRulesets(includeInferred);
         if(rulesets instanceof SPARQLRuleset){qdef.setRulesets(rulesets);};
         qdef.setBindings(getSPARQLBindings(bindings));
@@ -173,7 +181,10 @@ public class MarkLogicClientImpl {
     // performUpdateQuery
     public void performUpdateQuery(String queryString, SPARQLQueryBindingSet bindings, Transaction tx, boolean includeInferred, String baseURI) {
         sparqlManager = getDatabaseClient().newSPARQLQueryManager();
-        SPARQLQueryDefinition qdef = sparqlManager.newQueryDefinition(queryString);
+        StringBuilder sb = new StringBuilder();
+        if(baseURI != null) sb.append("BASE <"+baseURI+">\n");
+        sb.append(queryString);
+        SPARQLQueryDefinition qdef = sparqlManager.newQueryDefinition(sb.toString());
         if(rulesets instanceof SPARQLRuleset){qdef.setRulesets(rulesets);};
         qdef.setIncludeDefaultRulesets(includeInferred);
         qdef.setBindings(getSPARQLBindings(bindings));
@@ -184,42 +195,68 @@ public class MarkLogicClientImpl {
     public void performAdd(File file, String baseURI, RDFFormat dataFormat,Transaction tx,Resource... contexts){
         GraphManager gmgr = getDatabaseClient().newGraphManager();
         gmgr.setDefaultMimetype(dataFormat.getDefaultMIMEType());
-        //TBD- must be more efficient method to deal with this
-
-        for(Resource context: contexts) {
-            gmgr.write(context.toString(), new FileHandle(file),tx);
+        if(dataFormat.equals(RDFFormat.NQUADS)||dataFormat.equals(RDFFormat.TRIG)){
+            //TBD- tx ?
+            gmgr.mergeGraphs(new FileHandle(file));
+        }else{
+            //TBD- must be more efficient
+            if(contexts.length != 0){
+                for(Resource context: contexts) {
+                    gmgr.merge(context.toString(), new FileHandle(file), tx);
+                }
+            }else{
+                gmgr.merge(null, new FileHandle(file), tx);
+            }
         }
     }
     public void performAdd(InputStream in, String baseURI, RDFFormat dataFormat,Transaction tx,Resource... contexts) {
         GraphManager gmgr = getDatabaseClient().newGraphManager();
         gmgr.setDefaultMimetype(dataFormat.getDefaultMIMEType());
-        // TBD- must handle multiple contexts
-        gmgr.write(contexts[0].stringValue(), new InputStreamHandle(in), tx);
+        if(dataFormat.equals(RDFFormat.NQUADS)||dataFormat.equals(RDFFormat.TRIG)){
+            //TBD- tx ?
+            gmgr.mergeGraphs(new InputStreamHandle(in));
+        }else{
+            //TBD- must be more efficient
+            if(contexts.length !=0) {
+                gmgr.merge(contexts[0].stringValue(), new InputStreamHandle(in), tx);
+            }else{
+                gmgr.merge(null, new InputStreamHandle(in), tx);
+            }
+        }
     }
-    public void performAdd(Resource subject,URI predicate, Value object,Transaction tx,Resource... contexts) {
+
+    public void performAdd(String baseURI,Resource subject,URI predicate, Value object,Transaction tx,Resource... contexts) {
         sparqlManager = getDatabaseClient().newSPARQLQueryManager();
-        // TBD- must handle multiple contexts
-
-        String query = "INSERT DATA { GRAPH <" + contexts[0].stringValue() + "> { ?s ?p ?o } }";
-
-        SPARQLQueryDefinition qdef = sparqlManager.newQueryDefinition(query);
+        StringBuilder sb = new StringBuilder();
+        if(baseURI != null) sb.append("BASE <"+baseURI+">\n");
+        sb.append("INSERT DATA { ");
+        for (int i = 0; i < contexts.length; i++)
+        {
+            sb.append("GRAPH <"+ contexts[i].stringValue()+"> {?s ?p ?o .} ");
+        }
+        sb.append("}");
+        SPARQLQueryDefinition qdef = sparqlManager.newQueryDefinition(sb.toString());
         qdef.withBinding("s", subject.stringValue());
         qdef.withBinding("p", predicate.stringValue());
-        qdef.withBinding("o", object.stringValue());
+        qdef.withBinding("o", object.toString());
         sparqlManager.executeUpdate(qdef, tx);
     }
 
     // performRemove
-    public void performRemove(Resource subject,URI predicate, Value object,Transaction tx,Resource... contexts) {
+    public void performRemove(String baseURI,Resource subject,URI predicate, Value object,Transaction tx,Resource... contexts) {
         sparqlManager = getDatabaseClient().newSPARQLQueryManager();
-        // TBD- must handle multiple contexts
-
-        String query = "DELETE WHERE { GRAPH <" + contexts[0].stringValue() + "> { ?s ?p ?o } }";
-
-        SPARQLQueryDefinition qdef = sparqlManager.newQueryDefinition(query);
+        StringBuilder sb = new StringBuilder();
+        if(baseURI != null) sb.append("BASE <"+baseURI+">\n");
+        sb.append("DELETE WHERE { ");
+        for (int i = 0; i < contexts.length; i++)
+        {
+            sb.append("GRAPH <"+ contexts[i].stringValue()+"> {?s ?p ?o .} ");
+        }
+        sb.append("}");
+        SPARQLQueryDefinition qdef = sparqlManager.newQueryDefinition(sb.toString());
         qdef.withBinding("s", subject.stringValue());
         qdef.withBinding("p", predicate.stringValue());
-        qdef.withBinding("o", object.stringValue());
+        qdef.withBinding("o", object.toString());
         sparqlManager.executeUpdate(qdef, tx);
     }
 

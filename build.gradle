@@ -7,6 +7,9 @@ subprojects{
         mavenLocal()
     }
 
+    sourceCompatibility = "1.7"
+    targetCompatibility = "1.7"
+
     dependencies {
         testCompile group: 'junit', name: 'junit', version: '4.+'
         testCompile 'org.apache.httpcomponents:httpclient:4.1.1'
@@ -18,3 +21,5 @@ subprojects{
         }
     }
 }
+
+
