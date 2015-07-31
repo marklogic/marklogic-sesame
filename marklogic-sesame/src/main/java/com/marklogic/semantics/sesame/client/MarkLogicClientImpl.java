@@ -61,6 +61,8 @@ public class MarkLogicClientImpl {
 
     static public SPARQLQueryManager sparqlManager;
 
+    private String defaultGraphUri="http://marklogic.com/semantics#default-graph";
+
     protected static DatabaseClientFactory.Authentication authType = DatabaseClientFactory.Authentication.valueOf(
             "DIGEST"
     );
@@ -198,8 +200,12 @@ public class MarkLogicClientImpl {
             gmgr.mergeGraphs(new FileHandle(file));
         }else{
             //TBD- must be more efficient
-            for(Resource context: contexts) {
-                gmgr.write(context.toString(), new FileHandle(file),tx);
+            if(contexts.length != 0){
+                for(Resource context: contexts) {
+                    gmgr.merge(context.toString(), new FileHandle(file), tx);
+                }
+            }else{
+                gmgr.merge(null, new FileHandle(file), tx);
             }
         }
     }
@@ -211,9 +217,11 @@ public class MarkLogicClientImpl {
             gmgr.mergeGraphs(new InputStreamHandle(in));
         }else{
             //TBD- must be more efficient
-            //for(Resource context: contexts) {
-                gmgr.write(contexts[0].stringValue(), new InputStreamHandle(in), tx);
-            //}
+            if(contexts.length !=0) {
+                gmgr.merge(contexts[0].stringValue(), new InputStreamHandle(in), tx);
+            }else{
+                gmgr.merge(null, new InputStreamHandle(in), tx);
+            }
         }
     }
 

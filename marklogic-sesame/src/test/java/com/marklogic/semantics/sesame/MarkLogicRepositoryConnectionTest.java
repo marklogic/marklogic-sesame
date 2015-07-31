@@ -557,17 +557,27 @@ public class MarkLogicRepositoryConnectionTest {
 
     }
 
-
     @Test
     public void testAddTurtle() throws Exception {
         File inputFile = new File("src/test/resources/testdata/default-graph-1.ttl");
-
         String baseURI = "http://example.org/example1/";
-
         Resource context1 = conn.getValueFactory().createURI("http://marklogic.com/test/context1");
         Resource context2 = conn.getValueFactory().createURI("http://marklogic.com/test/context2");
         conn.add(inputFile, baseURI, RDFFormat.TURTLE, context1, context2);
         conn.clear(context1, context2);
+    }
+
+    // https://github.com/marklogic/marklogic-sesame/issues/19
+    @Test
+    public void testAddTurtleWithDefaultContext() throws Exception {
+        File inputFile = new File("src/test/resources/testdata/default-graph-2.ttl");
+
+        conn.add(inputFile, null, RDFFormat.TURTLE);
+
+        String checkQuery = "PREFIX dc:<http://purl.org/dc/elements/1.1/> PREFIX xsd:<http://www.w3.org/2001/XMLSchema#> ASK { <urn:x-local:graph1> dc:publisher ?o .}";
+        BooleanQuery booleanQuery = conn.prepareBooleanQuery(QueryLanguage.SPARQL, checkQuery);
+        conn.setNamespace("dc", "http://purl.org/dc/elements/1.1/");
+        Assert.assertTrue(booleanQuery.evaluate());
     }
 
     @Test
@@ -682,7 +692,7 @@ public class MarkLogicRepositoryConnectionTest {
 
     @Test
     public void testTransaction1() throws Exception {
-        File inputFile = new File("src/test/resources/testdata/default-graph-1.ttl");
+        File inputFile = new File("src/test/resources/testdata/named-graph-1.ttl");
         String baseURI = "http://example.org/example1/";
         Resource context1 = conn.getValueFactory().createURI("http://marklogic.com/test/transactiontest");
         conn.begin();
@@ -692,7 +702,7 @@ public class MarkLogicRepositoryConnectionTest {
 
     @Test
     public void testTransaction2() throws Exception {
-        File inputFile = new File("src/test/resources/testdata/default-graph-1.ttl");
+        File inputFile = new File("src/test/resources/testdata/named-graph-1.ttl");
 
         String baseURI = "http://example.org/example1/";
 
