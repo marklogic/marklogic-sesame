@@ -34,6 +34,7 @@ public interface MarkLogicQueryDependent {
     Object getConstrainingQueryDefinition();
     void setConstrainingQueryDefinition(Object constrainingQueryDefinition);
 
-    //graphperms
+    Object getGraphPerms();
+    void setGraphPerms(Object graphPerms);
 
 }

@@ -198,6 +198,14 @@ public class MarkLogicClient {
         return getClient().getConstrainingQueryDefinition();
     }
 
+    // graph perms
+    public void setGraphPerms(Object graphPerms){
+        getClient().setConstrainingQueryDefinition(graphPerms);
+    }
+    public Object getGraphPerms(){
+        return getClient().getGraphPerms();
+    }
+
 
     //execute
 	protected void execute(Runnable command) {

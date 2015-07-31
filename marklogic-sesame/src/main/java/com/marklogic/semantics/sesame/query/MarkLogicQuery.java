@@ -161,4 +161,15 @@ public class MarkLogicQuery extends AbstractQuery implements Query,MarkLogicClie
     public Object getRulesets(){
         return getMarkLogicClient().getRulesets();
     }
+
+    // graph perms
+    @Override
+    public void setGraphPerms(Object graphPerms) {
+        getMarkLogicClient().setGraphPerms(graphPerms);
+    }
+    @Override
+    public Object getGraphPerms() {
+        return getMarkLogicClient().getGraphPerms();
+    }
+
 }

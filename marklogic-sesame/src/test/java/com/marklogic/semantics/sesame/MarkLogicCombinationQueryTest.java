@@ -5,9 +5,13 @@ import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.io.Format;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.query.*;
+import com.marklogic.client.semantics.Capability;
+import com.marklogic.client.semantics.GraphManager;
 import com.marklogic.semantics.sesame.query.MarkLogicBooleanQuery;
+import com.marklogic.semantics.sesame.query.MarkLogicUpdateQuery;
 import org.junit.*;
 import org.openrdf.model.ValueFactory;
+import org.openrdf.query.BooleanQuery;
 import org.openrdf.query.MalformedQueryException;
 import org.openrdf.query.QueryEvaluationException;
 import org.openrdf.query.QueryLanguage;
@@ -107,6 +111,22 @@ public class MarkLogicCombinationQueryTest extends SesameTestBase {
 //        askQuery.setConstrainingQueryDefinition(rawCombined);
 //        Assert.assertEquals(false, askQuery.evaluate());
 
+    }
+
+    @Test
+    public void testUpdateQueryWithPerms()
+            throws Exception {
+
+        GraphManager gmgr = adminClient.newGraphManager();
+        String defGraphQuery = "INSERT DATA { GRAPH <http://marklogic.com/test/g27> { <http://marklogic.com/test> <pp1> <oo1> } }";
+        String checkQuery = "ASK WHERE { <http://marklogic.com/test> <pp1> <oo1> }";
+        MarkLogicUpdateQuery updateQuery = (MarkLogicUpdateQuery) conn.prepareUpdate(QueryLanguage.SPARQL, defGraphQuery);
+        updateQuery.setGraphPerms(gmgr.permission("read-privileged", Capability.READ));
+
+        updateQuery.execute();
+        BooleanQuery booleanQuery = conn.prepareBooleanQuery(QueryLanguage.SPARQL, checkQuery);
+        boolean results = booleanQuery.evaluate();
+        Assert.assertEquals(true, results);
     }
 
 }

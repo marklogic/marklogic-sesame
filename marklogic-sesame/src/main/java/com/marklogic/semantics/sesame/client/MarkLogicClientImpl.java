@@ -66,6 +66,7 @@ public class MarkLogicClientImpl {
 
     private SPARQLRuleset rulesets;
     private RawCombinedQueryDefinition constrainingQueryDef;
+    private GraphPermissions graphPerms;
 
     static public SPARQLQueryManager sparqlManager;
     static public GraphManager graphManager;
@@ -291,10 +292,16 @@ public class MarkLogicClientImpl {
         this.rulesets=(SPARQLRuleset) rulesets;
     }
 
+    // graph perms
+    public void setGraphPerms(Object graphPerms){
+        this.graphPerms = (GraphPermissions)graphPerms;
+    }
+    public GraphPermissions getGraphPerms(){
+        return this.graphPerms;
+    }
 
     // constraining query
     public void setConstrainingQueryDefinition(Object constrainingQueryDefinition){
-        logger.debug("constraining query is set");
         this.constrainingQueryDef = constrainingQueryDef;
     }
     public RawCombinedQueryDefinition getConstrainingQueryDefinition(){
