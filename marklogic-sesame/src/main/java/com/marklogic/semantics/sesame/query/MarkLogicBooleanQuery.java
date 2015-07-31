@@ -21,6 +21,7 @@ package com.marklogic.semantics.sesame.query;
 
 import com.marklogic.semantics.sesame.client.MarkLogicClient;
 import org.openrdf.query.BooleanQuery;
+import org.openrdf.query.QueryEvaluationException;
 import org.openrdf.repository.sparql.query.SPARQLQueryBindingSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +41,7 @@ public class MarkLogicBooleanQuery extends MarkLogicQuery implements BooleanQuer
 
     //evaluate
     @Override
-    public boolean evaluate(){
+    public boolean evaluate() throws QueryEvaluationException {
         return getMarkLogicClient().sendBooleanQuery(getQueryString(), getBindings(), getIncludeInferred(),getBaseURI());
     }
 

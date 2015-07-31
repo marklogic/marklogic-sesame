@@ -30,4 +30,8 @@ public interface MarkLogicQueryDependent {
 
     String getBaseURI();
     void setBaseURI(String baseURI);
+
+    //graphperms
+
+    //constraints
 }

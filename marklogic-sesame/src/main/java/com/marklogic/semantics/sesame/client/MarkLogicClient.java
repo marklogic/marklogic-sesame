@@ -20,6 +20,7 @@
 package com.marklogic.semantics.sesame.client;
 
 import com.marklogic.client.Transaction;
+import org.apache.commons.io.input.ReaderInputStream;
 import org.openrdf.http.client.BackgroundGraphResult;
 import org.openrdf.http.client.BackgroundTupleResult;
 import org.openrdf.model.Resource;
@@ -44,6 +45,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Reader;
 import java.nio.charset.Charset;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -101,7 +103,16 @@ public class MarkLogicClient {
 		RDFParser parser = Rio.createParser(rdfFormat, getValueFactory());
 		parser.setParserConfig(getParserConfig());
 		parser.setParseErrorListener(new ParseErrorLogger());
-		BackgroundGraphResult gRes = new BackgroundGraphResult(parser,stream,charset,"");
+
+		BackgroundGraphResult gRes;
+
+		// fixup - baseURI cannot be null
+		if(baseURI != null){
+			gRes= new BackgroundGraphResult(parser,stream,charset,baseURI);
+		}else{
+			gRes= new BackgroundGraphResult(parser,stream,charset,"");
+		};
+
 		execute(gRes);
 		return gRes;
 	}
@@ -123,13 +134,17 @@ public class MarkLogicClient {
 	public void sendAdd(InputStream in, String baseURI, RDFFormat dataFormat, Resource... contexts){
 		getClient().performAdd(in, baseURI, dataFormat, this.tx, contexts);
 	}
-	public void sendAdd(Resource subject,URI predicate, Value object, Resource... contexts){
-		getClient().performAdd(subject, predicate, object, this.tx, contexts);
+	public void sendAdd(Reader in, String baseURI, RDFFormat dataFormat, Resource... contexts){
+		//TBD- must deal with char encoding
+		getClient().performAdd(new ReaderInputStream(in), baseURI, dataFormat, this.tx, contexts);
+	}
+	public void sendAdd(String baseURI, Resource subject, URI predicate, Value object, Resource... contexts){
+		getClient().performAdd(baseURI,subject,predicate,object,this.tx,contexts);
 	}
 
 	//remove
-	public void sendRemove(Resource subject,URI predicate, Value object, Resource... contexts){
-		getClient().performRemove(subject, predicate, object, this.tx, contexts);
+	public void sendRemove(String baseURI, Resource subject,URI predicate, Value object, Resource... contexts){
+		getClient().performRemove(baseURI,subject, predicate, object, this.tx, contexts);
 	}
 
 	//clear

@@ -32,6 +32,8 @@ import org.openrdf.model.impl.StatementImpl;
 import org.openrdf.query.*;
 import org.openrdf.query.impl.DatasetImpl;
 import org.openrdf.query.parser.QueryParserUtil;
+import org.openrdf.query.resultio.BooleanQueryResultFormat;
+import org.openrdf.query.resultio.TupleQueryResultFormat;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.RepositoryResult;
@@ -73,6 +75,12 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
 
     private MarkLogicClient client;
 
+    private TupleQueryResultFormat preferredTQRFormat = TupleQueryResultFormat.BINARY;
+
+    private BooleanQueryResultFormat preferredBQRFormat = BooleanQueryResultFormat.TEXT;
+
+    private RDFFormat preferredRDFFormat = RDFFormat.TURTLE;
+
     //constructor
     public MarkLogicRepositoryConnection(MarkLogicRepository repository, MarkLogicClient client, boolean quadMode) {
         super(repository);
@@ -93,22 +101,23 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     // prepareQuery entrypoint
     @Override
     public Query prepareQuery(QueryLanguage queryLanguage, String queryString) throws RepositoryException, MalformedQueryException {
-        return prepareTupleQuery(queryLanguage, queryString, "");
+        return prepareTupleQuery(queryLanguage, queryString, null);
     }
     @Override
     public Query prepareQuery(QueryLanguage queryLanguage, String queryString, String baseURI)
             throws RepositoryException, MalformedQueryException
     {
+        // function routing based on query form
         if (SPARQL.equals(queryLanguage)) {
-            String strippedQuery = QueryParserUtil.removeSPARQLQueryProlog(queryString).toUpperCase();
-            if (strippedQuery.startsWith("SELECT")) {
-                return prepareTupleQuery(queryLanguage, queryString, baseURI);
+            String queryStringWithoutProlog = QueryParserUtil.removeSPARQLQueryProlog(queryString).toUpperCase();
+            if (queryStringWithoutProlog.startsWith("SELECT")) {
+                return prepareTupleQuery(queryLanguage, queryString, baseURI);   //must be a TupleQuery
             }
-            else if (strippedQuery.startsWith("ASK")) {
-                return prepareBooleanQuery(queryLanguage, queryString, baseURI);
+            else if (queryStringWithoutProlog.startsWith("ASK")) {
+                return prepareBooleanQuery(queryLanguage, queryString, baseURI); //must be a BooleanQuery
             }
             else {
-                return prepareGraphQuery(queryLanguage, queryString, baseURI);
+                return prepareGraphQuery(queryLanguage, queryString, baseURI);   //all the rest use GraphQuery
             }
         }
         throw new UnsupportedOperationException("Unsupported query language " + queryLanguage.getName());
@@ -120,7 +129,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     }
     @Override
     public TupleQuery prepareTupleQuery(QueryLanguage queryLanguage, String queryString) throws RepositoryException, MalformedQueryException {
-        return prepareTupleQuery(queryLanguage, queryString, "");
+        return prepareTupleQuery(queryLanguage, queryString, null);
     }
     @Override
     public TupleQuery prepareTupleQuery(QueryLanguage queryLanguage, String queryString, String baseURI) throws RepositoryException, MalformedQueryException {
@@ -132,11 +141,11 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
 
     // prepareGraphQuery
     public GraphQuery prepareGraphQuery(String queryString) throws RepositoryException, MalformedQueryException {
-        return prepareGraphQuery(QueryLanguage.SPARQL, queryString, "");
+        return prepareGraphQuery(QueryLanguage.SPARQL, queryString, null);
     }
     @Override
     public GraphQuery prepareGraphQuery(QueryLanguage queryLanguage, String queryString) throws RepositoryException, MalformedQueryException {
-        return prepareGraphQuery(queryLanguage, queryString, "");
+        return prepareGraphQuery(queryLanguage, queryString, null);
     }
     @Override
     public GraphQuery prepareGraphQuery(QueryLanguage queryLanguage, String queryString, String baseURI)
@@ -150,11 +159,11 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
 
     // prepareBooleanQuery
     public BooleanQuery prepareBooleanQuery(String queryString) throws RepositoryException, MalformedQueryException {
-        return prepareBooleanQuery(QueryLanguage.SPARQL, queryString, "");
+        return prepareBooleanQuery(QueryLanguage.SPARQL, queryString, null);
     }
     @Override
     public BooleanQuery prepareBooleanQuery(QueryLanguage queryLanguage, String queryString) throws RepositoryException, MalformedQueryException {
-        return prepareBooleanQuery(queryLanguage, queryString, "");
+        return prepareBooleanQuery(queryLanguage, queryString, null);
     }
     @Override
     public BooleanQuery prepareBooleanQuery(QueryLanguage queryLanguage, String queryString, String baseURI) throws RepositoryException, MalformedQueryException {
@@ -166,11 +175,11 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
 
     // prepareUpdate
     public Update prepareUpdate(String queryString) throws RepositoryException, MalformedQueryException {
-        return prepareUpdate(QueryLanguage.SPARQL, queryString, "");
+        return prepareUpdate(QueryLanguage.SPARQL, queryString, null);
     }
     @Override
     public Update prepareUpdate(QueryLanguage queryLanguage, String queryString) throws RepositoryException, MalformedQueryException {
-       return prepareUpdate(queryLanguage, queryString, "");
+       return prepareUpdate(queryLanguage, queryString, null);
     }
     @Override
     public Update prepareUpdate(QueryLanguage queryLanguage, String queryString, String baseURI) throws RepositoryException, MalformedQueryException {
@@ -180,7 +189,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
         throw new UnsupportedQueryLanguageException("Unsupported query language " + queryLanguage.getName());
     }
 
-    //
+    // get list of contexts (graphs)
     @Override
     public RepositoryResult<Resource> getContextIDs() throws RepositoryException {
 
@@ -242,7 +251,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
                 }
             }
 
-            GraphQuery query = prepareGraphQuery(SPARQL, EVERYTHING, "");
+            GraphQuery query = prepareGraphQuery(SPARQL, EVERYTHING);
             setBindings(query, subj, pred, obj, contexts);
             GraphQueryResult result = query.evaluate();
             return new RepositoryResult<Statement>(
@@ -260,9 +269,13 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
         }
     }
     @Override
+    public boolean hasStatement(Statement st, boolean includeInferred, Resource... contexts) throws RepositoryException {
+        return hasStatement(st.getSubject(),st.getPredicate(),st.getObject(),includeInferred,contexts); //TBD
+    }
+    @Override
     public boolean hasStatement(Resource subj, URI pred, Value obj, boolean includeInferred, Resource... contexts) throws RepositoryException {
         try {
-            BooleanQuery query = prepareBooleanQuery(SPARQL, SOMETHING, "");
+            BooleanQuery query = prepareBooleanQuery(SPARQL, SOMETHING, null);
             setBindings(query, subj, pred, obj, contexts);
             return query.evaluate();
         }
@@ -273,22 +286,18 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
             throw new RepositoryException(e);
         }
     }
-    @Override
-    public boolean hasStatement(Statement st, boolean includeInferred, Resource... contexts) throws RepositoryException {
-        return false; //TBD
-    }
+
+    // export
     @Override
     public void exportStatements(Resource subj, URI pred, Value obj, boolean includeInferred, RDFHandler handler, Resource... contexts) throws RepositoryException, RDFHandlerException {
     //TBD
     }
-
-    //
     @Override
     public void export(RDFHandler handler, Resource... contexts) throws RepositoryException, RDFHandlerException {
     //TBD
     }
 
-    //
+    // number of triples in repository context (graph)
     @Override
     public long size(Resource... contexts) throws RepositoryException {
         RepositoryResult<Statement> stmts = getStatements(null, null, null, true, contexts);
@@ -305,11 +314,23 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
         }
     }
 
+    // remove context (graph)
+    @Override
+    public void clear(Resource... contexts) throws RepositoryException {
+        client.sendClear(contexts);
+    }
+
+    // is repository empty
     @Override
     public boolean isEmpty() throws RepositoryException {
         return size() == 0;
     }
 
+    //transactions
+    @Override
+    public boolean isActive() throws UnknownTransactionStateException, RepositoryException {
+        return client.isActiveTransaction();
+    }
     @Override
     public boolean isAutoCommit() throws RepositoryException {
         return client.isActiveTransaction() == false;
@@ -317,10 +338,6 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     @Override
     public void setAutoCommit(boolean autoCommit) throws RepositoryException {
         client.setAutoCommit();
-    }
-    @Override
-    public boolean isActive() throws UnknownTransactionStateException, RepositoryException {
-        return client.isActiveTransaction();
     }
     @Override
     public IsolationLevel getIsolationLevel() {
@@ -353,69 +370,64 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     // add
     @Override
     public void add(InputStream in, String baseURI, RDFFormat dataFormat, Resource... contexts) throws IOException, RDFParseException, RepositoryException {
-        client.sendAdd(in,baseURI,dataFormat,contexts);
+        client.sendAdd(in, baseURI, dataFormat, contexts);
     }
     @Override
     public void add(File file, String baseURI, RDFFormat dataFormat, Resource... contexts) throws IOException, RDFParseException, RepositoryException {
-        client.sendAdd(file,baseURI,dataFormat,contexts);
+        client.sendAdd(file, baseURI, dataFormat, contexts);
     }
     @Override
     public void add(Reader reader, String baseURI, RDFFormat dataFormat, Resource... contexts) throws IOException, RDFParseException, RepositoryException {
-
+        client.sendAdd(reader,baseURI,dataFormat,contexts);
     }
     @Override
     public void add(URL url, String baseURI, RDFFormat dataFormat, Resource... contexts) throws IOException, RDFParseException, RepositoryException {
-
+        InputStream in = new URL(url.toString()).openStream(); //TBD- naive impl, will need refactoring
+        client.sendAdd(in,baseURI,dataFormat,contexts);
     }
     @Override
     public void add(Resource subject, URI predicate, Value object, Resource... contexts) throws RepositoryException {
-        client.sendAdd(subject, predicate, object, contexts); // TBD - no baseURI ?
+        client.sendAdd(null,subject, predicate, object, contexts);
     }
     @Override
     public void add(Statement st, Resource... contexts) throws RepositoryException {
-
+        client.sendAdd(null,st.getSubject(), st.getPredicate(), st.getObject(), contexts);
     }
     @Override
     public void add(Iterable<? extends Statement> statements, Resource... contexts) throws RepositoryException {
-
+    //TBD
     }
     @Override
     public <E extends Exception> void add(Iteration<? extends Statement, E> statements, Resource... contexts) throws RepositoryException, E {
-
+    //TBD
     }
 
     // remove
     @Override
     public void remove(Resource subject, URI predicate, Value object, Resource... contexts) throws RepositoryException {
-        client.sendRemove(subject,predicate,object,contexts);
+        client.sendRemove(null,subject,predicate,object,contexts);
     }
     @Override
     public void remove(Statement st, Resource... contexts) throws RepositoryException {
-
+        client.sendRemove(null,st.getSubject(),st.getPredicate(),st.getObject(),contexts);
     }
     @Override
     public void remove(Iterable<? extends Statement> statements, Resource... contexts) throws RepositoryException {
-
+    //TBD
     }
     @Override
     public <E extends Exception> void remove(Iteration<? extends Statement, E> statements, Resource... contexts) throws RepositoryException, E {
-
+    //TBD
     }
 
-    //
-    @Override
-    public void clear(Resource... contexts) throws RepositoryException {
-        client.sendClear(contexts);
-    }
-
-    //
+    // without commit
     @Override
     protected void addWithoutCommit(Resource subject, URI predicate, Value object, Resource... contexts) throws RepositoryException {
-    //TBD
+        add(subject,predicate,object,contexts);
     }
     @Override
     protected void removeWithoutCommit(Resource subject, URI predicate, Value object, Resource... contexts) throws RepositoryException {
-    //TBD
+        remove(subject, predicate, object, contexts);
     }
 
     // TBD - not in scope for 1.0.0
@@ -424,27 +436,29 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
         return null;
     }
 
-    ////////////////////////////////////////////////////////////////////////////////////
-    // TBD - not in scope for 1.0.0
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    // not in scope for 1.0.0 /////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////
     @Override
     public String getNamespace(String prefix) throws RepositoryException {
         return null;
     }
-    // TBD - not in scope for 1.0.0
     @Override
     public void setNamespace(String prefix, String name) throws RepositoryException {
     }
-    // TBD - not in scope for 1.0.0
     @Override
     public void removeNamespace(String prefix) throws RepositoryException {
     }
-    // TBD - not in scope for 1.0.0
     @Override
     public void clearNamespaces() throws RepositoryException {
     }
-    ////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    // private
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    // private ////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+
     private void setBindings(Query query, Resource subj, URI pred, Value obj, Resource... contexts)
             throws RepositoryException {
         if (subj != null) {
@@ -469,19 +483,14 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
         }
     }
 
-    //
     private boolean isQuadMode() {
         return quadMode;
     }
 
-    //
     private Iteration<Statement, QueryEvaluationException> toStatementIteration(TupleQueryResult iter, final Resource subj, final URI pred, final Value obj) {
-
         return new ConvertingIteration<BindingSet, Statement, QueryEvaluationException>(iter) {
-
             @Override
             protected Statement convert(BindingSet b) throws QueryEvaluationException {
-
                 Resource s = subj == null ? (Resource) b.getValue("s") : subj;
                 URI p = pred == null ? getValueFactory().createURI(b.getValue("o").stringValue()) : pred;
                 Value o = obj == null ? b.getValue("o") : obj;
@@ -489,7 +498,8 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
 
                 return getValueFactory().createStatement(s, p, o, ctx);
             }
-
         };
     }
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+
 }

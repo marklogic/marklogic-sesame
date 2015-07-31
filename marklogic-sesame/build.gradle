@@ -36,19 +36,11 @@ repositories {
 }
 
 dependencies {
-    compile('org.openrdf.sesame:sesame-repository-api:2.8.3')
-    compile('org.openrdf.sesame:sesame-queryresultio-api:2.8.4')
-    compile('org.openrdf.sesame:sesame-model:2.8.4')
-    compile('org.openrdf.sesame:sesame-queryparser-sparql:2.8.4')
-    compile('org.openrdf.sesame:sesame-queryresultio-sparqlxml:2.8.4')
-    compile('org.openrdf.sesame:sesame-http-client:2.8.4')
     compile('org.openrdf.sesame:sesame-runtime:2.8.4')
-
+    compile('com.marklogic:java-client-api:4.0-SNAPSHOT')
     compile('org.slf4j:slf4j-api:1.7.10')
     compile "ch.qos.logback:logback-classic:$logbackVersion"
     compile "org.slf4j:jcl-over-slf4j:$slf4jVersion"
-
-    compile('com.marklogic:java-client-api:4.0-SNAPSHOT')
 
     testCompile 'com.jayway.restassured:rest-assured:2.4.1'
     testCompile 'org.hamcrest:hamcrest-all:1.3'
