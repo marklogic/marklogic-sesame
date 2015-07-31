@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author James Fuller
  */
-public class MarkLogicRepositoryTest {
+public class MarkLogicRepositoryTest extends SesameTestBase {
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -45,7 +45,6 @@ public class MarkLogicRepositoryTest {
             throws Exception {
 
         logger.info("setting up repo");
-        Repository rep = new MarkLogicRepository("localhost", 8200, "admin", "admin", "DIGEST");
         rep.initialize();
 
         Assert.assertTrue(rep instanceof Repository);

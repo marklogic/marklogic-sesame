@@ -31,7 +31,6 @@ import org.openrdf.model.impl.ValueFactoryImpl;
 import org.openrdf.model.vocabulary.RDF;
 import org.openrdf.query.*;
 import org.openrdf.query.resultio.sparqlxml.SPARQLResultsXMLWriter;
-import org.openrdf.repository.Repository;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.RepositoryResult;
@@ -53,43 +52,20 @@ import java.util.Properties;
  *
  * @author James Fuller
  */
-public class MarkLogicRepositoryConnectionTest {
+public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private Repository rep;
-
     protected RepositoryConnection conn;
-
     protected ValueFactory f;
 
     @Before
     public void setUp()
             throws Exception {
         logger.debug("setting up test");
-
-        // extrude to semantics.utils
-        Properties props = new Properties();
-        try {
-            props.load(new FileInputStream("gradle.properties"));
-        } catch (IOException e) {
-            System.err.println("problem loading properties file.");
-            System.exit(1);
-        }
-        String host = props.getProperty("mlHost");
-        int port = Integer.parseInt(props.getProperty("mlRestPort"));
-        String user = props.getProperty("mlUsername");
-        String pass = props.getProperty("mlPassword");
-        // extrude to semantics.utils
-
-        this.rep = new MarkLogicRepository(host, port, user, pass, "DIGEST");
-
-
         rep.initialize();
-
         f = rep.getValueFactory();
         conn = rep.getConnection();
-
         logger.info("test setup complete.");
     }
 
@@ -102,10 +78,8 @@ public class MarkLogicRepositoryConnectionTest {
         logger.debug("tearing down...");
         conn.close();
         conn = null;
-
         rep.shutDown();
         rep = null;
-
         logger.info("tearDown complete.");
     }
 

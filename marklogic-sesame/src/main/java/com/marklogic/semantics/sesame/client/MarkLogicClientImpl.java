@@ -26,6 +26,7 @@ import com.marklogic.client.Transaction;
 import com.marklogic.client.impl.SPARQLBindingsImpl;
 import com.marklogic.client.io.FileHandle;
 import com.marklogic.client.io.InputStreamHandle;
+import com.marklogic.client.query.RawCombinedQueryDefinition;
 import com.marklogic.client.semantics.*;
 import org.openrdf.model.Resource;
 import org.openrdf.model.URI;
@@ -47,6 +48,8 @@ public class MarkLogicClientImpl {
 
     protected final Logger logger = LoggerFactory.getLogger(MarkLogicClientImpl.class);
 
+    public static final String DEFAULT_GRAPH_URI = "http://marklogic.com/semantics#default-graph";
+
     private String host;
 
     private int port;
@@ -57,15 +60,15 @@ public class MarkLogicClientImpl {
 
     private String auth;
 
-    private SPARQLRuleset rulesets;
-
-    static public SPARQLQueryManager sparqlManager;
-
-    private String defaultGraphUri="http://marklogic.com/semantics#default-graph";
-
     protected static DatabaseClientFactory.Authentication authType = DatabaseClientFactory.Authentication.valueOf(
             "DIGEST"
     );
+
+    private SPARQLRuleset rulesets;
+    private RawCombinedQueryDefinition constrainingQueryDef;
+
+    static public SPARQLQueryManager sparqlManager;
+    static public GraphManager graphManager;
 
     protected DatabaseClient databaseClient;
 
@@ -128,7 +131,7 @@ public class MarkLogicClientImpl {
 
     //
     public DatabaseClient getDatabaseClient() {
-        return databaseClient;
+        return this.databaseClient;
     }
 
     // performSPARQLQuery
@@ -142,6 +145,7 @@ public class MarkLogicClientImpl {
         sb.append(queryString);
         SPARQLQueryDefinition qdef = sparqlManager.newQueryDefinition(sb.toString());
         if(rulesets instanceof SPARQLRuleset){qdef.setRulesets(rulesets);};
+        if(constrainingQueryDef instanceof RawCombinedQueryDefinition){qdef.setConstrainingQueryDefinintion(constrainingQueryDef);};
         qdef.setIncludeDefaultRulesets(includeInferred);
         qdef.setBindings(getSPARQLBindings(bindings));
         sparqlManager.executeSelect(qdef, handle, start, pageLength, tx);
@@ -159,6 +163,7 @@ public class MarkLogicClientImpl {
         sb.append(queryString);
         SPARQLQueryDefinition qdef = sparqlManager.newQueryDefinition(sb.toString());
         if(rulesets instanceof SPARQLRuleset){qdef.setRulesets(rulesets);};
+        if(constrainingQueryDef instanceof RawCombinedQueryDefinition){qdef.setConstrainingQueryDefinintion(constrainingQueryDef);};
         qdef.setIncludeDefaultRulesets(includeInferred);
         qdef.setBindings(getSPARQLBindings(bindings));
         sparqlManager.executeDescribe(qdef, handle, tx);
@@ -173,7 +178,11 @@ public class MarkLogicClientImpl {
         sb.append(queryString);
         SPARQLQueryDefinition qdef = sparqlManager.newQueryDefinition(sb.toString());
         qdef.setIncludeDefaultRulesets(includeInferred);
-        if(rulesets instanceof SPARQLRuleset){qdef.setRulesets(rulesets);};
+        if (rulesets instanceof SPARQLRuleset){qdef.setRulesets(rulesets);};
+        if(constrainingQueryDef instanceof RawCombinedQueryDefinition){
+            logger.debug("set constraining query");
+
+            qdef.setConstrainingQueryDefinintion(constrainingQueryDef);};
         qdef.setBindings(getSPARQLBindings(bindings));
         return sparqlManager.executeAsk(qdef, tx);
     }
@@ -186,6 +195,8 @@ public class MarkLogicClientImpl {
         sb.append(queryString);
         SPARQLQueryDefinition qdef = sparqlManager.newQueryDefinition(sb.toString());
         if(rulesets instanceof SPARQLRuleset){qdef.setRulesets(rulesets);};
+        if(constrainingQueryDef instanceof RawCombinedQueryDefinition){
+            qdef.setConstrainingQueryDefinintion(constrainingQueryDef);};
         qdef.setIncludeDefaultRulesets(includeInferred);
         qdef.setBindings(getSPARQLBindings(bindings));
         sparqlManager.executeUpdate(qdef, tx);
@@ -193,34 +204,34 @@ public class MarkLogicClientImpl {
 
     // performAdd
     public void performAdd(File file, String baseURI, RDFFormat dataFormat,Transaction tx,Resource... contexts){
-        GraphManager gmgr = getDatabaseClient().newGraphManager();
-        gmgr.setDefaultMimetype(dataFormat.getDefaultMIMEType());
+        graphManager = getDatabaseClient().newGraphManager();
+        graphManager.setDefaultMimetype(dataFormat.getDefaultMIMEType());
         if(dataFormat.equals(RDFFormat.NQUADS)||dataFormat.equals(RDFFormat.TRIG)){
             //TBD- tx ?
-            gmgr.mergeGraphs(new FileHandle(file));
+            graphManager.mergeGraphs(new FileHandle(file));
         }else{
             //TBD- must be more efficient
             if(contexts.length != 0){
                 for(Resource context: contexts) {
-                    gmgr.merge(context.toString(), new FileHandle(file), tx);
+                    graphManager.merge(context.toString(), new FileHandle(file), tx);
                 }
             }else{
-                gmgr.merge(null, new FileHandle(file), tx);
+                graphManager.merge(null, new FileHandle(file), tx);
             }
         }
     }
     public void performAdd(InputStream in, String baseURI, RDFFormat dataFormat,Transaction tx,Resource... contexts) {
-        GraphManager gmgr = getDatabaseClient().newGraphManager();
-        gmgr.setDefaultMimetype(dataFormat.getDefaultMIMEType());
+        graphManager = getDatabaseClient().newGraphManager();
+        graphManager.setDefaultMimetype(dataFormat.getDefaultMIMEType());
         if(dataFormat.equals(RDFFormat.NQUADS)||dataFormat.equals(RDFFormat.TRIG)){
             //TBD- tx ?
-            gmgr.mergeGraphs(new InputStreamHandle(in));
+            graphManager.mergeGraphs(new InputStreamHandle(in));
         }else{
             //TBD- must be more efficient
             if(contexts.length !=0) {
-                gmgr.merge(contexts[0].stringValue(), new InputStreamHandle(in), tx);
+                graphManager.merge(contexts[0].stringValue(), new InputStreamHandle(in), tx);
             }else{
-                gmgr.merge(null, new InputStreamHandle(in), tx);
+                graphManager.merge(null, new InputStreamHandle(in), tx);
             }
         }
     }
@@ -262,22 +273,32 @@ public class MarkLogicClientImpl {
 
     // performClear
     public void performClear(Transaction tx, Resource... contexts){
-        GraphManager gmgr = getDatabaseClient().newGraphManager();
+        graphManager = getDatabaseClient().newGraphManager();
         for(Resource context : contexts) {
-            gmgr.delete(context.stringValue(), tx);
+            graphManager.delete(context.stringValue(), tx);
         }
     }
     public void performClearAll(Transaction tx){
-        GraphManager gmgr = getDatabaseClient().newGraphManager();
-        gmgr.deleteGraphs();
+        graphManager = getDatabaseClient().newGraphManager();
+        graphManager.deleteGraphs();
     }
 
+    // rulesets
+    public SPARQLRuleset getRulesets(){
+        return this.rulesets;
+    }
     public void setRulesets(Object rulesets){
         this.rulesets=(SPARQLRuleset) rulesets;
     }
 
-    public SPARQLRuleset getRulesets(){
-        return this.rulesets;
+
+    // constraining query
+    public void setConstrainingQueryDefinition(Object constrainingQueryDefinition){
+        logger.debug("constraining query is set");
+        this.constrainingQueryDef = constrainingQueryDef;
+    }
+    public RawCombinedQueryDefinition getConstrainingQueryDefinition(){
+        return this.constrainingQueryDef;
     }
 
     // getSPARQLBindings

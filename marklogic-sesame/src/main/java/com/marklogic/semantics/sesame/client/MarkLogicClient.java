@@ -27,7 +27,6 @@ import org.openrdf.model.Resource;
 import org.openrdf.model.URI;
 import org.openrdf.model.Value;
 import org.openrdf.model.ValueFactory;
-import org.openrdf.model.impl.ValueFactoryImpl;
 import org.openrdf.query.GraphQueryResult;
 import org.openrdf.query.TupleQueryResult;
 import org.openrdf.query.resultio.QueryResultIO;
@@ -139,12 +138,12 @@ public class MarkLogicClient {
 		getClient().performAdd(new ReaderInputStream(in), baseURI, dataFormat, this.tx, contexts);
 	}
 	public void sendAdd(String baseURI, Resource subject, URI predicate, Value object, Resource... contexts){
-		getClient().performAdd(baseURI,subject,predicate,object,this.tx,contexts);
+		getClient().performAdd(baseURI,(Resource)skolemize(subject),(URI)skolemize(predicate),skolemize(object),this.tx,contexts);
 	}
 
 	//remove
 	public void sendRemove(String baseURI, Resource subject,URI predicate, Value object, Resource... contexts){
-		getClient().performRemove(baseURI,subject, predicate, object, this.tx, contexts);
+		getClient().performRemove(baseURI, (Resource) skolemize(subject), (URI) skolemize(predicate), skolemize(object), this.tx, contexts);
 	}
 
 	//clear
@@ -191,19 +190,34 @@ public class MarkLogicClient {
 		return getClient().getRulesets();
 	}
 
-	//execute
+    // constraining query
+    public void setConstrainingQueryDefinition(Object constrainingQueryDefinition){
+        getClient().setConstrainingQueryDefinition(constrainingQueryDefinition);
+    }
+    public Object getConstrainingQueryDefinition(){
+        return getClient().getConstrainingQueryDefinition();
+    }
+
+
+    //execute
 	protected void execute(Runnable command) {
 		executor.execute(command);
 	}
 
-	// private
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    // private ////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+
+    //
 	private MarkLogicClientImpl getClient(){
 		return this._client;
 	}
 
+    //
 	private Value skolemize(Value s) {
 		if (s instanceof org.openrdf.model.BNode) {
-			return ValueFactoryImpl.getInstance().createURI("http://marklogic.com/semantics/blank/" + s.toString());
+			return getValueFactory().createURI("http://marklogic.com/semantics/blank/" + s.toString());
 		} else {
 			return s;
 		}

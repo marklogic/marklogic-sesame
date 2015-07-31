@@ -59,7 +59,7 @@ import static org.openrdf.query.QueryLanguage.SPARQL;
  *
  * @author James Fuller
  */
-public class MarkLogicRepositoryConnection extends RepositoryConnectionBase implements RepositoryConnection {
+public class MarkLogicRepositoryConnection extends RepositoryConnectionBase implements RepositoryConnection,MarkLogicRepositoryConnectionDependent {
 
     protected final Logger logger = LoggerFactory.getLogger(MarkLogicRepositoryConnection.class);
 
@@ -99,6 +99,10 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     }
 
     // prepareQuery entrypoint
+    @Override
+    public Query prepareQuery(String queryString) throws RepositoryException, MalformedQueryException {
+        return prepareTupleQuery(QueryLanguage.SPARQL, queryString, null);
+    }
     @Override
     public Query prepareQuery(QueryLanguage queryLanguage, String queryString) throws RepositoryException, MalformedQueryException {
         return prepareTupleQuery(queryLanguage, queryString, null);
