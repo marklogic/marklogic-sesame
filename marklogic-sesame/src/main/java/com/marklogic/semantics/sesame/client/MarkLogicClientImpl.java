@@ -230,7 +230,7 @@ public class MarkLogicClientImpl {
         SPARQLQueryDefinition qdef = sparqlManager.newQueryDefinition(sb.toString());
         qdef.withBinding("s", subject.stringValue());
         qdef.withBinding("p", predicate.stringValue());
-        qdef.withBinding("o", object.stringValue());
+        qdef.withBinding("o", object.toString());
         sparqlManager.executeUpdate(qdef, tx);
     }
 
@@ -248,7 +248,7 @@ public class MarkLogicClientImpl {
         SPARQLQueryDefinition qdef = sparqlManager.newQueryDefinition(sb.toString());
         qdef.withBinding("s", subject.stringValue());
         qdef.withBinding("p", predicate.stringValue());
-        qdef.withBinding("o", object.stringValue());
+        qdef.withBinding("o", object.toString());
         sparqlManager.executeUpdate(qdef, tx);
     }
 

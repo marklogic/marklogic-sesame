@@ -746,8 +746,8 @@ public class MarkLogicRepositoryConnectionTest {
         URI bob = conn.getValueFactory().createURI("http://example.org/people/bob");
         URI name = conn.getValueFactory().createURI("http://example.org/ontology/name");
         URI person = conn.getValueFactory().createURI("http://example.org/ontology/Person");
-        Literal bobsName = conn.getValueFactory().createLiteral("http://example.org/ontology/name/Bob");
-        Literal alicesName = conn.getValueFactory().createLiteral("http://example.org/ontology/name/Alice");
+        Literal bobsName = conn.getValueFactory().createLiteral("Bob");
+        Literal alicesName = conn.getValueFactory().createLiteral("Alice");
 
         conn.add(alice, RDF.TYPE, person, context5);
         conn.add(alice, name, alicesName,context5, context6);
@@ -764,6 +764,7 @@ public class MarkLogicRepositoryConnectionTest {
         conn.remove(bob, RDF.TYPE, person, context5);
         conn.remove(bob, name, bobsName, context5, context6);
 
+        conn.clear(context5,context6);
     }
 
     @Ignore
