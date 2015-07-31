@@ -68,6 +68,9 @@ task removeTestData <<{
     exec {
         commandLine 'curl --anyauth --user admin:admin -i -X DELETE http://localhost:8200/v1/graphs?graph=http://marklogic.com/test/g27'.tokenize()
     }
+    exec {
+        commandLine 'curl --anyauth --user admin:admin -i -X DELETE http://localhost:8200/v1/graphs?default'.tokenize()
+    }
 }
 
 task loadTestData << {
