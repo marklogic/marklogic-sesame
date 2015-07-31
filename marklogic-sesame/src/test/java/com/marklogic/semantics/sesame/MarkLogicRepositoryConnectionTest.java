@@ -23,22 +23,29 @@ import com.marklogic.client.semantics.SPARQLRuleset;
 import com.marklogic.semantics.sesame.query.MarkLogicTupleQuery;
 import info.aduna.iteration.ConvertingIteration;
 import info.aduna.iteration.ExceptionConvertingIteration;
+import info.aduna.iteration.Iterations;
 import org.junit.*;
 import org.openrdf.model.*;
+import org.openrdf.model.impl.LinkedHashModel;
 import org.openrdf.model.impl.ValueFactoryImpl;
 import org.openrdf.model.vocabulary.RDF;
 import org.openrdf.query.*;
+import org.openrdf.query.resultio.sparqlxml.SPARQLResultsXMLWriter;
 import org.openrdf.repository.Repository;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.RepositoryResult;
 import org.openrdf.rio.RDFFormat;
+import org.openrdf.rio.RDFWriter;
+import org.openrdf.rio.Rio;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.URL;
 import java.util.List;
 import java.util.Properties;
 
@@ -147,11 +154,11 @@ public class MarkLogicRepositoryConnectionTest {
         Query q = conn.prepareQuery(QueryLanguage.SPARQL, queryString);
 
         if (q instanceof TupleQuery) {
-            TupleQueryResult result = ((TupleQuery)q).evaluate();
+            TupleQueryResult result = ((TupleQuery) q).evaluate();
             while (result.hasNext()) {
                 BindingSet tuple = result.next();
-                Assert.assertEquals("s",tuple.getBinding("s").getName());
-                Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#AlexandriaGeodata",tuple.getBinding("s").getValue().stringValue());
+                Assert.assertEquals("s", tuple.getBinding("s").getName());
+                Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#AlexandriaGeodata", tuple.getBinding("s").getValue().stringValue());
             }
         }
     }
@@ -226,38 +233,38 @@ public class MarkLogicRepositoryConnectionTest {
     public void testSPARQLQueryDistinct()
             throws Exception {
 
-        try{
-        String queryString = "SELECT DISTINCT ?_ WHERE { GRAPH ?_ { ?s ?p ?o } }";
-        TupleQuery tupleQuery = conn.prepareTupleQuery(QueryLanguage.SPARQL, queryString);
-        TupleQueryResult result = tupleQuery.evaluate();
-        RepositoryResult<Resource> rr =
-         new RepositoryResult<Resource>(
-                new ExceptionConvertingIteration<Resource, RepositoryException>(
-                        new ConvertingIteration<BindingSet, Resource, QueryEvaluationException>(result) {
+        try {
+            String queryString = "SELECT DISTINCT ?_ WHERE { GRAPH ?_ { ?s ?p ?o } }";
+            TupleQuery tupleQuery = conn.prepareTupleQuery(QueryLanguage.SPARQL, queryString);
+            TupleQueryResult result = tupleQuery.evaluate();
+            RepositoryResult<Resource> rr =
+                    new RepositoryResult<Resource>(
+                            new ExceptionConvertingIteration<Resource, RepositoryException>(
+                                    new ConvertingIteration<BindingSet, Resource, QueryEvaluationException>(result) {
 
-                            @Override
-                            protected Resource convert(BindingSet bindings)
-                                    throws QueryEvaluationException {
-                                return (Resource) bindings.getValue("_");
-                            }
-                        }) {
+                                        @Override
+                                        protected Resource convert(BindingSet bindings)
+                                                throws QueryEvaluationException {
+                                            return (Resource) bindings.getValue("_");
+                                        }
+                                    }) {
 
-                    @Override
-                    protected RepositoryException convert(Exception e) {
-                        return new RepositoryException(e);
-                    }
-                });
+                                @Override
+                                protected RepositoryException convert(Exception e) {
+                                    return new RepositoryException(e);
+                                }
+                            });
 
-        Resource resource = rr.next();
+            Resource resource = rr.next();
 
-        logger.debug(resource.stringValue());
+            logger.debug(resource.stringValue());
 
-    } catch (MalformedQueryException e) {
-        throw new RepositoryException(e);
-    } catch (QueryEvaluationException e) {
-        throw new RepositoryException(e);
+        } catch (MalformedQueryException e) {
+            throw new RepositoryException(e);
+        } catch (QueryEvaluationException e) {
+            throw new RepositoryException(e);
+        }
     }
-}
 
     @Test
     public void testSPARQLQueryWithPagination()
@@ -307,6 +314,7 @@ public class MarkLogicRepositoryConnectionTest {
         Assert.assertEquals("0", oV.stringValue());
 
     }
+
     @Test
     public void testSPARQLQueryWithResultsHandler()
             throws Exception {
@@ -386,6 +394,46 @@ public class MarkLogicRepositoryConnectionTest {
         Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#Ahaz", oV.stringValue());
     }
 
+
+    @Test
+    public void testSPARQLWithWriter()
+            throws Exception {
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+        SPARQLResultsXMLWriter sparqlWriter = new SPARQLResultsXMLWriter(out);
+
+        String expected = "<?xml version='1.0' encoding='UTF-8'?>\n" +
+                "<sparql xmlns='http://www.w3.org/2005/sparql-results#'>\n" +
+                "\t<head>\n" +
+                "\t\t<variable name='s'/>\n" +
+                "\t\t<variable name='p'/>\n" +
+                "\t\t<variable name='o'/>\n" +
+                "\t</head>\n" +
+                "\t<results>\n" +
+                "\t\t<result>\n" +
+                "\t\t\t<binding name='s'>\n" +
+                "\t\t\t\t<uri>http://semanticbible.org/ns/2006/NTNames#AlexandriaGeodata</uri>\n" +
+                "\t\t\t</binding>\n" +
+                "\t\t\t<binding name='p'>\n" +
+                "\t\t\t\t<uri>http://semanticbible.org/ns/2006/NTNames#altitude</uri>\n" +
+                "\t\t\t</binding>\n" +
+                "\t\t\t<binding name='o'>\n" +
+                "\t\t\t\t<literal datatype='http://www.w3.org/2001/XMLSchema#int'>0</literal>\n" +
+                "\t\t\t</binding>\n" +
+                "\t\t</result>\n" +
+                "\t</results>\n" +
+                "</sparql>\n";
+
+        String queryString = "select * { ?s ?p ?o . } limit 1";
+        TupleQuery tupleQuery = conn.prepareTupleQuery(QueryLanguage.SPARQL, queryString);
+
+        tupleQuery.evaluate(sparqlWriter);
+
+        Assert.assertEquals(expected,out.toString());
+
+    }
+
     @Ignore
     public void incrementallyBuildQueryTest() throws MalformedQueryException, RepositoryException {
 
@@ -411,36 +459,35 @@ public class MarkLogicRepositoryConnectionTest {
 
     }
 
-    //negative test by supplying CONSTRUCT query to TupleQuery
-    @Ignore
-    public void negativeTestSPARQLQuery()
-            throws Exception {
-        String queryString = "PREFIX nn: <http://semanticbible.org/ns/2006/NTNames#>\n" +
-                "PREFIX test: <http://marklogic.com#test>\n" +
-                "\n" +
-                "construct { ?s  test:test \"0\"} where  {?s nn:childOf nn:Eve . }";
-        TupleQuery tupleQuery = conn.prepareTupleQuery(QueryLanguage.SPARQL, queryString);
-        TupleQueryResult results = tupleQuery.evaluate();
-
-        Assert.assertEquals(results.getBindingNames().get(0), "s");
-        Assert.assertEquals(results.getBindingNames().get(1), "p");
-        Assert.assertEquals(results.getBindingNames().get(2), "o");
-    }
-
     @Test
     public void testConstructQuery()
             throws Exception {
         String queryString = "PREFIX nn: <http://semanticbible.org/ns/2006/NTNames#>\n" +
                 "PREFIX test: <http://marklogic.com#test>\n" +
                 "\n" +
-                "construct { ?s  test:test \"0\"} where  {?s nn:childOf nn:Eve . }";
+                "construct { ?s  test:test \"0\"} where  {GRAPH <http://marklogic.com/test/my-graph> {?s nn:childOf nn:Eve . }}";
         GraphQuery graphQuery = conn.prepareGraphQuery(QueryLanguage.SPARQL, queryString);
         GraphQueryResult results = graphQuery.evaluate();
         Statement st1 = results.next();
-        Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#Abel",st1.getSubject().stringValue());
+        Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#Abel", st1.getSubject().stringValue());
         Statement st2 = results.next();
         Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#Cain", st2.getSubject().stringValue());
     }
+
+
+    @Ignore
+    public void testConstructQueryWithWriter()
+            throws Exception {
+        RDFWriter writer = Rio.createWriter(RDFFormat.TURTLE, System.out);
+
+        String queryString = "PREFIX nn: <http://semanticbible.org/ns/2006/NTNames#>\n" +
+                "PREFIX test: <http://marklogic.com#test>\n" +
+                "\n" +
+                "construct { ?s  test:test \"0\"} where  {GRAPH <http://marklogic.com/test/my-graph> {?s nn:childOf nn:Eve . }}";
+        conn.prepareGraphQuery(QueryLanguage.SPARQL,
+                "CONSTRUCT {?s ?p ?o } WHERE {?s ?p ?o } ").evaluate(writer);
+    }
+
 
     @Test
     public void testDescribeQuery()
@@ -449,38 +496,26 @@ public class MarkLogicRepositoryConnectionTest {
         GraphQuery graphQuery = conn.prepareGraphQuery(QueryLanguage.SPARQL, queryString);
         GraphQueryResult results = graphQuery.evaluate();
         Statement st1 = results.next();
-        Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#Shelah",st1.getSubject().stringValue());
-        Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#childOf",st1.getPredicate().stringValue());
-        Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#CainanSonOfArphaxad",st1.getObject().stringValue());
-    }
-
-    @Ignore
-    public void negativeTestDescribeQuery1()
-            throws Exception {
-        String queryString = "ASK { <http://semanticbible.org/ns/2006/NTNames#Shelah1> ?p ?o}";
-        GraphQuery graphQuery = conn.prepareGraphQuery(QueryLanguage.SPARQL, queryString);
-        GraphQueryResult results = graphQuery.evaluate();
-        Statement st1 = results.next();
-        Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#Shelah",st1.getSubject().stringValue());
-        Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#childOf",st1.getPredicate().stringValue());
-        Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#CainanSonOfArphaxad",st1.getObject().stringValue());
+        Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#Shelah", st1.getSubject().stringValue());
+        Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#childOf", st1.getPredicate().stringValue());
+        Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#CainanSonOfArphaxad", st1.getObject().stringValue());
     }
 
     @Test
     public void testBooleanQuery()
             throws Exception {
-        String queryString = "ASK { <http://semanticbible.org/ns/2006/NTNames#Shelah1> ?p ?o}";
+        String queryString = "ASK { GRAPH <http://marklogic.com/test/my-graph> {<http://semanticbible.org/ns/2006/NTNames#Shelah1> ?p ?o}}";
         BooleanQuery booleanQuery = conn.prepareBooleanQuery(QueryLanguage.SPARQL, queryString);
         boolean results = booleanQuery.evaluate();
         Assert.assertEquals(false, results);
-        queryString = "ASK { <http://semanticbible.org/ns/2006/NTNames#Shelah> ?p ?o}";
+        queryString = "ASK { GRAPH <http://marklogic.com/test/my-graph> { <http://semanticbible.org/ns/2006/NTNames#Shelah> ?p ?o}}";
         booleanQuery = conn.prepareBooleanQuery(QueryLanguage.SPARQL, queryString);
         results = booleanQuery.evaluate();
-        Assert.assertEquals(true,results);
+        Assert.assertEquals(true, results);
     }
 
     @Test
-    public void testUpdateQuery1()
+    public void testUpdateQuery()
             throws Exception {
         String defGraphQuery = "INSERT DATA { GRAPH <http://marklogic.com/test/g27> { <http://marklogic.com/test> <pp1> <oo1> } }";
         String checkQuery = "ASK WHERE { <http://marklogic.com/test> <pp1> <oo1> }";
@@ -491,26 +526,17 @@ public class MarkLogicRepositoryConnectionTest {
         Assert.assertEquals(true, results);
     }
 
-    @Ignore
-    public void testUpdateQuery2() throws MalformedQueryException, RepositoryException, UpdateExecutionException {
-        String defGraphQuery1 = "INSERT DATA { <s2> <p1> <o1> }";
-        Update updateQuery = conn.prepareUpdate(QueryLanguage.SPARQL, defGraphQuery1);
+    @Test
+    public void testUpdateQueryWithBaseURI()
+            throws Exception {
+        String defGraphQuery = "INSERT DATA { GRAPH <http://marklogic.com/test/context10> {  <http://marklogic.com/test/subject> <pp1> <oo1> } }";
+        String checkQuery = "ASK WHERE { <http://marklogic.com/test/subject> <pp1> <oo1> }";
+        Update updateQuery = conn.prepareUpdate(QueryLanguage.SPARQL, defGraphQuery,"http://marklogic.com/test/baseuri");
         updateQuery.execute();
-        String defGraphQuery4 ="CREATE GRAPH <http://example/update1>";
-        updateQuery = conn.prepareUpdate(QueryLanguage.SPARQL, defGraphQuery4);
-        updateQuery.execute();
-        String defGraphQuery5 ="BASE <http://example.org/> INSERT DATA { GRAPH <http://example.org/update2> { <s1> <p1> <o1>  } }";
-        updateQuery = conn.prepareUpdate(QueryLanguage.SPARQL, defGraphQuery5);
-        updateQuery.execute();
-        String defGraphQuery6 ="BASE <http://example.org/> INSERT DATA { GRAPH <http://example.org/update3> { <s1> <p1> <o1>  } }";
-        updateQuery = conn.prepareUpdate(QueryLanguage.SPARQL, defGraphQuery6);
-        updateQuery.execute();
-
-        Resource update1 = conn.getValueFactory().createURI("http://example.org/update1>");
-        Resource update2 = conn.getValueFactory().createURI("http://example.org/update2>");
-        Resource update3 = conn.getValueFactory().createURI("http://example.org/update3>");
-
-        conn.clear(update1,update2,update3);
+        BooleanQuery booleanQuery = conn.prepareBooleanQuery(QueryLanguage.SPARQL, checkQuery);
+        boolean results = booleanQuery.evaluate();
+        Assert.assertEquals(true, results);
+        conn.clear(conn.getValueFactory().createURI("http://marklogic.com/test/context10"));
     }
 
     @Test
@@ -531,52 +557,90 @@ public class MarkLogicRepositoryConnectionTest {
 
     }
 
-    @Ignore
-    public void testAddQuads() throws Exception{
-        File inputFile = new File("src/test/resources/testdata/nquads1.nq");
-        String baseURI = "http://example.org/example1/";
-        Resource context1 = conn.getValueFactory().createURI("http://marklogic.com/test/context1");
-        Resource graph1 = conn.getValueFactory().createURI("http://example.org/graph1");
-        Resource graph2 = conn.getValueFactory().createURI("http://example.org/graph2");
-        Resource graph3 = conn.getValueFactory().createURI("http://example.org/graph3");
-        Resource graph4 = conn.getValueFactory().createURI("http://example.org/graph4");
-
-        conn.add(inputFile, baseURI, RDFFormat.NQUADS,graph3);
-
-        String checkQuery = "ASK {GRAPH <http://example.org/graph3> { <http://example.org/kennedy/person1> <http://example.org/kennedy/death-year> '1969'' . } }";
-        BooleanQuery booleanQuery = conn.prepareBooleanQuery(QueryLanguage.SPARQL, checkQuery);
-        Assert.assertTrue(booleanQuery.evaluate());
-
-        conn.clear(graph3);
-    }
 
     @Test
-    public void testAddTurtle() throws Exception{
+    public void testAddTurtle() throws Exception {
         File inputFile = new File("src/test/resources/testdata/default-graph-1.ttl");
 
         String baseURI = "http://example.org/example1/";
 
         Resource context1 = conn.getValueFactory().createURI("http://marklogic.com/test/context1");
         Resource context2 = conn.getValueFactory().createURI("http://marklogic.com/test/context2");
-        conn.add(inputFile, baseURI, RDFFormat.TURTLE,context1,context2);
+        conn.add(inputFile, baseURI, RDFFormat.TURTLE, context1, context2);
         conn.clear(context1, context2);
     }
 
     @Test
-    public void testAddWithInputStream() throws Exception{
+    public void testAddWithInputStream() throws Exception {
         File inputFile = new File("src/test/resources/testdata/default-graph-1.ttl");
         FileInputStream is = new FileInputStream(inputFile);
         String baseURI = "http://example.org/example1/";
         Resource context3 = conn.getValueFactory().createURI("http://marklogic.com/test/context3");
         Resource context4 = conn.getValueFactory().createURI("http://marklogic.com/test/context4");
-        conn.add(is, baseURI, RDFFormat.TURTLE,context3,context4);
+        conn.add(is, baseURI, RDFFormat.TURTLE, context3, context4);
         conn.clear(context3, context4);
     }
 
+    // this test requires access to https://raw.githubusercontent.com/marklogic/marklogic-sesame/develop/marklogic-sesame/src/test/resources/testdata/testData.trig
     @Test
-    public void testAddStatement() throws Exception{
+    @Ignore
+    public void testAddTrigWithURL() throws Exception {
+        URL dataURL = new URL("https://raw.githubusercontent.com/marklogic/marklogic-sesame/develop/marklogic-sesame/src/test/resources/testdata/testData.trig?token=AApzyAXWDMZiXGGf9DFnhq534MpEP-tKks5VwxFswA%3D%3D");
+
+        Resource context1 = conn.getValueFactory().createURI("http://[example.org/g1");
+        Resource context2 = conn.getValueFactory().createURI("http://[example.org/g2");
+        Resource context3 = conn.getValueFactory().createURI("http://[example.org/g3");
+        Resource context4 = conn.getValueFactory().createURI("http://[example.org/g4");
+        Resource context5 = conn.getValueFactory().createURI("http://[example.org/o1");
+        Resource context6 = conn.getValueFactory().createURI("http://[example.org/o2");
+        Resource context7 = conn.getValueFactory().createURI("http://[example.org/o3");
+        Resource context8 = conn.getValueFactory().createURI("http://[example.org/o4");
+        conn.add(dataURL, dataURL.toString(), RDFFormat.TRIG, context3, context4);
+
+        String checkQuery = "ASK { <http://example.org/r1> <http://example.org/p1> \"string value 0\" .}";
+        BooleanQuery booleanQuery = conn.prepareBooleanQuery(QueryLanguage.SPARQL, checkQuery);
+        Assert.assertTrue(booleanQuery.evaluate());
+
+        conn.clear(context1,context2,context3,context4,context5,context6,context7,context8);
+    }
+
+    @Test
+    public void testAddNQuads() throws Exception{
+        File inputFile = new File("src/test/resources/testdata/nquads1.nq");
+        String baseURI = "http://example.org/example1/";
+
+        Resource graph1 = conn.getValueFactory().createURI("http://example.org/graph1");
+        Resource graph2 = conn.getValueFactory().createURI("http://example.org/graph2");
+        Resource graph3 = conn.getValueFactory().createURI("http://example.org/graph3");
+        Resource graph4 = conn.getValueFactory().createURI("http://example.org/graph4");
+
+        conn.add(inputFile,baseURI,RDFFormat.NQUADS);
+
+        String checkQuery = "ASK {GRAPH <http://example.org/graph4> { <http://example.org/kennedy/person1> <http://example.org/kennedy/death-year> '1969' . } }";
+        BooleanQuery booleanQuery = conn.prepareBooleanQuery(QueryLanguage.SPARQL, checkQuery);
+        Assert.assertTrue(booleanQuery.evaluate());
+
+        conn.clear(graph1,graph2,graph3,graph4);
+    }
+
+    @Test
+    public void testAddNquadWithInputStream() throws Exception {
+        File inputFile = new File("src/test/resources/testdata/nquads1.nq");
+        FileInputStream is = new FileInputStream(inputFile);
+        String baseURI = "http://example.org/example1/";
+        Resource graph1 = conn.getValueFactory().createURI("http://example.org/graph1");
+        Resource graph2 = conn.getValueFactory().createURI("http://example.org/graph2");
+        Resource graph3 = conn.getValueFactory().createURI("http://example.org/graph3");
+        Resource graph4 = conn.getValueFactory().createURI("http://example.org/graph4");
+        conn.add(is, baseURI, RDFFormat.NQUADS);
+        conn.clear(graph1,graph2,graph3,graph4);
+    }
+
+    @Test
+    public void testAddRemoveStatementWithMultipleContext() throws Exception {
 
         Resource context5 = conn.getValueFactory().createURI("http://marklogic.com/test/context5");
+        Resource context6 = conn.getValueFactory().createURI("http://marklogic.com/test/context6");
 
         URI alice = conn.getValueFactory().createURI("http://example.org/people/alice");
         URI bob = conn.getValueFactory().createURI("http://example.org/people/bob");
@@ -585,21 +649,15 @@ public class MarkLogicRepositoryConnectionTest {
         Literal bobsName = conn.getValueFactory().createLiteral("Bob");
         Literal alicesName = conn.getValueFactory().createLiteral("Alice");
 
-        conn.add(alice, RDF.TYPE, person,context5);
-        conn.add(alice, name, alicesName,context5);
-        conn.add(bob, RDF.TYPE, person,context5);
-        conn.add(bob, name, bobsName, context5);
-
-        conn.clear(context5);
+        conn.add(alice, RDF.TYPE, person, context5);
+        conn.add(alice, name, alicesName,context5, context6);
+        conn.add(bob, RDF.TYPE, person, context5);
+        conn.add(bob, name, bobsName, context5, context6);
 
         conn.remove(alice, RDF.TYPE, person, context5);
-        conn.remove(alice, name, alicesName, context5);
+        conn.remove(alice, name, alicesName, context5, context6);
         conn.remove(bob, RDF.TYPE, person, context5);
-        conn.remove(bob, name, bobsName, context5);
-
-        Resource defaultcontext = conn.getValueFactory().createURI("http://marklogic.com/semantics#default-graph");
-        conn.clear(defaultcontext);
-
+        conn.remove(bob, name, bobsName, context5, context6);
     }
 
     @Test
@@ -618,12 +676,12 @@ public class MarkLogicRepositoryConnectionTest {
     }
 
     @Test
-    public void testHasStatement(){
+    public void testHasStatement() {
 
     }
 
     @Test
-    public void testTransaction1() throws Exception{
+    public void testTransaction1() throws Exception {
         File inputFile = new File("src/test/resources/testdata/default-graph-1.ttl");
         String baseURI = "http://example.org/example1/";
         Resource context1 = conn.getValueFactory().createURI("http://marklogic.com/test/transactiontest");
@@ -633,7 +691,7 @@ public class MarkLogicRepositoryConnectionTest {
     }
 
     @Test
-    public void testTransaction2() throws Exception{
+    public void testTransaction2() throws Exception {
         File inputFile = new File("src/test/resources/testdata/default-graph-1.ttl");
 
         String baseURI = "http://example.org/example1/";
@@ -646,7 +704,7 @@ public class MarkLogicRepositoryConnectionTest {
     }
 
     @Test
-    public void testTransaction3() throws Exception{
+    public void testTransaction3() throws Exception {
         Resource context1 = conn.getValueFactory().createURI("http://marklogic.com/test/my-graph");
         conn.begin();
         conn.clear(context1);
@@ -654,21 +712,22 @@ public class MarkLogicRepositoryConnectionTest {
     }
 
     @Test
-    public void testOpen() throws Exception{
+    public void testOpen() throws Exception {
         Assert.assertEquals(true, conn.isOpen());
         conn.close();
         Assert.assertEquals(false, conn.isOpen());
     }
 
     @Test
-    public void testActive() throws Exception{
+    public void testActive() throws Exception {
         Assert.assertEquals(false, conn.isActive());
         conn.begin();
         Assert.assertEquals(true, conn.isActive());
     }
 
+    @Test
     @Ignore
-    public void testSize() throws Exception{
+    public void testSize() throws Exception {
         File inputFile = new File("src/test/resources/testdata/default-graph-1.ttl");
         String baseURI = "http://example.org/example1/";
         Resource context1 = conn.getValueFactory().createURI("http://marklogic.com/test/sizetest");
@@ -676,5 +735,41 @@ public class MarkLogicRepositoryConnectionTest {
         conn.clear(context1);
         Assert.assertEquals(10, conn.size(context1));
         conn.clear(context1);
+    }
+
+    @Test
+    public void testModel() throws Exception{
+        Resource context5 = conn.getValueFactory().createURI("http://marklogic.com/test/context5");
+        Resource context6 = conn.getValueFactory().createURI("http://marklogic.com/test/context6");
+
+        URI alice = conn.getValueFactory().createURI("http://example.org/people/alice");
+        URI bob = conn.getValueFactory().createURI("http://example.org/people/bob");
+        URI name = conn.getValueFactory().createURI("http://example.org/ontology/name");
+        URI person = conn.getValueFactory().createURI("http://example.org/ontology/Person");
+        Literal bobsName = conn.getValueFactory().createLiteral("http://example.org/ontology/name/Bob");
+        Literal alicesName = conn.getValueFactory().createLiteral("http://example.org/ontology/name/Alice");
+
+        conn.add(alice, RDF.TYPE, person, context5);
+        conn.add(alice, name, alicesName,context5, context6);
+        conn.add(bob, RDF.TYPE, person, context5);
+        conn.add(bob, name, bobsName, context5, context6);
+
+        //TBD- need to be able to set baseURI
+        RepositoryResult<Statement> statements = conn.getStatements(alice, null, null, true,context5);
+
+        Model aboutAlice = Iterations.addAll(statements, new LinkedHashModel());
+
+        conn.remove(alice, RDF.TYPE, person, context5);
+        conn.remove(alice, name, alicesName, context5, context6);
+        conn.remove(bob, RDF.TYPE, person, context5);
+        conn.remove(bob, name, bobsName, context5, context6);
+
+    }
+
+    @Ignore
+    public void testDataset() throws Exception{
+        String queryString = "select ?s ?p ?o { ?s ?p ?o } limit 10 ";
+        TupleQuery tupleQuery = conn.prepareTupleQuery(QueryLanguage.SPARQL, queryString);
+
     }
 }
