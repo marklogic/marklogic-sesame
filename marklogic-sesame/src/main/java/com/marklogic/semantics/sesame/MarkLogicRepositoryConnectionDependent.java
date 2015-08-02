@@ -17,24 +17,16 @@
  * A library that enables access to a MarkLogic-backed triple-store via the
  * Sesame API.
  */
-package com.marklogic.semantics.sesame.query;
+package com.marklogic.semantics.sesame;
 
-/**
- *
- * @author James Fuller
- */
-public interface MarkLogicQueryDependent {
+import org.openrdf.query.BooleanQuery;
+import org.openrdf.query.MalformedQueryException;
+import org.openrdf.query.Query;
+import org.openrdf.repository.RepositoryException;
 
-    Object getRulesets();
-    void setRulesets(Object rulesets);
+public interface MarkLogicRepositoryConnectionDependent {
 
-    String getBaseURI();
-    void setBaseURI(String baseURI);
+    public Query prepareQuery(String queryString) throws RepositoryException, MalformedQueryException;
 
-    Object getConstrainingQueryDefinition();
-    void setConstrainingQueryDefinition(Object constrainingQueryDefinition);
-
-    Object getGraphPerms();
-    void setGraphPerms(Object graphPerms);
-
+    public BooleanQuery prepareBooleanQuery(String queryString) throws RepositoryException, MalformedQueryException;
 }

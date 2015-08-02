@@ -26,7 +26,6 @@ import org.openrdf.model.impl.ValueFactoryImpl;
 import org.openrdf.query.Dataset;
 import org.openrdf.query.Query;
 import org.openrdf.query.QueryLanguage;
-import org.openrdf.query.UnsupportedQueryLanguageException;
 import org.openrdf.query.impl.AbstractQuery;
 import org.openrdf.repository.sparql.query.QueryStringUtil;
 import org.openrdf.repository.sparql.query.SPARQLQueryBindingSet;
@@ -73,26 +72,6 @@ public class MarkLogicQuery extends AbstractQuery implements Query,MarkLogicClie
         return this.client;
     }
 
-    // base uri
-    @Override
-    public String getBaseURI() {
-        return baseURI;
-    }
-    @Override
-    public void setBaseURI(String baseURI) {
-        this.baseURI = baseURI;
-    }
-
-    // query language
-    public QueryLanguage getQueryLanguage() {
-        return queryLanguage;
-    }
-    public void setQueryLanguage(QueryLanguage queryLanguage){
-        if (QueryLanguage.SPARQL.equals(queryLanguage))
-            queryLanguage = QueryLanguage.SPARQL;
-        throw new UnsupportedQueryLanguageException("Unsupported query language " + queryLanguage.getName());
-    }
-
     // query string
     public String getQueryString() {
         return QueryStringUtil.getQueryString(this.queryString, getBindings());
@@ -116,7 +95,7 @@ public class MarkLogicQuery extends AbstractQuery implements Query,MarkLogicClie
     // binding
     @Override
     public void setBinding(String name, Value value) {
-        bindingSet.addBinding(name,value);
+        bindingSet.addBinding(name, value);
     }
     @Override
     public void removeBinding(String name) {
@@ -155,6 +134,26 @@ public class MarkLogicQuery extends AbstractQuery implements Query,MarkLogicClie
         return 0;
     }
 
+    // base uri
+    @Override
+    public String getBaseURI() {
+        return baseURI;
+    }
+    @Override
+    public void setBaseURI(String baseURI) {
+        this.baseURI = baseURI;
+    }
+
+    // constraining query
+    @Override
+    public void setConstrainingQueryDefinition(Object constrainingQueryDefinition) {
+        getMarkLogicClient().setConstrainingQueryDefinition(constrainingQueryDefinition);
+    }
+    @Override
+    public Object getConstrainingQueryDefinition() {
+        return getMarkLogicClient().getConstrainingQueryDefinition();
+    }
+
     // rulesets
     public void setRulesets(Object rulesets){
         getMarkLogicClient().setRulesets(rulesets);
@@ -162,4 +161,15 @@ public class MarkLogicQuery extends AbstractQuery implements Query,MarkLogicClie
     public Object getRulesets(){
         return getMarkLogicClient().getRulesets();
     }
+
+    // graph perms
+    @Override
+    public void setGraphPerms(Object graphPerms) {
+        getMarkLogicClient().setGraphPerms(graphPerms);
+    }
+    @Override
+    public Object getGraphPerms() {
+        return getMarkLogicClient().getGraphPerms();
+    }
+
 }
