@@ -74,7 +74,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     public MarkLogicRepositoryConnection(MarkLogicRepository repository, MarkLogicClient client, boolean quadMode) {
         super(repository);
         this.client = client;
-        this.quadMode = quadMode;
+        this.quadMode = true;
         client.setValueFactory(repository.getValueFactory());
     }
 

@@ -28,9 +28,7 @@ import com.marklogic.client.io.FileHandle;
 import com.marklogic.client.io.InputStreamHandle;
 import com.marklogic.client.query.RawCombinedQueryDefinition;
 import com.marklogic.client.semantics.*;
-import org.openrdf.model.Resource;
-import org.openrdf.model.URI;
-import org.openrdf.model.Value;
+import org.openrdf.model.*;
 import org.openrdf.query.Binding;
 import org.openrdf.repository.sparql.query.SPARQLQueryBindingSet;
 import org.openrdf.rio.RDFFormat;
@@ -259,7 +257,7 @@ public class MarkLogicClientImpl {
         SPARQLQueryDefinition qdef = sparqlManager.newQueryDefinition(sb.toString());
         qdef.withBinding("s", subject.stringValue());
         qdef.withBinding("p", predicate.stringValue());
-        qdef.withBinding("o", object.toString());
+        qdef.withBinding("o", object.stringValue());
         sparqlManager.executeUpdate(qdef, tx);
     }
 
