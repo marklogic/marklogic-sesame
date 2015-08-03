@@ -31,7 +31,6 @@ import org.openrdf.model.impl.ValueFactoryImpl;
 import org.openrdf.model.vocabulary.RDF;
 import org.openrdf.query.*;
 import org.openrdf.query.resultio.sparqlxml.SPARQLResultsXMLWriter;
-import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.RepositoryResult;
 import org.openrdf.rio.RDFFormat;
@@ -56,7 +55,7 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    protected RepositoryConnection conn;
+    protected MarkLogicRepositoryConnection conn;
     protected ValueFactory f;
 
     @Before
@@ -65,7 +64,7 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
         logger.debug("setting up test");
         rep.initialize();
         f = rep.getValueFactory();
-        conn = rep.getConnection();
+        conn =(MarkLogicRepositoryConnection)rep.getConnection();
         logger.info("test setup complete.");
     }
 
@@ -168,6 +167,17 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
         Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#AmphipolisGeodata", sV1.stringValue());
         Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#altitude", pV1.stringValue());
         Assert.assertEquals("0", oV1.stringValue());
+    }
+
+    @Test
+    public void testPrepareTupleQueryQueryStringMethod() throws Exception{
+        String queryString = "select ?s ?p ?o { ?s ?p ?o } limit 10 ";
+        TupleQuery tupleQuery = conn.prepareTupleQuery(queryString);
+        TupleQueryResult results = tupleQuery.evaluate();
+
+        Assert.assertEquals(results.getBindingNames().get(0), "s");
+        Assert.assertEquals(results.getBindingNames().get(1), "p");
+        Assert.assertEquals(results.getBindingNames().get(2), "o");
     }
 
     @Test
@@ -617,7 +627,7 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
         Resource graph3 = conn.getValueFactory().createURI("http://example.org/graph3");
         Resource graph4 = conn.getValueFactory().createURI("http://example.org/graph4");
         conn.add(is, baseURI, RDFFormat.NQUADS);
-        conn.clear(graph1,graph2,graph3,graph4);
+        conn.clear(graph1, graph2, graph3, graph4);
     }
 
     @Test
@@ -751,10 +761,5 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
         conn.clear(context5,context6);
     }
 
-    @Ignore
-    public void testDataset() throws Exception{
-        String queryString = "select ?s ?p ?o { ?s ?p ?o } limit 10 ";
-        TupleQuery tupleQuery = conn.prepareTupleQuery(QueryLanguage.SPARQL, queryString);
 
-    }
 }

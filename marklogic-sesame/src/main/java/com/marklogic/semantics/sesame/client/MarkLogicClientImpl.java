@@ -48,7 +48,7 @@ public class MarkLogicClientImpl {
 
     protected final Logger logger = LoggerFactory.getLogger(MarkLogicClientImpl.class);
 
-    public static final String DEFAULT_GRAPH_URI = "http://marklogic.com/semantics#default-graph";
+    private static final String DEFAULT_GRAPH_URI = "http://marklogic.com/semantics#default-graph";
 
     private String host;
 
@@ -75,7 +75,16 @@ public class MarkLogicClientImpl {
 
     // constructor
     public MarkLogicClientImpl(String host, int port, String user, String password, String auth) {
-        this.databaseClient = DatabaseClientFactory.newClient(host, port, user, password, DatabaseClientFactory.Authentication.valueOf(auth));
+        setDatabaseClient(DatabaseClientFactory.newClient(host, port, user, password, DatabaseClientFactory.Authentication.valueOf(auth)));
+    }
+    public MarkLogicClientImpl(Object databaseClient) {
+        if(databaseClient instanceof  DatabaseClient){
+            setDatabaseClient((DatabaseClient)databaseClient);
+        }
+    }
+
+    private void setDatabaseClient(DatabaseClient databaseClient){
+        this.databaseClient=databaseClient;
     }
 
     // host

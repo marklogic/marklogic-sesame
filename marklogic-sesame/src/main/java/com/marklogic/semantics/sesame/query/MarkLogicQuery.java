@@ -24,7 +24,6 @@ import com.marklogic.semantics.sesame.client.MarkLogicClientDependent;
 import org.openrdf.model.Value;
 import org.openrdf.model.impl.ValueFactoryImpl;
 import org.openrdf.query.Dataset;
-import org.openrdf.query.Query;
 import org.openrdf.query.QueryLanguage;
 import org.openrdf.query.impl.AbstractQuery;
 import org.openrdf.repository.sparql.query.QueryStringUtil;
@@ -36,7 +35,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author James Fuller
  */
-public class MarkLogicQuery extends AbstractQuery implements Query,MarkLogicClientDependent,MarkLogicQueryDependent {
+public class MarkLogicQuery extends AbstractQuery implements MarkLogicClientDependent,MarkLogicQueryDependent {
 
     protected final Logger logger = LoggerFactory.getLogger(MarkLogicQuery.class);
 
