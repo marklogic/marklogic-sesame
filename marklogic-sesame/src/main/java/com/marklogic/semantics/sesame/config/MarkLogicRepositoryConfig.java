@@ -54,6 +54,25 @@ public class MarkLogicRepositoryConfig extends RepositoryImplConfigBase {
 	private String password;
 	private String auth;
 
+	public MarkLogicRepositoryConfig() {
+		super(MarkLogicRepositoryFactory.REPOSITORY_TYPE);
+	}
+    public MarkLogicRepositoryConfig(String host, int port, String user, String password, String auth) {
+        this();
+        this.host = host;
+        this.port = port;
+        this.user = user;
+        this.password = password;
+        this.auth = auth;
+    }
+	public MarkLogicRepositoryConfig(String queryEndpointUrl) {
+        setQueryEndpointUrl(queryEndpointUrl);
+	}
+	public MarkLogicRepositoryConfig(String queryEndpointUrl, String updateEndpointUrl) {
+		this(queryEndpointUrl);
+		setUpdateEndpointUrl(updateEndpointUrl);
+	}
+
 	public String getHost() {
 		return host;
 	}
@@ -92,18 +111,6 @@ public class MarkLogicRepositoryConfig extends RepositoryImplConfigBase {
 
 	public void setAuth(String auth) {
 		this.auth = auth;
-	}
-	public MarkLogicRepositoryConfig() {
-		super(MarkLogicRepositoryFactory.REPOSITORY_TYPE);
-	}
-
-	public MarkLogicRepositoryConfig(String queryEndpointUrl) {
-		setQueryEndpointUrl(queryEndpointUrl);
-	}
-	
-	public MarkLogicRepositoryConfig(String queryEndpointUrl, String updateEndpointUrl) {
-		this(queryEndpointUrl);
-		setUpdateEndpointUrl(updateEndpointUrl);
 	}
 
 	public String getQueryEndpointUrl() {

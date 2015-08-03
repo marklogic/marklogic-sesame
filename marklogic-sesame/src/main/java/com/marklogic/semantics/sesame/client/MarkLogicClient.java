@@ -79,6 +79,10 @@ public class MarkLogicClient {
 		this._client = new MarkLogicClientImpl(host,port,user,password,auth);
 	}
 
+	public MarkLogicClient(Object databaseClient) {
+		this._client = new MarkLogicClientImpl(databaseClient);
+	}
+
 	// valuefactory
 	public ValueFactory getValueFactory() {
 		return this.f;

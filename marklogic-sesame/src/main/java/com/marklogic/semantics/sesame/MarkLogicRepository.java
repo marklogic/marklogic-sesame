@@ -23,6 +23,7 @@ import com.marklogic.semantics.sesame.client.MarkLogicClient;
 import com.marklogic.semantics.sesame.client.MarkLogicClientDependent;
 import org.openrdf.model.ValueFactory;
 import org.openrdf.model.impl.ValueFactoryImpl;
+import org.openrdf.repository.Repository;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.base.RepositoryBase;
@@ -35,7 +36,7 @@ import java.io.File;
  *
  * @author James Fuller
  */
-public class MarkLogicRepository extends RepositoryBase implements MarkLogicClientDependent {
+public class MarkLogicRepository extends RepositoryBase implements Repository,MarkLogicClientDependent {
 
     protected final Logger logger = LoggerFactory.getLogger(MarkLogicRepository.class);
 
@@ -60,20 +61,28 @@ public class MarkLogicRepository extends RepositoryBase implements MarkLogicClie
         super();
         this.client = getMarkLogicClient();
         this.f = new ValueFactoryImpl();
-        this.quadMode = false;
-        this.auth = "DIGEST";
+        this.quadMode = true;
+        this.auth="DIGEST";
     }
     public MarkLogicRepository(String host, int port, String user, String password, String auth) {
         super();
+        this.f = new ValueFactoryImpl();
+        this.quadMode = true;
+        this.auth="DIGEST";
         this.host = host;
         this.port = port;
         this.user = user;
         this.password = password;
         this.auth = auth;
         this.client = getMarkLogicClient();
-        this.f = new ValueFactoryImpl();
-        this.quadMode = false;
     }
+    public MarkLogicRepository(Object databaseClient) {
+        super();
+        this.f = new ValueFactoryImpl();
+        this.quadMode = true;
+        this.client = new MarkLogicClient(databaseClient);
+    }
+
 
     // valuefactory
     public ValueFactory getValueFactory() {
@@ -108,7 +117,7 @@ public class MarkLogicRepository extends RepositoryBase implements MarkLogicClie
         return true;
     }
 
-    //
+    @Override
     public RepositoryConnection getConnection()
             throws RepositoryException {
         if (!isInitialized()) {
@@ -129,6 +138,7 @@ public class MarkLogicRepository extends RepositoryBase implements MarkLogicClie
     public synchronized void setMarkLogicClient(MarkLogicClient client) {
         this.client = client;
     }
+
 
     // quad mode
     public boolean isQuadMode() {

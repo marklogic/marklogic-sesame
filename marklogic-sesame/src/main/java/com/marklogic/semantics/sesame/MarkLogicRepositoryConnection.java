@@ -32,12 +32,7 @@ import org.openrdf.model.impl.StatementImpl;
 import org.openrdf.query.*;
 import org.openrdf.query.impl.DatasetImpl;
 import org.openrdf.query.parser.QueryParserUtil;
-import org.openrdf.query.resultio.BooleanQueryResultFormat;
-import org.openrdf.query.resultio.TupleQueryResultFormat;
-import org.openrdf.repository.RepositoryConnection;
-import org.openrdf.repository.RepositoryException;
-import org.openrdf.repository.RepositoryResult;
-import org.openrdf.repository.UnknownTransactionStateException;
+import org.openrdf.repository.*;
 import org.openrdf.repository.base.RepositoryConnectionBase;
 import org.openrdf.repository.sparql.query.SPARQLQueryBindingSet;
 import org.openrdf.rio.RDFFormat;
@@ -75,17 +70,11 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
 
     private MarkLogicClient client;
 
-    private TupleQueryResultFormat preferredTQRFormat = TupleQueryResultFormat.BINARY;
-
-    private BooleanQueryResultFormat preferredBQRFormat = BooleanQueryResultFormat.TEXT;
-
-    private RDFFormat preferredRDFFormat = RDFFormat.TURTLE;
-
     //constructor
     public MarkLogicRepositoryConnection(MarkLogicRepository repository, MarkLogicClient client, boolean quadMode) {
         super(repository);
         this.client = client;
-        this.quadMode = quadMode;
+        this.quadMode = true;
         client.setValueFactory(repository.getValueFactory());
     }
 
@@ -144,6 +133,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     }
 
     // prepareGraphQuery
+    @Override
     public GraphQuery prepareGraphQuery(String queryString) throws RepositoryException, MalformedQueryException {
         return prepareGraphQuery(QueryLanguage.SPARQL, queryString, null);
     }
@@ -162,6 +152,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     }
 
     // prepareBooleanQuery
+    @Override
     public BooleanQuery prepareBooleanQuery(String queryString) throws RepositoryException, MalformedQueryException {
         return prepareBooleanQuery(QueryLanguage.SPARQL, queryString, null);
     }
@@ -178,6 +169,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     }
 
     // prepareUpdate
+    @Override
     public Update prepareUpdate(String queryString) throws RepositoryException, MalformedQueryException {
         return prepareUpdate(QueryLanguage.SPARQL, queryString, null);
     }
