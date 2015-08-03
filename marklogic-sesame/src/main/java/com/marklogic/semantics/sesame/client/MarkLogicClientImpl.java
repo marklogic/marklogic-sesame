@@ -153,7 +153,7 @@ public class MarkLogicClientImpl {
         sb.append(queryString);
         SPARQLQueryDefinition qdef = sparqlManager.newQueryDefinition(sb.toString());
         if(rulesets instanceof SPARQLRuleset){qdef.setRulesets(rulesets);};
-        if(constrainingQueryDef instanceof RawCombinedQueryDefinition){qdef.setConstrainingQueryDefinintion(constrainingQueryDef);};
+        if(constrainingQueryDef instanceof RawCombinedQueryDefinition){qdef.setConstrainingQueryDefinition(constrainingQueryDef);};
         qdef.setIncludeDefaultRulesets(includeInferred);
         qdef.setBindings(getSPARQLBindings(bindings));
         sparqlManager.executeSelect(qdef, handle, start, pageLength, tx);
@@ -171,7 +171,7 @@ public class MarkLogicClientImpl {
         sb.append(queryString);
         SPARQLQueryDefinition qdef = sparqlManager.newQueryDefinition(sb.toString());
         if(rulesets instanceof SPARQLRuleset){qdef.setRulesets(rulesets);};
-        if(constrainingQueryDef instanceof RawCombinedQueryDefinition){qdef.setConstrainingQueryDefinintion(constrainingQueryDef);};
+        if(constrainingQueryDef instanceof RawCombinedQueryDefinition){qdef.setConstrainingQueryDefinition(constrainingQueryDef);};
         qdef.setIncludeDefaultRulesets(includeInferred);
         qdef.setBindings(getSPARQLBindings(bindings));
         sparqlManager.executeDescribe(qdef, handle, tx);
@@ -190,7 +190,7 @@ public class MarkLogicClientImpl {
         if(constrainingQueryDef instanceof RawCombinedQueryDefinition){
             logger.debug("set constraining query");
 
-            qdef.setConstrainingQueryDefinintion(constrainingQueryDef);};
+            qdef.setConstrainingQueryDefinition(constrainingQueryDef);};
         qdef.setBindings(getSPARQLBindings(bindings));
         return sparqlManager.executeAsk(qdef, tx);
     }
@@ -204,7 +204,7 @@ public class MarkLogicClientImpl {
         SPARQLQueryDefinition qdef = sparqlManager.newQueryDefinition(sb.toString());
         if(rulesets instanceof SPARQLRuleset){qdef.setRulesets(rulesets);};
         if(constrainingQueryDef instanceof RawCombinedQueryDefinition){
-            qdef.setConstrainingQueryDefinintion(constrainingQueryDef);};
+            qdef.setConstrainingQueryDefinition(constrainingQueryDef);};
         qdef.setIncludeDefaultRulesets(includeInferred);
         qdef.setBindings(getSPARQLBindings(bindings));
         sparqlManager.executeUpdate(qdef, tx);
