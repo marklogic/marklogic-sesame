@@ -140,7 +140,7 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
     public void testSPARQLQuery()
             throws Exception {
 
-        String queryString = "select ?s ?p ?o { ?s ?p ?o } limit 2 ";
+        String queryString = "select * { ?s ?p ?o } limit 2 ";
         TupleQuery tupleQuery = conn.prepareTupleQuery(QueryLanguage.SPARQL, queryString);
         TupleQueryResult results = tupleQuery.evaluate();
 
@@ -633,15 +633,15 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
     @Test
     public void testAddRemoveStatementWithMultipleContext() throws Exception {
 
-        Resource context5 = conn.getValueFactory().createURI("http://marklogic.com/test/context5");
-        Resource context6 = conn.getValueFactory().createURI("http://marklogic.com/test/context6");
+        Resource context5 = conn.getValueFactory().createURI("http://marklogic.com/test/context7");
+        Resource context6 = conn.getValueFactory().createURI("http://marklogic.com/test/context8");
 
         URI alice = conn.getValueFactory().createURI("http://example.org/people/alice");
         URI bob = conn.getValueFactory().createURI("http://example.org/people/bob");
         URI name = conn.getValueFactory().createURI("http://example.org/ontology/name");
         URI person = conn.getValueFactory().createURI("http://example.org/ontology/Person");
-        Literal bobsName = conn.getValueFactory().createLiteral("Bob");
-        Literal alicesName = conn.getValueFactory().createLiteral("Alice");
+        Literal bobsName = conn.getValueFactory().createLiteral("Bob","http://www.w3.org/2001/XMLSchema#string");
+        Literal alicesName = conn.getValueFactory().createLiteral("Alice","http://www.w3.org/2001/XMLSchema#string");
 
         conn.add(alice, RDF.TYPE, person, context5);
         conn.add(alice, name, alicesName,context5, context6);
@@ -652,6 +652,8 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
         conn.remove(alice, name, alicesName, context5, context6);
         conn.remove(bob, RDF.TYPE, person, context5);
         conn.remove(bob, name, bobsName, context5, context6);
+
+        conn.clear(context5,context6);
     }
 
     @Test
@@ -740,8 +742,8 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
         URI bob = conn.getValueFactory().createURI("http://example.org/people/bob");
         URI name = conn.getValueFactory().createURI("http://example.org/ontology/name");
         URI person = conn.getValueFactory().createURI("http://example.org/ontology/Person");
-        Literal bobsName = conn.getValueFactory().createLiteral("Bob");
-        Literal alicesName = conn.getValueFactory().createLiteral("Alice");
+        Literal bobsName = conn.getValueFactory().createLiteral("Bob","http://www.w3.org/2001/XMLSchema#string");
+        Literal alicesName = conn.getValueFactory().createLiteral("Alice","http://www.w3.org/2001/XMLSchema#string");
 
         conn.add(alice, RDF.TYPE, person, context5);
         conn.add(alice, name, alicesName,context5, context6);

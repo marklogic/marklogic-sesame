@@ -61,13 +61,13 @@ public class MarkLogicRepository extends RepositoryBase implements Repository,Ma
         super();
         this.client = getMarkLogicClient();
         this.f = new ValueFactoryImpl();
-        this.quadMode = false;
+        this.quadMode = true;
         this.auth="DIGEST";
     }
     public MarkLogicRepository(String host, int port, String user, String password, String auth) {
         super();
         this.f = new ValueFactoryImpl();
-        this.quadMode = false;
+        this.quadMode = true;
         this.auth="DIGEST";
         this.host = host;
         this.port = port;
@@ -79,7 +79,7 @@ public class MarkLogicRepository extends RepositoryBase implements Repository,Ma
     public MarkLogicRepository(Object databaseClient) {
         super();
         this.f = new ValueFactoryImpl();
-        this.quadMode = false;
+        this.quadMode = true;
         this.client = new MarkLogicClient(databaseClient);
     }
 
