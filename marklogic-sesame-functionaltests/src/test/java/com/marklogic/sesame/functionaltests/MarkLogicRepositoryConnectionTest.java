@@ -239,7 +239,7 @@ public class MarkLogicRepositoryConnectionTest  extends  ConnectedRESTQA{
         Assert.assertTrue(testReaderCon instanceof MarkLogicRepositoryConnection);
        
         
-   /*   //Creating MLSesame Connection object Using MarkLogicRepository default constructor
+      //Creating MLSesame Connection object Using MarkLogicRepository default constructor
         
 		testWriterRepository = new MarkLogicRepository();
 		testWriterRepository.setMarkLogicClient(new MarkLogicClient("localhost", restPort, "writer", "writer", "DIGEST"));
@@ -250,7 +250,7 @@ public class MarkLogicRepositoryConnectionTest  extends  ConnectedRESTQA{
 		} catch (RepositoryException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}*/
+		}
 		
 		
 	}
@@ -392,7 +392,8 @@ public class MarkLogicRepositoryConnectionTest  extends  ConnectedRESTQA{
 		testAdminCon.add(st8, dirgraph);
 		testAdminCon.add(st9, dirgraph);
 		testAdminCon.add(st10, dirgraph);
-				
+		testAdminCon.size(dirgraph);
+						
 		try{
 			Assert.assertEquals(10, testAdminCon.size(dirgraph));
 		}
