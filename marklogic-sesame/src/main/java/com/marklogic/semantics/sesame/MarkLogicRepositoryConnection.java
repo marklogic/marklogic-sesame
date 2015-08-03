@@ -54,7 +54,7 @@ import static org.openrdf.query.QueryLanguage.SPARQL;
  *
  * @author James Fuller
  */
-public class MarkLogicRepositoryConnection extends RepositoryConnectionBase implements MarkLogicRepositoryConnectionDependent {
+public class MarkLogicRepositoryConnection extends RepositoryConnectionBase implements RepositoryConnection,MarkLogicRepositoryConnectionDependent {
 
     protected final Logger logger = LoggerFactory.getLogger(MarkLogicRepositoryConnection.class);
 

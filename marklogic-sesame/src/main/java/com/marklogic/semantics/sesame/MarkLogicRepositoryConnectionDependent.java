@@ -20,10 +20,9 @@
 package com.marklogic.semantics.sesame;
 
 import org.openrdf.query.*;
-import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
 
-public interface MarkLogicRepositoryConnectionDependent extends RepositoryConnection {
+public interface MarkLogicRepositoryConnectionDependent {
 
     public Query prepareQuery(String queryString) throws RepositoryException, MalformedQueryException;
     public TupleQuery prepareTupleQuery(String queryString) throws RepositoryException, MalformedQueryException;

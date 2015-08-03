@@ -19,13 +19,11 @@
  */
 package com.marklogic.semantics.sesame.query;
 
-import org.openrdf.query.Query;
-
 /**
  *
  * @author James Fuller
  */
-public interface MarkLogicQueryDependent extends Query {
+public interface MarkLogicQueryDependent {
 
     Object getRulesets();
     void setRulesets(Object rulesets);
