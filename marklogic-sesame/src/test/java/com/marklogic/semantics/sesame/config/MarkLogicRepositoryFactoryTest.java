@@ -70,4 +70,20 @@ public class MarkLogicRepositoryFactoryTest {
         //try to get connection without initialising repo, throws error
         RepositoryConnection conn = otherrepo.getConnection();
     }
+
+    @Test
+    public void testGetRepositoryWithConstructor() throws Exception {
+        MarkLogicRepositoryConfig config = new MarkLogicRepositoryConfig("localhost",8200,"admin","admin","DIGEST");
+
+        RepositoryFactory factory = new MarkLogicRepositoryFactory();
+        Assert.assertEquals("marklogic:MarkLogicRepository", factory.getRepositoryType());
+        Repository repo = factory.getRepository(config);
+        repo.initialize();
+        Assert.assertTrue(repo.getConnection() instanceof MarkLogicRepositoryConnection);
+
+        Repository otherrepo = factory.getRepository(config);
+        exception.expect(RepositoryException.class);
+        //try to get connection without initialising repo, throws error
+        RepositoryConnection conn = otherrepo.getConnection();
+    }
 }

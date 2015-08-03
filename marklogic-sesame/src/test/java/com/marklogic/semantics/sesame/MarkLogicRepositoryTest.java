@@ -19,6 +19,8 @@
  */
 package com.marklogic.semantics.sesame;
 
+import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.DatabaseClientFactory;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
@@ -63,5 +65,18 @@ public class MarkLogicRepositoryTest extends SesameTestBase {
         exception.expect(RepositoryException.class);
         exception.expectMessage("MarkLogicRepository not initialized.");
         RepositoryConnection conn = rep.getConnection();
+    }
+
+    @Test
+    public void TestRepoWithJavaAPIClientDatabaseClient()
+            throws Exception {
+        DatabaseClient databaseClient = DatabaseClientFactory.newClient("localhost", 8200, "admin", "admin", DatabaseClientFactory.Authentication.valueOf("DIGEST"));
+        Repository rep = new MarkLogicRepository(databaseClient);
+        rep.initialize();
+        Assert.assertTrue(rep instanceof Repository);
+        RepositoryConnection conn = rep.getConnection();
+        Assert.assertTrue(conn instanceof RepositoryConnection);
+        conn.close();
+        rep.shutDown();
     }
 }
