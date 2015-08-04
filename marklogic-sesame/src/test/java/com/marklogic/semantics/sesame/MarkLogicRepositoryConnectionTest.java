@@ -637,7 +637,7 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
         URI bob = conn.getValueFactory().createURI("http://example.org/people/bob");
         URI name = conn.getValueFactory().createURI("http://example.org/ontology/name");
         URI person = conn.getValueFactory().createURI("http://example.org/ontology/Person");
-        Literal bobsName = conn.getValueFactory().createLiteral("Bob","http://www.w3.org/2001/XMLSchema#string");
+        Literal bobsName = conn.getValueFactory().createLiteral("Bob", "http://www.w3.org/2001/XMLSchema#string");
         Literal alicesName = conn.getValueFactory().createLiteral("Alice","http://www.w3.org/2001/XMLSchema#string");
 
         conn.add(alice, RDF.TYPE, person, context5);
@@ -758,6 +758,35 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
         conn.remove(bob, name, bobsName, context5, context6);
 
         conn.clear(context5,context6);
+    }
+
+
+    @Test
+    public void testAddStatements() throws Exception{
+        Resource context = conn.getValueFactory().createURI("http://marklogic.com/test/context");
+
+        ValueFactory f= conn.getValueFactory();
+
+        URI alice = f.createURI("http://example.org/people/alice");
+        URI bob = f.createURI("http://example.org/people/bob");
+        URI name = f.createURI("http://example.org/ontology/name");
+        URI age = f.createURI("http://example.org/ontology/age");
+        URI person = f.createURI("http://example.org/ontology/Person");
+        Literal bobsAge = f.createLiteral(123123123123D);
+        Literal alicesName = f.createLiteral("Alice");
+
+        conn.add(alice, name, alicesName,context);
+        conn.add(bob, age, bobsAge, context);
+
+        String checkAliceQuery = "ASK { <http://example.org/people/alice> <http://example.org/ontology/name> 'Alice' .}";
+        BooleanQuery booleanAliceQuery = conn.prepareBooleanQuery(QueryLanguage.SPARQL, checkAliceQuery);
+        Assert.assertTrue(booleanAliceQuery.evaluate());
+
+        String checkBobQuery = "ASK { <http://example.org/people/bob> <http://example.org/ontology/age> '123123123123'^^<http://www.w3.org/2001/XMLSchema#double> .}";
+        BooleanQuery booleanBobQuery = conn.prepareBooleanQuery(QueryLanguage.SPARQL, checkBobQuery);
+        Assert.assertTrue(booleanBobQuery.evaluate());
+
+        conn.clear(context);
     }
 
 

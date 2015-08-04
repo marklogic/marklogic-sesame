@@ -11,6 +11,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.openrdf.model.Resource;
 import org.openrdf.model.ValueFactory;
 import org.openrdf.query.BooleanQuery;
 import org.openrdf.query.QueryLanguage;
@@ -87,6 +88,8 @@ public class MarkLogicGraphPermsTest extends SesameTestBase {
             throws Exception {
 
         GraphManager gmgr = adminClient.newGraphManager();
+        Resource context = conn.getValueFactory().createURI("http://marklogic.com/test/graph/permstest");
+
         String defGraphQuery = "INSERT DATA { GRAPH <http://marklogic.com/test/graph/permstest> { <http://marklogic.com/test> <pp1> <oo1> } }";
         String checkQuery = "ASK WHERE {  GRAPH <http://marklogic.com/test/graph/permstest> {<http://marklogic.com/test> <pp1> <oo1> }}";
         MarkLogicUpdateQuery updateQuery = conn.prepareUpdate(QueryLanguage.SPARQL, defGraphQuery);
@@ -96,6 +99,8 @@ public class MarkLogicGraphPermsTest extends SesameTestBase {
         BooleanQuery booleanQuery = conn.prepareBooleanQuery(QueryLanguage.SPARQL, checkQuery);
         boolean results = booleanQuery.evaluate();
         Assert.assertEquals(true, results);
+
+        conn.clear(context);
     }
 
 }

@@ -383,6 +383,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     }
     @Override
     public void add(Resource subject, URI predicate, Value object, Resource... contexts) throws RepositoryException {
+        logger.debug("object: {}",object.stringValue());
         client.sendAdd(null,subject, predicate, object, contexts);
     }
     @Override

@@ -101,6 +101,7 @@ public class MarkLogicRepositoryTest extends SesameTestBase {
     @Test
     public void TestRepoWithJavaAPIClientDatabaseClient()
             throws Exception {
+
         DatabaseClient databaseClient = DatabaseClientFactory.newClient("localhost", 8200, "admin", "admin", DatabaseClientFactory.Authentication.valueOf("DIGEST"));
         Repository rep = new MarkLogicRepository(databaseClient);
         rep.initialize();

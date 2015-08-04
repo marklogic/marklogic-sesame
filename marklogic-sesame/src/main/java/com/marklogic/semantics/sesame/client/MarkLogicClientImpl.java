@@ -29,10 +29,12 @@ import com.marklogic.client.io.InputStreamHandle;
 import com.marklogic.client.query.QueryDefinition;
 import com.marklogic.client.query.RawCombinedQueryDefinition;
 import com.marklogic.client.semantics.*;
+import org.openrdf.model.Literal;
 import org.openrdf.model.Resource;
 import org.openrdf.model.URI;
 import org.openrdf.model.Value;
 import org.openrdf.query.Binding;
+import org.openrdf.query.parser.sparql.SPARQLUtil;
 import org.openrdf.repository.sparql.query.SPARQLQueryBindingSet;
 import org.openrdf.rio.RDFFormat;
 import org.slf4j.Logger;
@@ -249,36 +251,56 @@ public class MarkLogicClientImpl {
 
     public void performAdd(String baseURI,Resource subject,URI predicate, Value object,Transaction tx,Resource... contexts) {
         sparqlManager = getDatabaseClient().newSPARQLQueryManager();
+
+        StringBuilder ob = new StringBuilder();
+        if (object instanceof Literal) {
+            Literal lit = (Literal)object;
+            ob.append("\"");
+            ob.append(SPARQLUtil.encodeString(lit.getLabel()));
+            ob.append("\"");
+            ob.append("^^<" + lit.getDatatype().stringValue() + ">");
+            ob.append(" ");
+        }else {
+            ob.append("<" + object.stringValue() + "> ");
+        }
+
         StringBuilder sb = new StringBuilder();
         if(baseURI != null) sb.append("BASE <"+baseURI+">\n");
         sb.append("INSERT DATA { ");
+
         for (int i = 0; i < contexts.length; i++)
         {
-            sb.append("GRAPH <"+ contexts[i].stringValue()+"> {?s ?p ?o .} ");
+            sb.append("GRAPH <"+ contexts[i].stringValue()+"> {<"+subject.stringValue()+"> <"+predicate.stringValue()+"> "+ob.toString()+" .} ");
         }
         sb.append("}");
         SPARQLQueryDefinition qdef = sparqlManager.newQueryDefinition(sb.toString());
-        qdef.withBinding("s", subject.stringValue());
-        qdef.withBinding("p", predicate.stringValue());
-        qdef.withBinding("o", object.stringValue());
         sparqlManager.executeUpdate(qdef, tx);
     }
 
     // performRemove
     public void performRemove(String baseURI,Resource subject,URI predicate, Value object,Transaction tx,Resource... contexts) {
-        sparqlManager = getDatabaseClient().newSPARQLQueryManager();
+        StringBuilder ob = new StringBuilder();
+        if (object instanceof Literal) {
+            Literal lit = (Literal)object;
+            ob.append("\"");
+            ob.append(SPARQLUtil.encodeString(lit.getLabel()));
+            ob.append("\"");
+            ob.append("^^<" + lit.getDatatype().stringValue() + ">");
+            ob.append(" ");
+        }else {
+            ob.append("<" + object.stringValue() + "> ");
+        }
+
         StringBuilder sb = new StringBuilder();
         if(baseURI != null) sb.append("BASE <"+baseURI+">\n");
         sb.append("DELETE WHERE { ");
+
         for (int i = 0; i < contexts.length; i++)
         {
-            sb.append("GRAPH <"+ contexts[i].stringValue()+"> {?s ?p ?o .} ");
+            sb.append("GRAPH <"+ contexts[i].stringValue()+"> {<"+subject.stringValue()+"> <"+predicate.stringValue()+"> "+ob.toString()+" .} ");
         }
         sb.append("}");
         SPARQLQueryDefinition qdef = sparqlManager.newQueryDefinition(sb.toString());
-        qdef.withBinding("s", subject.stringValue());
-        qdef.withBinding("p", predicate.stringValue());
-        qdef.withBinding("o", object.toString());
         sparqlManager.executeUpdate(qdef, tx);
     }
 
