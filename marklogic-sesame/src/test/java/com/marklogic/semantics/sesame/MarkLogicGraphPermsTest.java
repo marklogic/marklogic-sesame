@@ -2,25 +2,24 @@ package com.marklogic.semantics.sesame;
 
 
 import com.marklogic.client.document.XMLDocumentManager;
-import com.marklogic.client.io.Format;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.query.QueryManager;
-import com.marklogic.client.query.RawCombinedQueryDefinition;
-import com.marklogic.semantics.sesame.query.MarkLogicBooleanQuery;
+import com.marklogic.client.semantics.Capability;
+import com.marklogic.client.semantics.GraphManager;
+import com.marklogic.semantics.sesame.query.MarkLogicUpdateQuery;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.openrdf.model.ValueFactory;
-import org.openrdf.query.MalformedQueryException;
-import org.openrdf.query.QueryEvaluationException;
+import org.openrdf.query.BooleanQuery;
 import org.openrdf.query.QueryLanguage;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MarkLogicCombinationQueryTest extends SesameTestBase {
+public class MarkLogicGraphPermsTest extends SesameTestBase {
 
     private QueryManager qmgr;
 
@@ -85,32 +84,19 @@ public class MarkLogicCombinationQueryTest extends SesameTestBase {
     }
 
     @Test
-    public void testCombinationQuery() throws MalformedQueryException, RepositoryException, QueryEvaluationException {
+    public void testUpdateQueryWithPerms()
+            throws Exception {
 
-        String query = "SELECT * { ?s ?p ?o .}";
+        GraphManager gmgr = adminClient.newGraphManager();
+        String defGraphQuery = "INSERT DATA { GRAPH <http://marklogic.com/test/graph/permstest> { <http://marklogic.com/test> <pp1> <oo1> } }";
+        String checkQuery = "ASK WHERE {  GRAPH <http://marklogic.com/test/graph/permstest> {<http://marklogic.com/test> <pp1> <oo1> }}";
+        MarkLogicUpdateQuery updateQuery = (MarkLogicUpdateQuery) conn.prepareUpdate(QueryLanguage.SPARQL, defGraphQuery);
+        updateQuery.setGraphPerms(gmgr.permission("read-privileged", Capability.READ));
+        updateQuery.execute();
 
-        String query1 = "ASK WHERE {<http://example.org/r9928> ?p ?o .}";
-        String query2 = "ASK WHERE {<http://example.org/r9929> ?p ?o .}";
-
-        // case one, rawcombined
-        String combinedQuery =
-                "{\"search\":" +
-                        "{\"qtext\":\"First Title\"}}";
-        String negCombinedQuery =
-                "{\"search\":" +
-                        "{\"qtext\":\"Second Title\"}}";
-
-        RawCombinedQueryDefinition rawCombined = qmgr.newRawCombinedQueryDefinition(new StringHandle().with(combinedQuery).withFormat(Format.JSON));
-        RawCombinedQueryDefinition negRawCombined = qmgr.newRawCombinedQueryDefinition(new StringHandle().with(negCombinedQuery).withFormat(Format.JSON));
-
-        MarkLogicBooleanQuery askQuery = (MarkLogicBooleanQuery) conn.prepareBooleanQuery(QueryLanguage.SPARQL,query1);
-        askQuery.setConstrainingQueryDefinition(rawCombined);
-        Assert.assertEquals(true, askQuery.evaluate());
-        logger.debug("query: {}",query1);
-
-        askQuery = (MarkLogicBooleanQuery) conn.prepareBooleanQuery(QueryLanguage.SPARQL,query2);
-        askQuery.setConstrainingQueryDefinition(rawCombined);
-        Assert.assertEquals(false, askQuery.evaluate());
+        BooleanQuery booleanQuery = conn.prepareBooleanQuery(QueryLanguage.SPARQL, checkQuery);
+        boolean results = booleanQuery.evaluate();
+        Assert.assertEquals(true, results);
     }
 
 }

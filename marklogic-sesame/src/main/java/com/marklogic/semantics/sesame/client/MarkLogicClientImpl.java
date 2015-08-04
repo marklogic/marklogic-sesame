@@ -153,7 +153,8 @@ public class MarkLogicClientImpl {
         sb.append(queryString);
         SPARQLQueryDefinition qdef = sparqlManager.newQueryDefinition(sb.toString());
         if(rulesets instanceof SPARQLRuleset){qdef.setRulesets(rulesets);};
-        if(constrainingQueryDef instanceof RawCombinedQueryDefinition){qdef.setConstrainingQueryDefinition(constrainingQueryDef);};
+        if(getConstrainingQueryDefinition() instanceof RawCombinedQueryDefinition){
+            qdef.setConstrainingQueryDefinition(getConstrainingQueryDefinition());};
         qdef.setIncludeDefaultRulesets(includeInferred);
         qdef.setBindings(getSPARQLBindings(bindings));
         sparqlManager.executeSelect(qdef, handle, start, pageLength, tx);
@@ -171,7 +172,8 @@ public class MarkLogicClientImpl {
         sb.append(queryString);
         SPARQLQueryDefinition qdef = sparqlManager.newQueryDefinition(sb.toString());
         if(rulesets instanceof SPARQLRuleset){qdef.setRulesets(rulesets);};
-        if(constrainingQueryDef instanceof RawCombinedQueryDefinition){qdef.setConstrainingQueryDefinition(constrainingQueryDef);};
+        if(getConstrainingQueryDefinition() instanceof RawCombinedQueryDefinition){
+            qdef.setConstrainingQueryDefinition(getConstrainingQueryDefinition());};
         qdef.setIncludeDefaultRulesets(includeInferred);
         qdef.setBindings(getSPARQLBindings(bindings));
         sparqlManager.executeDescribe(qdef, handle, tx);
@@ -187,10 +189,8 @@ public class MarkLogicClientImpl {
         SPARQLQueryDefinition qdef = sparqlManager.newQueryDefinition(sb.toString());
         qdef.setIncludeDefaultRulesets(includeInferred);
         if (rulesets instanceof SPARQLRuleset){qdef.setRulesets(rulesets);};
-        if(constrainingQueryDef instanceof RawCombinedQueryDefinition){
-            logger.debug("set constraining query");
-
-            qdef.setConstrainingQueryDefinition(constrainingQueryDef);};
+        if(getConstrainingQueryDefinition() instanceof RawCombinedQueryDefinition){
+            qdef.setConstrainingQueryDefinition(getConstrainingQueryDefinition());};
         qdef.setBindings(getSPARQLBindings(bindings));
         return sparqlManager.executeAsk(qdef, tx);
     }
@@ -203,8 +203,8 @@ public class MarkLogicClientImpl {
         sb.append(queryString);
         SPARQLQueryDefinition qdef = sparqlManager.newQueryDefinition(sb.toString());
         if(rulesets instanceof SPARQLRuleset){qdef.setRulesets(rulesets);};
-        if(constrainingQueryDef instanceof RawCombinedQueryDefinition){
-            qdef.setConstrainingQueryDefinition(constrainingQueryDef);};
+        if(getConstrainingQueryDefinition() instanceof RawCombinedQueryDefinition){
+            qdef.setConstrainingQueryDefinition(getConstrainingQueryDefinition());};
         qdef.setIncludeDefaultRulesets(includeInferred);
         qdef.setBindings(getSPARQLBindings(bindings));
         sparqlManager.executeUpdate(qdef, tx);
@@ -309,7 +309,7 @@ public class MarkLogicClientImpl {
 
     // constraining query
     public void setConstrainingQueryDefinition(Object constrainingQueryDefinition){
-        this.constrainingQueryDef = constrainingQueryDef;
+        this.constrainingQueryDef = (RawCombinedQueryDefinition)constrainingQueryDefinition;
     }
     public RawCombinedQueryDefinition getConstrainingQueryDefinition(){
         return this.constrainingQueryDef;
