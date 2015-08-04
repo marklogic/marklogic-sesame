@@ -55,14 +55,6 @@ public class MarkLogicRepository extends RepositoryBase implements Repository,Ma
 
     private ValueFactory f;
 
-    // constructors
-    public MarkLogicRepository() {
-        super();
-        this.client = getMarkLogicClient();
-        this.f = new ValueFactoryImpl();
-        this.quadMode = true;
-        this.auth="DIGEST";
-    }
     public MarkLogicRepository(String host, int port, String user, String password, String auth) {
         super();
         this.f = new ValueFactoryImpl();
