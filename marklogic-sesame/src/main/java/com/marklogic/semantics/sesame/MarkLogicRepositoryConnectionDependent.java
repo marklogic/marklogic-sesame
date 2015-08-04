@@ -25,9 +25,18 @@ import org.openrdf.repository.RepositoryException;
 public interface MarkLogicRepositoryConnectionDependent {
 
     public Query prepareQuery(String queryString) throws RepositoryException, MalformedQueryException;
+    public Query prepareQuery(String queryString, String baseURI) throws RepositoryException, MalformedQueryException;
+
     public TupleQuery prepareTupleQuery(String queryString) throws RepositoryException, MalformedQueryException;
+    public TupleQuery prepareTupleQuery(String queryString,String baseURI) throws RepositoryException, MalformedQueryException;
+
     public Update prepareUpdate(String queryString) throws RepositoryException, MalformedQueryException;
+    public Update prepareUpdate(String queryString, String baseURI) throws RepositoryException, MalformedQueryException;
+
     public BooleanQuery prepareBooleanQuery(String queryString) throws RepositoryException, MalformedQueryException;
+    public BooleanQuery prepareBooleanQuery(String queryString, String baseURI) throws RepositoryException, MalformedQueryException;
+
     public GraphQuery prepareGraphQuery(String queryString) throws RepositoryException, MalformedQueryException;
+    public GraphQuery prepareGraphQuery(String queryString, String baseURI) throws RepositoryException, MalformedQueryException;
 
 }

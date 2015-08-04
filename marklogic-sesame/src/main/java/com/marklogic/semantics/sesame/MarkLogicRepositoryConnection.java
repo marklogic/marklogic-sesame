@@ -93,6 +93,10 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
         return prepareTupleQuery(QueryLanguage.SPARQL, queryString, null);
     }
     @Override
+    public Query prepareQuery(String queryString, String baseURI) throws RepositoryException, MalformedQueryException {
+        return prepareTupleQuery(QueryLanguage.SPARQL, queryString, baseURI);
+    }
+    @Override
     public Query prepareQuery(QueryLanguage queryLanguage, String queryString) throws RepositoryException, MalformedQueryException {
         return prepareTupleQuery(queryLanguage, queryString, null);
     }
@@ -117,8 +121,13 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     }
 
     // prepareTupleQuery
+    @Override
     public MarkLogicTupleQuery prepareTupleQuery(String queryString) throws RepositoryException, MalformedQueryException {
         return prepareTupleQuery(QueryLanguage.SPARQL, queryString);
+    }
+    @Override
+    public MarkLogicTupleQuery prepareTupleQuery(String queryString,String baseURI) throws RepositoryException, MalformedQueryException {
+        return prepareTupleQuery(QueryLanguage.SPARQL, queryString,baseURI);
     }
     @Override
     public MarkLogicTupleQuery prepareTupleQuery(QueryLanguage queryLanguage, String queryString) throws RepositoryException, MalformedQueryException {
@@ -136,6 +145,10 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     @Override
     public MarkLogicGraphQuery prepareGraphQuery(String queryString) throws RepositoryException, MalformedQueryException {
         return prepareGraphQuery(QueryLanguage.SPARQL, queryString, null);
+    }
+    @Override
+    public MarkLogicGraphQuery prepareGraphQuery(String queryString,String baseURI) throws RepositoryException, MalformedQueryException {
+        return prepareGraphQuery(QueryLanguage.SPARQL, queryString, baseURI);
     }
     @Override
     public MarkLogicGraphQuery prepareGraphQuery(QueryLanguage queryLanguage, String queryString) throws RepositoryException, MalformedQueryException {
@@ -157,6 +170,10 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
         return prepareBooleanQuery(QueryLanguage.SPARQL, queryString, null);
     }
     @Override
+    public MarkLogicBooleanQuery prepareBooleanQuery(String queryString,String baseURI) throws RepositoryException, MalformedQueryException {
+        return prepareBooleanQuery(QueryLanguage.SPARQL, queryString, baseURI);
+    }
+    @Override
     public MarkLogicBooleanQuery prepareBooleanQuery(QueryLanguage queryLanguage, String queryString) throws RepositoryException, MalformedQueryException {
         return prepareBooleanQuery(queryLanguage, queryString, null);
     }
@@ -172,6 +189,10 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     @Override
     public MarkLogicUpdateQuery prepareUpdate(String queryString) throws RepositoryException, MalformedQueryException {
         return prepareUpdate(QueryLanguage.SPARQL, queryString, null);
+    }
+    @Override
+    public MarkLogicUpdateQuery prepareUpdate(String queryString,String baseURI) throws RepositoryException, MalformedQueryException {
+        return prepareUpdate(QueryLanguage.SPARQL, queryString, baseURI);
     }
     @Override
     public MarkLogicUpdateQuery prepareUpdate(QueryLanguage queryLanguage, String queryString) throws RepositoryException, MalformedQueryException {
@@ -313,7 +334,11 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     // remove context (graph)
     @Override
     public void clear(Resource... contexts) throws RepositoryException {
-        client.sendClear(contexts);
+        if(contexts.length != 0){
+            client.sendClear(contexts);
+        }else{
+            client.sendClearAll();
+        }
     }
 
     // is repository empty
