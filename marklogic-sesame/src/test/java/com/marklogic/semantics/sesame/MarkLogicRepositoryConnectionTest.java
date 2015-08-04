@@ -168,6 +168,7 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
     public void testPrepareTupleQueryQueryStringMethod() throws Exception{
         String queryString = "select ?s ?p ?o { ?s ?p ?o } limit 10 ";
         TupleQuery tupleQuery = conn.prepareTupleQuery(queryString);
+        tupleQuery = conn.prepareTupleQuery(queryString,"http://marklogic.com/test/baseuri");
         TupleQueryResult results = tupleQuery.evaluate();
 
         Assert.assertEquals(results.getBindingNames().get(0), "s");
@@ -493,6 +494,19 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
         Assert.assertEquals(true, results);
     }
 
+    @Test
+    public void testBooleanQueryWithOverloadedMethods()
+            throws Exception {
+        String queryString = "ASK { GRAPH <http://marklogic.com/test/my-graph> {<http://semanticbible.org/ns/2006/NTNames#Shelah1> ?p ?o}}";
+        BooleanQuery booleanQuery = conn.prepareBooleanQuery(queryString);
+        booleanQuery = conn.prepareBooleanQuery(queryString,"http://marklogic.com/test/baseuri");
+        boolean results = booleanQuery.evaluate();
+        Assert.assertEquals(false, results);
+        queryString = "ASK { GRAPH <http://marklogic.com/test/my-graph> { <http://semanticbible.org/ns/2006/NTNames#Shelah> ?p ?o}}";
+        booleanQuery = conn.prepareBooleanQuery(QueryLanguage.SPARQL, queryString);
+        results = booleanQuery.evaluate();
+        Assert.assertEquals(true, results);
+    }
     @Test
     public void testUpdateQuery()
             throws Exception {
