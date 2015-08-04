@@ -14,7 +14,6 @@ import org.openrdf.model.ValueFactory;
 import org.openrdf.query.MalformedQueryException;
 import org.openrdf.query.QueryEvaluationException;
 import org.openrdf.query.QueryLanguage;
-import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +24,7 @@ public class MarkLogicCombinationQueryTest extends SesameTestBase {
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    protected RepositoryConnection conn;
+    protected MarkLogicRepositoryConnection conn;
     protected ValueFactory f;
 
     @Before
@@ -102,12 +101,12 @@ public class MarkLogicCombinationQueryTest extends SesameTestBase {
         RawCombinedQueryDefinition rawCombined = qmgr.newRawCombinedQueryDefinition(new StringHandle().with(combinedQuery).withFormat(Format.JSON));
         RawCombinedQueryDefinition negRawCombined = qmgr.newRawCombinedQueryDefinition(new StringHandle().with(negCombinedQuery).withFormat(Format.JSON));
 
-        MarkLogicBooleanQuery askQuery = (MarkLogicBooleanQuery) conn.prepareBooleanQuery(QueryLanguage.SPARQL,query1);
+        MarkLogicBooleanQuery askQuery =conn.prepareBooleanQuery(QueryLanguage.SPARQL,query1);
         askQuery.setConstrainingQueryDefinition(rawCombined);
         Assert.assertEquals(true, askQuery.evaluate());
         logger.debug("query: {}", query1);
 
-        askQuery = (MarkLogicBooleanQuery) conn.prepareBooleanQuery(QueryLanguage.SPARQL,query2);
+        askQuery = conn.prepareBooleanQuery(QueryLanguage.SPARQL,query2);
         askQuery.setConstrainingQueryDefinition(rawCombined);
         Assert.assertEquals(false, askQuery.evaluate());
     }
@@ -119,11 +118,11 @@ public class MarkLogicCombinationQueryTest extends SesameTestBase {
 
         String posQuery = "ASK WHERE {<http://example.org/r9929> ?p ?o .}";
         String negQuery = "ASK WHERE {<http://example.org/r9928> ?p ?o .}";
-        MarkLogicBooleanQuery askQuery = (MarkLogicBooleanQuery) conn.prepareBooleanQuery(QueryLanguage.SPARQL,posQuery);
+        MarkLogicBooleanQuery askQuery = conn.prepareBooleanQuery(QueryLanguage.SPARQL,posQuery);
         askQuery.setConstrainingQueryDefinition(structuredDef);
         Assert.assertEquals(true, askQuery.evaluate());
 
-        askQuery = (MarkLogicBooleanQuery) conn.prepareBooleanQuery(QueryLanguage.SPARQL,negQuery);
+        askQuery = conn.prepareBooleanQuery(QueryLanguage.SPARQL,negQuery);
         askQuery.setConstrainingQueryDefinition(structuredDef);
         Assert.assertEquals(true, askQuery.evaluate());
     }
@@ -135,11 +134,11 @@ public class MarkLogicCombinationQueryTest extends SesameTestBase {
         String posQuery = "ASK WHERE {<http://example.org/r9928> ?p ?o .}";
         String negQuery = "ASK WHERE {<http://example.org/r9929> ?p ?o .}";
 
-        MarkLogicBooleanQuery askQuery = (MarkLogicBooleanQuery) conn.prepareBooleanQuery(QueryLanguage.SPARQL,posQuery);
+        MarkLogicBooleanQuery askQuery = conn.prepareBooleanQuery(QueryLanguage.SPARQL,posQuery);
         askQuery.setConstrainingQueryDefinition(stringDef);
         Assert.assertEquals(true, askQuery.evaluate());
 
-        askQuery = (MarkLogicBooleanQuery) conn.prepareBooleanQuery(QueryLanguage.SPARQL,negQuery);
+        askQuery = conn.prepareBooleanQuery(QueryLanguage.SPARQL,negQuery);
         askQuery.setConstrainingQueryDefinition(stringDef);
         Assert.assertEquals(true, askQuery.evaluate());
     }

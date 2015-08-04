@@ -24,7 +24,6 @@ import com.marklogic.semantics.sesame.client.MarkLogicClientDependent;
 import org.openrdf.model.ValueFactory;
 import org.openrdf.model.impl.ValueFactoryImpl;
 import org.openrdf.repository.Repository;
-import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.base.RepositoryBase;
 import org.slf4j.Logger;
@@ -118,7 +117,7 @@ public class MarkLogicRepository extends RepositoryBase implements Repository,Ma
     }
 
     @Override
-    public RepositoryConnection getConnection()
+    public MarkLogicRepositoryConnection getConnection()
             throws RepositoryException {
         if (!isInitialized()) {
             throw new RepositoryException("MarkLogicRepository not initialized.");

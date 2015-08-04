@@ -17,7 +17,6 @@ package com.marklogic.semantics.sesame;
 
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
-import org.openrdf.repository.Repository;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -37,7 +36,7 @@ public class SesameTestBase {
     public static String readerUser;
     public static String readerPassword;
 
-    public Repository rep;
+    public MarkLogicRepository rep;
 
     public DatabaseClient readerClient;
     public DatabaseClient writerClient;

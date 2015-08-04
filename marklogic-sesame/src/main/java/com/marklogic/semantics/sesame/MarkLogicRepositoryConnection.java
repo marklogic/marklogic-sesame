@@ -20,10 +20,7 @@
 package com.marklogic.semantics.sesame;
 
 import com.marklogic.semantics.sesame.client.MarkLogicClient;
-import com.marklogic.semantics.sesame.query.MarkLogicBooleanQuery;
-import com.marklogic.semantics.sesame.query.MarkLogicGraphQuery;
-import com.marklogic.semantics.sesame.query.MarkLogicTupleQuery;
-import com.marklogic.semantics.sesame.query.MarkLogicUpdateQuery;
+import com.marklogic.semantics.sesame.query.*;
 import info.aduna.iteration.*;
 import org.openrdf.IsolationLevel;
 import org.openrdf.IsolationLevels;
@@ -32,7 +29,10 @@ import org.openrdf.model.impl.StatementImpl;
 import org.openrdf.query.*;
 import org.openrdf.query.impl.DatasetImpl;
 import org.openrdf.query.parser.QueryParserUtil;
-import org.openrdf.repository.*;
+import org.openrdf.repository.RepositoryConnection;
+import org.openrdf.repository.RepositoryException;
+import org.openrdf.repository.RepositoryResult;
+import org.openrdf.repository.UnknownTransactionStateException;
 import org.openrdf.repository.base.RepositoryConnectionBase;
 import org.openrdf.repository.sparql.query.SPARQLQueryBindingSet;
 import org.openrdf.rio.RDFFormat;
@@ -97,7 +97,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
         return prepareTupleQuery(queryLanguage, queryString, null);
     }
     @Override
-    public Query prepareQuery(QueryLanguage queryLanguage, String queryString, String baseURI)
+    public MarkLogicQuery prepareQuery(QueryLanguage queryLanguage, String queryString, String baseURI)
             throws RepositoryException, MalformedQueryException
     {
         // function routing based on query form
@@ -117,15 +117,15 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     }
 
     // prepareTupleQuery
-    public TupleQuery prepareTupleQuery(String queryString) throws RepositoryException, MalformedQueryException {
+    public MarkLogicTupleQuery prepareTupleQuery(String queryString) throws RepositoryException, MalformedQueryException {
         return prepareTupleQuery(QueryLanguage.SPARQL, queryString);
     }
     @Override
-    public TupleQuery prepareTupleQuery(QueryLanguage queryLanguage, String queryString) throws RepositoryException, MalformedQueryException {
+    public MarkLogicTupleQuery prepareTupleQuery(QueryLanguage queryLanguage, String queryString) throws RepositoryException, MalformedQueryException {
         return prepareTupleQuery(queryLanguage, queryString, null);
     }
     @Override
-    public TupleQuery prepareTupleQuery(QueryLanguage queryLanguage, String queryString, String baseURI) throws RepositoryException, MalformedQueryException {
+    public MarkLogicTupleQuery prepareTupleQuery(QueryLanguage queryLanguage, String queryString, String baseURI) throws RepositoryException, MalformedQueryException {
         if (QueryLanguage.SPARQL.equals(queryLanguage)) {
             return new MarkLogicTupleQuery(client, new SPARQLQueryBindingSet(), baseURI, queryString);
         }
@@ -134,15 +134,15 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
 
     // prepareGraphQuery
     @Override
-    public GraphQuery prepareGraphQuery(String queryString) throws RepositoryException, MalformedQueryException {
+    public MarkLogicGraphQuery prepareGraphQuery(String queryString) throws RepositoryException, MalformedQueryException {
         return prepareGraphQuery(QueryLanguage.SPARQL, queryString, null);
     }
     @Override
-    public GraphQuery prepareGraphQuery(QueryLanguage queryLanguage, String queryString) throws RepositoryException, MalformedQueryException {
+    public MarkLogicGraphQuery prepareGraphQuery(QueryLanguage queryLanguage, String queryString) throws RepositoryException, MalformedQueryException {
         return prepareGraphQuery(queryLanguage, queryString, null);
     }
     @Override
-    public GraphQuery prepareGraphQuery(QueryLanguage queryLanguage, String queryString, String baseURI)
+    public MarkLogicGraphQuery prepareGraphQuery(QueryLanguage queryLanguage, String queryString, String baseURI)
             throws RepositoryException, MalformedQueryException
     {
         if (QueryLanguage.SPARQL.equals(queryLanguage)) {
@@ -153,15 +153,15 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
 
     // prepareBooleanQuery
     @Override
-    public BooleanQuery prepareBooleanQuery(String queryString) throws RepositoryException, MalformedQueryException {
+    public MarkLogicBooleanQuery prepareBooleanQuery(String queryString) throws RepositoryException, MalformedQueryException {
         return prepareBooleanQuery(QueryLanguage.SPARQL, queryString, null);
     }
     @Override
-    public BooleanQuery prepareBooleanQuery(QueryLanguage queryLanguage, String queryString) throws RepositoryException, MalformedQueryException {
+    public MarkLogicBooleanQuery prepareBooleanQuery(QueryLanguage queryLanguage, String queryString) throws RepositoryException, MalformedQueryException {
         return prepareBooleanQuery(queryLanguage, queryString, null);
     }
     @Override
-    public BooleanQuery prepareBooleanQuery(QueryLanguage queryLanguage, String queryString, String baseURI) throws RepositoryException, MalformedQueryException {
+    public MarkLogicBooleanQuery prepareBooleanQuery(QueryLanguage queryLanguage, String queryString, String baseURI) throws RepositoryException, MalformedQueryException {
         if (QueryLanguage.SPARQL.equals(queryLanguage)) {
             return new MarkLogicBooleanQuery(client, new SPARQLQueryBindingSet(), baseURI, queryString);
         }
@@ -170,17 +170,17 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
 
     // prepareUpdate
     @Override
-    public Update prepareUpdate(String queryString) throws RepositoryException, MalformedQueryException {
+    public MarkLogicUpdateQuery prepareUpdate(String queryString) throws RepositoryException, MalformedQueryException {
         return prepareUpdate(QueryLanguage.SPARQL, queryString, null);
     }
     @Override
-    public Update prepareUpdate(QueryLanguage queryLanguage, String queryString) throws RepositoryException, MalformedQueryException {
+    public MarkLogicUpdateQuery prepareUpdate(QueryLanguage queryLanguage, String queryString) throws RepositoryException, MalformedQueryException {
        return prepareUpdate(queryLanguage, queryString, null);
     }
     @Override
-    public Update prepareUpdate(QueryLanguage queryLanguage, String queryString, String baseURI) throws RepositoryException, MalformedQueryException {
+    public MarkLogicUpdateQuery prepareUpdate(QueryLanguage queryLanguage, String queryString, String baseURI) throws RepositoryException, MalformedQueryException {
         if (QueryLanguage.SPARQL.equals(queryLanguage)) {
-            return (Update) new MarkLogicUpdateQuery(client, new SPARQLQueryBindingSet(), baseURI, queryString);
+            return new MarkLogicUpdateQuery(client, new SPARQLQueryBindingSet(), baseURI, queryString);
         }
         throw new UnsupportedQueryLanguageException("Unsupported query language " + queryLanguage.getName());
     }

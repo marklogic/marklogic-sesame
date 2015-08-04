@@ -64,7 +64,7 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
         logger.debug("setting up test");
         rep.initialize();
         f = rep.getValueFactory();
-        conn =(MarkLogicRepositoryConnection)rep.getConnection();
+        conn =rep.getConnection();
         logger.info("test setup complete.");
     }
 
@@ -251,7 +251,7 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
     public void testSPARQLQueryWithPagination()
             throws Exception {
         String queryString = "select ?s ?p ?o { ?s ?p ?o } limit 100 ";
-        MarkLogicTupleQuery tupleQuery = (MarkLogicTupleQuery) conn.prepareTupleQuery(QueryLanguage.SPARQL, queryString);
+        MarkLogicTupleQuery tupleQuery = conn.prepareTupleQuery(QueryLanguage.SPARQL, queryString);
         TupleQueryResult results = tupleQuery.evaluate(3, 1);
 
         Assert.assertEquals(results.getBindingNames().get(0), "s");
@@ -275,7 +275,7 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
     public void testSPARQLQueryWithRuleset()
             throws Exception {
         String queryString = "select ?s ?p ?o { ?s ?p ?o } limit 100 ";
-        MarkLogicTupleQuery tupleQuery = (MarkLogicTupleQuery) conn.prepareTupleQuery(QueryLanguage.SPARQL, queryString);
+        MarkLogicTupleQuery tupleQuery = conn.prepareTupleQuery(QueryLanguage.SPARQL, queryString);
 
         tupleQuery.setRulesets(SPARQLRuleset.RDFS_FULL);
         TupleQueryResult results = tupleQuery.evaluate();
