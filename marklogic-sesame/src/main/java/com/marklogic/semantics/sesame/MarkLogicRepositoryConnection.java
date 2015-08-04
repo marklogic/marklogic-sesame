@@ -334,7 +334,11 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     // remove context (graph)
     @Override
     public void clear(Resource... contexts) throws RepositoryException {
-        client.sendClear(contexts);
+        if(contexts.length != 0){
+            client.sendClear(contexts);
+        }else{
+            client.sendClearAll();
+        }
     }
 
     // is repository empty

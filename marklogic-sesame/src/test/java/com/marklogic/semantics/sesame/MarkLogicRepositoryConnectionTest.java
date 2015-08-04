@@ -49,6 +49,7 @@ import java.util.Properties;
  *
  * @author James Fuller
  */
+// @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -533,7 +534,7 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
     }
 
     @Test
-    public void testClear()
+    public void testClearWithContext()
             throws Exception {
         String defGraphQuery = "INSERT DATA { GRAPH <http://marklogic.com/test/ns/cleartest> { <http://marklogic.com/cleartest> <pp1> <oo1> } }";
         String checkQuery = "ASK WHERE { <http://marklogic.com/cleartest> <pp1> <oo1> }";
