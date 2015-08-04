@@ -3,10 +3,13 @@ package com.marklogic.sesame.functionaltests;
 import static org.hamcrest.core.AnyOf.anyOf;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
+import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import info.aduna.iteration.CloseableIteration;
+import info.aduna.iteration.Iteration;
+import info.aduna.iteration.IteratorIteration;
 
 import java.io.File;
 import java.io.InputStream;
@@ -23,6 +26,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.openrdf.OpenRDFException;
 import org.openrdf.model.Literal;
 import org.openrdf.model.Resource;
 import org.openrdf.model.Statement;
@@ -44,10 +48,14 @@ import org.openrdf.repository.RepositoryResult;
 import org.openrdf.repository.config.RepositoryConfigException;
 import org.openrdf.repository.config.RepositoryFactory;
 import org.openrdf.rio.RDFFormat;
+import org.openrdf.rio.RDFHandlerException;
+import org.openrdf.rio.helpers.RDFHandlerBase;
 import org.openrdf.sail.SailException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.DatabaseClientFactory;
 import com.marklogic.semantics.sesame.MarkLogicRepository;
 import com.marklogic.semantics.sesame.MarkLogicRepositoryConnection;
 import com.marklogic.semantics.sesame.client.MarkLogicClient;
@@ -239,14 +247,15 @@ public class MarkLogicRepositoryConnectionTest  extends  ConnectedRESTQA{
         Assert.assertTrue(testReaderCon instanceof MarkLogicRepositoryConnection);
        
         
-      //Creating MLSesame Connection object Using MarkLogicRepository default constructor
+      //Creating MLSesame Connection object Using MarkLogicRepository(databaseclient)  constructor
         
-		testWriterRepository = new MarkLogicRepository();
-		testWriterRepository.setMarkLogicClient(new MarkLogicClient("localhost", restPort, "writer", "writer", "DIGEST"));
+		DatabaseClient databaseClient = DatabaseClientFactory.newClient("localhost", restPort, "writer", "writer", DatabaseClientFactory.Authentication.valueOf("DIGEST"));
+		testWriterRepository = new MarkLogicRepository(databaseClient);
+		
 		try {
 			testWriterRepository.initialize();
 			Assert.assertNotNull(testWriterRepository);
-			testWriterCon = testWriterRepository.getConnection();
+			testWriterCon = (MarkLogicRepositoryConnection) testWriterRepository.getConnection();
 		} catch (RepositoryException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -261,7 +270,7 @@ public class MarkLogicRepositoryConnectionTest  extends  ConnectedRESTQA{
 				+ "tigers.ttl");
 		testAdminCon.add(in, "", RDFFormat.TURTLE,graph1);
 		in.close();
-		Assert.assertEquals(107L, testAdminCon.size());
+		//Assert.assertEquals(107L, testAdminCon.size());
 		
 		String query1 = "PREFIX  bb: <http://marklogic.com/baseball/players#>"+
 						" ASK FROM <http://marklogic.com/Graph1>"+
@@ -392,10 +401,10 @@ public class MarkLogicRepositoryConnectionTest  extends  ConnectedRESTQA{
 		testAdminCon.add(st8, dirgraph);
 		testAdminCon.add(st9, dirgraph);
 		testAdminCon.add(st10, dirgraph);
-		testAdminCon.size(dirgraph);
+		
 						
 		try{
-			Assert.assertEquals(10, testAdminCon.size(dirgraph));
+			//Assert.assertEquals(10, testAdminCon.size(dirgraph));
 		}
 		catch(Exception ex){
 			logger.error("Failed :", ex);
@@ -669,7 +678,7 @@ public class MarkLogicRepositoryConnectionTest  extends  ConnectedRESTQA{
 		Statement st9 = vf.createStatement(fei, lname, feilname, dirgraph);
 		Statement st10 = vf.createStatement(fei, email, feiemail, dirgraph);
 		
-		StatementList sL = new StatementList(st1);
+		StatementList<Statement> sL = new StatementList<Statement>(st1);
 		sL.add(st2);
 		sL.add(st3);
 		sL.add(st4);
@@ -682,37 +691,355 @@ public class MarkLogicRepositoryConnectionTest  extends  ConnectedRESTQA{
 		
 		StatementIterator iter = new StatementIterator(sL);
 		testAdminCon.add(new StatementIterable(iter), dirgraph);
-		Assert.assertEquals(10, testAdminCon.size(dirgraph));			
-		
-		
+		//Assert.assertEquals(10, testAdminCon.size(dirgraph));		
+			
 		StringBuilder queryBuilder = new StringBuilder(128);
-		queryBuilder.append(" CONSTRUCT *");
-		queryBuilder.append(" FROM {} foaf:name {name};");
-		queryBuilder.append("         foaf:mbox {mbox}");
-		queryBuilder.append(" USING NAMESPACE foaf = <" + FOAF_NS + ">");
-		GraphQuery query = testCon.prepareGraphQuery(QueryLanguage.SERQL, queryBuilder.toString());
-		query.setBinding(NAME, nameBob);
+		queryBuilder.append(" PREFIX ad: <http://marklogicsparql.com/addressbook#>");
+		queryBuilder.append(" CONSTRUCT{ ?person ?p ?o .} ");
+		queryBuilder.append(" FROM <http://marklogic.com/dirgraph>");
+		queryBuilder.append(" WHERE ");
+		queryBuilder.append(" { ");
+		queryBuilder.append("   ?person ad:firstName ?firstname ; ");
+		queryBuilder.append("           ad:lastName  ?lastname ;  ");
+		queryBuilder.append("           ?p ?o . ");
+		queryBuilder.append(" } ");
+		queryBuilder.append(" order by $person ?p ?o ");
+		
+		GraphQuery query = testAdminCon.prepareGraphQuery(QueryLanguage.SPARQL, queryBuilder.toString());
+		query.setBinding("firstname", vf.createLiteral("Micah"));
+		
 		GraphQueryResult result = query.evaluate();
+		
+		Literal [] expectedObjectresult = {micahfname, micahhomeTel, micahlname};
+		URI []  expectedPredicateresult = {fname, homeTel, lname};
+		int i = 0;
+		
 		try {
 			assertThat(result, is(notNullValue()));
 			assertThat(result.hasNext(), is(equalTo(true)));
 			while (result.hasNext()) {
 				Statement st = result.next();
+				URI subject = (URI) st.getSubject();
+				Assert.assertEquals(subject, micah);
 				URI predicate = st.getPredicate();
-				assertThat(predicate, anyOf(is(equalTo(name)), is(equalTo(mbox))));
+				Assert.assertEquals(predicate, expectedPredicateresult[i]);
 				Value object = st.getObject();
-				if (name.equals(predicate)) {
-					assertEquals("unexpected value for name: " + object, nameBob, object);
-				}
-				else {
-					assertThat(predicate, is(equalTo(mbox)));
-					assertEquals("unexpected value for mbox: " + object, mboxBob, object);
-				}
+				Assert.assertEquals(object, expectedObjectresult[i]);
+				i++;
 			}
 		}
 		finally {
 			result.close();
 		}
+		
+		StringBuilder qB = new StringBuilder(128);
+		qB.append(" PREFIX ad: <http://marklogicsparql.com/addressbook#>");
+		qB.append(" CONSTRUCT{ ?person ?p ?o .} ");
+		qB.append(" FROM <http://marklogic.com/dirgraph>");
+		qB.append(" WHERE ");
+		qB.append(" { ");
+		qB.append("   ?person ad:firstname ?firstname ; ");
+		qB.append("  ?p ?o . ");
+		qB.append("  VALUES ?firstname { \"Fei\" }  ");
+		qB.append(" } ");
+		qB.append(" order by $person ?p ?o ");
+		
+		GraphQuery query1 = testAdminCon.prepareGraphQuery(QueryLanguage.SPARQL, qB.toString());
+		GraphQueryResult result1 = query1.evaluate();
+		assertThat(result1, is(notNullValue()));
+		assertThat(result1.hasNext(), is(equalTo(false)));
+	}
+	
+	@Test
+	public void testPrepareGraphQuery2() throws Exception
+	{
+		Statement st1 = vf.createStatement(john, fname, johnfname, dirgraph);
+		Statement st2 = vf.createStatement(john, lname, johnlname, dirgraph);
+		Statement st3 = vf.createStatement(john, homeTel, johnhomeTel, dirgraph);
+		Statement st4 = vf.createStatement(john, email, johnemail, dirgraph);
+		Statement st5 = vf.createStatement(micah, fname, micahfname, dirgraph);
+		Statement st6 = vf.createStatement(micah, lname, micahlname, dirgraph);
+		Statement st7 = vf.createStatement(micah, homeTel, micahhomeTel, dirgraph);
+		Statement st8 = vf.createStatement(fei, fname, feifname, dirgraph);
+		Statement st9 = vf.createStatement(fei, lname, feilname, dirgraph);
+		Statement st10 = vf.createStatement(fei, email, feiemail, dirgraph);
+		
+		StatementList<Statement> sL = new StatementList<Statement>(st1);
+		sL.add(st2);
+		sL.add(st3);
+		sL.add(st4);
+		sL.add(st5);
+		sL.add(st6);
+		sL.add(st7);
+		sL.add(st8);
+		sL.add(st9);
+		sL.add(st10);
+		
+		
+		StatementIterator iter = new StatementIterator(sL);
+		Iteration<Statement, Exception> it = new IteratorIteration<Statement, Exception> (iter);
+		testAdminCon.add(it, dirgraph);
+		//Assert.assertEquals(10, testAdminCon.size(dirgraph));		
+			
+		StringBuilder queryBuilder = new StringBuilder(128);
+		queryBuilder.append(" PREFIX ad: <http://marklogicsparql.com/addressbook#>");
+		queryBuilder.append(" PREFIX id:  <http://marklogicsparql.com/id#> ");
+		queryBuilder.append(" CONSTRUCT{ <#1111> ad:email ?e .} ");
+		queryBuilder.append(" FROM <http://marklogic.com/dirgraph> ");
+		queryBuilder.append(" WHERE ");
+		queryBuilder.append(" { ");
+		queryBuilder.append("  <#1111> ad:lastName ?o; ");
+		queryBuilder.append("          ad:email  ?e. ");
+		queryBuilder.append(" }  ");
+		
+		GraphQuery query = testAdminCon.prepareGraphQuery(QueryLanguage.SPARQL, queryBuilder.toString(), "http://marklogicsparql.com/id");
+		GraphQueryResult result = query.evaluate();
+		
+		Literal [] expectedObjectresult = {johnemail};
+		URI []  expectedPredicateresult = {email};
+		int i = 0;
+		
+		try {
+			assertThat(result, is(notNullValue()));
+			assertThat(result.hasNext(), is(equalTo(true)));
+			while (result.hasNext()) {
+				Statement st = result.next();
+				URI subject = (URI) st.getSubject();
+				Assert.assertEquals(subject, john);
+				URI predicate = st.getPredicate();
+				Assert.assertEquals(predicate, expectedPredicateresult[i]);
+				Value object = st.getObject();
+				Assert.assertEquals(object, expectedObjectresult[i]);
+				i++;
+			}
+		}
+		finally {
+			result.close();
+		}
+		
+	}
+	
+	@Test
+	public void testPrepareGraphQuery3() throws Exception
+	{
+		Statement st1 = vf.createStatement(john, fname, johnfname, dirgraph);
+		Statement st2 = vf.createStatement(john, lname, johnlname, dirgraph);
+		Statement st3 = vf.createStatement(john, homeTel, johnhomeTel, dirgraph);
+		Statement st4 = vf.createStatement(john, email, johnemail, dirgraph);
+		Statement st5 = vf.createStatement(micah, fname, micahfname, dirgraph);
+		Statement st6 = vf.createStatement(micah, lname, micahlname, dirgraph);
+		Statement st7 = vf.createStatement(micah, homeTel, micahhomeTel, dirgraph);
+		Statement st8 = vf.createStatement(fei, fname, feifname, dirgraph);
+		Statement st9 = vf.createStatement(fei, lname, feilname, dirgraph);
+		Statement st10 = vf.createStatement(fei, email, feiemail, dirgraph);
+		
+	
+		testWriterCon.add(st1);
+		testWriterCon.add(st2);
+		testWriterCon.add(st3);
+		testWriterCon.add(st4);
+		testWriterCon.add(st5);
+		testWriterCon.add(st6);
+		testWriterCon.add(st7);
+		testWriterCon.add(st8);
+		testWriterCon.add(st9);
+		testWriterCon.add(st10);
+		
+		//Assert.assertEquals(10, testAdminCon.size(dirgraph));		
+			
+		String query = " DESCRIBE <http://marklogicsparql.com/addressbook#firstName> ";
+		GraphQuery queryObj = testReaderCon.prepareGraphQuery(query);
+			
+		GraphQueryResult result = queryObj.evaluate();
+		try {
+			assertThat(result, is(notNullValue()));
+			assertThat(result.hasNext(), is(equalTo(false)));
+		}
+		finally {
+			result.close();
+		}
+	}
+	
+	@Test
+	public void testPrepareGraphQuery4() throws Exception{
+		
+		Statement st1 = vf.createStatement(john, fname, johnfname);
+		Statement st2 = vf.createStatement(john, lname, johnlname);
+		Statement st3 = vf.createStatement(john, homeTel, johnhomeTel);
+		Statement st4 = vf.createStatement(john, email, johnemail);
+		Statement st5 = vf.createStatement(micah, fname, micahfname);
+		Statement st6 = vf.createStatement(micah, lname, micahlname);
+		Statement st7 = vf.createStatement(micah, homeTel, micahhomeTel);
+		Statement st8 = vf.createStatement(fei, fname, feifname);
+		Statement st9 = vf.createStatement(fei, lname, feilname);
+		Statement st10 = vf.createStatement(fei, email, feiemail);
+		
+		testWriterCon.add(st1,dirgraph);
+		testWriterCon.add(st2,dirgraph);
+		testWriterCon.add(st3,dirgraph);
+		testWriterCon.add(st4,dirgraph);
+		testWriterCon.add(st5,dirgraph);
+		testWriterCon.add(st6,dirgraph);
+		testWriterCon.add(st7,dirgraph);
+		testWriterCon.add(st8,dirgraph);
+		testWriterCon.add(st9,dirgraph);
+		testWriterCon.add(st10,dirgraph);
+		
+		//Assert.assertEquals(10, testWriterCon.size(dirgraph));
+				
+		String query = " DESCRIBE  <#3333>  ";
+		GraphQuery queryObj = testReaderCon.prepareGraphQuery(query, "http://marklogicsparql.com/id");
+			
+		GraphQueryResult result = queryObj.evaluate();
+		Literal [] expectedObjectresult = {feifname, feiemail, feilname};
+		URI []  expectedPredicateresult = {fname, email, lname};
+		int i = 0;
+	
+		try {
+			assertThat(result, is(notNullValue()));
+			assertThat(result.hasNext(), is(equalTo(true)));
+			while (result.hasNext()) {
+				Statement st = result.next();
+				URI subject = (URI) st.getSubject();
+				Assert.assertEquals(subject, fei);
+				URI predicate = st.getPredicate();
+				Assert.assertEquals(predicate, expectedPredicateresult[i]);
+				Value object = st.getObject();
+				Assert.assertEquals(object, expectedObjectresult[i]);
+				i++;
+			}
+		}
+		finally {
+			result.close();
+		}
+	
+	}
+	
+	@Test
+	public void testAddDelete()
+		throws OpenRDFException
+	{
+		Statement st1 = vf.createStatement(john, fname, johnfname);
+		testAdminCon.begin();
+		testAdminCon.add(st1);
+		testAdminCon.prepareUpdate(QueryLanguage.SPARQL,
+				"DELETE DATA {<" + john.stringValue() + "> <" + fname.stringValue() + "> \"" + johnfname.stringValue() + "\"}").execute();
+		testAdminCon.commit();
+
+		testAdminCon.exportStatements(null, null, null, false, new RDFHandlerBase() {
+
+			@Override
+			public void handleStatement(Statement st)
+				throws RDFHandlerException
+			{
+				assertThat(st, is(not(equalTo(st1))));
+			}
+		});
+	}
+
+	@Test
+	public final void testInsertRemove()
+		throws OpenRDFException
+	{
+		Statement st1 = vf.createStatement(john, fname, johnfname);
+		testAdminCon.begin();
+		
+		testCon.prepareUpdate(QueryLanguage.SPARQL,
+				"INSERT DATA {<" + URN_TEST_S1 + "> <" + URN_TEST_P1 + "> <" + URN_TEST_O1 + ">}").execute();
+		testCon.remove(stmt);
+		testCon.commit();
+
+		testCon.exportStatements(null, null, null, false, new RDFHandlerBase() {
+
+			@Override
+			public void handleStatement(Statement st)
+				throws RDFHandlerException
+			{
+				assertThat(st, is(not(equalTo(stmt))));
+			}
+		});
+	}
+
+	@Test
+	public void testInsertDelete()
+		throws OpenRDFException
+	{
+		final Statement stmt = vf.createStatement(vf.createURI(URN_TEST_S1), vf.createURI(URN_TEST_P1),
+				vf.createURI(URN_TEST_O1));
+		testCon.begin();
+		testCon.prepareUpdate(QueryLanguage.SPARQL,
+				"INSERT DATA {<" + URN_TEST_S1 + "> <" + URN_TEST_P1 + "> <" + URN_TEST_O1 + ">}").execute();
+		testCon.prepareUpdate(QueryLanguage.SPARQL,
+				"DELETE DATA {<" + URN_TEST_S1 + "> <" + URN_TEST_P1 + "> <" + URN_TEST_O1 + ">}").execute();
+		testCon.commit();
+
+		testCon.exportStatements(null, null, null, false, new RDFHandlerBase() {
+
+			@Override
+			public void handleStatement(Statement st)
+				throws RDFHandlerException
+			{
+				assertThat(st, is(not(equalTo(stmt))));
+			}
+		});
+	}
+
+	@Test
+	public void testAddRemoveAdd()
+		throws OpenRDFException
+	{
+		Statement stmt = vf.createStatement(vf.createURI(URN_TEST_S1), vf.createURI(URN_TEST_P1),
+				vf.createURI(URN_TEST_O1));
+		testCon.add(stmt);
+		testCon.begin();
+		testCon.remove(vf.createURI(URN_TEST_S1), vf.createURI(URN_TEST_P1), vf.createURI(URN_TEST_O1));
+		testCon.add(stmt);
+		testCon.commit();
+		Assert.assertFalse(testCon.isEmpty());
+	}
+
+	@Test
+	public void testAddDeleteAdd()
+		throws OpenRDFException
+	{
+		Statement stmt = vf.createStatement(vf.createURI(URN_TEST_S1), vf.createURI(URN_TEST_P1),
+				vf.createURI(URN_TEST_O1));
+		testCon.add(stmt);
+		testCon.begin();
+		testCon.prepareUpdate(QueryLanguage.SPARQL,
+				"DELETE DATA {<" + URN_TEST_S1 + "> <" + URN_TEST_P1 + "> <" + URN_TEST_O1 + ">}").execute();
+		testCon.add(stmt);
+		testCon.commit();
+		Assert.assertFalse(testCon.isEmpty());
+	}
+
+	@Test
+	public void testAddRemoveInsert()
+		throws OpenRDFException
+	{
+		Statement stmt = vf.createStatement(vf.createURI(URN_TEST_S1), vf.createURI(URN_TEST_P1),
+				vf.createURI(URN_TEST_O1));
+		testCon.add(stmt);
+		testCon.begin();
+		testCon.remove(stmt);
+		testCon.prepareUpdate(QueryLanguage.SPARQL,
+				"INSERT DATA {<" + URN_TEST_S1 + "> <" + URN_TEST_P1 + "> <" + URN_TEST_O1 + ">}").execute();
+		testCon.commit();
+		Assert.assertFalse(testCon.isEmpty());
+	}
+
+	@Test
+	public void testAddDeleteInsert()
+		throws OpenRDFException
+	{
+		testCon.add(vf.createURI(URN_TEST_S1), vf.createURI(URN_TEST_P1), vf.createURI(URN_TEST_O1));
+		testCon.begin();
+		testCon.prepareUpdate(QueryLanguage.SPARQL,
+				"DELETE DATA {<" + URN_TEST_S1 + "> <" + URN_TEST_P1 + "> <" + URN_TEST_O1 + ">}").execute();
+		testCon.prepareUpdate(QueryLanguage.SPARQL,
+				"INSERT DATA {<" + URN_TEST_S1 + "> <" + URN_TEST_P1 + "> <" + URN_TEST_O1 + ">}").execute();
+		testCon.commit();
+		Assert.assertFalse(testCon.isEmpty());
 	}
 
 }
