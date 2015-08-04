@@ -471,7 +471,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     }
     @Override
     public void remove(Statement st, Resource... contexts) throws RepositoryException {
-        client.sendRemove(null,st.getSubject(),st.getPredicate(),st.getObject(),contexts);
+        client.sendRemove(null,st.getSubject(),st.getPredicate(),st.getObject(),mergeResource(st.getContext(),contexts));
     }
     @Override
     public void remove(Iterable<? extends Statement> statements, Resource... contexts) throws RepositoryException {
