@@ -5,13 +5,12 @@ import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.io.Format;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.query.*;
-import com.marklogic.client.semantics.Capability;
-import com.marklogic.client.semantics.GraphManager;
 import com.marklogic.semantics.sesame.query.MarkLogicBooleanQuery;
-import com.marklogic.semantics.sesame.query.MarkLogicUpdateQuery;
-import org.junit.*;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import org.openrdf.model.ValueFactory;
-import org.openrdf.query.BooleanQuery;
 import org.openrdf.query.MalformedQueryException;
 import org.openrdf.query.QueryEvaluationException;
 import org.openrdf.query.QueryLanguage;
@@ -28,7 +27,6 @@ public class MarkLogicCombinationQueryTest extends SesameTestBase {
 
     protected RepositoryConnection conn;
     protected ValueFactory f;
-
 
     @Before
     public void setUp() throws RepositoryException {
@@ -83,11 +81,12 @@ public class MarkLogicCombinationQueryTest extends SesameTestBase {
 
         docMgr.delete("/directory1/doc1.xml");
         docMgr.delete("/directory2/doc2.xml");
-
     }
 
     @Test
     public void testCombinationQuery() throws MalformedQueryException, RepositoryException, QueryEvaluationException {
+
+        String query = "SELECT * { ?s ?p ?o .}";
 
         String query1 = "ASK WHERE {<http://example.org/r9928> ?p ?o .}";
         String query2 = "ASK WHERE {<http://example.org/r9929> ?p ?o .}";
@@ -106,27 +105,44 @@ public class MarkLogicCombinationQueryTest extends SesameTestBase {
         MarkLogicBooleanQuery askQuery = (MarkLogicBooleanQuery) conn.prepareBooleanQuery(QueryLanguage.SPARQL,query1);
         askQuery.setConstrainingQueryDefinition(rawCombined);
         Assert.assertEquals(true, askQuery.evaluate());
+        logger.debug("query: {}", query1);
 
-//        askQuery = (MarkLogicBooleanQuery) conn.prepareBooleanQuery(QueryLanguage.SPARQL,query2);
-//        askQuery.setConstrainingQueryDefinition(rawCombined);
-//        Assert.assertEquals(false, askQuery.evaluate());
-
+        askQuery = (MarkLogicBooleanQuery) conn.prepareBooleanQuery(QueryLanguage.SPARQL,query2);
+        askQuery.setConstrainingQueryDefinition(rawCombined);
+        Assert.assertEquals(false, askQuery.evaluate());
     }
 
     @Test
-    public void testUpdateQueryWithPerms()
-            throws Exception {
+    public void testStructuredCombinedQuery() throws MalformedQueryException, RepositoryException, QueryEvaluationException {
+        StructuredQueryBuilder qb = new StructuredQueryBuilder();
+        QueryDefinition structuredDef = qb.build(qb.term("Second"));
 
-        GraphManager gmgr = adminClient.newGraphManager();
-        String defGraphQuery = "INSERT DATA { GRAPH <http://marklogic.com/test/g27> { <http://marklogic.com/test> <pp1> <oo1> } }";
-        String checkQuery = "ASK WHERE { <http://marklogic.com/test> <pp1> <oo1> }";
-        MarkLogicUpdateQuery updateQuery = (MarkLogicUpdateQuery) conn.prepareUpdate(QueryLanguage.SPARQL, defGraphQuery);
-        updateQuery.setGraphPerms(gmgr.permission("read-privileged", Capability.READ));
+        String posQuery = "ASK WHERE {<http://example.org/r9929> ?p ?o .}";
+        String negQuery = "ASK WHERE {<http://example.org/r9928> ?p ?o .}";
+        MarkLogicBooleanQuery askQuery = (MarkLogicBooleanQuery) conn.prepareBooleanQuery(QueryLanguage.SPARQL,posQuery);
+        askQuery.setConstrainingQueryDefinition(structuredDef);
+        Assert.assertEquals(true, askQuery.evaluate());
 
-        updateQuery.execute();
-        BooleanQuery booleanQuery = conn.prepareBooleanQuery(QueryLanguage.SPARQL, checkQuery);
-        boolean results = booleanQuery.evaluate();
-        Assert.assertEquals(true, results);
+        askQuery = (MarkLogicBooleanQuery) conn.prepareBooleanQuery(QueryLanguage.SPARQL,negQuery);
+        askQuery.setConstrainingQueryDefinition(structuredDef);
+        Assert.assertEquals(true, askQuery.evaluate());
     }
+
+    @Test
+    public void testStringCombinationQuery() throws QueryEvaluationException, MalformedQueryException, RepositoryException {
+
+        StringQueryDefinition stringDef = qmgr.newStringDefinition().withCriteria("First");
+        String posQuery = "ASK WHERE {<http://example.org/r9928> ?p ?o .}";
+        String negQuery = "ASK WHERE {<http://example.org/r9929> ?p ?o .}";
+
+        MarkLogicBooleanQuery askQuery = (MarkLogicBooleanQuery) conn.prepareBooleanQuery(QueryLanguage.SPARQL,posQuery);
+        askQuery.setConstrainingQueryDefinition(stringDef);
+        Assert.assertEquals(true, askQuery.evaluate());
+
+        askQuery = (MarkLogicBooleanQuery) conn.prepareBooleanQuery(QueryLanguage.SPARQL,negQuery);
+        askQuery.setConstrainingQueryDefinition(stringDef);
+        Assert.assertEquals(true, askQuery.evaluate());
+    }
+
 
 }

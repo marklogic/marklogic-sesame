@@ -25,6 +25,7 @@ import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.openrdf.model.impl.ValueFactoryImpl;
 import org.openrdf.repository.Repository;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
@@ -43,7 +44,7 @@ public class MarkLogicRepositoryTest extends SesameTestBase {
     public ExpectedException exception = ExpectedException.none();
 
     @Test
-    public void testRepo1()
+    public void testRepoInitialized()
             throws Exception {
 
         logger.info("setting up repo");
@@ -54,17 +55,32 @@ public class MarkLogicRepositoryTest extends SesameTestBase {
     }
 
     @Test
-    public void TestRepo2()
+    public void negativeTestRepo2()
             throws Exception {
 
-        // TBD this will pass, so do we want to throw connection error ?
         Repository rep = new MarkLogicRepository("localhost", 8200, "admin", "admin", "DIGEST");
         rep.initialize();
         rep.shutDown();
 
+        // should throw error as we shutdown repo
         exception.expect(RepositoryException.class);
         exception.expectMessage("MarkLogicRepository not initialized.");
         RepositoryConnection conn = rep.getConnection();
+    }
+
+    @Test
+    public void testRepo()
+            throws Exception {
+
+        Repository rep = new MarkLogicRepository("localhost", 8200, "admin", "admin", "DIGEST");
+        rep.initialize();
+        rep.shutDown();
+
+        rep.initialize();
+        Assert.assertTrue(rep.getDataDir() == null);
+        Assert.assertTrue(rep.isWritable());
+        Assert.assertTrue(rep.getValueFactory() instanceof ValueFactoryImpl);
+        Assert.assertTrue(rep.getConnection() instanceof MarkLogicRepositoryConnection);
     }
 
     @Test

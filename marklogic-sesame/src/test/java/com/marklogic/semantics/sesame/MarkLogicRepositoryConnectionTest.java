@@ -68,9 +68,6 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
         logger.info("test setup complete.");
     }
 
-    /**
-     * @throws java.lang.Exception
-     */
     @After
     public void tearDown()
             throws Exception {
