@@ -11,10 +11,10 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.openrdf.model.Resource;
 import org.openrdf.model.ValueFactory;
 import org.openrdf.query.BooleanQuery;
 import org.openrdf.query.QueryLanguage;
-import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +25,7 @@ public class MarkLogicGraphPermsTest extends SesameTestBase {
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    protected RepositoryConnection conn;
+    protected MarkLogicRepositoryConnection conn;
     protected ValueFactory f;
 
     @Before
@@ -88,15 +88,19 @@ public class MarkLogicGraphPermsTest extends SesameTestBase {
             throws Exception {
 
         GraphManager gmgr = adminClient.newGraphManager();
+        Resource context = conn.getValueFactory().createURI("http://marklogic.com/test/graph/permstest");
+
         String defGraphQuery = "INSERT DATA { GRAPH <http://marklogic.com/test/graph/permstest> { <http://marklogic.com/test> <pp1> <oo1> } }";
         String checkQuery = "ASK WHERE {  GRAPH <http://marklogic.com/test/graph/permstest> {<http://marklogic.com/test> <pp1> <oo1> }}";
-        MarkLogicUpdateQuery updateQuery = (MarkLogicUpdateQuery) conn.prepareUpdate(QueryLanguage.SPARQL, defGraphQuery);
+        MarkLogicUpdateQuery updateQuery = conn.prepareUpdate(QueryLanguage.SPARQL, defGraphQuery);
         updateQuery.setGraphPerms(gmgr.permission("read-privileged", Capability.READ));
         updateQuery.execute();
 
         BooleanQuery booleanQuery = conn.prepareBooleanQuery(QueryLanguage.SPARQL, checkQuery);
         boolean results = booleanQuery.evaluate();
         Assert.assertEquals(true, results);
+
+        conn.clear(context);
     }
 
 }

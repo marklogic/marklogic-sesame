@@ -23,10 +23,8 @@ import com.marklogic.client.semantics.SPARQLRuleset;
 import com.marklogic.semantics.sesame.query.MarkLogicTupleQuery;
 import info.aduna.iteration.ConvertingIteration;
 import info.aduna.iteration.ExceptionConvertingIteration;
-import info.aduna.iteration.Iterations;
 import org.junit.*;
 import org.openrdf.model.*;
-import org.openrdf.model.impl.LinkedHashModel;
 import org.openrdf.model.impl.ValueFactoryImpl;
 import org.openrdf.model.vocabulary.RDF;
 import org.openrdf.query.*;
@@ -64,7 +62,7 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
         logger.debug("setting up test");
         rep.initialize();
         f = rep.getValueFactory();
-        conn =(MarkLogicRepositoryConnection)rep.getConnection();
+        conn =rep.getConnection();
         logger.info("test setup complete.");
     }
 
@@ -251,7 +249,7 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
     public void testSPARQLQueryWithPagination()
             throws Exception {
         String queryString = "select ?s ?p ?o { ?s ?p ?o } limit 100 ";
-        MarkLogicTupleQuery tupleQuery = (MarkLogicTupleQuery) conn.prepareTupleQuery(QueryLanguage.SPARQL, queryString);
+        MarkLogicTupleQuery tupleQuery = conn.prepareTupleQuery(QueryLanguage.SPARQL, queryString);
         TupleQueryResult results = tupleQuery.evaluate(3, 1);
 
         Assert.assertEquals(results.getBindingNames().get(0), "s");
@@ -275,7 +273,7 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
     public void testSPARQLQueryWithRuleset()
             throws Exception {
         String queryString = "select ?s ?p ?o { ?s ?p ?o } limit 100 ";
-        MarkLogicTupleQuery tupleQuery = (MarkLogicTupleQuery) conn.prepareTupleQuery(QueryLanguage.SPARQL, queryString);
+        MarkLogicTupleQuery tupleQuery = conn.prepareTupleQuery(QueryLanguage.SPARQL, queryString);
 
         tupleQuery.setRulesets(SPARQLRuleset.RDFS_FULL);
         TupleQueryResult results = tupleQuery.evaluate();
@@ -632,23 +630,30 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
 
         Resource context5 = conn.getValueFactory().createURI("http://marklogic.com/test/context7");
         Resource context6 = conn.getValueFactory().createURI("http://marklogic.com/test/context8");
+        ValueFactory f= conn.getValueFactory();
 
-        URI alice = conn.getValueFactory().createURI("http://example.org/people/alice");
-        URI bob = conn.getValueFactory().createURI("http://example.org/people/bob");
-        URI name = conn.getValueFactory().createURI("http://example.org/ontology/name");
-        URI person = conn.getValueFactory().createURI("http://example.org/ontology/Person");
-        Literal bobsName = conn.getValueFactory().createLiteral("Bob","http://www.w3.org/2001/XMLSchema#string");
-        Literal alicesName = conn.getValueFactory().createLiteral("Alice","http://www.w3.org/2001/XMLSchema#string");
+        URI alice = f.createURI("http://example.org/people/alice");
+        URI bob = f.createURI("http://example.org/people/bob");
+        URI name = f.createURI("http://example.org/ontology/name");
+        URI person = f.createURI("http://example.org/ontology/Person");
+        Literal bobsName = f.createLiteral("Bob");
+        Literal alicesName = f.createLiteral("Alice");
 
         conn.add(alice, RDF.TYPE, person, context5);
         conn.add(alice, name, alicesName,context5, context6);
         conn.add(bob, RDF.TYPE, person, context5);
         conn.add(bob, name, bobsName, context5, context6);
 
+        String checkAliceQuery = "ASK { <http://example.org/people/alice> <http://example.org/ontology/name> 'Alice' .}";
+        BooleanQuery booleanAliceQuery = conn.prepareBooleanQuery(QueryLanguage.SPARQL, checkAliceQuery);
+        Assert.assertTrue(booleanAliceQuery.evaluate());
+
         conn.remove(alice, RDF.TYPE, person, context5);
         conn.remove(alice, name, alicesName, context5, context6);
         conn.remove(bob, RDF.TYPE, person, context5);
         conn.remove(bob, name, bobsName, context5, context6);
+
+        Assert.assertFalse(booleanAliceQuery.evaluate());
 
         conn.clear(context5,context6);
     }
@@ -735,12 +740,14 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
         Resource context5 = conn.getValueFactory().createURI("http://marklogic.com/test/context5");
         Resource context6 = conn.getValueFactory().createURI("http://marklogic.com/test/context6");
 
-        URI alice = conn.getValueFactory().createURI("http://example.org/people/alice");
-        URI bob = conn.getValueFactory().createURI("http://example.org/people/bob");
-        URI name = conn.getValueFactory().createURI("http://example.org/ontology/name");
-        URI person = conn.getValueFactory().createURI("http://example.org/ontology/Person");
-        Literal bobsName = conn.getValueFactory().createLiteral("Bob","http://www.w3.org/2001/XMLSchema#string");
-        Literal alicesName = conn.getValueFactory().createLiteral("Alice","http://www.w3.org/2001/XMLSchema#string");
+        ValueFactory f= conn.getValueFactory();
+
+        URI alice = f.createURI("http://example.org/people/alice");
+        URI bob = f.createURI("http://example.org/people/bob");
+        URI name = f.createURI("http://example.org/ontology/name");
+        URI person = f.createURI("http://example.org/ontology/Person");
+        Literal bobsName = f.createLiteral("Bob");
+        Literal alicesName = f.createLiteral("Alice");
 
         conn.add(alice, RDF.TYPE, person, context5);
         conn.add(alice, name, alicesName,context5, context6);
@@ -748,16 +755,51 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
         conn.add(bob, name, bobsName, context5, context6);
 
         //TBD- need to be able to set baseURI
-        RepositoryResult<Statement> statements = conn.getStatements(alice, null, null, true,context5);
+       // RepositoryResult<Statement> statements = conn.getStatements(alice, null, null, true,context5);
 
-        Model aboutAlice = Iterations.addAll(statements, new LinkedHashModel());
+        //Model aboutAlice = Iterations.addAll(statements, new LinkedHashModel());
+
+        String checkAliceQuery = "ASK { GRAPH <http://marklogic.com/test/context5> {<http://example.org/people/alice> <http://example.org/ontology/name> 'Alice' .}}";
+        BooleanQuery booleanAliceQuery = conn.prepareBooleanQuery(QueryLanguage.SPARQL, checkAliceQuery);
+        Assert.assertTrue(booleanAliceQuery.evaluate());
 
         conn.remove(alice, RDF.TYPE, person, context5);
         conn.remove(alice, name, alicesName, context5, context6);
         conn.remove(bob, RDF.TYPE, person, context5);
         conn.remove(bob, name, bobsName, context5, context6);
 
+        Assert.assertFalse(booleanAliceQuery.evaluate());
+
         conn.clear(context5,context6);
+    }
+
+
+    @Test
+    public void testAddStatements() throws Exception{
+        Resource context = conn.getValueFactory().createURI("http://marklogic.com/test/context");
+
+        ValueFactory f= conn.getValueFactory();
+
+        URI alice = f.createURI("http://example.org/people/alice");
+        URI bob = f.createURI("http://example.org/people/bob");
+        URI name = f.createURI("http://example.org/ontology/name");
+        URI age = f.createURI("http://example.org/ontology/age");
+        URI person = f.createURI("http://example.org/ontology/Person");
+        Literal bobsAge = f.createLiteral(123123123123D);
+        Literal alicesName = f.createLiteral("Alice");
+
+        conn.add(alice, name, alicesName,context);
+        conn.add(bob, age, bobsAge, context);
+
+        String checkAliceQuery = "ASK { <http://example.org/people/alice> <http://example.org/ontology/name> 'Alice' .}";
+        BooleanQuery booleanAliceQuery = conn.prepareBooleanQuery(QueryLanguage.SPARQL, checkAliceQuery);
+        Assert.assertTrue(booleanAliceQuery.evaluate());
+
+        String checkBobQuery = "ASK { <http://example.org/people/bob> <http://example.org/ontology/age> '123123123123'^^<http://www.w3.org/2001/XMLSchema#double> .}";
+        BooleanQuery booleanBobQuery = conn.prepareBooleanQuery(QueryLanguage.SPARQL, checkBobQuery);
+        Assert.assertTrue(booleanBobQuery.evaluate());
+
+        conn.clear(context);
     }
 
 

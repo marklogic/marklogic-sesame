@@ -84,8 +84,24 @@ public class MarkLogicRepositoryTest extends SesameTestBase {
     }
 
     @Test
+    public void testRepo2()
+            throws Exception {
+
+        MarkLogicRepository rep = new MarkLogicRepository("localhost", 8200, "admin", "admin", "DIGEST");
+        rep.initialize();
+        rep.shutDown();
+
+        rep.initialize();
+        Assert.assertTrue(rep.getDataDir() == null);
+        Assert.assertTrue(rep.isWritable());
+        Assert.assertTrue(rep.getValueFactory() instanceof ValueFactoryImpl);
+        Assert.assertTrue(rep.getConnection() instanceof MarkLogicRepositoryConnection);
+    }
+
+    @Test
     public void TestRepoWithJavaAPIClientDatabaseClient()
             throws Exception {
+
         DatabaseClient databaseClient = DatabaseClientFactory.newClient("localhost", 8200, "admin", "admin", DatabaseClientFactory.Authentication.valueOf("DIGEST"));
         Repository rep = new MarkLogicRepository(databaseClient);
         rep.initialize();
