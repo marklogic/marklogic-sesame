@@ -445,13 +445,14 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     }
     @Override
     public void add(Statement st, Resource... contexts) throws RepositoryException {
-        client.sendAdd(null,st.getSubject(), st.getPredicate(), st.getObject(), contexts);
+        client.sendAdd(null,st.getSubject(), st.getPredicate(), st.getObject(), mergeResource(st.getContext(), contexts));
     }
     @Override
     public void add(Iterable<? extends Statement> statements, Resource... contexts) throws RepositoryException {
         Iterator <? extends Statement> iter = statements.iterator();
         while(iter.hasNext()){
             Statement st = iter.next();
+
             client.sendAdd(null,st.getSubject(), st.getPredicate(), st.getObject(), contexts);
         }
     }
@@ -546,6 +547,14 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
 
     private boolean isQuadMode() {
         return quadMode;
+    }
+
+    private static Resource[] mergeResource(Resource o, Resource... arr) {
+        Resource[] newArray = new Resource[arr.length + 1];
+        newArray[0] = o;
+        System.arraycopy(arr, 0, newArray, 1, arr.length);
+
+        return newArray;
     }
 
     private Iteration<Statement, QueryEvaluationException> toStatementIteration(TupleQueryResult iter, final Resource subj, final URI pred, final Value obj) {
