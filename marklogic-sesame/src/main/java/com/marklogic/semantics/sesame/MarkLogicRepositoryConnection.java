@@ -47,6 +47,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.net.URL;
+import java.util.Iterator;
 
 import static org.openrdf.query.QueryLanguage.SPARQL;
 
@@ -244,7 +245,20 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     public RepositoryResult<Statement> getStatements(Resource subj, URI pred, Value obj, boolean includeInferred, Resource... contexts) throws RepositoryException {
         try {
             if (isQuadMode()) {
-                TupleQuery tupleQuery = prepareTupleQuery(EVERYTHING_WITH_GRAPH);
+                StringBuilder sb= new StringBuilder();
+                if(contexts.length !=0){
+                    sb.append("SELECT * WHERE { ");
+
+                    for (int i = 0; i < contexts.length; i++)
+                    {
+                        sb.append("GRAPH <"+ contexts[i].stringValue()+"> {?s ?p ?o .} ");
+                    }
+                    sb.append("}");
+                }else {
+                    sb.append(EVERYTHING_WITH_GRAPH);
+                }
+
+                TupleQuery tupleQuery = prepareTupleQuery(sb.toString());
                 setBindings(tupleQuery, subj, pred, obj, contexts);
                 tupleQuery.setIncludeInferred(includeInferred);
                 TupleQueryResult qRes = tupleQuery.evaluate();
@@ -268,7 +282,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
                 }
             }
 
-            GraphQuery query = prepareGraphQuery(SPARQL, EVERYTHING);
+            GraphQuery query = prepareGraphQuery(EVERYTHING);
             setBindings(query, subj, pred, obj, contexts);
             GraphQueryResult result = query.evaluate();
             return new RepositoryResult<Statement>(
@@ -435,11 +449,18 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     }
     @Override
     public void add(Iterable<? extends Statement> statements, Resource... contexts) throws RepositoryException {
-    //TBD
+        Iterator <? extends Statement> iter = statements.iterator();
+        while(iter.hasNext()){
+            Statement st = iter.next();
+            client.sendAdd(null,st.getSubject(), st.getPredicate(), st.getObject(), contexts);
+        }
     }
     @Override
     public <E extends Exception> void add(Iteration<? extends Statement, E> statements, Resource... contexts) throws RepositoryException, E {
-    //TBD
+        while(statements.hasNext()){
+            Statement st = statements.next();
+            client.sendAdd(null,st.getSubject(), st.getPredicate(), st.getObject(), contexts);
+        }
     }
 
     // remove
@@ -532,8 +553,14 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
             @Override
             protected Statement convert(BindingSet b) throws QueryEvaluationException {
                 Resource s = subj == null ? (Resource) b.getValue("s") : subj;
-                URI p = pred == null ? getValueFactory().createURI(b.getValue("o").stringValue()) : pred;
-                Value o = obj == null ? b.getValue("o") : obj;
+                URI p = pred == null ? getValueFactory().createURI(b.getValue("p").stringValue()) : pred;
+                Value o;
+                if (obj instanceof Literal) {
+                    Literal lit = (Literal)b.getValue("o");
+                    o = getValueFactory().createLiteral(lit.stringValue(),lit.getDatatype().toString());
+                }else{
+                    o = b.getValue("o");
+                }
                 Resource ctx = (Resource) b.getValue("ctx");
 
                 return getValueFactory().createStatement(s, p, o, ctx);

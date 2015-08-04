@@ -738,7 +738,6 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
         Assert.assertEquals(true, conn.isActive());
     }
 
-    @Test
     @Ignore
     public void testSizeWithLargerGraph() throws Exception {
         Resource context1 = conn.getValueFactory().createURI("http://marklogic.com/test/my-graph");
@@ -803,7 +802,6 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
         conn.clear(context5,context6);
     }
 
-
     @Test
     public void testAddStatements() throws Exception{
         Resource context = conn.getValueFactory().createURI("http://marklogic.com/test/context");
@@ -832,5 +830,45 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
         conn.clear(context);
     }
 
+    @Test
+    public void testModelWithIterator() throws Exception{
+        Resource context1 = conn.getValueFactory().createURI("http://marklogic.com/test/context1");
+        Resource context2 = conn.getValueFactory().createURI("http://marklogic.com/test/context2");
 
+        ValueFactory f= conn.getValueFactory();
+
+        URI alice = f.createURI("http://example.org/people/alice");
+        URI name = f.createURI("http://example.org/ontology/name");
+        URI person = f.createURI("http://example.org/ontology/Person");
+        Literal alicesName = f.createLiteral("Alice1");
+
+        conn.add(alice, RDF.TYPE, person, context1);
+        conn.add(alice, name, alicesName, context1);
+
+        String checkAliceQuery = "ASK { GRAPH <http://marklogic.com/test/context1> {<http://example.org/people/alice> <http://example.org/ontology/name> 'Alice1' .}}";
+        BooleanQuery booleanAliceQuery = conn.prepareBooleanQuery(QueryLanguage.SPARQL, checkAliceQuery);
+        Assert.assertTrue(booleanAliceQuery.evaluate());
+
+        RepositoryResult<Statement> statements = conn.getStatements(alice, null, null, true,context1);
+
+        conn.add(statements,context2);
+        conn.clear(context1);
+
+        checkAliceQuery = "ASK { GRAPH <http://marklogic.com/test/context2> {<http://example.org/people/alice> <http://example.org/ontology/name> 'Alice1' .}}";
+        booleanAliceQuery = conn.prepareBooleanQuery(QueryLanguage.SPARQL, checkAliceQuery);
+        Assert.assertTrue(booleanAliceQuery.evaluate());
+
+        conn.clear(context2);
+    }
+
+    @Test
+    public void testGetStatements() throws Exception{
+        Resource context1 = conn.getValueFactory().createURI("http://marklogic.com/test/my-graph");
+
+        ValueFactory f= conn.getValueFactory();
+        URI subj = f.createURI("http://semanticbible.org/ns/2006/NTNames#AlexandriaGeodata");
+        RepositoryResult<Statement> statements = conn.getStatements(subj, null, null, true,context1);
+
+        Assert.assertTrue(statements.hasNext());
+    }
 }
