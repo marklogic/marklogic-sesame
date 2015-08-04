@@ -6,19 +6,18 @@ import org.openrdf.model.Statement;
 
 public class StatementIterator implements Iterator{
 	
-	private StatementList sL;
-	private int size;
+	private StatementList<Statement> sL;
 	private int index = 0;
+	private int size ;
 	
 	public StatementIterator(StatementList<Statement> sL){
 		this.sL =sL;
-		size =sL.size();
-		
+		this.size =sL.size();
 	}
 
 	@Override
 	public boolean hasNext() {
-		if(sL.get(index) !=null)
+		if(index < size)
 			return true;
 		return false;
 	}

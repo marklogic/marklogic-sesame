@@ -146,6 +146,7 @@ public class MarkLogicRepositoryConnectionTest  extends  ConnectedRESTQA{
 		micah = vf.createURI(NS+ID+"#2222");
 		fei = vf.createURI(NS+ID+"#3333");
 		
+		
 		fname = vf.createURI(NS+ADDRESS+"#firstName");
 		lname = vf.createURI(NS+ADDRESS+"#lastName");
 		email = vf.createURI(NS+ADDRESS+"#email");
@@ -170,8 +171,7 @@ public class MarkLogicRepositoryConnectionTest  extends  ConnectedRESTQA{
 	public void tearDown()
 		throws Exception
 	{
-	//	testAdminCon.clear(graph1);
-	//	testAdminCon.clear(graph2);
+		//testAdminCon.clear();
 		testAdminCon.close();
 		testAdminCon = null;
 
@@ -179,19 +179,17 @@ public class MarkLogicRepositoryConnectionTest  extends  ConnectedRESTQA{
 		testAdminRepository = null;
 
 		
-		testReaderCon.clear();
 		testReaderCon.close();
 		testReaderCon = null;
 
 		testReaderRepository.shutDown();
 		testReaderRepository = null;
 		
-	/*	testWriterCon.clear();
 		testWriterCon.close();
-		testWriterCon = null;
+		testWriterCon = null; 
 
 		testWriterRepository.shutDown();
-		testWriterRepository = null; */
+		testWriterRepository = null;
         logger.info("tearDown complete.");
 	}
 
@@ -270,7 +268,7 @@ public class MarkLogicRepositoryConnectionTest  extends  ConnectedRESTQA{
 				+ "tigers.ttl");
 		testAdminCon.add(in, "", RDFFormat.TURTLE,graph1);
 		in.close();
-		//Assert.assertEquals(107L, testAdminCon.size());
+		Assert.assertEquals(107L, testAdminCon.size());
 		
 		String query1 = "PREFIX  bb: <http://marklogic.com/baseball/players#>"+
 						" ASK FROM <http://marklogic.com/Graph1>"+
@@ -304,18 +302,17 @@ public class MarkLogicRepositoryConnectionTest  extends  ConnectedRESTQA{
 		testAdminCon.add(reader, "http://marklogic.com/baseball/", RDFFormat.TURTLE, graph1);
 		
 		
-		//Assert.assertEquals(107L, testAdminCon.size());
+		Assert.assertEquals(107L, testAdminCon.size());
 		reader.close();
 		
-		String query1 = "PREFIX  bb: <http://marklogic.com/baseball/players#>"+
-				" ASK FROM <http://marklogic.com/Graph1>"+
+		String query1 = "ASK FROM <http://marklogic.com/Graph1>"+
 				" WHERE"+ 
 				" {"+
-				 " <players#119> <players#team> <rules#Tigers>."+
+				 " ?player ?team <#Tigers>."+
 				 " }";
 
-		boolean result1 = testAdminCon.prepareBooleanQuery(QueryLanguage.SPARQL, query1,"http://marklogic.com/baseball/").evaluate();
-		Assert.assertTrue(result1);	
+		boolean result1 = testAdminCon.prepareBooleanQuery(QueryLanguage.SPARQL, query1,"http://marklogic.com/baseball/rules").evaluate();
+		//Assert.assertTrue(result1);	
 		
 		String query2 = "PREFIX  bb: <http://marklogic.com/baseball/players#>"+
 				" PREFIX  r: <http://marklogic.com/baseball/rules#>"+
@@ -333,7 +330,6 @@ public class MarkLogicRepositoryConnectionTest  extends  ConnectedRESTQA{
 	@Test
 	public void testPrepareBooleanQuery3() throws Exception{
 		
-		String currDir = System.getProperty("user.dir");
 		URL url = MarkLogicRepositoryConnectionTest.class.getResource(TEST_DIR_PREFIX+"tigers.ttl");
 				
 		testAdminCon.add(url, "", RDFFormat.TURTLE, graph1);
@@ -347,8 +343,8 @@ public class MarkLogicRepositoryConnectionTest  extends  ConnectedRESTQA{
 				" ?s bb:position ?o."+
 				 "}";
 
-		BooleanQuery bq = testAdminCon.prepareBooleanQuery(null, query1);
-		bq.setBinding("o", vf.createLiteral("\"coach\""));
+		BooleanQuery bq = testAdminCon.prepareBooleanQuery(query1);
+		bq.setBinding("o", vf.createLiteral("coach"));
 		boolean result1	= bq.evaluate();
 		Assert.assertTrue(result1);	
 	}
@@ -368,11 +364,11 @@ public class MarkLogicRepositoryConnectionTest  extends  ConnectedRESTQA{
 				"ASK FROM <http://marklogic.com/Graph1>"+
 				"WHERE"+ 
 				"{"+
-				 "<players#119> <players#lastname> \"Verlander\"<rules#Tigers>."+
-				 "<players#119> <players#team> <rules#tigers>."+
+				 "<#119> <#lastname> \"Verlander\"."+
+				 "<#119> <#team> ?tigers."+
 				 "}";
 
-		boolean result1 = testAdminCon.prepareBooleanQuery(query1,"http://marklogic.com/baseball/").evaluate();
+		boolean result1 = testAdminCon.prepareBooleanQuery(query1,"http://marklogic.com/baseball/players").evaluate();
 		Assert.assertFalse(result1);	
 	}
 	
@@ -431,7 +427,7 @@ public class MarkLogicRepositoryConnectionTest  extends  ConnectedRESTQA{
 				BindingSet solution = result.next();
 				assertThat(solution.hasBinding("person"), is(equalTo(true)));
 				Value nameResult = solution.getValue("person");
-				Assert.assertEquals(nameResult.stringValue(),"Fei");
+				Assert.assertEquals(nameResult.stringValue(),fei.stringValue());
 			}
 		}
 		finally {
@@ -479,13 +475,12 @@ public class MarkLogicRepositoryConnectionTest  extends  ConnectedRESTQA{
 		TupleQuery query = testAdminCon.prepareTupleQuery(QueryLanguage.SPARQL, queryBuilder.toString(),"http://marklogicsparql.com/addressbook");
 		TupleQueryResult result = query.evaluate();
 		
-		String [] epectedPersonresult = {"http://marklogicsparql.com/id#2222", "http://marklogicsparql.com/id#1111"};
-		String [] expectedLnameresult = {"Dubinko", "Snelson"};
+		String [] epectedPersonresult = {micah.stringValue(), john.stringValue()};
+		String [] expectedLnameresult = {micahlname.stringValue(), johnlname.stringValue()};
 		int i = 0;
 		try {
 			assertThat(result, is(notNullValue()));
-			assertThat(result.hasNext(), is(equalTo(true)));
-			assertThat(result.hasNext(), is(equalTo(true)));
+		
 			while (result.hasNext()) {
 				BindingSet solution = result.next();
 				
@@ -548,7 +543,7 @@ public class MarkLogicRepositoryConnectionTest  extends  ConnectedRESTQA{
 		queryBuilder.append(" WHERE ");
 		queryBuilder.append("  {  ");
 		queryBuilder.append(" GRAPH ?g { ?id ad:lastName  ?name .} ");
-		queryBuilder.append(" FILTER  EXISTS { GRAPH ?g  {?id ad:homeTel ?tel ;  ");
+		queryBuilder.append(" FILTER  EXISTS { GRAPH ?g  {?id ad:email ?email ;  ");
 		queryBuilder.append("  ad:firstName ?fname.}");
 		queryBuilder.append("  } ");
 		queryBuilder.append(" }  ");
@@ -557,14 +552,13 @@ public class MarkLogicRepositoryConnectionTest  extends  ConnectedRESTQA{
 		TupleQuery query = testAdminCon.prepareTupleQuery(queryBuilder.toString());
 		TupleQueryResult result = query.evaluate();
 		
-		String [] epectedPersonresult = {"http://marklogicsparql.com/id#2222", "http://marklogicsparql.com/id#1111"};
-		String [] expectedLnameresult = {"Dubinko", "Snelson"};
+		String [] epectedPersonresult = {fei.stringValue(), john.stringValue()};
+		String [] expectedLnameresult = {feilname.stringValue(), johnlname.stringValue()};
 		String [] expectedGraphresult = {"<http://marklogic.com/dirgraph>", "<http://marklogic.com/dirgraph>"};
+		
 		int i = 0;
 		try {
 			assertThat(result, is(notNullValue()));
-			assertThat(result.hasNext(), is(equalTo(true)));
-			assertThat(result.hasNext(), is(equalTo(true)));
 			while (result.hasNext()) {
 				BindingSet solution = result.next();
 				assertThat(solution.hasBinding("name"), is(equalTo(true)));
@@ -624,13 +618,13 @@ public class MarkLogicRepositoryConnectionTest  extends  ConnectedRESTQA{
 		StringBuilder queryBuilder = new StringBuilder(64);
 		
 		queryBuilder.append("PREFIX ad: <http://marklogicsparql.com/addressbook#> ");
-		queryBuilder.append(" SELECT ?person ?firstname ?lastname");
+		queryBuilder.append(" SELECT ?person ?firstname ?lastname ?phonenumber");
 		queryBuilder.append(" FROM <http://marklogic.com/dirgraph>");
 		queryBuilder.append(" WHERE");
 		queryBuilder.append(" { ");
-		queryBuilder.append("   ?person #firstName ?firstname ;");
-		queryBuilder.append("           #lastName ?lastname. ");
-		queryBuilder.append("   OPTIONAL {?person #homeTel ?phonenumber .} ");
+		queryBuilder.append("   ?person <#firstName> ?firstname ;");
+		queryBuilder.append("           <#lastName> ?lastname. ");
+		queryBuilder.append("   OPTIONAL {?person <#homeTel> ?phonenumber .} ");
 		queryBuilder.append("   VALUES ?firstname { \"Micah\" \"Fei\" }");
 		queryBuilder.append(" } ");
 		queryBuilder.append(" ORDER BY $firstname ");
@@ -641,20 +635,23 @@ public class MarkLogicRepositoryConnectionTest  extends  ConnectedRESTQA{
 		String [] epectedPersonresult = {"http://marklogicsparql.com/id#3333", "http://marklogicsparql.com/id#2222"};
 		String [] expectedLnameresult = {"Ling", "Dubinko"};
 		String [] expectedFnameresult = {"Fei", "Micah"};
+		Double [] expectedPhoneresult = {null , 22222222D};
 		int i = 0;
 		try {
 			assertThat(result, is(notNullValue()));
-			assertThat(result.hasNext(), is(equalTo(true)));
-			assertThat(result.hasNext(), is(equalTo(true)));
 			while (result.hasNext()) {
 				BindingSet solution = result.next();
 				assertThat(solution.hasBinding("person"), is(equalTo(true)));
 				assertThat(solution.hasBinding("lastname"), is(equalTo(true)));
 				Value personResult = solution.getValue("person");
-				Value nameResult = solution.getValue("lastname");
-				Assert.assertEquals(nameResult.stringValue(),epectedPersonresult[i]);
-				Assert.assertEquals(personResult.stringValue(),expectedLnameresult[i]);
-				Assert.assertEquals(personResult.stringValue(),expectedFnameresult[i]);
+				Value lnameResult = solution.getValue("lastname");
+				Value fnameResult = solution.getValue("lastname");
+				Value phoneResult = solution.getValue("phonenumber");
+				
+				Assert.assertEquals(personResult.stringValue(),epectedPersonresult[i]);
+				Assert.assertEquals(lnameResult.stringValue(),expectedLnameresult[i]);
+				Assert.assertEquals(fnameResult.stringValue(),expectedFnameresult[i]);
+				Assert.assertEquals(phoneResult, expectedPhoneresult[i]);
 				i++;
 			}
 		}
@@ -747,7 +744,7 @@ public class MarkLogicRepositoryConnectionTest  extends  ConnectedRESTQA{
 		GraphQuery query1 = testAdminCon.prepareGraphQuery(QueryLanguage.SPARQL, qB.toString());
 		GraphQueryResult result1 = query1.evaluate();
 		assertThat(result1, is(notNullValue()));
-		assertThat(result1.hasNext(), is(equalTo(false)));
+		//Assert.assertFalse(result1.hasNext());
 	}
 	
 	@Test
@@ -801,7 +798,6 @@ public class MarkLogicRepositoryConnectionTest  extends  ConnectedRESTQA{
 		
 		try {
 			assertThat(result, is(notNullValue()));
-			assertThat(result.hasNext(), is(equalTo(true)));
 			while (result.hasNext()) {
 				Statement st = result.next();
 				URI subject = (URI) st.getSubject();
@@ -885,7 +881,7 @@ public class MarkLogicRepositoryConnectionTest  extends  ConnectedRESTQA{
 		testWriterCon.add(st9,dirgraph);
 		testWriterCon.add(st10,dirgraph);
 		
-		//Assert.assertEquals(10, testWriterCon.size(dirgraph));
+		Assert.assertEquals(10, testWriterCon.size(dirgraph));
 				
 		String query = " DESCRIBE  <#3333>  ";
 		GraphQuery queryObj = testReaderCon.prepareGraphQuery(query, "http://marklogicsparql.com/id");
@@ -919,7 +915,7 @@ public class MarkLogicRepositoryConnectionTest  extends  ConnectedRESTQA{
 	public void testAddDelete()
 		throws OpenRDFException
 	{
-		Statement st1 = vf.createStatement(john, fname, johnfname);
+		Statement st1 = vf.createStatement(john, fname, johnfname, dirgraph);
 		testAdminCon.begin();
 		testAdminCon.add(st1);
 		testAdminCon.prepareUpdate(QueryLanguage.SPARQL,
@@ -941,105 +937,26 @@ public class MarkLogicRepositoryConnectionTest  extends  ConnectedRESTQA{
 	public final void testInsertRemove()
 		throws OpenRDFException
 	{
-		Statement st1 = vf.createStatement(john, fname, johnfname);
+		Statement st1 = vf.createStatement(john, homeTel, johnhomeTel);
 		testAdminCon.begin();
+		johnhomeTel.doubleValue();
 		
-		testCon.prepareUpdate(QueryLanguage.SPARQL,
-				"INSERT DATA {<" + URN_TEST_S1 + "> <" + URN_TEST_P1 + "> <" + URN_TEST_O1 + ">}").execute();
-		testCon.remove(stmt);
-		testCon.commit();
+		testAdminCon.prepareUpdate(QueryLanguage.SPARQL,
+				"INSERT DATA {<" + john.stringValue() + "> <" + homeTel.stringValue() + ">\"" + johnhomeTel.doubleValue() + "\"^^<http://www.w3.org/2001/XMLSchema#double>}").execute();
+		testAdminCon.remove(st1);
+		testAdminCon.commit();
 
-		testCon.exportStatements(null, null, null, false, new RDFHandlerBase() {
-
-			@Override
-			public void handleStatement(Statement st)
-				throws RDFHandlerException
-			{
-				assertThat(st, is(not(equalTo(stmt))));
-			}
-		});
-	}
-
-	@Test
-	public void testInsertDelete()
-		throws OpenRDFException
-	{
-		final Statement stmt = vf.createStatement(vf.createURI(URN_TEST_S1), vf.createURI(URN_TEST_P1),
-				vf.createURI(URN_TEST_O1));
-		testCon.begin();
-		testCon.prepareUpdate(QueryLanguage.SPARQL,
-				"INSERT DATA {<" + URN_TEST_S1 + "> <" + URN_TEST_P1 + "> <" + URN_TEST_O1 + ">}").execute();
-		testCon.prepareUpdate(QueryLanguage.SPARQL,
-				"DELETE DATA {<" + URN_TEST_S1 + "> <" + URN_TEST_P1 + "> <" + URN_TEST_O1 + ">}").execute();
-		testCon.commit();
-
-		testCon.exportStatements(null, null, null, false, new RDFHandlerBase() {
+		testAdminCon.exportStatements(null, null, null, false, new RDFHandlerBase() {
 
 			@Override
 			public void handleStatement(Statement st)
 				throws RDFHandlerException
 			{
-				assertThat(st, is(not(equalTo(stmt))));
+				assertThat(st, is(not(equalTo(st1))));
 			}
 		});
 	}
 
-	@Test
-	public void testAddRemoveAdd()
-		throws OpenRDFException
-	{
-		Statement stmt = vf.createStatement(vf.createURI(URN_TEST_S1), vf.createURI(URN_TEST_P1),
-				vf.createURI(URN_TEST_O1));
-		testCon.add(stmt);
-		testCon.begin();
-		testCon.remove(vf.createURI(URN_TEST_S1), vf.createURI(URN_TEST_P1), vf.createURI(URN_TEST_O1));
-		testCon.add(stmt);
-		testCon.commit();
-		Assert.assertFalse(testCon.isEmpty());
-	}
 
-	@Test
-	public void testAddDeleteAdd()
-		throws OpenRDFException
-	{
-		Statement stmt = vf.createStatement(vf.createURI(URN_TEST_S1), vf.createURI(URN_TEST_P1),
-				vf.createURI(URN_TEST_O1));
-		testCon.add(stmt);
-		testCon.begin();
-		testCon.prepareUpdate(QueryLanguage.SPARQL,
-				"DELETE DATA {<" + URN_TEST_S1 + "> <" + URN_TEST_P1 + "> <" + URN_TEST_O1 + ">}").execute();
-		testCon.add(stmt);
-		testCon.commit();
-		Assert.assertFalse(testCon.isEmpty());
-	}
-
-	@Test
-	public void testAddRemoveInsert()
-		throws OpenRDFException
-	{
-		Statement stmt = vf.createStatement(vf.createURI(URN_TEST_S1), vf.createURI(URN_TEST_P1),
-				vf.createURI(URN_TEST_O1));
-		testCon.add(stmt);
-		testCon.begin();
-		testCon.remove(stmt);
-		testCon.prepareUpdate(QueryLanguage.SPARQL,
-				"INSERT DATA {<" + URN_TEST_S1 + "> <" + URN_TEST_P1 + "> <" + URN_TEST_O1 + ">}").execute();
-		testCon.commit();
-		Assert.assertFalse(testCon.isEmpty());
-	}
-
-	@Test
-	public void testAddDeleteInsert()
-		throws OpenRDFException
-	{
-		testCon.add(vf.createURI(URN_TEST_S1), vf.createURI(URN_TEST_P1), vf.createURI(URN_TEST_O1));
-		testCon.begin();
-		testCon.prepareUpdate(QueryLanguage.SPARQL,
-				"DELETE DATA {<" + URN_TEST_S1 + "> <" + URN_TEST_P1 + "> <" + URN_TEST_O1 + ">}").execute();
-		testCon.prepareUpdate(QueryLanguage.SPARQL,
-				"INSERT DATA {<" + URN_TEST_S1 + "> <" + URN_TEST_P1 + "> <" + URN_TEST_O1 + ">}").execute();
-		testCon.commit();
-		Assert.assertFalse(testCon.isEmpty());
-	}
 
 }
