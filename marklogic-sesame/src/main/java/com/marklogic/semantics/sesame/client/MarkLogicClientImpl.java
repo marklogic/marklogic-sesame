@@ -26,9 +26,12 @@ import com.marklogic.client.Transaction;
 import com.marklogic.client.impl.SPARQLBindingsImpl;
 import com.marklogic.client.io.FileHandle;
 import com.marklogic.client.io.InputStreamHandle;
+import com.marklogic.client.query.QueryDefinition;
 import com.marklogic.client.query.RawCombinedQueryDefinition;
 import com.marklogic.client.semantics.*;
-import org.openrdf.model.*;
+import org.openrdf.model.Resource;
+import org.openrdf.model.URI;
+import org.openrdf.model.Value;
 import org.openrdf.query.Binding;
 import org.openrdf.repository.sparql.query.SPARQLQueryBindingSet;
 import org.openrdf.rio.RDFFormat;
@@ -63,7 +66,7 @@ public class MarkLogicClientImpl {
     );
 
     private SPARQLRuleset rulesets;
-    private RawCombinedQueryDefinition constrainingQueryDef;
+    private QueryDefinition constrainingQueryDef;
     private GraphPermissions graphPerms;
 
     static public SPARQLQueryManager sparqlManager;
@@ -309,9 +312,9 @@ public class MarkLogicClientImpl {
 
     // constraining query
     public void setConstrainingQueryDefinition(Object constrainingQueryDefinition){
-        this.constrainingQueryDef = (RawCombinedQueryDefinition)constrainingQueryDefinition;
+        this.constrainingQueryDef = (QueryDefinition) constrainingQueryDefinition;
     }
-    public RawCombinedQueryDefinition getConstrainingQueryDefinition(){
+    public QueryDefinition getConstrainingQueryDefinition(){
         return this.constrainingQueryDef;
     }
 

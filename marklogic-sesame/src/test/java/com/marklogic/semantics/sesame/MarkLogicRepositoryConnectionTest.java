@@ -51,7 +51,6 @@ import java.util.Properties;
  *
  * @author James Fuller
  */
-@Ignore
 public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
