@@ -21,7 +21,6 @@ package com.marklogic.semantics.sesame.config;
 
 import com.marklogic.semantics.sesame.MarkLogicRepositoryConnection;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -38,16 +37,6 @@ public class MarkLogicRepositoryFactoryTest {
 
     @Rule
     public ExpectedException exception = ExpectedException.none();
-
-    @Ignore
-    public void testGetRepositoryType() throws Exception {
-
-    }
-
-    @Ignore
-    public void testGetConfig() throws Exception {
-
-    }
 
     @Test
     public void testGetRepository() throws Exception {
@@ -83,7 +72,7 @@ public class MarkLogicRepositoryFactoryTest {
 
         Repository otherrepo = factory.getRepository(config);
         exception.expect(RepositoryException.class);
-        //try to get connection without initialising repo, throws error
+        //try to get connection without initialising repo, will throw error
         RepositoryConnection conn = otherrepo.getConnection();
     }
 }
