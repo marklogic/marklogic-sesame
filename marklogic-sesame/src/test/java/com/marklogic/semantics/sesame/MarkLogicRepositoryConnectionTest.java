@@ -740,13 +740,28 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
 
     @Test
     @Ignore
-    public void testSize() throws Exception {
-        File inputFile = new File("src/test/resources/testdata/default-graph-1.ttl");
-        String baseURI = "http://example.org/example1/";
-        Resource context1 = conn.getValueFactory().createURI("http://marklogic.com/test/sizetest");
-        conn.add(inputFile, baseURI, RDFFormat.TURTLE, context1);
-        conn.clear(context1);
-        Assert.assertEquals(10, conn.size(context1));
+    public void testSizeWithLargerGraph() throws Exception {
+        Resource context1 = conn.getValueFactory().createURI("http://marklogic.com/test/my-graph");
+        Assert.assertEquals(4036, conn.size(context1));
+    }
+
+    @Test
+    public void testSizeWithEmptyGraph() throws Exception {
+        Resource context1 = conn.getValueFactory().createURI("http://marklogic.com/test/nonexistent");
+        Assert.assertEquals(0, conn.size(context1));
+    }
+
+    @Test
+    public void testSizeWithSmallerGraph() throws Exception {
+        Resource context1 = conn.getValueFactory().createURI("http://marklogic.com/test/context1");
+        ValueFactory f= conn.getValueFactory();
+        URI alice = f.createURI("http://example.org/people/alice");
+        URI name = f.createURI("http://example.org/ontology/name");
+        URI person = f.createURI("http://example.org/ontology/Person");
+        Literal alicesName = f.createLiteral("Alice");
+        conn.add(alice, RDF.TYPE, person, context1);
+        conn.add(alice, name, alicesName,context1);
+        Assert.assertEquals(2, conn.size(context1));
         conn.clear(context1);
     }
 

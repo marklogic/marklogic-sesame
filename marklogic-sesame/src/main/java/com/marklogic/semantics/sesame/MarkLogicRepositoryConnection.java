@@ -244,7 +244,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     public RepositoryResult<Statement> getStatements(Resource subj, URI pred, Value obj, boolean includeInferred, Resource... contexts) throws RepositoryException {
         try {
             if (isQuadMode()) {
-                TupleQuery tupleQuery = prepareTupleQuery(SPARQL, EVERYTHING_WITH_GRAPH);
+                TupleQuery tupleQuery = prepareTupleQuery(EVERYTHING_WITH_GRAPH);
                 setBindings(tupleQuery, subj, pred, obj, contexts);
                 tupleQuery.setIncludeInferred(includeInferred);
                 TupleQueryResult qRes = tupleQuery.evaluate();
@@ -316,19 +316,37 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
 
     // number of triples in repository context (graph)
     @Override
-    public long size(Resource... contexts) throws RepositoryException {
-        RepositoryResult<Statement> stmts = getStatements(null, null, null, true, contexts);
+    public long size(Resource... contexts)  {
         try {
+            StringBuilder sb= new StringBuilder();
+            if(contexts.length !=0){
+                sb.append("SELECT * WHERE { ");
+
+                for (int i = 0; i < contexts.length; i++)
+                {
+                    sb.append("GRAPH <"+ contexts[i].stringValue()+"> {?s ?p ?o .} ");
+                }
+                sb.append("}");
+            }else {
+                sb.append(EVERYTHING_WITH_GRAPH);
+            }
+            TupleQuery tupleQuery = prepareTupleQuery(sb.toString());
+            //tupleQuery.setIncludeInferred(includeInferred);
+            TupleQueryResult qRes = tupleQuery.evaluate();
             long i = 0;
-            while (stmts.hasNext()) {
-                stmts.next();
+            while (qRes.hasNext()) {
+                qRes.next();
                 i++;
             }
             return i;
+        } catch (MalformedQueryException e) {
+            e.printStackTrace();
+        } catch (QueryEvaluationException e) {
+            e.printStackTrace();
+        } catch (RepositoryException e) {
+            e.printStackTrace();
         }
-        finally {
-            stmts.close();
-        }
+        return 0;
     }
 
     // remove context (graph)
