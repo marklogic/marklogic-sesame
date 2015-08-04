@@ -862,12 +862,33 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
     }
 
     @Test
+    public void testStatementWithDefinedContext() throws Exception{
+        Resource context1 = conn.getValueFactory().createURI("http://marklogic.com/test/context1");
+
+        ValueFactory f= conn.getValueFactory();
+
+        URI alice = f.createURI("http://example.org/people/alice");
+        URI name = f.createURI("http://example.org/ontology/name");
+        URI person = f.createURI("http://example.org/ontology/Person");
+        Literal alicesName = f.createLiteral("Alice1");
+
+        Statement st1 = f.createStatement(alice, name, alicesName, context1);
+        conn.add(st1);
+
+        String checkAliceQuery = "ASK { GRAPH <http://marklogic.com/test/context1> {<http://example.org/people/alice> <http://example.org/ontology/name> 'Alice1' .}}";
+        BooleanQuery booleanAliceQuery = conn.prepareBooleanQuery(QueryLanguage.SPARQL, checkAliceQuery);
+        Assert.assertTrue(booleanAliceQuery.evaluate());
+
+        conn.clear(context1);
+    }
+
+    @Test
     public void testGetStatements() throws Exception{
         Resource context1 = conn.getValueFactory().createURI("http://marklogic.com/test/my-graph");
 
         ValueFactory f= conn.getValueFactory();
         URI subj = f.createURI("http://semanticbible.org/ns/2006/NTNames#AlexandriaGeodata");
-        RepositoryResult<Statement> statements = conn.getStatements(subj, null, null, true,context1);
+        RepositoryResult<Statement> statements = conn.getStatements(subj, null, null, true, context1);
 
         Assert.assertTrue(statements.hasNext());
     }

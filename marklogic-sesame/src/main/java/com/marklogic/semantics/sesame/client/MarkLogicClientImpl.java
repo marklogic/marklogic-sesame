@@ -272,6 +272,7 @@ public class MarkLogicClientImpl {
         {
             sb.append("GRAPH <"+ contexts[i].stringValue()+"> {<"+subject.stringValue()+"> <"+predicate.stringValue()+"> "+ob.toString()+" .} ");
         }
+
         sb.append("}");
         SPARQLQueryDefinition qdef = sparqlManager.newQueryDefinition(sb.toString());
         sparqlManager.executeUpdate(qdef, tx);
