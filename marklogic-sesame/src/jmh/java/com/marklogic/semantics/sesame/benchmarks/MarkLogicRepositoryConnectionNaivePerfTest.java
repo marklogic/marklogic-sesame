@@ -1,21 +1,28 @@
 package com.marklogic.semantics.sesame.benchmarks;
 
 import com.marklogic.semantics.sesame.MarkLogicRepository;
+import com.marklogic.semantics.sesame.MarkLogicRepositoryConnection;
 import org.openjdk.jmh.annotations.Benchmark;
+import org.openrdf.model.Resource;
+import org.openrdf.model.Statement;
 import org.openrdf.model.Value;
 import org.openrdf.model.ValueFactory;
 import org.openrdf.query.BindingSet;
-import org.openrdf.query.QueryLanguage;
 import org.openrdf.query.TupleQuery;
 import org.openrdf.query.TupleQueryResult;
-import org.openrdf.repository.Repository;
-import org.openrdf.repository.RepositoryConnection;
+import org.openrdf.repository.RepositoryResult;
+import org.openrdf.rio.RDFFormat;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
 
 public class MarkLogicRepositoryConnectionNaivePerfTest {
+
+    private static final Logger logger = LoggerFactory.getLogger(MarkLogicRepositoryConnectionNaivePerfTest.class);
 
     @Benchmark
     public void perfNaiveQuery1()
@@ -34,16 +41,22 @@ public class MarkLogicRepositoryConnectionNaivePerfTest {
         String pass = props.getProperty("mlPassword");
         // extrude to semantics.utils
 
-        Repository rep = new MarkLogicRepository(host,port,user,pass,"DIGEST");
+        MarkLogicRepository rep = new MarkLogicRepository(host,port,user,pass,"DIGEST");
         rep.initialize();
 
         ValueFactory f = rep.getValueFactory();
-        RepositoryConnection conn = rep.getConnection();
+        MarkLogicRepositoryConnection conn = rep.getConnection();
         rep.shutDown();
         rep.initialize();
 
+        File inputFile = new File("src/jmh/resources/testdata/default-graph-1.ttl");
+        FileInputStream is = new FileInputStream(inputFile);
+        String baseURI = "http://example.org/example1/";
+        Resource context1 = conn.getValueFactory().createURI("http://marklogic.com/test/context3");
+        conn.add(is, baseURI, RDFFormat.TURTLE, context1);
+
         String queryString = "select ?s ?p ?o { ?s ?p ?o } limit 100 ";
-        TupleQuery tupleQuery = conn.prepareTupleQuery(QueryLanguage.SPARQL, queryString);
+        TupleQuery tupleQuery = conn.prepareTupleQuery(queryString);
         TupleQueryResult results = tupleQuery.evaluate();
 
         while(results.hasNext()) {
@@ -52,5 +65,16 @@ public class MarkLogicRepositoryConnectionNaivePerfTest {
             Value pV = bindingSet.getValue("p");
             Value oV = bindingSet.getValue("o");
         }
+        Resource subject = conn.getValueFactory().createURI("urn:x-local:graph1");
+        RepositoryResult<Statement> statements = conn.getStatements(subject, null, null, true, context1);
+
+        if(statements.hasNext()){
+            logger.debug("getStatements worked");
+        }
+
+        logger.debug("size:{}",conn.size(context1));
+        conn.clear(context1);
+        conn.close();
+        rep.shutDown();
     }
 }
