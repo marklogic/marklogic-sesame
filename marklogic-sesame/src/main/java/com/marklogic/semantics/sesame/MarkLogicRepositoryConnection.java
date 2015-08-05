@@ -440,7 +440,6 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     }
     @Override
     public void add(Resource subject, URI predicate, Value object, Resource... contexts) throws RepositoryException {
-        logger.debug("object: {}",object.stringValue());
         client.sendAdd(null,subject, predicate, object, contexts);
     }
     @Override
@@ -452,15 +451,14 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
         Iterator <? extends Statement> iter = statements.iterator();
         while(iter.hasNext()){
             Statement st = iter.next();
-
-            client.sendAdd(null,st.getSubject(), st.getPredicate(), st.getObject(), contexts);
+            client.sendAdd(null,st.getSubject(), st.getPredicate(), st.getObject(), mergeResource(st.getContext(),contexts));
         }
     }
     @Override
     public <E extends Exception> void add(Iteration<? extends Statement, E> statements, Resource... contexts) throws RepositoryException, E {
         while(statements.hasNext()){
             Statement st = statements.next();
-            client.sendAdd(null,st.getSubject(), st.getPredicate(), st.getObject(), contexts);
+            client.sendAdd(null,st.getSubject(), st.getPredicate(), st.getObject(), mergeResource(st.getContext(),contexts));
         }
     }
 
@@ -475,32 +473,39 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     }
     @Override
     public void remove(Iterable<? extends Statement> statements, Resource... contexts) throws RepositoryException {
-    //TBD
+        Iterator <? extends Statement> iter = statements.iterator();
+        while(iter.hasNext()){
+            Statement st = iter.next();
+            client.sendRemove(null, st.getSubject(), st.getPredicate(), st.getObject(), mergeResource(st.getContext(),contexts));
+        }
     }
     @Override
     public <E extends Exception> void remove(Iteration<? extends Statement, E> statements, Resource... contexts) throws RepositoryException, E {
-    //TBD
+        while(statements.hasNext()){
+            Statement st = statements.next();
+            client.sendRemove(null, st.getSubject(), st.getPredicate(), st.getObject(), mergeResource(st.getContext(),contexts));
+        }
     }
 
     // without commit
     @Override
     protected void addWithoutCommit(Resource subject, URI predicate, Value object, Resource... contexts) throws RepositoryException {
-        add(subject,predicate,object,contexts);
+        add(subject, predicate, object, contexts);
     }
     @Override
     protected void removeWithoutCommit(Resource subject, URI predicate, Value object, Resource... contexts) throws RepositoryException {
         remove(subject, predicate, object, contexts);
     }
 
-    // TBD - not in scope for 1.0.0
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    // not in scope for 1.0.0 /////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+
     @Override
     public RepositoryResult<Namespace> getNamespaces() throws RepositoryException {
         return null;
     }
 
-    ///////////////////////////////////////////////////////////////////////////////////////////////
-    // not in scope for 1.0.0 /////////////////////////////////////////////////////////////////////
-    ///////////////////////////////////////////////////////////////////////////////////////////////
     @Override
     public String getNamespace(String prefix) throws RepositoryException {
         return null;
@@ -517,6 +522,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
 
+
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // private ////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -530,7 +536,15 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
             query.setBinding("p", pred);
         }
         if (obj != null) {
-            query.setBinding("o", obj);
+
+            Value o;
+            if (obj instanceof Literal) {
+                Literal lit = (Literal)obj;
+                o = getValueFactory().createLiteral(lit.stringValue(),lit.getDatatype().toString());
+                query.setBinding("o", o);
+            }else{
+                query.setBinding("o", obj);
+            }
         }
         if (contexts != null && contexts.length > 0) {
             DatasetImpl dataset = new DatasetImpl();
