@@ -1,0 +1,109 @@
+# VM invoker: /Library/Java/JavaVirtualMachines/jdk1.7.0_71.jdk/Contents/Home/jre/bin/java
+# VM options: -Dfile.encoding=UTF-8 -Duser.country=US -Duser.language=en -Duser.variant
+# Warmup: 1 iterations, 1 s each, 2 calls per op
+# Measurement: 5 iterations, 1 s each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Throughput, ops/time
+# Benchmark: com.marklogic.semantics.sesame.benchmarks.MarkLogicRepositoryConnectionNaivePerfTest.perfNaiveQuery1
+
+# Run progress: 0.00% complete, ETA 00:01:00
+# Fork: 1 of 10
+# Warmup Iteration   1: 0.890 ops/s
+Iteration   1: 6.075 ops/s
+Iteration   2: 7.027 ops/s
+Iteration   3: 7.342 ops/s
+Iteration   4: 7.625 ops/s
+Iteration   5: 8.374 ops/s
+
+# Run progress: 10.00% complete, ETA 00:10:10
+# Fork: 2 of 10
+# Warmup Iteration   1: 1.624 ops/s
+Iteration   1: 6.301 ops/s
+Iteration   2: 6.792 ops/s
+Iteration   3: 7.648 ops/s
+Iteration   4: 8.128 ops/s
+Iteration   5: 8.137 ops/s
+
+# Run progress: 20.00% complete, ETA 00:09:02
+# Fork: 3 of 10
+# Warmup Iteration   1: 1.680 ops/s
+Iteration   1: 6.864 ops/s
+Iteration   2: 7.460 ops/s
+Iteration   3: 7.854 ops/s
+Iteration   4: 8.628 ops/s
+Iteration   5: 9.082 ops/s
+
+# Run progress: 30.00% complete, ETA 00:07:54
+# Fork: 4 of 10
+# Warmup Iteration   1: 0.916 ops/s
+Iteration   1: 5.916 ops/s
+Iteration   2: 6.347 ops/s
+Iteration   3: 7.123 ops/s
+Iteration   4: 8.089 ops/s
+Iteration   5: 7.268 ops/s
+
+# Run progress: 40.00% complete, ETA 00:06:47
+# Fork: 5 of 10
+# Warmup Iteration   1: 1.733 ops/s
+Iteration   1: 7.120 ops/s
+Iteration   2: 7.894 ops/s
+Iteration   3: 8.365 ops/s
+Iteration   4: 8.964 ops/s
+Iteration   5: 8.971 ops/s
+
+# Run progress: 50.00% complete, ETA 00:05:38
+# Fork: 6 of 10
+# Warmup Iteration   1: 1.760 ops/s
+Iteration   1: 6.921 ops/s
+Iteration   2: 7.823 ops/s
+Iteration   3: 7.454 ops/s
+Iteration   4: 9.116 ops/s
+Iteration   5: 8.985 ops/s
+
+# Run progress: 60.00% complete, ETA 00:04:31
+# Fork: 7 of 10
+# Warmup Iteration   1: 1.815 ops/s
+Iteration   1: 1.895 ops/s
+Iteration   2: 7.959 ops/s
+Iteration   3: 8.332 ops/s
+Iteration   4: 8.522 ops/s
+Iteration   5: 8.494 ops/s
+
+# Run progress: 70.00% complete, ETA 00:03:24
+# Fork: 8 of 10
+# Warmup Iteration   1: 1.700 ops/s
+Iteration   1: 6.962 ops/s
+Iteration   2: 7.753 ops/s
+Iteration   3: 7.671 ops/s
+Iteration   4: 8.890 ops/s
+Iteration   5: 8.797 ops/s
+
+# Run progress: 80.00% complete, ETA 00:02:16
+# Fork: 9 of 10
+# Warmup Iteration   1: 1.777 ops/s
+Iteration   1: 7.233 ops/s
+Iteration   2: 8.403 ops/s
+Iteration   3: 0.458 ops/s
+Iteration   4: 7.837 ops/s
+Iteration   5: 9.154 ops/s
+
+# Run progress: 90.00% complete, ETA 00:01:08
+# Fork: 10 of 10
+# Warmup Iteration   1: 1.677 ops/s
+Iteration   1: 6.458 ops/s
+Iteration   2: 7.235 ops/s
+Iteration   3: 7.754 ops/s
+Iteration   4: 8.412 ops/s
+Iteration   5: 8.832 ops/s
+
+
+Result: 7.535 ±(99.9%) 0.777 ops/s [Average]
+  Statistics: (min, avg, max) = (0.458, 7.535, 9.154), stdev = 1.569
+  Confidence interval (99.9%): [6.759, 8.312]
+
+
+# Run complete. Total time: 00:11:22
+
+Benchmark                                                                Mode  Samples  Score   Error  Units
+c.m.s.s.b.MarkLogicRepositoryConnectionNaivePerfTest.perfNaiveQuery1    thrpt       50  7.535 ± 0.777  ops/s
