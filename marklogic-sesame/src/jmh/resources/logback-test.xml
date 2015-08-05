@@ -17,9 +17,12 @@
         <appender-ref ref="STDOUT" />
     </logger>
 
-
-    <!-- By default, the level of the root level is set to DEBUG -->
-    <root level="INFO">
+    <logger name="com.marklogic.semantics.sesame.*" level="DEBUG" additivity="false">
         <appender-ref ref="STDOUT" />
+    </logger>
+    <!-- By default, the level of the root level is set to DEBUG -->
+    <root level="DEBUG">
+        <appender-ref ref="STDOUT" />
+
     </root>
 </configuration>
