@@ -94,7 +94,7 @@ public class MarkLogicClient {
 	//tuple query
 	public TupleQueryResult sendTupleQuery(String queryString,SPARQLQueryBindingSet bindings, long start, long pageLength, boolean includeInferred, String baseURI) throws IOException {
 		InputStream stream = getClient().performSPARQLQuery(queryString, bindings, start, pageLength, this.tx, includeInferred, baseURI);
-		TupleQueryResultParser parser = QueryResultIO.createParser(format, getValueFactory());
+		TupleQueryResultParser parser = QueryResultIO.createParser(this.format, getValueFactory());
 		BackgroundTupleResult tRes = new BackgroundTupleResult(parser,stream);
 		execute(tRes);
 		return tRes;
@@ -103,7 +103,7 @@ public class MarkLogicClient {
 	//graph query
 	public GraphQueryResult sendGraphQuery(String queryString, SPARQLQueryBindingSet bindings, boolean includeInferred, String baseURI) throws IOException {
 		InputStream stream = getClient().performGraphQuery(queryString, bindings, this.tx, includeInferred, baseURI);
-		RDFParser parser = Rio.createParser(rdfFormat, getValueFactory());
+		RDFParser parser = Rio.createParser(this.rdfFormat, getValueFactory());
 		parser.setParserConfig(getParserConfig());
 		parser.setParseErrorListener(new ParseErrorLogger());
 
@@ -171,7 +171,7 @@ public class MarkLogicClient {
 		tx=null;
 	}
 	public boolean isActiveTransaction(){
-		return tx instanceof Transaction;
+		return this.tx instanceof Transaction;
 	}
 	public void setAutoCommit(){
 		//TBD-what to do if active ?
