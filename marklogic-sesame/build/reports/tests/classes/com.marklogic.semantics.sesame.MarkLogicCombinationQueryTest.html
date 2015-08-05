@@ -1,0 +1,1463 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta http-equiv="x-ua-compatible" content="IE=edge"/>
+<title>Test results - Class com.marklogic.semantics.sesame.MarkLogicCombinationQueryTest</title>
+<link href="../css/base-style.css" rel="stylesheet" type="text/css"/>
+<link href="../css/style.css" rel="stylesheet" type="text/css"/>
+<script src="../js/report.js" type="text/javascript"></script>
+</head>
+<body>
+<div id="content">
+<h1>Class com.marklogic.semantics.sesame.MarkLogicCombinationQueryTest</h1>
+<div class="breadcrumbs">
+<a href="../index.html">all</a> &gt; 
+<a href="../packages/com.marklogic.semantics.sesame.html">com.marklogic.semantics.sesame</a> &gt; MarkLogicCombinationQueryTest</div>
+<div id="summary">
+<table>
+<tr>
+<td>
+<div class="summaryGroup">
+<table>
+<tr>
+<td>
+<div class="infoBox" id="tests">
+<div class="counter">3</div>
+<p>tests</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="failures">
+<div class="counter">0</div>
+<p>failures</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="ignored">
+<div class="counter">0</div>
+<p>ignored</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="duration">
+<div class="counter">2.642s</div>
+<p>duration</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</td>
+<td>
+<div class="infoBox success" id="successRate">
+<div class="percent">100%</div>
+<p>successful</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div id="tabs">
+<ul class="tabLinks">
+<li>
+<a href="#tab0">Tests</a>
+</li>
+<li>
+<a href="#tab1">Standard output</a>
+</li>
+</ul>
+<div id="tab0" class="tab">
+<h2>Tests</h2>
+<table>
+<thead>
+<tr>
+<th>Test</th>
+<th>Duration</th>
+<th>Result</th>
+</tr>
+</thead>
+<tr>
+<td class="success">testCombinationQuery</td>
+<td>2.325s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">testStringCombinationQuery</td>
+<td>0.136s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">testStructuredCombinedQuery</td>
+<td>0.181s</td>
+<td class="success">passed</td>
+</tr>
+</table>
+</div>
+<div id="tab1" class="tab">
+<h2>Standard output</h2>
+<span class="code">
+<pre>10:57:57,965 |-INFO in ch.qos.logback.classic.LoggerContext[default] - Could NOT find resource [logback.groovy]
+10:57:57,965 |-INFO in ch.qos.logback.classic.LoggerContext[default] - Found resource [logback-test.xml] at [file:/Users/jfuller/Source/1_marklogic/projects/marklogic-sesame/marklogic-sesame/build/resources/test/logback-test.xml]
+10:57:58,041 |-INFO in ch.qos.logback.classic.joran.action.ConfigurationAction - debug attribute not set
+10:57:58,048 |-INFO in ch.qos.logback.core.joran.action.AppenderAction - About to instantiate appender of type [ch.qos.logback.core.ConsoleAppender]
+10:57:58,057 |-INFO in ch.qos.logback.core.joran.action.AppenderAction - Naming appender as [STDOUT]
+10:57:58,073 |-INFO in ch.qos.logback.core.joran.action.NestedComplexPropertyIA - Assuming default type [ch.qos.logback.classic.encoder.PatternLayoutEncoder] for [encoder] property
+10:57:58,116 |-INFO in ch.qos.logback.classic.joran.action.LoggerAction - Setting level of logger [com.marklogic.client.*] to INFO
+10:57:58,116 |-INFO in ch.qos.logback.classic.joran.action.LoggerAction - Setting additivity of logger [com.marklogic.client.*] to false
+10:57:58,117 |-ERROR in ch.qos.logback.core.joran.action.AppenderRefAction - Could not find an appender named [BUFFER]. Did you define it below instead of above in the configuration file?
+10:57:58,117 |-ERROR in ch.qos.logback.core.joran.action.AppenderRefAction - See http://logback.qos.ch/codes.html#appender_order for more details.
+10:57:58,117 |-INFO in ch.qos.logback.classic.joran.action.LoggerAction - Setting level of logger [com.marklogic.semantics.sesame.client.*] to DEBUG
+10:57:58,117 |-INFO in ch.qos.logback.classic.joran.action.LoggerAction - Setting additivity of logger [com.marklogic.semantics.sesame.client.*] to false
+10:57:58,117 |-INFO in ch.qos.logback.core.joran.action.AppenderRefAction - Attaching appender named [STDOUT] to Logger[com.marklogic.semantics.sesame.client.*]
+10:57:58,117 |-INFO in ch.qos.logback.classic.joran.action.RootLoggerAction - Setting level of ROOT logger to DEBUG
+10:57:58,117 |-INFO in ch.qos.logback.core.joran.action.AppenderRefAction - Attaching appender named [STDOUT] to Logger[ROOT]
+10:57:58,117 |-INFO in ch.qos.logback.classic.joran.action.ConfigurationAction - End of configuration.
+10:57:58,118 |-INFO in ch.qos.logback.classic.joran.JoranConfigurator@3ea929da - Registering current configuration as safe fallback point
+
+10:57:58.162 [Test worker] DEBUG c.m.c.DatabaseClientFactory - Creating new database client for server at localhost:8200
+10:57:58.196 [Test worker] DEBUG c.m.c.i.JerseyServices - Connecting to localhost at 8200 as admin
+10:57:58.501 [Test worker] DEBUG c.m.c.DatabaseClientFactory - Creating new database client for server at localhost:8200
+10:57:58.502 [Test worker] DEBUG c.m.c.i.JerseyServices - Connecting to localhost at 8200 as admin
+10:57:58.590 [Test worker] DEBUG c.m.c.DatabaseClientFactory - Creating new database client for server at localhost:8200
+10:57:58.591 [Test worker] DEBUG c.m.c.i.JerseyServices - Connecting to localhost at 8200 as rest-reader
+10:57:58.676 [Test worker] DEBUG c.m.c.DatabaseClientFactory - Creating new database client for server at localhost:8200
+10:57:58.676 [Test worker] DEBUG c.m.c.i.JerseyServices - Connecting to localhost at 8200 as admin
+10:57:58.745 [Test worker] DEBUG c.m.s.s.MarkLogicCombinationQueryTest - setting up test
+10:57:58.752 [Test worker] INFO  c.m.s.s.MarkLogicCombinationQueryTest - test setup complete.
+10:57:58.759 [Test worker] INFO  c.m.c.i.DocumentManagerImpl - Writing content for /directory1/doc1.xml
+10:57:58.760 [Test worker] DEBUG c.m.c.i.JerseyServices - Sending /directory1/doc1.xml document in transaction null
+10:57:58.843 [Test worker] DEBUG o.a.h.i.c.t.ThreadSafeClientConnManager - Get connection: {}-&gt;http://localhost:8200, timeout = 0
+10:57:58.844 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - [{}-&gt;http://localhost:8200] total kept alive: 0, total issued: 0, total allocated: 0 out of 200
+10:57:58.844 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - No free connections [{}-&gt;http://localhost:8200][null]
+10:57:58.844 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Available capacity: 100 out of 100 [{}-&gt;http://localhost:8200][null]
+10:57:58.845 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Creating new connection [{}-&gt;http://localhost:8200]
+10:57:58.862 [Test worker] DEBUG o.a.h.i.c.DefaultClientConnectionOperator - Connecting to localhost:8200
+10:57:58.890 [Test worker] DEBUG o.a.h.c.p.RequestAddCookies - CookieSpec selected: ignoreCookies
+10:57:58.891 [Test worker] DEBUG o.a.h.c.p.RequestAuthCache - Auth cache not set in the context
+10:57:58.891 [Test worker] DEBUG o.a.h.c.p.RequestTargetAuthentication - Target auth state: UNCHALLENGED
+10:57:58.892 [Test worker] DEBUG o.a.h.c.p.RequestProxyAuthentication - Proxy auth state: UNCHALLENGED
+10:57:58.892 [Test worker] DEBUG o.a.h.i.c.DefaultHttpClient - Attempt 1 to execute request
+10:57:58.892 [Test worker] DEBUG o.a.h.i.c.DefaultClientConnection - Sending request: PUT /v1/documents?category=content&amp;uri=/directory1/doc1.xml HTTP/1.1
+10:57:58.893 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;PUT /v1/documents?category=content&amp;uri=/directory1/doc1.xml HTTP/1.1[\r][\n]&quot;
+10:57:58.894 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Content-Type: application/xml[\r][\n]&quot;
+10:57:58.894 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Transfer-Encoding: chunked[\r][\n]&quot;
+10:57:58.894 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Host: localhost:8200[\r][\n]&quot;
+10:57:58.894 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Connection: Keep-Alive[\r][\n]&quot;
+10:57:58.894 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;[\r][\n]&quot;
+10:57:58.894 [Test worker] DEBUG o.a.h.headers - &gt;&gt; PUT /v1/documents?category=content&amp;uri=/directory1/doc1.xml HTTP/1.1
+10:57:58.894 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Content-Type: application/xml
+10:57:58.894 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Transfer-Encoding: chunked
+10:57:58.894 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Host: localhost:8200
+10:57:58.894 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Connection: Keep-Alive
+10:57:58.895 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;165[\r][\n]&quot;
+10:57:58.895 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;&lt;semantic-document&gt;[\n]&quot;
+10:57:58.895 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;&lt;title&gt;First Title&lt;/title&gt;[\n]&quot;
+10:57:58.895 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;&lt;size&gt;100&lt;/size&gt;[\n]&quot;
+10:57:58.895 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;&lt;sem:triples xmlns:sem=&quot;http://marklogic.com/semantics&quot;&gt;&lt;sem:triple&gt;&lt;sem:subject&gt;http://example.org/r9928&lt;/sem:subject&gt;&lt;sem:predicate&gt;http://example.org/p3&lt;/sem:predicate&gt;&lt;sem:object datatype=&quot;http://www.w3.org/2001/XMLSchema#int&quot;&gt;1&lt;/sem:object&gt;&lt;/sem:triple&gt;&lt;/sem:triples&gt;[\n]&quot;
+10:57:58.895 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;&lt;/semantic-document&gt;&quot;
+10:57:58.895 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;[\r][\n]&quot;
+10:57:58.896 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;0[\r][\n]&quot;
+10:57:58.896 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;[\r][\n]&quot;
+10:57:58.899 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;HTTP/1.1 401 Unauthorized[\r][\n]&quot;
+10:57:58.901 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Server: MarkLogic[\r][\n]&quot;
+10:57:58.902 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;WWW-Authenticate: Digest realm=&quot;public&quot;, qop=&quot;auth&quot;, nonce=&quot;38adc9e3fd95456a072aa17dea9dcc42&quot;, opaque=&quot;028a9599344e2e61&quot;[\r][\n]&quot;
+10:57:58.902 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Content-Type: application/json; charset=utf-8[\r][\n]&quot;
+10:57:58.902 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Content-Length: 104[\r][\n]&quot;
+10:57:58.902 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Connection: Keep-Alive[\r][\n]&quot;
+10:57:58.902 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Keep-Alive: timeout=5[\r][\n]&quot;
+10:57:58.902 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;[\r][\n]&quot;
+10:57:58.903 [Test worker] DEBUG o.a.h.i.c.DefaultClientConnection - Receiving response: HTTP/1.1 401 Unauthorized
+10:57:58.903 [Test worker] DEBUG o.a.h.headers - &lt;&lt; HTTP/1.1 401 Unauthorized
+10:57:58.903 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Server: MarkLogic
+10:57:58.904 [Test worker] DEBUG o.a.h.headers - &lt;&lt; WWW-Authenticate: Digest realm=&quot;public&quot;, qop=&quot;auth&quot;, nonce=&quot;38adc9e3fd95456a072aa17dea9dcc42&quot;, opaque=&quot;028a9599344e2e61&quot;
+10:57:58.904 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Content-Type: application/json; charset=utf-8
+10:57:58.904 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Content-Length: 104
+10:57:58.904 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Connection: Keep-Alive
+10:57:58.904 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Keep-Alive: timeout=5
+10:57:58.911 [Test worker] DEBUG o.a.h.i.c.DefaultHttpClient - Connection can be kept alive for 5000 MILLISECONDS
+10:57:58.911 [Test worker] DEBUG o.a.h.i.c.DefaultHttpClient - Authentication required
+10:57:58.912 [Test worker] DEBUG o.a.h.i.c.DefaultHttpClient - localhost:8200 requested authentication
+10:57:58.913 [Test worker] DEBUG o.a.h.i.c.TargetAuthenticationStrategy - Authentication schemes in the order of preference: [Negotiate, Kerberos, NTLM, Digest, Basic]
+10:57:58.913 [Test worker] DEBUG o.a.h.i.c.TargetAuthenticationStrategy - Challenge for Negotiate authentication scheme not available
+10:57:58.913 [Test worker] DEBUG o.a.h.i.c.TargetAuthenticationStrategy - Challenge for Kerberos authentication scheme not available
+10:57:58.913 [Test worker] DEBUG o.a.h.i.c.TargetAuthenticationStrategy - Challenge for NTLM authentication scheme not available
+10:57:58.919 [Test worker] DEBUG o.a.h.i.c.TargetAuthenticationStrategy - Challenge for Basic authentication scheme not available
+10:57:58.930 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;{&quot;errorResponse&quot;:   {&quot;statusCode&quot;:401,[\n]&quot;
+10:57:58.931 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;   &quot;status&quot;:&quot;Unauthorized&quot;,[\n]&quot;
+10:57:58.931 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;   &quot;message&quot;:&quot;401 Unauthorized&quot;[\n]&quot;
+10:57:58.931 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;  }[\n]&quot;
+10:57:58.931 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;}&quot;
+10:57:58.934 [Test worker] DEBUG o.a.h.i.c.t.ThreadSafeClientConnManager - Released connection is reusable.
+10:57:58.934 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Releasing connection [{}-&gt;http://localhost:8200][null]
+10:57:58.934 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Pooling connection [{}-&gt;http://localhost:8200][null]; keep alive for 5000 MILLISECONDS
+10:57:58.934 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Notifying no-one, there are no waiting threads
+10:57:58.953 [Test worker] DEBUG o.a.h.i.c.t.ThreadSafeClientConnManager - Get connection: {}-&gt;http://localhost:8200, timeout = 0
+10:57:58.953 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - [{}-&gt;http://localhost:8200] total kept alive: 1, total issued: 0, total allocated: 1 out of 200
+10:57:58.953 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Getting free connection [{}-&gt;http://localhost:8200][null]
+10:57:58.953 [Test worker] DEBUG o.a.h.i.c.DefaultHttpClient - Stale connection check
+10:57:58.958 [Test worker] DEBUG o.a.h.c.p.RequestAddCookies - CookieSpec selected: ignoreCookies
+10:57:58.958 [Test worker] DEBUG o.a.h.c.p.RequestAuthCache - Auth cache not set in the context
+10:57:58.958 [Test worker] DEBUG o.a.h.c.p.RequestProxyAuthentication - Proxy auth state: UNCHALLENGED
+10:57:58.958 [Test worker] DEBUG o.a.h.i.c.DefaultHttpClient - Attempt 1 to execute request
+10:57:58.958 [Test worker] DEBUG o.a.h.i.c.DefaultClientConnection - Sending request: PUT /v1/documents?category=content&amp;uri=/directory1/doc1.xml HTTP/1.1
+10:57:58.959 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;PUT /v1/documents?category=content&amp;uri=/directory1/doc1.xml HTTP/1.1[\r][\n]&quot;
+10:57:58.959 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Content-Type: application/xml[\r][\n]&quot;
+10:57:58.959 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Authorization: Digest username=&quot;admin&quot;,realm=&quot;public&quot;,nonce=&quot;38adc9e3fd95456a072aa17dea9dcc42&quot;,opaque=&quot;028a9599344e2e61&quot;,qop=auth,uri=&quot;/v1/documents&quot;,cnonce=&quot;d41a4d95&quot;,nc=00000001,response=&quot;3182bac372942df84e6892b8c2d9a602&quot;[\r][\n]&quot;
+10:57:58.959 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Transfer-Encoding: chunked[\r][\n]&quot;
+10:57:58.959 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Host: localhost:8200[\r][\n]&quot;
+10:57:58.959 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Connection: Keep-Alive[\r][\n]&quot;
+10:57:58.959 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;[\r][\n]&quot;
+10:57:58.960 [Test worker] DEBUG o.a.h.headers - &gt;&gt; PUT /v1/documents?category=content&amp;uri=/directory1/doc1.xml HTTP/1.1
+10:57:58.960 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Content-Type: application/xml
+10:57:58.960 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Authorization: Digest username=&quot;admin&quot;,realm=&quot;public&quot;,nonce=&quot;38adc9e3fd95456a072aa17dea9dcc42&quot;,opaque=&quot;028a9599344e2e61&quot;,qop=auth,uri=&quot;/v1/documents&quot;,cnonce=&quot;d41a4d95&quot;,nc=00000001,response=&quot;3182bac372942df84e6892b8c2d9a602&quot;
+10:57:58.960 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Transfer-Encoding: chunked
+10:57:58.960 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Host: localhost:8200
+10:57:58.960 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Connection: Keep-Alive
+10:57:58.960 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;165[\r][\n]&quot;
+10:57:58.960 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;&lt;semantic-document&gt;[\n]&quot;
+10:57:58.960 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;&lt;title&gt;First Title&lt;/title&gt;[\n]&quot;
+10:57:58.960 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;&lt;size&gt;100&lt;/size&gt;[\n]&quot;
+10:57:58.961 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;&lt;sem:triples xmlns:sem=&quot;http://marklogic.com/semantics&quot;&gt;&lt;sem:triple&gt;&lt;sem:subject&gt;http://example.org/r9928&lt;/sem:subject&gt;&lt;sem:predicate&gt;http://example.org/p3&lt;/sem:predicate&gt;&lt;sem:object datatype=&quot;http://www.w3.org/2001/XMLSchema#int&quot;&gt;1&lt;/sem:object&gt;&lt;/sem:triple&gt;&lt;/sem:triples&gt;[\n]&quot;
+10:57:58.961 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;&lt;/semantic-document&gt;&quot;
+10:57:58.961 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;[\r][\n]&quot;
+10:57:58.961 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;0[\r][\n]&quot;
+10:57:58.961 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;[\r][\n]&quot;
+10:57:59.570 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;HTTP/1.1 201 Created[\r][\n]&quot;
+10:57:59.570 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Location: /v1/documents?uri=/directory1/doc1.xml[\r][\n]&quot;
+10:57:59.570 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Server: MarkLogic[\r][\n]&quot;
+10:57:59.570 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Content-Length: 0[\r][\n]&quot;
+10:57:59.570 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Connection: Keep-Alive[\r][\n]&quot;
+10:57:59.571 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Keep-Alive: timeout=5[\r][\n]&quot;
+10:57:59.571 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;[\r][\n]&quot;
+10:57:59.571 [Test worker] DEBUG o.a.h.i.c.DefaultClientConnection - Receiving response: HTTP/1.1 201 Created
+10:57:59.571 [Test worker] DEBUG o.a.h.headers - &lt;&lt; HTTP/1.1 201 Created
+10:57:59.571 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Location: /v1/documents?uri=/directory1/doc1.xml
+10:57:59.571 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Server: MarkLogic
+10:57:59.571 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Content-Length: 0
+10:57:59.571 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Connection: Keep-Alive
+10:57:59.571 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Keep-Alive: timeout=5
+10:57:59.571 [Test worker] DEBUG o.a.h.i.c.DefaultHttpClient - Connection can be kept alive for 5000 MILLISECONDS
+10:57:59.571 [Test worker] DEBUG o.a.h.i.c.t.ThreadSafeClientConnManager - Released connection is reusable.
+10:57:59.572 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Releasing connection [{}-&gt;http://localhost:8200][null]
+10:57:59.572 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Pooling connection [{}-&gt;http://localhost:8200][null]; keep alive for 5000 MILLISECONDS
+10:57:59.572 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Notifying no-one, there are no waiting threads
+10:57:59.572 [Test worker] INFO  c.m.c.i.DocumentManagerImpl - Writing content for /directory2/doc2.xml
+10:57:59.572 [Test worker] DEBUG c.m.c.i.JerseyServices - Sending /directory2/doc2.xml document in transaction null
+10:57:59.573 [Test worker] DEBUG o.a.h.i.c.t.ThreadSafeClientConnManager - Get connection: {}-&gt;http://localhost:8200, timeout = 0
+10:57:59.573 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - [{}-&gt;http://localhost:8200] total kept alive: 1, total issued: 0, total allocated: 1 out of 200
+10:57:59.573 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Getting free connection [{}-&gt;http://localhost:8200][null]
+10:57:59.573 [Test worker] DEBUG o.a.h.i.c.DefaultHttpClient - Stale connection check
+10:57:59.575 [Test worker] DEBUG o.a.h.c.p.RequestAddCookies - CookieSpec selected: ignoreCookies
+10:57:59.575 [Test worker] DEBUG o.a.h.c.p.RequestAuthCache - Auth cache not set in the context
+10:57:59.575 [Test worker] DEBUG o.a.h.c.p.RequestProxyAuthentication - Proxy auth state: UNCHALLENGED
+10:57:59.575 [Test worker] DEBUG o.a.h.i.c.DefaultHttpClient - Attempt 1 to execute request
+10:57:59.576 [Test worker] DEBUG o.a.h.i.c.DefaultClientConnection - Sending request: PUT /v1/documents?category=content&amp;uri=/directory2/doc2.xml HTTP/1.1
+10:57:59.576 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;PUT /v1/documents?category=content&amp;uri=/directory2/doc2.xml HTTP/1.1[\r][\n]&quot;
+10:57:59.576 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Content-Type: application/xml[\r][\n]&quot;
+10:57:59.576 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Authorization: Digest username=&quot;admin&quot;,realm=&quot;public&quot;,nonce=&quot;38adc9e3fd95456a072aa17dea9dcc42&quot;,opaque=&quot;028a9599344e2e61&quot;,qop=auth,uri=&quot;/v1/documents&quot;,cnonce=&quot;7e413ca9&quot;,nc=00000002,response=&quot;577ca57b96ca7af2d80a223bfb597075&quot;[\r][\n]&quot;
+10:57:59.576 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Transfer-Encoding: chunked[\r][\n]&quot;
+10:57:59.576 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Host: localhost:8200[\r][\n]&quot;
+10:57:59.576 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Connection: Keep-Alive[\r][\n]&quot;
+10:57:59.576 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;[\r][\n]&quot;
+10:57:59.577 [Test worker] DEBUG o.a.h.headers - &gt;&gt; PUT /v1/documents?category=content&amp;uri=/directory2/doc2.xml HTTP/1.1
+10:57:59.577 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Content-Type: application/xml
+10:57:59.577 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Authorization: Digest username=&quot;admin&quot;,realm=&quot;public&quot;,nonce=&quot;38adc9e3fd95456a072aa17dea9dcc42&quot;,opaque=&quot;028a9599344e2e61&quot;,qop=auth,uri=&quot;/v1/documents&quot;,cnonce=&quot;7e413ca9&quot;,nc=00000002,response=&quot;577ca57b96ca7af2d80a223bfb597075&quot;
+10:57:59.577 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Transfer-Encoding: chunked
+10:57:59.577 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Host: localhost:8200
+10:57:59.577 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Connection: Keep-Alive
+10:57:59.577 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;166[\r][\n]&quot;
+10:57:59.577 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;&lt;semantic-document&gt;[\n]&quot;
+10:57:59.577 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;&lt;title&gt;Second Title&lt;/title&gt;[\n]&quot;
+10:57:59.577 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;&lt;size&gt;500&lt;/size&gt;[\n]&quot;
+10:57:59.577 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;&lt;sem:triples xmlns:sem=&quot;http://marklogic.com/semantics&quot;&gt;&lt;sem:triple&gt;&lt;sem:subject&gt;http://example.org/r9929&lt;/sem:subject&gt;&lt;sem:predicate&gt;http://example.org/p3&lt;/sem:predicate&gt;&lt;sem:object datatype=&quot;http://www.w3.org/2001/XMLSchema#int&quot;&gt;2&lt;/sem:object&gt;&lt;/sem:triple&gt;&lt;/sem:triples&gt;[\n]&quot;
+10:57:59.578 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;&lt;/semantic-document&gt;&quot;
+10:57:59.578 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;[\r][\n]&quot;
+10:57:59.578 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;0[\r][\n]&quot;
+10:57:59.578 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;[\r][\n]&quot;
+10:57:59.585 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;HTTP/1.1 201 Created[\r][\n]&quot;
+10:57:59.586 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Location: /v1/documents?uri=/directory2/doc2.xml[\r][\n]&quot;
+10:57:59.586 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Server: MarkLogic[\r][\n]&quot;
+10:57:59.586 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Content-Length: 0[\r][\n]&quot;
+10:57:59.586 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Connection: Keep-Alive[\r][\n]&quot;
+10:57:59.586 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Keep-Alive: timeout=5[\r][\n]&quot;
+10:57:59.586 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;[\r][\n]&quot;
+10:57:59.586 [Test worker] DEBUG o.a.h.i.c.DefaultClientConnection - Receiving response: HTTP/1.1 201 Created
+10:57:59.586 [Test worker] DEBUG o.a.h.headers - &lt;&lt; HTTP/1.1 201 Created
+10:57:59.586 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Location: /v1/documents?uri=/directory2/doc2.xml
+10:57:59.586 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Server: MarkLogic
+10:57:59.587 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Content-Length: 0
+10:57:59.587 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Connection: Keep-Alive
+10:57:59.587 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Keep-Alive: timeout=5
+10:57:59.587 [Test worker] DEBUG o.a.h.i.c.DefaultHttpClient - Connection can be kept alive for 5000 MILLISECONDS
+10:57:59.587 [Test worker] DEBUG o.a.h.i.c.t.ThreadSafeClientConnManager - Released connection is reusable.
+10:57:59.587 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Releasing connection [{}-&gt;http://localhost:8200][null]
+10:57:59.587 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Pooling connection [{}-&gt;http://localhost:8200][null]; keep alive for 5000 MILLISECONDS
+10:57:59.587 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Notifying no-one, there are no waiting threads
+10:57:59.601 [Test worker] DEBUG c.m.s.s.q.MarkLogicQuery - setting constraining query: {&quot;search&quot;:{&quot;qtext&quot;:&quot;First Title&quot;}}
+10:57:59.815 [Test worker] DEBUG c.m.c.i.JerseyServices - Posting /graphs/sparql
+10:57:59.816 [Test worker] DEBUG o.a.h.i.c.t.ThreadSafeClientConnManager - Get connection: {}-&gt;http://localhost:8200, timeout = 0
+10:57:59.816 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - [{}-&gt;http://localhost:8200] total kept alive: 0, total issued: 0, total allocated: 0 out of 200
+10:57:59.816 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - No free connections [{}-&gt;http://localhost:8200][null]
+10:57:59.816 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Available capacity: 100 out of 100 [{}-&gt;http://localhost:8200][null]
+10:57:59.817 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Creating new connection [{}-&gt;http://localhost:8200]
+10:57:59.817 [Test worker] DEBUG o.a.h.i.c.DefaultClientConnectionOperator - Connecting to localhost:8200
+10:57:59.817 [Test worker] DEBUG o.a.h.c.p.RequestAddCookies - CookieSpec selected: ignoreCookies
+10:57:59.817 [Test worker] DEBUG o.a.h.c.p.RequestAuthCache - Auth cache not set in the context
+10:57:59.818 [Test worker] DEBUG o.a.h.c.p.RequestTargetAuthentication - Target auth state: UNCHALLENGED
+10:57:59.818 [Test worker] DEBUG o.a.h.c.p.RequestProxyAuthentication - Proxy auth state: UNCHALLENGED
+10:57:59.818 [Test worker] DEBUG o.a.h.i.c.DefaultHttpClient - Attempt 1 to execute request
+10:57:59.818 [Test worker] DEBUG o.a.h.i.c.DefaultClientConnection - Sending request: HEAD /v1/ping HTTP/1.1
+10:57:59.818 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;HEAD /v1/ping HTTP/1.1[\r][\n]&quot;
+10:57:59.818 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Host: localhost:8200[\r][\n]&quot;
+10:57:59.818 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Connection: Keep-Alive[\r][\n]&quot;
+10:57:59.818 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;[\r][\n]&quot;
+10:57:59.818 [Test worker] DEBUG o.a.h.headers - &gt;&gt; HEAD /v1/ping HTTP/1.1
+10:57:59.818 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Host: localhost:8200
+10:57:59.819 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Connection: Keep-Alive
+10:57:59.819 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;HTTP/1.1 401 Unauthorized[\r][\n]&quot;
+10:57:59.819 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Server: MarkLogic[\r][\n]&quot;
+10:57:59.819 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;WWW-Authenticate: Digest realm=&quot;public&quot;, qop=&quot;auth&quot;, nonce=&quot;17b5e8a35e91a94bdd48b43651b70740&quot;, opaque=&quot;e6a7df4e3cdd8f89&quot;[\r][\n]&quot;
+10:57:59.819 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Content-Type: application/json; charset=utf-8[\r][\n]&quot;
+10:57:59.820 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Connection: Keep-Alive[\r][\n]&quot;
+10:57:59.820 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Keep-Alive: timeout=5[\r][\n]&quot;
+10:57:59.820 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;[\r][\n]&quot;
+10:57:59.820 [Test worker] DEBUG o.a.h.i.c.DefaultClientConnection - Receiving response: HTTP/1.1 401 Unauthorized
+10:57:59.820 [Test worker] DEBUG o.a.h.headers - &lt;&lt; HTTP/1.1 401 Unauthorized
+10:57:59.820 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Server: MarkLogic
+10:57:59.820 [Test worker] DEBUG o.a.h.headers - &lt;&lt; WWW-Authenticate: Digest realm=&quot;public&quot;, qop=&quot;auth&quot;, nonce=&quot;17b5e8a35e91a94bdd48b43651b70740&quot;, opaque=&quot;e6a7df4e3cdd8f89&quot;
+10:57:59.820 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Content-Type: application/json; charset=utf-8
+10:57:59.820 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Connection: Keep-Alive
+10:57:59.820 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Keep-Alive: timeout=5
+10:57:59.820 [Test worker] DEBUG o.a.h.i.c.DefaultHttpClient - Authentication required
+10:57:59.821 [Test worker] DEBUG o.a.h.i.c.DefaultHttpClient - localhost:8200 requested authentication
+10:57:59.821 [Test worker] DEBUG o.a.h.i.c.TargetAuthenticationStrategy - Authentication schemes in the order of preference: [Negotiate, Kerberos, NTLM, Digest, Basic]
+10:57:59.821 [Test worker] DEBUG o.a.h.i.c.TargetAuthenticationStrategy - Challenge for Negotiate authentication scheme not available
+10:57:59.821 [Test worker] DEBUG o.a.h.i.c.TargetAuthenticationStrategy - Challenge for Kerberos authentication scheme not available
+10:57:59.821 [Test worker] DEBUG o.a.h.i.c.TargetAuthenticationStrategy - Challenge for NTLM authentication scheme not available
+10:57:59.821 [Test worker] DEBUG o.a.h.i.c.TargetAuthenticationStrategy - Challenge for Basic authentication scheme not available
+10:57:59.822 [Test worker] DEBUG o.a.h.i.c.DefaultClientConnection - Connection 0.0.0.0:59382&lt;-&gt;127.0.0.1:8200 shut down
+10:57:59.822 [Test worker] DEBUG o.a.h.i.c.t.ThreadSafeClientConnManager - Released connection is not reusable.
+10:57:59.822 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Releasing connection [{}-&gt;http://localhost:8200][null]
+10:57:59.822 [Test worker] DEBUG o.a.h.i.c.DefaultClientConnection - Connection 0.0.0.0:59382&lt;-&gt;127.0.0.1:8200 closed
+10:57:59.823 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Notifying no-one, there are no waiting threads
+10:57:59.823 [Test worker] DEBUG o.a.h.i.c.t.ThreadSafeClientConnManager - Get connection: {}-&gt;http://localhost:8200, timeout = 0
+10:57:59.823 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - [{}-&gt;http://localhost:8200] total kept alive: 0, total issued: 0, total allocated: 0 out of 200
+10:57:59.823 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - No free connections [{}-&gt;http://localhost:8200][null]
+10:57:59.824 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Available capacity: 100 out of 100 [{}-&gt;http://localhost:8200][null]
+10:57:59.824 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Creating new connection [{}-&gt;http://localhost:8200]
+10:57:59.824 [Test worker] DEBUG o.a.h.i.c.DefaultClientConnectionOperator - Connecting to localhost:8200
+10:57:59.824 [Test worker] DEBUG o.a.h.c.p.RequestAddCookies - CookieSpec selected: ignoreCookies
+10:57:59.824 [Test worker] DEBUG o.a.h.c.p.RequestAuthCache - Auth cache not set in the context
+10:57:59.824 [Test worker] DEBUG o.a.h.c.p.RequestProxyAuthentication - Proxy auth state: UNCHALLENGED
+10:57:59.825 [Test worker] DEBUG o.a.h.i.c.DefaultHttpClient - Attempt 1 to execute request
+10:57:59.825 [Test worker] DEBUG o.a.h.i.c.DefaultClientConnection - Sending request: HEAD /v1/ping HTTP/1.1
+10:57:59.825 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;HEAD /v1/ping HTTP/1.1[\r][\n]&quot;
+10:57:59.825 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Authorization: Digest username=&quot;admin&quot;,realm=&quot;public&quot;,nonce=&quot;17b5e8a35e91a94bdd48b43651b70740&quot;,opaque=&quot;e6a7df4e3cdd8f89&quot;,qop=auth,uri=&quot;/v1/ping&quot;,cnonce=&quot;b5931678&quot;,nc=00000001,response=&quot;f70c12ff79f3ba32f398c4ff2bdf455d&quot;[\r][\n]&quot;
+10:57:59.825 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Host: localhost:8200[\r][\n]&quot;
+10:57:59.825 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Connection: Keep-Alive[\r][\n]&quot;
+10:57:59.825 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;[\r][\n]&quot;
+10:57:59.825 [Test worker] DEBUG o.a.h.headers - &gt;&gt; HEAD /v1/ping HTTP/1.1
+10:57:59.825 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Authorization: Digest username=&quot;admin&quot;,realm=&quot;public&quot;,nonce=&quot;17b5e8a35e91a94bdd48b43651b70740&quot;,opaque=&quot;e6a7df4e3cdd8f89&quot;,qop=auth,uri=&quot;/v1/ping&quot;,cnonce=&quot;b5931678&quot;,nc=00000001,response=&quot;f70c12ff79f3ba32f398c4ff2bdf455d&quot;
+10:57:59.826 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Host: localhost:8200
+10:57:59.826 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Connection: Keep-Alive
+10:58:00.350 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;HTTP/1.1 204 No Content[\r][\n]&quot;
+10:58:00.351 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Server: MarkLogic[\r][\n]&quot;
+10:58:00.351 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Connection: Keep-Alive[\r][\n]&quot;
+10:58:00.351 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Keep-Alive: timeout=5[\r][\n]&quot;
+10:58:00.351 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;[\r][\n]&quot;
+10:58:00.351 [Test worker] DEBUG o.a.h.i.c.DefaultClientConnection - Receiving response: HTTP/1.1 204 No Content
+10:58:00.351 [Test worker] DEBUG o.a.h.headers - &lt;&lt; HTTP/1.1 204 No Content
+10:58:00.351 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Server: MarkLogic
+10:58:00.351 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Connection: Keep-Alive
+10:58:00.351 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Keep-Alive: timeout=5
+10:58:00.351 [Test worker] DEBUG o.a.h.i.c.DefaultHttpClient - Connection can be kept alive for 5000 MILLISECONDS
+10:58:00.351 [Test worker] DEBUG o.a.h.i.c.t.ThreadSafeClientConnManager - Released connection is reusable.
+10:58:00.351 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Releasing connection [{}-&gt;http://localhost:8200][null]
+10:58:00.352 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Pooling connection [{}-&gt;http://localhost:8200][null]; keep alive for 5000 MILLISECONDS
+10:58:00.352 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Notifying no-one, there are no waiting threads
+10:58:00.353 [Test worker] DEBUG o.a.h.i.c.t.ThreadSafeClientConnManager - Get connection: {}-&gt;http://localhost:8200, timeout = 0
+10:58:00.353 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - [{}-&gt;http://localhost:8200] total kept alive: 1, total issued: 0, total allocated: 1 out of 200
+10:58:00.353 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Getting free connection [{}-&gt;http://localhost:8200][null]
+10:58:00.353 [Test worker] DEBUG o.a.h.i.c.DefaultHttpClient - Stale connection check
+10:58:00.355 [Test worker] DEBUG o.a.h.c.p.RequestAddCookies - CookieSpec selected: ignoreCookies
+10:58:00.355 [Test worker] DEBUG o.a.h.c.p.RequestAuthCache - Auth cache not set in the context
+10:58:00.355 [Test worker] DEBUG o.a.h.c.p.RequestProxyAuthentication - Proxy auth state: UNCHALLENGED
+10:58:00.355 [Test worker] DEBUG o.a.h.i.c.DefaultHttpClient - Attempt 1 to execute request
+10:58:00.355 [Test worker] DEBUG o.a.h.i.c.DefaultClientConnection - Sending request: POST /v1/graphs/sparql?default-rulesets=include HTTP/1.1
+10:58:00.355 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;POST /v1/graphs/sparql?default-rulesets=include HTTP/1.1[\r][\n]&quot;
+10:58:00.355 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Content-Type: application/json[\r][\n]&quot;
+10:58:00.355 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Accept: application/sparql-results+json[\r][\n]&quot;
+10:58:00.356 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Authorization: Digest username=&quot;admin&quot;,realm=&quot;public&quot;,nonce=&quot;17b5e8a35e91a94bdd48b43651b70740&quot;,opaque=&quot;e6a7df4e3cdd8f89&quot;,qop=auth,uri=&quot;/v1/graphs/sparql&quot;,cnonce=&quot;e62cc328&quot;,nc=00000002,response=&quot;d04fa66cf838a97492ca02250e3713da&quot;[\r][\n]&quot;
+10:58:00.356 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Transfer-Encoding: chunked[\r][\n]&quot;
+10:58:00.356 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Host: localhost:8200[\r][\n]&quot;
+10:58:00.356 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Connection: Keep-Alive[\r][\n]&quot;
+10:58:00.356 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;[\r][\n]&quot;
+10:58:00.356 [Test worker] DEBUG o.a.h.headers - &gt;&gt; POST /v1/graphs/sparql?default-rulesets=include HTTP/1.1
+10:58:00.356 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Content-Type: application/json
+10:58:00.356 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Accept: application/sparql-results+json
+10:58:00.356 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Authorization: Digest username=&quot;admin&quot;,realm=&quot;public&quot;,nonce=&quot;17b5e8a35e91a94bdd48b43651b70740&quot;,opaque=&quot;e6a7df4e3cdd8f89&quot;,qop=auth,uri=&quot;/v1/graphs/sparql&quot;,cnonce=&quot;e62cc328&quot;,nc=00000002,response=&quot;d04fa66cf838a97492ca02250e3713da&quot;
+10:58:00.357 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Transfer-Encoding: chunked
+10:58:00.357 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Host: localhost:8200
+10:58:00.357 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Connection: Keep-Alive
+10:58:00.357 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;5c[\r][\n]&quot;
+10:58:00.357 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;{&quot;search&quot;:{&quot;sparql&quot;:&quot;ASK WHERE {&lt;http://example.org/r9928&gt; ?p ?o .}&quot;,&quot;qtext&quot;:&quot;First Title&quot;}}&quot;
+10:58:00.357 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;[\r][\n]&quot;
+10:58:00.357 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;0[\r][\n]&quot;
+10:58:00.357 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;[\r][\n]&quot;
+10:58:00.981 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;HTTP/1.1 200 OK[\r][\n]&quot;
+10:58:00.981 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Content-type: application/sparql-results+json; charset=UTF-8[\r][\n]&quot;
+10:58:00.981 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Server: MarkLogic[\r][\n]&quot;
+10:58:00.981 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Content-Length: 26[\r][\n]&quot;
+10:58:00.981 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Connection: Keep-Alive[\r][\n]&quot;
+10:58:00.982 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Keep-Alive: timeout=5[\r][\n]&quot;
+10:58:00.982 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;[\r][\n]&quot;
+10:58:00.982 [Test worker] DEBUG o.a.h.i.c.DefaultClientConnection - Receiving response: HTTP/1.1 200 OK
+10:58:00.982 [Test worker] DEBUG o.a.h.headers - &lt;&lt; HTTP/1.1 200 OK
+10:58:00.982 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Content-type: application/sparql-results+json; charset=UTF-8
+10:58:00.982 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Server: MarkLogic
+10:58:00.982 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Content-Length: 26
+10:58:00.982 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Connection: Keep-Alive
+10:58:00.982 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Keep-Alive: timeout=5
+10:58:00.982 [Test worker] DEBUG o.a.h.i.c.DefaultHttpClient - Connection can be kept alive for 5000 MILLISECONDS
+10:58:00.983 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;{&quot;head&quot;:{},&quot;boolean&quot;:true}&quot;
+10:58:00.987 [Test worker] DEBUG o.a.h.i.c.t.ThreadSafeClientConnManager - Released connection is reusable.
+10:58:00.987 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Releasing connection [{}-&gt;http://localhost:8200][null]
+10:58:00.987 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Pooling connection [{}-&gt;http://localhost:8200][null]; keep alive for 5000 MILLISECONDS
+10:58:00.987 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Notifying no-one, there are no waiting threads
+10:58:00.987 [Test worker] DEBUG c.m.s.s.MarkLogicCombinationQueryTest - query: ASK WHERE {&lt;http://example.org/r9928&gt; ?p ?o .}
+10:58:00.988 [Test worker] DEBUG c.m.s.s.q.MarkLogicQuery - setting constraining query: {&quot;search&quot;:{&quot;qtext&quot;:&quot;First Title&quot;}}
+10:58:00.990 [Test worker] DEBUG c.m.c.i.JerseyServices - Posting /graphs/sparql
+10:58:00.991 [Test worker] DEBUG o.a.h.i.c.t.ThreadSafeClientConnManager - Get connection: {}-&gt;http://localhost:8200, timeout = 0
+10:58:00.991 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - [{}-&gt;http://localhost:8200] total kept alive: 1, total issued: 0, total allocated: 1 out of 200
+10:58:00.991 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Getting free connection [{}-&gt;http://localhost:8200][null]
+10:58:00.991 [Test worker] DEBUG o.a.h.i.c.DefaultHttpClient - Stale connection check
+10:58:00.993 [Test worker] DEBUG o.a.h.c.p.RequestAddCookies - CookieSpec selected: ignoreCookies
+10:58:00.993 [Test worker] DEBUG o.a.h.c.p.RequestAuthCache - Auth cache not set in the context
+10:58:00.993 [Test worker] DEBUG o.a.h.c.p.RequestProxyAuthentication - Proxy auth state: UNCHALLENGED
+10:58:00.993 [Test worker] DEBUG o.a.h.i.c.DefaultHttpClient - Attempt 1 to execute request
+10:58:00.993 [Test worker] DEBUG o.a.h.i.c.DefaultClientConnection - Sending request: POST /v1/graphs/sparql?default-rulesets=include HTTP/1.1
+10:58:00.993 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;POST /v1/graphs/sparql?default-rulesets=include HTTP/1.1[\r][\n]&quot;
+10:58:00.993 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Content-Type: application/json[\r][\n]&quot;
+10:58:00.993 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Accept: application/sparql-results+json[\r][\n]&quot;
+10:58:00.994 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Authorization: Digest username=&quot;admin&quot;,realm=&quot;public&quot;,nonce=&quot;17b5e8a35e91a94bdd48b43651b70740&quot;,opaque=&quot;e6a7df4e3cdd8f89&quot;,qop=auth,uri=&quot;/v1/graphs/sparql&quot;,cnonce=&quot;b79387d1&quot;,nc=00000003,response=&quot;1e870107694a1e862a5592cd27ffa78e&quot;[\r][\n]&quot;
+10:58:00.994 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Transfer-Encoding: chunked[\r][\n]&quot;
+10:58:00.994 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Host: localhost:8200[\r][\n]&quot;
+10:58:00.994 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Connection: Keep-Alive[\r][\n]&quot;
+10:58:00.994 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;[\r][\n]&quot;
+10:58:00.994 [Test worker] DEBUG o.a.h.headers - &gt;&gt; POST /v1/graphs/sparql?default-rulesets=include HTTP/1.1
+10:58:00.994 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Content-Type: application/json
+10:58:00.994 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Accept: application/sparql-results+json
+10:58:00.994 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Authorization: Digest username=&quot;admin&quot;,realm=&quot;public&quot;,nonce=&quot;17b5e8a35e91a94bdd48b43651b70740&quot;,opaque=&quot;e6a7df4e3cdd8f89&quot;,qop=auth,uri=&quot;/v1/graphs/sparql&quot;,cnonce=&quot;b79387d1&quot;,nc=00000003,response=&quot;1e870107694a1e862a5592cd27ffa78e&quot;
+10:58:00.995 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Transfer-Encoding: chunked
+10:58:00.995 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Host: localhost:8200
+10:58:00.995 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Connection: Keep-Alive
+10:58:00.995 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;5c[\r][\n]&quot;
+10:58:00.995 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;{&quot;search&quot;:{&quot;sparql&quot;:&quot;ASK WHERE {&lt;http://example.org/r9929&gt; ?p ?o .}&quot;,&quot;qtext&quot;:&quot;First Title&quot;}}&quot;
+10:58:00.995 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;[\r][\n]&quot;
+10:58:00.995 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;0[\r][\n]&quot;
+10:58:00.995 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;[\r][\n]&quot;
+10:58:01.032 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;HTTP/1.1 200 OK[\r][\n]&quot;
+10:58:01.033 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Content-type: application/sparql-results+json; charset=UTF-8[\r][\n]&quot;
+10:58:01.033 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Server: MarkLogic[\r][\n]&quot;
+10:58:01.033 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Content-Length: 27[\r][\n]&quot;
+10:58:01.033 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Connection: Keep-Alive[\r][\n]&quot;
+10:58:01.033 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Keep-Alive: timeout=5[\r][\n]&quot;
+10:58:01.033 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;[\r][\n]&quot;
+10:58:01.033 [Test worker] DEBUG o.a.h.i.c.DefaultClientConnection - Receiving response: HTTP/1.1 200 OK
+10:58:01.034 [Test worker] DEBUG o.a.h.headers - &lt;&lt; HTTP/1.1 200 OK
+10:58:01.034 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Content-type: application/sparql-results+json; charset=UTF-8
+10:58:01.034 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Server: MarkLogic
+10:58:01.034 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Content-Length: 27
+10:58:01.034 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Connection: Keep-Alive
+10:58:01.034 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Keep-Alive: timeout=5
+10:58:01.034 [Test worker] DEBUG o.a.h.i.c.DefaultHttpClient - Connection can be kept alive for 5000 MILLISECONDS
+10:58:01.034 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;{&quot;head&quot;:{},&quot;boolean&quot;:false}&quot;
+10:58:01.037 [Test worker] DEBUG o.a.h.i.c.t.ThreadSafeClientConnManager - Released connection is reusable.
+10:58:01.037 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Releasing connection [{}-&gt;http://localhost:8200][null]
+10:58:01.037 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Pooling connection [{}-&gt;http://localhost:8200][null]; keep alive for 5000 MILLISECONDS
+10:58:01.037 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Notifying no-one, there are no waiting threads
+10:58:01.037 [Test worker] DEBUG c.m.s.s.MarkLogicCombinationQueryTest - tearing down...
+10:58:01.037 [Test worker] INFO  c.m.s.s.MarkLogicCombinationQueryTest - tearDown complete.
+10:58:01.037 [Test worker] INFO  c.m.c.i.DocumentManagerImpl - Deleting /directory1/doc1.xml
+10:58:01.037 [Test worker] DEBUG c.m.c.i.JerseyServices - Deleting /directory1/doc1.xml in transaction null
+10:58:01.039 [Test worker] DEBUG o.a.h.i.c.t.ThreadSafeClientConnManager - Get connection: {}-&gt;http://localhost:8200, timeout = 0
+10:58:01.040 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - [{}-&gt;http://localhost:8200] total kept alive: 1, total issued: 0, total allocated: 1 out of 200
+10:58:01.040 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Getting free connection [{}-&gt;http://localhost:8200][null]
+10:58:01.040 [Test worker] DEBUG o.a.h.i.c.DefaultHttpClient - Stale connection check
+10:58:01.041 [Test worker] DEBUG o.a.h.c.p.RequestAddCookies - CookieSpec selected: ignoreCookies
+10:58:01.042 [Test worker] DEBUG o.a.h.c.p.RequestAuthCache - Auth cache not set in the context
+10:58:01.042 [Test worker] DEBUG o.a.h.c.p.RequestProxyAuthentication - Proxy auth state: UNCHALLENGED
+10:58:01.042 [Test worker] DEBUG o.a.h.i.c.DefaultHttpClient - Attempt 1 to execute request
+10:58:01.042 [Test worker] DEBUG o.a.h.i.c.DefaultClientConnection - Sending request: DELETE /v1/documents?category=content&amp;uri=/directory1/doc1.xml HTTP/1.1
+10:58:01.042 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;DELETE /v1/documents?category=content&amp;uri=/directory1/doc1.xml HTTP/1.1[\r][\n]&quot;
+10:58:01.042 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Authorization: Digest username=&quot;admin&quot;,realm=&quot;public&quot;,nonce=&quot;38adc9e3fd95456a072aa17dea9dcc42&quot;,opaque=&quot;028a9599344e2e61&quot;,qop=auth,uri=&quot;/v1/documents&quot;,cnonce=&quot;b5dcf864&quot;,nc=00000003,response=&quot;519d7136a589df15900850084ed922d1&quot;[\r][\n]&quot;
+10:58:01.043 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Host: localhost:8200[\r][\n]&quot;
+10:58:01.043 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Connection: Keep-Alive[\r][\n]&quot;
+10:58:01.043 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;[\r][\n]&quot;
+10:58:01.043 [Test worker] DEBUG o.a.h.headers - &gt;&gt; DELETE /v1/documents?category=content&amp;uri=/directory1/doc1.xml HTTP/1.1
+10:58:01.043 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Authorization: Digest username=&quot;admin&quot;,realm=&quot;public&quot;,nonce=&quot;38adc9e3fd95456a072aa17dea9dcc42&quot;,opaque=&quot;028a9599344e2e61&quot;,qop=auth,uri=&quot;/v1/documents&quot;,cnonce=&quot;b5dcf864&quot;,nc=00000003,response=&quot;519d7136a589df15900850084ed922d1&quot;
+10:58:01.043 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Host: localhost:8200
+10:58:01.043 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Connection: Keep-Alive
+10:58:01.053 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;HTTP/1.1 204 Document Deleted[\r][\n]&quot;
+10:58:01.053 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Server: MarkLogic[\r][\n]&quot;
+10:58:01.053 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Content-Length: 0[\r][\n]&quot;
+10:58:01.053 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Connection: Keep-Alive[\r][\n]&quot;
+10:58:01.053 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Keep-Alive: timeout=5[\r][\n]&quot;
+10:58:01.053 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;[\r][\n]&quot;
+10:58:01.054 [Test worker] DEBUG o.a.h.i.c.DefaultClientConnection - Receiving response: HTTP/1.1 204 Document Deleted
+10:58:01.054 [Test worker] DEBUG o.a.h.headers - &lt;&lt; HTTP/1.1 204 Document Deleted
+10:58:01.054 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Server: MarkLogic
+10:58:01.054 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Content-Length: 0
+10:58:01.054 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Connection: Keep-Alive
+10:58:01.054 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Keep-Alive: timeout=5
+10:58:01.054 [Test worker] DEBUG o.a.h.i.c.DefaultHttpClient - Connection can be kept alive for 5000 MILLISECONDS
+10:58:01.054 [Test worker] DEBUG o.a.h.i.c.t.ThreadSafeClientConnManager - Released connection is reusable.
+10:58:01.054 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Releasing connection [{}-&gt;http://localhost:8200][null]
+10:58:01.054 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Pooling connection [{}-&gt;http://localhost:8200][null]; keep alive for 5000 MILLISECONDS
+10:58:01.055 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Notifying no-one, there are no waiting threads
+10:58:01.055 [Test worker] INFO  c.m.c.i.DocumentManagerImpl - Deleting /directory2/doc2.xml
+10:58:01.055 [Test worker] DEBUG c.m.c.i.JerseyServices - Deleting /directory2/doc2.xml in transaction null
+10:58:01.056 [Test worker] DEBUG o.a.h.i.c.t.ThreadSafeClientConnManager - Get connection: {}-&gt;http://localhost:8200, timeout = 0
+10:58:01.056 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - [{}-&gt;http://localhost:8200] total kept alive: 1, total issued: 0, total allocated: 1 out of 200
+10:58:01.056 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Getting free connection [{}-&gt;http://localhost:8200][null]
+10:58:01.056 [Test worker] DEBUG o.a.h.i.c.DefaultHttpClient - Stale connection check
+10:58:01.058 [Test worker] DEBUG o.a.h.c.p.RequestAddCookies - CookieSpec selected: ignoreCookies
+10:58:01.058 [Test worker] DEBUG o.a.h.c.p.RequestAuthCache - Auth cache not set in the context
+10:58:01.058 [Test worker] DEBUG o.a.h.c.p.RequestProxyAuthentication - Proxy auth state: UNCHALLENGED
+10:58:01.058 [Test worker] DEBUG o.a.h.i.c.DefaultHttpClient - Attempt 1 to execute request
+10:58:01.058 [Test worker] DEBUG o.a.h.i.c.DefaultClientConnection - Sending request: DELETE /v1/documents?category=content&amp;uri=/directory2/doc2.xml HTTP/1.1
+10:58:01.058 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;DELETE /v1/documents?category=content&amp;uri=/directory2/doc2.xml HTTP/1.1[\r][\n]&quot;
+10:58:01.059 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Authorization: Digest username=&quot;admin&quot;,realm=&quot;public&quot;,nonce=&quot;38adc9e3fd95456a072aa17dea9dcc42&quot;,opaque=&quot;028a9599344e2e61&quot;,qop=auth,uri=&quot;/v1/documents&quot;,cnonce=&quot;0ebfae85&quot;,nc=00000004,response=&quot;bc366070132d84631fb0916ef63a406b&quot;[\r][\n]&quot;
+10:58:01.059 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Host: localhost:8200[\r][\n]&quot;
+10:58:01.059 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Connection: Keep-Alive[\r][\n]&quot;
+10:58:01.059 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;[\r][\n]&quot;
+10:58:01.059 [Test worker] DEBUG o.a.h.headers - &gt;&gt; DELETE /v1/documents?category=content&amp;uri=/directory2/doc2.xml HTTP/1.1
+10:58:01.059 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Authorization: Digest username=&quot;admin&quot;,realm=&quot;public&quot;,nonce=&quot;38adc9e3fd95456a072aa17dea9dcc42&quot;,opaque=&quot;028a9599344e2e61&quot;,qop=auth,uri=&quot;/v1/documents&quot;,cnonce=&quot;0ebfae85&quot;,nc=00000004,response=&quot;bc366070132d84631fb0916ef63a406b&quot;
+10:58:01.059 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Host: localhost:8200
+10:58:01.059 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Connection: Keep-Alive
+10:58:01.067 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;HTTP/1.1 204 Document Deleted[\r][\n]&quot;
+10:58:01.067 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Server: MarkLogic[\r][\n]&quot;
+10:58:01.067 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Content-Length: 0[\r][\n]&quot;
+10:58:01.067 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Connection: Keep-Alive[\r][\n]&quot;
+10:58:01.067 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Keep-Alive: timeout=5[\r][\n]&quot;
+10:58:01.068 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;[\r][\n]&quot;
+10:58:01.068 [Test worker] DEBUG o.a.h.i.c.DefaultClientConnection - Receiving response: HTTP/1.1 204 Document Deleted
+10:58:01.068 [Test worker] DEBUG o.a.h.headers - &lt;&lt; HTTP/1.1 204 Document Deleted
+10:58:01.068 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Server: MarkLogic
+10:58:01.068 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Content-Length: 0
+10:58:01.068 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Connection: Keep-Alive
+10:58:01.068 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Keep-Alive: timeout=5
+10:58:01.068 [Test worker] DEBUG o.a.h.i.c.DefaultHttpClient - Connection can be kept alive for 5000 MILLISECONDS
+10:58:01.068 [Test worker] DEBUG o.a.h.i.c.t.ThreadSafeClientConnManager - Released connection is reusable.
+10:58:01.068 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Releasing connection [{}-&gt;http://localhost:8200][null]
+10:58:01.069 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Pooling connection [{}-&gt;http://localhost:8200][null]; keep alive for 5000 MILLISECONDS
+10:58:01.069 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Notifying no-one, there are no waiting threads
+10:58:01.071 [Test worker] DEBUG c.m.c.DatabaseClientFactory - Creating new database client for server at localhost:8200
+10:58:01.071 [Test worker] DEBUG c.m.c.i.JerseyServices - Connecting to localhost at 8200 as admin
+10:58:01.176 [Test worker] DEBUG c.m.c.DatabaseClientFactory - Creating new database client for server at localhost:8200
+10:58:01.176 [Test worker] DEBUG c.m.c.i.JerseyServices - Connecting to localhost at 8200 as admin
+10:58:01.268 [Finalizer] DEBUG o.a.h.i.c.t.ThreadSafeClientConnManager - Shutting down
+10:58:01.269 [Finalizer] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+10:58:01.269 [Finalizer] DEBUG c.m.c.i.JerseyServices - Releasing connection
+10:58:01.269 [Finalizer] DEBUG o.a.h.i.c.t.ThreadSafeClientConnManager - Shutting down
+10:58:01.269 [Finalizer] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+10:58:01.269 [Finalizer] DEBUG c.m.c.i.JerseyServices - Releasing connection
+10:58:01.269 [Finalizer] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+10:58:01.269 [Finalizer] DEBUG c.m.c.i.JerseyServices - Releasing connection
+10:58:01.290 [Test worker] DEBUG c.m.c.DatabaseClientFactory - Creating new database client for server at localhost:8200
+10:58:01.290 [Test worker] DEBUG c.m.c.i.JerseyServices - Connecting to localhost at 8200 as rest-reader
+10:58:01.362 [Test worker] DEBUG c.m.c.DatabaseClientFactory - Creating new database client for server at localhost:8200
+10:58:01.362 [Test worker] DEBUG c.m.c.i.JerseyServices - Connecting to localhost at 8200 as admin
+10:58:01.422 [Test worker] DEBUG c.m.s.s.MarkLogicCombinationQueryTest - setting up test
+10:58:01.422 [Test worker] INFO  c.m.s.s.MarkLogicCombinationQueryTest - test setup complete.
+10:58:01.422 [Test worker] INFO  c.m.c.i.DocumentManagerImpl - Writing content for /directory1/doc1.xml
+10:58:01.422 [Test worker] DEBUG c.m.c.i.JerseyServices - Sending /directory1/doc1.xml document in transaction null
+10:58:01.423 [Test worker] DEBUG o.a.h.i.c.t.ThreadSafeClientConnManager - Get connection: {}-&gt;http://localhost:8200, timeout = 0
+10:58:01.423 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - [{}-&gt;http://localhost:8200] total kept alive: 0, total issued: 0, total allocated: 0 out of 200
+10:58:01.423 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - No free connections [{}-&gt;http://localhost:8200][null]
+10:58:01.423 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Available capacity: 100 out of 100 [{}-&gt;http://localhost:8200][null]
+10:58:01.423 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Creating new connection [{}-&gt;http://localhost:8200]
+10:58:01.423 [Test worker] DEBUG o.a.h.i.c.DefaultClientConnectionOperator - Connecting to localhost:8200
+10:58:01.424 [Test worker] DEBUG o.a.h.c.p.RequestAddCookies - CookieSpec selected: ignoreCookies
+10:58:01.424 [Test worker] DEBUG o.a.h.c.p.RequestAuthCache - Auth cache not set in the context
+10:58:01.424 [Test worker] DEBUG o.a.h.c.p.RequestTargetAuthentication - Target auth state: UNCHALLENGED
+10:58:01.424 [Test worker] DEBUG o.a.h.c.p.RequestProxyAuthentication - Proxy auth state: UNCHALLENGED
+10:58:01.424 [Test worker] DEBUG o.a.h.i.c.DefaultHttpClient - Attempt 1 to execute request
+10:58:01.424 [Test worker] DEBUG o.a.h.i.c.DefaultClientConnection - Sending request: PUT /v1/documents?category=content&amp;uri=/directory1/doc1.xml HTTP/1.1
+10:58:01.425 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;PUT /v1/documents?category=content&amp;uri=/directory1/doc1.xml HTTP/1.1[\r][\n]&quot;
+10:58:01.425 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Content-Type: application/xml[\r][\n]&quot;
+10:58:01.425 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Transfer-Encoding: chunked[\r][\n]&quot;
+10:58:01.425 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Host: localhost:8200[\r][\n]&quot;
+10:58:01.425 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Connection: Keep-Alive[\r][\n]&quot;
+10:58:01.425 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;[\r][\n]&quot;
+10:58:01.425 [Test worker] DEBUG o.a.h.headers - &gt;&gt; PUT /v1/documents?category=content&amp;uri=/directory1/doc1.xml HTTP/1.1
+10:58:01.425 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Content-Type: application/xml
+10:58:01.425 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Transfer-Encoding: chunked
+10:58:01.425 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Host: localhost:8200
+10:58:01.425 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Connection: Keep-Alive
+10:58:01.426 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;165[\r][\n]&quot;
+10:58:01.426 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;&lt;semantic-document&gt;[\n]&quot;
+10:58:01.426 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;&lt;title&gt;First Title&lt;/title&gt;[\n]&quot;
+10:58:01.426 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;&lt;size&gt;100&lt;/size&gt;[\n]&quot;
+10:58:01.426 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;&lt;sem:triples xmlns:sem=&quot;http://marklogic.com/semantics&quot;&gt;&lt;sem:triple&gt;&lt;sem:subject&gt;http://example.org/r9928&lt;/sem:subject&gt;&lt;sem:predicate&gt;http://example.org/p3&lt;/sem:predicate&gt;&lt;sem:object datatype=&quot;http://www.w3.org/2001/XMLSchema#int&quot;&gt;1&lt;/sem:object&gt;&lt;/sem:triple&gt;&lt;/sem:triples&gt;[\n]&quot;
+10:58:01.426 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;&lt;/semantic-document&gt;&quot;
+10:58:01.426 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;[\r][\n]&quot;
+10:58:01.426 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;0[\r][\n]&quot;
+10:58:01.427 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;[\r][\n]&quot;
+10:58:01.427 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;HTTP/1.1 401 Unauthorized[\r][\n]&quot;
+10:58:01.427 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Server: MarkLogic[\r][\n]&quot;
+10:58:01.427 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;WWW-Authenticate: Digest realm=&quot;public&quot;, qop=&quot;auth&quot;, nonce=&quot;f55e89a2002ce7c28293f582a0dfc519&quot;, opaque=&quot;27a82001d9623172&quot;[\r][\n]&quot;
+10:58:01.427 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Content-Type: application/json; charset=utf-8[\r][\n]&quot;
+10:58:01.428 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Content-Length: 104[\r][\n]&quot;
+10:58:01.428 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Connection: Keep-Alive[\r][\n]&quot;
+10:58:01.428 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Keep-Alive: timeout=5[\r][\n]&quot;
+10:58:01.428 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;[\r][\n]&quot;
+10:58:01.428 [Test worker] DEBUG o.a.h.i.c.DefaultClientConnection - Receiving response: HTTP/1.1 401 Unauthorized
+10:58:01.428 [Test worker] DEBUG o.a.h.headers - &lt;&lt; HTTP/1.1 401 Unauthorized
+10:58:01.428 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Server: MarkLogic
+10:58:01.428 [Test worker] DEBUG o.a.h.headers - &lt;&lt; WWW-Authenticate: Digest realm=&quot;public&quot;, qop=&quot;auth&quot;, nonce=&quot;f55e89a2002ce7c28293f582a0dfc519&quot;, opaque=&quot;27a82001d9623172&quot;
+10:58:01.428 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Content-Type: application/json; charset=utf-8
+10:58:01.429 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Content-Length: 104
+10:58:01.429 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Connection: Keep-Alive
+10:58:01.429 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Keep-Alive: timeout=5
+10:58:01.429 [Test worker] DEBUG o.a.h.i.c.DefaultHttpClient - Connection can be kept alive for 5000 MILLISECONDS
+10:58:01.429 [Test worker] DEBUG o.a.h.i.c.DefaultHttpClient - Authentication required
+10:58:01.429 [Test worker] DEBUG o.a.h.i.c.DefaultHttpClient - localhost:8200 requested authentication
+10:58:01.429 [Test worker] DEBUG o.a.h.i.c.TargetAuthenticationStrategy - Authentication schemes in the order of preference: [Negotiate, Kerberos, NTLM, Digest, Basic]
+10:58:01.429 [Test worker] DEBUG o.a.h.i.c.TargetAuthenticationStrategy - Challenge for Negotiate authentication scheme not available
+10:58:01.430 [Test worker] DEBUG o.a.h.i.c.TargetAuthenticationStrategy - Challenge for Kerberos authentication scheme not available
+10:58:01.430 [Test worker] DEBUG o.a.h.i.c.TargetAuthenticationStrategy - Challenge for NTLM authentication scheme not available
+10:58:01.430 [Test worker] DEBUG o.a.h.i.c.TargetAuthenticationStrategy - Challenge for Basic authentication scheme not available
+10:58:01.431 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;{&quot;errorResponse&quot;:   {&quot;statusCode&quot;:401,[\n]&quot;
+10:58:01.431 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;   &quot;status&quot;:&quot;Unauthorized&quot;,[\n]&quot;
+10:58:01.431 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;   &quot;message&quot;:&quot;401 Unauthorized&quot;[\n]&quot;
+10:58:01.431 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;  }[\n]&quot;
+10:58:01.431 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;}&quot;
+10:58:01.432 [Test worker] DEBUG o.a.h.i.c.t.ThreadSafeClientConnManager - Released connection is reusable.
+10:58:01.432 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Releasing connection [{}-&gt;http://localhost:8200][null]
+10:58:01.432 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Pooling connection [{}-&gt;http://localhost:8200][null]; keep alive for 5000 MILLISECONDS
+10:58:01.432 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Notifying no-one, there are no waiting threads
+10:58:01.433 [Test worker] DEBUG o.a.h.i.c.t.ThreadSafeClientConnManager - Get connection: {}-&gt;http://localhost:8200, timeout = 0
+10:58:01.433 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - [{}-&gt;http://localhost:8200] total kept alive: 1, total issued: 0, total allocated: 1 out of 200
+10:58:01.433 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Getting free connection [{}-&gt;http://localhost:8200][null]
+10:58:01.433 [Test worker] DEBUG o.a.h.i.c.DefaultHttpClient - Stale connection check
+10:58:01.435 [Test worker] DEBUG o.a.h.c.p.RequestAddCookies - CookieSpec selected: ignoreCookies
+10:58:01.435 [Test worker] DEBUG o.a.h.c.p.RequestAuthCache - Auth cache not set in the context
+10:58:01.435 [Test worker] DEBUG o.a.h.c.p.RequestProxyAuthentication - Proxy auth state: UNCHALLENGED
+10:58:01.435 [Test worker] DEBUG o.a.h.i.c.DefaultHttpClient - Attempt 1 to execute request
+10:58:01.435 [Test worker] DEBUG o.a.h.i.c.DefaultClientConnection - Sending request: PUT /v1/documents?category=content&amp;uri=/directory1/doc1.xml HTTP/1.1
+10:58:01.436 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;PUT /v1/documents?category=content&amp;uri=/directory1/doc1.xml HTTP/1.1[\r][\n]&quot;
+10:58:01.436 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Content-Type: application/xml[\r][\n]&quot;
+10:58:01.436 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Authorization: Digest username=&quot;admin&quot;,realm=&quot;public&quot;,nonce=&quot;f55e89a2002ce7c28293f582a0dfc519&quot;,opaque=&quot;27a82001d9623172&quot;,qop=auth,uri=&quot;/v1/documents&quot;,cnonce=&quot;e34ee913&quot;,nc=00000001,response=&quot;06fe632dac29ad73de34c3fa36197c32&quot;[\r][\n]&quot;
+10:58:01.436 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Transfer-Encoding: chunked[\r][\n]&quot;
+10:58:01.436 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Host: localhost:8200[\r][\n]&quot;
+10:58:01.436 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Connection: Keep-Alive[\r][\n]&quot;
+10:58:01.436 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;[\r][\n]&quot;
+10:58:01.436 [Test worker] DEBUG o.a.h.headers - &gt;&gt; PUT /v1/documents?category=content&amp;uri=/directory1/doc1.xml HTTP/1.1
+10:58:01.437 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Content-Type: application/xml
+10:58:01.437 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Authorization: Digest username=&quot;admin&quot;,realm=&quot;public&quot;,nonce=&quot;f55e89a2002ce7c28293f582a0dfc519&quot;,opaque=&quot;27a82001d9623172&quot;,qop=auth,uri=&quot;/v1/documents&quot;,cnonce=&quot;e34ee913&quot;,nc=00000001,response=&quot;06fe632dac29ad73de34c3fa36197c32&quot;
+10:58:01.437 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Transfer-Encoding: chunked
+10:58:01.437 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Host: localhost:8200
+10:58:01.437 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Connection: Keep-Alive
+10:58:01.437 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;165[\r][\n]&quot;
+10:58:01.437 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;&lt;semantic-document&gt;[\n]&quot;
+10:58:01.437 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;&lt;title&gt;First Title&lt;/title&gt;[\n]&quot;
+10:58:01.437 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;&lt;size&gt;100&lt;/size&gt;[\n]&quot;
+10:58:01.437 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;&lt;sem:triples xmlns:sem=&quot;http://marklogic.com/semantics&quot;&gt;&lt;sem:triple&gt;&lt;sem:subject&gt;http://example.org/r9928&lt;/sem:subject&gt;&lt;sem:predicate&gt;http://example.org/p3&lt;/sem:predicate&gt;&lt;sem:object datatype=&quot;http://www.w3.org/2001/XMLSchema#int&quot;&gt;1&lt;/sem:object&gt;&lt;/sem:triple&gt;&lt;/sem:triples&gt;[\n]&quot;
+10:58:01.437 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;&lt;/semantic-document&gt;&quot;
+10:58:01.437 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;[\r][\n]&quot;
+10:58:01.438 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;0[\r][\n]&quot;
+10:58:01.438 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;[\r][\n]&quot;
+10:58:01.450 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;HTTP/1.1 201 Created[\r][\n]&quot;
+10:58:01.450 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Location: /v1/documents?uri=/directory1/doc1.xml[\r][\n]&quot;
+10:58:01.450 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Server: MarkLogic[\r][\n]&quot;
+10:58:01.450 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Content-Length: 0[\r][\n]&quot;
+10:58:01.450 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Connection: Keep-Alive[\r][\n]&quot;
+10:58:01.450 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Keep-Alive: timeout=5[\r][\n]&quot;
+10:58:01.450 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;[\r][\n]&quot;
+10:58:01.451 [Test worker] DEBUG o.a.h.i.c.DefaultClientConnection - Receiving response: HTTP/1.1 201 Created
+10:58:01.451 [Test worker] DEBUG o.a.h.headers - &lt;&lt; HTTP/1.1 201 Created
+10:58:01.451 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Location: /v1/documents?uri=/directory1/doc1.xml
+10:58:01.451 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Server: MarkLogic
+10:58:01.451 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Content-Length: 0
+10:58:01.451 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Connection: Keep-Alive
+10:58:01.451 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Keep-Alive: timeout=5
+10:58:01.451 [Test worker] DEBUG o.a.h.i.c.DefaultHttpClient - Connection can be kept alive for 5000 MILLISECONDS
+10:58:01.451 [Test worker] DEBUG o.a.h.i.c.t.ThreadSafeClientConnManager - Released connection is reusable.
+10:58:01.452 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Releasing connection [{}-&gt;http://localhost:8200][null]
+10:58:01.452 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Pooling connection [{}-&gt;http://localhost:8200][null]; keep alive for 5000 MILLISECONDS
+10:58:01.452 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Notifying no-one, there are no waiting threads
+10:58:01.452 [Test worker] INFO  c.m.c.i.DocumentManagerImpl - Writing content for /directory2/doc2.xml
+10:58:01.452 [Test worker] DEBUG c.m.c.i.JerseyServices - Sending /directory2/doc2.xml document in transaction null
+10:58:01.453 [Test worker] DEBUG o.a.h.i.c.t.ThreadSafeClientConnManager - Get connection: {}-&gt;http://localhost:8200, timeout = 0
+10:58:01.453 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - [{}-&gt;http://localhost:8200] total kept alive: 1, total issued: 0, total allocated: 1 out of 200
+10:58:01.453 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Getting free connection [{}-&gt;http://localhost:8200][null]
+10:58:01.453 [Test worker] DEBUG o.a.h.i.c.DefaultHttpClient - Stale connection check
+10:58:01.455 [Test worker] DEBUG o.a.h.c.p.RequestAddCookies - CookieSpec selected: ignoreCookies
+10:58:01.455 [Test worker] DEBUG o.a.h.c.p.RequestAuthCache - Auth cache not set in the context
+10:58:01.455 [Test worker] DEBUG o.a.h.c.p.RequestProxyAuthentication - Proxy auth state: UNCHALLENGED
+10:58:01.455 [Test worker] DEBUG o.a.h.i.c.DefaultHttpClient - Attempt 1 to execute request
+10:58:01.455 [Test worker] DEBUG o.a.h.i.c.DefaultClientConnection - Sending request: PUT /v1/documents?category=content&amp;uri=/directory2/doc2.xml HTTP/1.1
+10:58:01.455 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;PUT /v1/documents?category=content&amp;uri=/directory2/doc2.xml HTTP/1.1[\r][\n]&quot;
+10:58:01.456 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Content-Type: application/xml[\r][\n]&quot;
+10:58:01.456 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Authorization: Digest username=&quot;admin&quot;,realm=&quot;public&quot;,nonce=&quot;f55e89a2002ce7c28293f582a0dfc519&quot;,opaque=&quot;27a82001d9623172&quot;,qop=auth,uri=&quot;/v1/documents&quot;,cnonce=&quot;b2757dfb&quot;,nc=00000002,response=&quot;04f31ccd9bbc214d1e66a8d8ec660b65&quot;[\r][\n]&quot;
+10:58:01.456 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Transfer-Encoding: chunked[\r][\n]&quot;
+10:58:01.456 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Host: localhost:8200[\r][\n]&quot;
+10:58:01.456 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Connection: Keep-Alive[\r][\n]&quot;
+10:58:01.456 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;[\r][\n]&quot;
+10:58:01.456 [Test worker] DEBUG o.a.h.headers - &gt;&gt; PUT /v1/documents?category=content&amp;uri=/directory2/doc2.xml HTTP/1.1
+10:58:01.456 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Content-Type: application/xml
+10:58:01.456 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Authorization: Digest username=&quot;admin&quot;,realm=&quot;public&quot;,nonce=&quot;f55e89a2002ce7c28293f582a0dfc519&quot;,opaque=&quot;27a82001d9623172&quot;,qop=auth,uri=&quot;/v1/documents&quot;,cnonce=&quot;b2757dfb&quot;,nc=00000002,response=&quot;04f31ccd9bbc214d1e66a8d8ec660b65&quot;
+10:58:01.456 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Transfer-Encoding: chunked
+10:58:01.456 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Host: localhost:8200
+10:58:01.457 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Connection: Keep-Alive
+10:58:01.457 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;166[\r][\n]&quot;
+10:58:01.457 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;&lt;semantic-document&gt;[\n]&quot;
+10:58:01.457 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;&lt;title&gt;Second Title&lt;/title&gt;[\n]&quot;
+10:58:01.457 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;&lt;size&gt;500&lt;/size&gt;[\n]&quot;
+10:58:01.457 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;&lt;sem:triples xmlns:sem=&quot;http://marklogic.com/semantics&quot;&gt;&lt;sem:triple&gt;&lt;sem:subject&gt;http://example.org/r9929&lt;/sem:subject&gt;&lt;sem:predicate&gt;http://example.org/p3&lt;/sem:predicate&gt;&lt;sem:object datatype=&quot;http://www.w3.org/2001/XMLSchema#int&quot;&gt;2&lt;/sem:object&gt;&lt;/sem:triple&gt;&lt;/sem:triples&gt;[\n]&quot;
+10:58:01.457 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;&lt;/semantic-document&gt;&quot;
+10:58:01.457 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;[\r][\n]&quot;
+10:58:01.457 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;0[\r][\n]&quot;
+10:58:01.457 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;[\r][\n]&quot;
+10:58:01.471 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;HTTP/1.1 201 Created[\r][\n]&quot;
+10:58:01.471 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Location: /v1/documents?uri=/directory2/doc2.xml[\r][\n]&quot;
+10:58:01.471 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Server: MarkLogic[\r][\n]&quot;
+10:58:01.471 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Content-Length: 0[\r][\n]&quot;
+10:58:01.472 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Connection: Keep-Alive[\r][\n]&quot;
+10:58:01.472 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Keep-Alive: timeout=5[\r][\n]&quot;
+10:58:01.472 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;[\r][\n]&quot;
+10:58:01.472 [Test worker] DEBUG o.a.h.i.c.DefaultClientConnection - Receiving response: HTTP/1.1 201 Created
+10:58:01.472 [Test worker] DEBUG o.a.h.headers - &lt;&lt; HTTP/1.1 201 Created
+10:58:01.472 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Location: /v1/documents?uri=/directory2/doc2.xml
+10:58:01.472 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Server: MarkLogic
+10:58:01.472 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Content-Length: 0
+10:58:01.472 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Connection: Keep-Alive
+10:58:01.472 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Keep-Alive: timeout=5
+10:58:01.472 [Test worker] DEBUG o.a.h.i.c.DefaultHttpClient - Connection can be kept alive for 5000 MILLISECONDS
+10:58:01.473 [Test worker] DEBUG o.a.h.i.c.t.ThreadSafeClientConnManager - Released connection is reusable.
+10:58:01.473 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Releasing connection [{}-&gt;http://localhost:8200][null]
+10:58:01.473 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Pooling connection [{}-&gt;http://localhost:8200][null]; keep alive for 5000 MILLISECONDS
+10:58:01.473 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Notifying no-one, there are no waiting threads
+10:58:01.494 [Test worker] DEBUG c.m.s.s.q.MarkLogicQuery - setting constraining query: &lt;query xmlns=&quot;http://marklogic.com/appservices/search&quot; xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:search=&quot;http://marklogic.com/appservices/search&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;&gt;&lt;term-query&gt;&lt;text&gt;Second&lt;/text&gt;&lt;/term-query&gt;&lt;/query&gt;
+10:58:01.494 [Test worker] DEBUG c.m.c.i.JerseyServices - Posting /graphs/sparql
+10:58:01.495 [Test worker] DEBUG o.a.h.i.c.t.ThreadSafeClientConnManager - Get connection: {}-&gt;http://localhost:8200, timeout = 0
+10:58:01.495 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - [{}-&gt;http://localhost:8200] total kept alive: 0, total issued: 0, total allocated: 0 out of 200
+10:58:01.495 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - No free connections [{}-&gt;http://localhost:8200][null]
+10:58:01.495 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Available capacity: 100 out of 100 [{}-&gt;http://localhost:8200][null]
+10:58:01.495 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Creating new connection [{}-&gt;http://localhost:8200]
+10:58:01.496 [Test worker] DEBUG o.a.h.i.c.DefaultClientConnectionOperator - Connecting to localhost:8200
+10:58:01.496 [Test worker] DEBUG o.a.h.c.p.RequestAddCookies - CookieSpec selected: ignoreCookies
+10:58:01.496 [Test worker] DEBUG o.a.h.c.p.RequestAuthCache - Auth cache not set in the context
+10:58:01.496 [Test worker] DEBUG o.a.h.c.p.RequestTargetAuthentication - Target auth state: UNCHALLENGED
+10:58:01.496 [Test worker] DEBUG o.a.h.c.p.RequestProxyAuthentication - Proxy auth state: UNCHALLENGED
+10:58:01.496 [Test worker] DEBUG o.a.h.i.c.DefaultHttpClient - Attempt 1 to execute request
+10:58:01.497 [Test worker] DEBUG o.a.h.i.c.DefaultClientConnection - Sending request: HEAD /v1/ping HTTP/1.1
+10:58:01.497 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;HEAD /v1/ping HTTP/1.1[\r][\n]&quot;
+10:58:01.497 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Host: localhost:8200[\r][\n]&quot;
+10:58:01.497 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Connection: Keep-Alive[\r][\n]&quot;
+10:58:01.497 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;[\r][\n]&quot;
+10:58:01.497 [Test worker] DEBUG o.a.h.headers - &gt;&gt; HEAD /v1/ping HTTP/1.1
+10:58:01.497 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Host: localhost:8200
+10:58:01.497 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Connection: Keep-Alive
+10:58:01.498 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;HTTP/1.1 401 Unauthorized[\r][\n]&quot;
+10:58:01.498 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Server: MarkLogic[\r][\n]&quot;
+10:58:01.498 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;WWW-Authenticate: Digest realm=&quot;public&quot;, qop=&quot;auth&quot;, nonce=&quot;54a8a0c99faa1514842e0ebc6cdb3d21&quot;, opaque=&quot;7eed3403fc910d09&quot;[\r][\n]&quot;
+10:58:01.498 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Content-Type: application/json; charset=utf-8[\r][\n]&quot;
+10:58:01.498 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Connection: Keep-Alive[\r][\n]&quot;
+10:58:01.498 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Keep-Alive: timeout=5[\r][\n]&quot;
+10:58:01.498 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;[\r][\n]&quot;
+10:58:01.498 [Test worker] DEBUG o.a.h.i.c.DefaultClientConnection - Receiving response: HTTP/1.1 401 Unauthorized
+10:58:01.499 [Test worker] DEBUG o.a.h.headers - &lt;&lt; HTTP/1.1 401 Unauthorized
+10:58:01.499 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Server: MarkLogic
+10:58:01.499 [Test worker] DEBUG o.a.h.headers - &lt;&lt; WWW-Authenticate: Digest realm=&quot;public&quot;, qop=&quot;auth&quot;, nonce=&quot;54a8a0c99faa1514842e0ebc6cdb3d21&quot;, opaque=&quot;7eed3403fc910d09&quot;
+10:58:01.499 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Content-Type: application/json; charset=utf-8
+10:58:01.499 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Connection: Keep-Alive
+10:58:01.499 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Keep-Alive: timeout=5
+10:58:01.499 [Test worker] DEBUG o.a.h.i.c.DefaultHttpClient - Authentication required
+10:58:01.499 [Test worker] DEBUG o.a.h.i.c.DefaultHttpClient - localhost:8200 requested authentication
+10:58:01.499 [Test worker] DEBUG o.a.h.i.c.TargetAuthenticationStrategy - Authentication schemes in the order of preference: [Negotiate, Kerberos, NTLM, Digest, Basic]
+10:58:01.499 [Test worker] DEBUG o.a.h.i.c.TargetAuthenticationStrategy - Challenge for Negotiate authentication scheme not available
+10:58:01.499 [Test worker] DEBUG o.a.h.i.c.TargetAuthenticationStrategy - Challenge for Kerberos authentication scheme not available
+10:58:01.499 [Test worker] DEBUG o.a.h.i.c.TargetAuthenticationStrategy - Challenge for NTLM authentication scheme not available
+10:58:01.500 [Test worker] DEBUG o.a.h.i.c.TargetAuthenticationStrategy - Challenge for Basic authentication scheme not available
+10:58:01.500 [Test worker] DEBUG o.a.h.i.c.DefaultClientConnection - Connection 0.0.0.0:59386&lt;-&gt;127.0.0.1:8200 shut down
+10:58:01.500 [Test worker] DEBUG o.a.h.i.c.t.ThreadSafeClientConnManager - Released connection is not reusable.
+10:58:01.500 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Releasing connection [{}-&gt;http://localhost:8200][null]
+10:58:01.501 [Test worker] DEBUG o.a.h.i.c.DefaultClientConnection - Connection 0.0.0.0:59386&lt;-&gt;127.0.0.1:8200 closed
+10:58:01.501 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Notifying no-one, there are no waiting threads
+10:58:01.502 [Test worker] DEBUG o.a.h.i.c.t.ThreadSafeClientConnManager - Get connection: {}-&gt;http://localhost:8200, timeout = 0
+10:58:01.502 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - [{}-&gt;http://localhost:8200] total kept alive: 0, total issued: 0, total allocated: 0 out of 200
+10:58:01.502 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - No free connections [{}-&gt;http://localhost:8200][null]
+10:58:01.502 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Available capacity: 100 out of 100 [{}-&gt;http://localhost:8200][null]
+10:58:01.502 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Creating new connection [{}-&gt;http://localhost:8200]
+10:58:01.502 [Test worker] DEBUG o.a.h.i.c.DefaultClientConnectionOperator - Connecting to localhost:8200
+10:58:01.503 [Test worker] DEBUG o.a.h.c.p.RequestAddCookies - CookieSpec selected: ignoreCookies
+10:58:01.503 [Test worker] DEBUG o.a.h.c.p.RequestAuthCache - Auth cache not set in the context
+10:58:01.503 [Test worker] DEBUG o.a.h.c.p.RequestProxyAuthentication - Proxy auth state: UNCHALLENGED
+10:58:01.503 [Test worker] DEBUG o.a.h.i.c.DefaultHttpClient - Attempt 1 to execute request
+10:58:01.503 [Test worker] DEBUG o.a.h.i.c.DefaultClientConnection - Sending request: HEAD /v1/ping HTTP/1.1
+10:58:01.503 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;HEAD /v1/ping HTTP/1.1[\r][\n]&quot;
+10:58:01.504 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Authorization: Digest username=&quot;admin&quot;,realm=&quot;public&quot;,nonce=&quot;54a8a0c99faa1514842e0ebc6cdb3d21&quot;,opaque=&quot;7eed3403fc910d09&quot;,qop=auth,uri=&quot;/v1/ping&quot;,cnonce=&quot;e7a9840c&quot;,nc=00000001,response=&quot;e472ad1b93ab8fc49d33007e08548220&quot;[\r][\n]&quot;
+10:58:01.504 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Host: localhost:8200[\r][\n]&quot;
+10:58:01.504 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Connection: Keep-Alive[\r][\n]&quot;
+10:58:01.504 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;[\r][\n]&quot;
+10:58:01.504 [Test worker] DEBUG o.a.h.headers - &gt;&gt; HEAD /v1/ping HTTP/1.1
+10:58:01.504 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Authorization: Digest username=&quot;admin&quot;,realm=&quot;public&quot;,nonce=&quot;54a8a0c99faa1514842e0ebc6cdb3d21&quot;,opaque=&quot;7eed3403fc910d09&quot;,qop=auth,uri=&quot;/v1/ping&quot;,cnonce=&quot;e7a9840c&quot;,nc=00000001,response=&quot;e472ad1b93ab8fc49d33007e08548220&quot;
+10:58:01.504 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Host: localhost:8200
+10:58:01.504 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Connection: Keep-Alive
+10:58:01.505 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;HTTP/1.1 204 No Content[\r][\n]&quot;
+10:58:01.505 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Server: MarkLogic[\r][\n]&quot;
+10:58:01.505 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Connection: Keep-Alive[\r][\n]&quot;
+10:58:01.505 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Keep-Alive: timeout=5[\r][\n]&quot;
+10:58:01.506 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;[\r][\n]&quot;
+10:58:01.506 [Test worker] DEBUG o.a.h.i.c.DefaultClientConnection - Receiving response: HTTP/1.1 204 No Content
+10:58:01.506 [Test worker] DEBUG o.a.h.headers - &lt;&lt; HTTP/1.1 204 No Content
+10:58:01.506 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Server: MarkLogic
+10:58:01.506 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Connection: Keep-Alive
+10:58:01.506 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Keep-Alive: timeout=5
+10:58:01.506 [Test worker] DEBUG o.a.h.i.c.DefaultHttpClient - Connection can be kept alive for 5000 MILLISECONDS
+10:58:01.506 [Test worker] DEBUG o.a.h.i.c.t.ThreadSafeClientConnManager - Released connection is reusable.
+10:58:01.506 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Releasing connection [{}-&gt;http://localhost:8200][null]
+10:58:01.506 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Pooling connection [{}-&gt;http://localhost:8200][null]; keep alive for 5000 MILLISECONDS
+10:58:01.507 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Notifying no-one, there are no waiting threads
+10:58:01.507 [Test worker] DEBUG o.a.h.i.c.t.ThreadSafeClientConnManager - Get connection: {}-&gt;http://localhost:8200, timeout = 0
+10:58:01.507 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - [{}-&gt;http://localhost:8200] total kept alive: 1, total issued: 0, total allocated: 1 out of 200
+10:58:01.507 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Getting free connection [{}-&gt;http://localhost:8200][null]
+10:58:01.507 [Test worker] DEBUG o.a.h.i.c.DefaultHttpClient - Stale connection check
+10:58:01.509 [Test worker] DEBUG o.a.h.c.p.RequestAddCookies - CookieSpec selected: ignoreCookies
+10:58:01.509 [Test worker] DEBUG o.a.h.c.p.RequestAuthCache - Auth cache not set in the context
+10:58:01.509 [Test worker] DEBUG o.a.h.c.p.RequestProxyAuthentication - Proxy auth state: UNCHALLENGED
+10:58:01.509 [Test worker] DEBUG o.a.h.i.c.DefaultHttpClient - Attempt 1 to execute request
+10:58:01.509 [Test worker] DEBUG o.a.h.i.c.DefaultClientConnection - Sending request: POST /v1/graphs/sparql?default-rulesets=include HTTP/1.1
+10:58:01.509 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;POST /v1/graphs/sparql?default-rulesets=include HTTP/1.1[\r][\n]&quot;
+10:58:01.509 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Content-Type: application/sparql-query[\r][\n]&quot;
+10:58:01.510 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Accept: application/sparql-results+json[\r][\n]&quot;
+10:58:01.510 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Authorization: Digest username=&quot;admin&quot;,realm=&quot;public&quot;,nonce=&quot;54a8a0c99faa1514842e0ebc6cdb3d21&quot;,opaque=&quot;7eed3403fc910d09&quot;,qop=auth,uri=&quot;/v1/graphs/sparql&quot;,cnonce=&quot;776dff5c&quot;,nc=00000002,response=&quot;2a3eae6802484d4681a3a2b8ed6a05ad&quot;[\r][\n]&quot;
+10:58:01.510 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Transfer-Encoding: chunked[\r][\n]&quot;
+10:58:01.510 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Host: localhost:8200[\r][\n]&quot;
+10:58:01.510 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Connection: Keep-Alive[\r][\n]&quot;
+10:58:01.510 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;[\r][\n]&quot;
+10:58:01.510 [Test worker] DEBUG o.a.h.headers - &gt;&gt; POST /v1/graphs/sparql?default-rulesets=include HTTP/1.1
+10:58:01.510 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Content-Type: application/sparql-query
+10:58:01.510 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Accept: application/sparql-results+json
+10:58:01.510 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Authorization: Digest username=&quot;admin&quot;,realm=&quot;public&quot;,nonce=&quot;54a8a0c99faa1514842e0ebc6cdb3d21&quot;,opaque=&quot;7eed3403fc910d09&quot;,qop=auth,uri=&quot;/v1/graphs/sparql&quot;,cnonce=&quot;776dff5c&quot;,nc=00000002,response=&quot;2a3eae6802484d4681a3a2b8ed6a05ad&quot;
+10:58:01.510 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Transfer-Encoding: chunked
+10:58:01.511 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Host: localhost:8200
+10:58:01.513 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Connection: Keep-Alive
+10:58:01.513 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;2e[\r][\n]&quot;
+10:58:01.513 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;ASK WHERE {&lt;http://example.org/r9929&gt; ?p ?o .}&quot;
+10:58:01.513 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;[\r][\n]&quot;
+10:58:01.514 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;0[\r][\n]&quot;
+10:58:01.514 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;[\r][\n]&quot;
+10:58:01.541 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;HTTP/1.1 200 OK[\r][\n]&quot;
+10:58:01.541 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Content-type: application/sparql-results+json; charset=UTF-8[\r][\n]&quot;
+10:58:01.541 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Server: MarkLogic[\r][\n]&quot;
+10:58:01.541 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Content-Length: 26[\r][\n]&quot;
+10:58:01.541 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Connection: Keep-Alive[\r][\n]&quot;
+10:58:01.542 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Keep-Alive: timeout=5[\r][\n]&quot;
+10:58:01.542 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;[\r][\n]&quot;
+10:58:01.542 [Test worker] DEBUG o.a.h.i.c.DefaultClientConnection - Receiving response: HTTP/1.1 200 OK
+10:58:01.542 [Test worker] DEBUG o.a.h.headers - &lt;&lt; HTTP/1.1 200 OK
+10:58:01.542 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Content-type: application/sparql-results+json; charset=UTF-8
+10:58:01.542 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Server: MarkLogic
+10:58:01.542 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Content-Length: 26
+10:58:01.542 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Connection: Keep-Alive
+10:58:01.542 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Keep-Alive: timeout=5
+10:58:01.542 [Test worker] DEBUG o.a.h.i.c.DefaultHttpClient - Connection can be kept alive for 5000 MILLISECONDS
+10:58:01.543 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;{&quot;head&quot;:{},&quot;boolean&quot;:true}&quot;
+10:58:01.544 [Test worker] DEBUG o.a.h.i.c.t.ThreadSafeClientConnManager - Released connection is reusable.
+10:58:01.544 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Releasing connection [{}-&gt;http://localhost:8200][null]
+10:58:01.544 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Pooling connection [{}-&gt;http://localhost:8200][null]; keep alive for 5000 MILLISECONDS
+10:58:01.545 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Notifying no-one, there are no waiting threads
+10:58:01.545 [Test worker] DEBUG c.m.s.s.q.MarkLogicQuery - setting constraining query: &lt;query xmlns=&quot;http://marklogic.com/appservices/search&quot; xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:search=&quot;http://marklogic.com/appservices/search&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;&gt;&lt;term-query&gt;&lt;text&gt;Second&lt;/text&gt;&lt;/term-query&gt;&lt;/query&gt;
+10:58:01.546 [Test worker] DEBUG c.m.c.i.JerseyServices - Posting /graphs/sparql
+10:58:01.546 [Test worker] DEBUG o.a.h.i.c.t.ThreadSafeClientConnManager - Get connection: {}-&gt;http://localhost:8200, timeout = 0
+10:58:01.546 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - [{}-&gt;http://localhost:8200] total kept alive: 1, total issued: 0, total allocated: 1 out of 200
+10:58:01.546 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Getting free connection [{}-&gt;http://localhost:8200][null]
+10:58:01.546 [Test worker] DEBUG o.a.h.i.c.DefaultHttpClient - Stale connection check
+10:58:01.548 [Test worker] DEBUG o.a.h.c.p.RequestAddCookies - CookieSpec selected: ignoreCookies
+10:58:01.548 [Test worker] DEBUG o.a.h.c.p.RequestAuthCache - Auth cache not set in the context
+10:58:01.548 [Test worker] DEBUG o.a.h.c.p.RequestProxyAuthentication - Proxy auth state: UNCHALLENGED
+10:58:01.548 [Test worker] DEBUG o.a.h.i.c.DefaultHttpClient - Attempt 1 to execute request
+10:58:01.548 [Test worker] DEBUG o.a.h.i.c.DefaultClientConnection - Sending request: POST /v1/graphs/sparql?default-rulesets=include HTTP/1.1
+10:58:01.548 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;POST /v1/graphs/sparql?default-rulesets=include HTTP/1.1[\r][\n]&quot;
+10:58:01.549 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Content-Type: application/sparql-query[\r][\n]&quot;
+10:58:01.549 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Accept: application/sparql-results+json[\r][\n]&quot;
+10:58:01.549 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Authorization: Digest username=&quot;admin&quot;,realm=&quot;public&quot;,nonce=&quot;54a8a0c99faa1514842e0ebc6cdb3d21&quot;,opaque=&quot;7eed3403fc910d09&quot;,qop=auth,uri=&quot;/v1/graphs/sparql&quot;,cnonce=&quot;28a35420&quot;,nc=00000003,response=&quot;e44c9f719ea32dc0232469a4a696e5a3&quot;[\r][\n]&quot;
+10:58:01.549 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Transfer-Encoding: chunked[\r][\n]&quot;
+10:58:01.549 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Host: localhost:8200[\r][\n]&quot;
+10:58:01.549 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Connection: Keep-Alive[\r][\n]&quot;
+10:58:01.549 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;[\r][\n]&quot;
+10:58:01.550 [Test worker] DEBUG o.a.h.headers - &gt;&gt; POST /v1/graphs/sparql?default-rulesets=include HTTP/1.1
+10:58:01.550 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Content-Type: application/sparql-query
+10:58:01.550 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Accept: application/sparql-results+json
+10:58:01.550 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Authorization: Digest username=&quot;admin&quot;,realm=&quot;public&quot;,nonce=&quot;54a8a0c99faa1514842e0ebc6cdb3d21&quot;,opaque=&quot;7eed3403fc910d09&quot;,qop=auth,uri=&quot;/v1/graphs/sparql&quot;,cnonce=&quot;28a35420&quot;,nc=00000003,response=&quot;e44c9f719ea32dc0232469a4a696e5a3&quot;
+10:58:01.550 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Transfer-Encoding: chunked
+10:58:01.550 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Host: localhost:8200
+10:58:01.550 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Connection: Keep-Alive
+10:58:01.550 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;2e[\r][\n]&quot;
+10:58:01.550 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;ASK WHERE {&lt;http://example.org/r9928&gt; ?p ?o .}&quot;
+10:58:01.550 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;[\r][\n]&quot;
+10:58:01.550 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;0[\r][\n]&quot;
+10:58:01.550 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;[\r][\n]&quot;
+10:58:01.571 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;HTTP/1.1 200 OK[\r][\n]&quot;
+10:58:01.572 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Content-type: application/sparql-results+json; charset=UTF-8[\r][\n]&quot;
+10:58:01.572 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Server: MarkLogic[\r][\n]&quot;
+10:58:01.572 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Content-Length: 26[\r][\n]&quot;
+10:58:01.572 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Connection: Keep-Alive[\r][\n]&quot;
+10:58:01.572 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Keep-Alive: timeout=5[\r][\n]&quot;
+10:58:01.572 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;[\r][\n]&quot;
+10:58:01.572 [Test worker] DEBUG o.a.h.i.c.DefaultClientConnection - Receiving response: HTTP/1.1 200 OK
+10:58:01.573 [Test worker] DEBUG o.a.h.headers - &lt;&lt; HTTP/1.1 200 OK
+10:58:01.573 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Content-type: application/sparql-results+json; charset=UTF-8
+10:58:01.573 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Server: MarkLogic
+10:58:01.573 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Content-Length: 26
+10:58:01.573 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Connection: Keep-Alive
+10:58:01.573 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Keep-Alive: timeout=5
+10:58:01.573 [Test worker] DEBUG o.a.h.i.c.DefaultHttpClient - Connection can be kept alive for 5000 MILLISECONDS
+10:58:01.574 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;{&quot;head&quot;:{},&quot;boolean&quot;:true}&quot;
+10:58:01.576 [Test worker] DEBUG o.a.h.i.c.t.ThreadSafeClientConnManager - Released connection is reusable.
+10:58:01.576 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Releasing connection [{}-&gt;http://localhost:8200][null]
+10:58:01.576 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Pooling connection [{}-&gt;http://localhost:8200][null]; keep alive for 5000 MILLISECONDS
+10:58:01.576 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Notifying no-one, there are no waiting threads
+10:58:01.576 [Test worker] DEBUG c.m.s.s.MarkLogicCombinationQueryTest - tearing down...
+10:58:01.577 [Test worker] INFO  c.m.s.s.MarkLogicCombinationQueryTest - tearDown complete.
+10:58:01.577 [Test worker] INFO  c.m.c.i.DocumentManagerImpl - Deleting /directory1/doc1.xml
+10:58:01.577 [Test worker] DEBUG c.m.c.i.JerseyServices - Deleting /directory1/doc1.xml in transaction null
+10:58:01.577 [Test worker] DEBUG o.a.h.i.c.t.ThreadSafeClientConnManager - Get connection: {}-&gt;http://localhost:8200, timeout = 0
+10:58:01.578 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - [{}-&gt;http://localhost:8200] total kept alive: 1, total issued: 0, total allocated: 1 out of 200
+10:58:01.578 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Getting free connection [{}-&gt;http://localhost:8200][null]
+10:58:01.578 [Test worker] DEBUG o.a.h.i.c.DefaultHttpClient - Stale connection check
+10:58:01.579 [Test worker] DEBUG o.a.h.c.p.RequestAddCookies - CookieSpec selected: ignoreCookies
+10:58:01.579 [Test worker] DEBUG o.a.h.c.p.RequestAuthCache - Auth cache not set in the context
+10:58:01.580 [Test worker] DEBUG o.a.h.c.p.RequestProxyAuthentication - Proxy auth state: UNCHALLENGED
+10:58:01.580 [Test worker] DEBUG o.a.h.i.c.DefaultHttpClient - Attempt 1 to execute request
+10:58:01.580 [Test worker] DEBUG o.a.h.i.c.DefaultClientConnection - Sending request: DELETE /v1/documents?category=content&amp;uri=/directory1/doc1.xml HTTP/1.1
+10:58:01.580 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;DELETE /v1/documents?category=content&amp;uri=/directory1/doc1.xml HTTP/1.1[\r][\n]&quot;
+10:58:01.580 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Authorization: Digest username=&quot;admin&quot;,realm=&quot;public&quot;,nonce=&quot;f55e89a2002ce7c28293f582a0dfc519&quot;,opaque=&quot;27a82001d9623172&quot;,qop=auth,uri=&quot;/v1/documents&quot;,cnonce=&quot;2f1bd169&quot;,nc=00000003,response=&quot;ab88013e2cfd9ee0ebeede7f2a2417e3&quot;[\r][\n]&quot;
+10:58:01.580 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Host: localhost:8200[\r][\n]&quot;
+10:58:01.580 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Connection: Keep-Alive[\r][\n]&quot;
+10:58:01.580 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;[\r][\n]&quot;
+10:58:01.580 [Test worker] DEBUG o.a.h.headers - &gt;&gt; DELETE /v1/documents?category=content&amp;uri=/directory1/doc1.xml HTTP/1.1
+10:58:01.580 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Authorization: Digest username=&quot;admin&quot;,realm=&quot;public&quot;,nonce=&quot;f55e89a2002ce7c28293f582a0dfc519&quot;,opaque=&quot;27a82001d9623172&quot;,qop=auth,uri=&quot;/v1/documents&quot;,cnonce=&quot;2f1bd169&quot;,nc=00000003,response=&quot;ab88013e2cfd9ee0ebeede7f2a2417e3&quot;
+10:58:01.581 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Host: localhost:8200
+10:58:01.581 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Connection: Keep-Alive
+10:58:01.588 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;HTTP/1.1 204 Document Deleted[\r][\n]&quot;
+10:58:01.588 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Server: MarkLogic[\r][\n]&quot;
+10:58:01.588 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Content-Length: 0[\r][\n]&quot;
+10:58:01.589 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Connection: Keep-Alive[\r][\n]&quot;
+10:58:01.589 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Keep-Alive: timeout=5[\r][\n]&quot;
+10:58:01.589 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;[\r][\n]&quot;
+10:58:01.589 [Test worker] DEBUG o.a.h.i.c.DefaultClientConnection - Receiving response: HTTP/1.1 204 Document Deleted
+10:58:01.589 [Test worker] DEBUG o.a.h.headers - &lt;&lt; HTTP/1.1 204 Document Deleted
+10:58:01.589 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Server: MarkLogic
+10:58:01.589 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Content-Length: 0
+10:58:01.589 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Connection: Keep-Alive
+10:58:01.589 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Keep-Alive: timeout=5
+10:58:01.589 [Test worker] DEBUG o.a.h.i.c.DefaultHttpClient - Connection can be kept alive for 5000 MILLISECONDS
+10:58:01.589 [Test worker] DEBUG o.a.h.i.c.t.ThreadSafeClientConnManager - Released connection is reusable.
+10:58:01.589 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Releasing connection [{}-&gt;http://localhost:8200][null]
+10:58:01.590 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Pooling connection [{}-&gt;http://localhost:8200][null]; keep alive for 5000 MILLISECONDS
+10:58:01.590 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Notifying no-one, there are no waiting threads
+10:58:01.590 [Test worker] INFO  c.m.c.i.DocumentManagerImpl - Deleting /directory2/doc2.xml
+10:58:01.590 [Test worker] DEBUG c.m.c.i.JerseyServices - Deleting /directory2/doc2.xml in transaction null
+10:58:01.591 [Test worker] DEBUG o.a.h.i.c.t.ThreadSafeClientConnManager - Get connection: {}-&gt;http://localhost:8200, timeout = 0
+10:58:01.591 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - [{}-&gt;http://localhost:8200] total kept alive: 1, total issued: 0, total allocated: 1 out of 200
+10:58:01.591 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Getting free connection [{}-&gt;http://localhost:8200][null]
+10:58:01.591 [Test worker] DEBUG o.a.h.i.c.DefaultHttpClient - Stale connection check
+10:58:01.593 [Test worker] DEBUG o.a.h.c.p.RequestAddCookies - CookieSpec selected: ignoreCookies
+10:58:01.593 [Test worker] DEBUG o.a.h.c.p.RequestAuthCache - Auth cache not set in the context
+10:58:01.593 [Test worker] DEBUG o.a.h.c.p.RequestProxyAuthentication - Proxy auth state: UNCHALLENGED
+10:58:01.593 [Test worker] DEBUG o.a.h.i.c.DefaultHttpClient - Attempt 1 to execute request
+10:58:01.593 [Test worker] DEBUG o.a.h.i.c.DefaultClientConnection - Sending request: DELETE /v1/documents?category=content&amp;uri=/directory2/doc2.xml HTTP/1.1
+10:58:01.593 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;DELETE /v1/documents?category=content&amp;uri=/directory2/doc2.xml HTTP/1.1[\r][\n]&quot;
+10:58:01.593 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Authorization: Digest username=&quot;admin&quot;,realm=&quot;public&quot;,nonce=&quot;f55e89a2002ce7c28293f582a0dfc519&quot;,opaque=&quot;27a82001d9623172&quot;,qop=auth,uri=&quot;/v1/documents&quot;,cnonce=&quot;d968d761&quot;,nc=00000004,response=&quot;e11051a558443538a8083b3e4aa697ae&quot;[\r][\n]&quot;
+10:58:01.594 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Host: localhost:8200[\r][\n]&quot;
+10:58:01.594 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Connection: Keep-Alive[\r][\n]&quot;
+10:58:01.594 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;[\r][\n]&quot;
+10:58:01.594 [Test worker] DEBUG o.a.h.headers - &gt;&gt; DELETE /v1/documents?category=content&amp;uri=/directory2/doc2.xml HTTP/1.1
+10:58:01.594 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Authorization: Digest username=&quot;admin&quot;,realm=&quot;public&quot;,nonce=&quot;f55e89a2002ce7c28293f582a0dfc519&quot;,opaque=&quot;27a82001d9623172&quot;,qop=auth,uri=&quot;/v1/documents&quot;,cnonce=&quot;d968d761&quot;,nc=00000004,response=&quot;e11051a558443538a8083b3e4aa697ae&quot;
+10:58:01.594 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Host: localhost:8200
+10:58:01.594 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Connection: Keep-Alive
+10:58:01.601 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;HTTP/1.1 204 Document Deleted[\r][\n]&quot;
+10:58:01.602 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Server: MarkLogic[\r][\n]&quot;
+10:58:01.602 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Content-Length: 0[\r][\n]&quot;
+10:58:01.602 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Connection: Keep-Alive[\r][\n]&quot;
+10:58:01.602 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Keep-Alive: timeout=5[\r][\n]&quot;
+10:58:01.602 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;[\r][\n]&quot;
+10:58:01.602 [Test worker] DEBUG o.a.h.i.c.DefaultClientConnection - Receiving response: HTTP/1.1 204 Document Deleted
+10:58:01.602 [Test worker] DEBUG o.a.h.headers - &lt;&lt; HTTP/1.1 204 Document Deleted
+10:58:01.602 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Server: MarkLogic
+10:58:01.602 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Content-Length: 0
+10:58:01.602 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Connection: Keep-Alive
+10:58:01.603 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Keep-Alive: timeout=5
+10:58:01.603 [Test worker] DEBUG o.a.h.i.c.DefaultHttpClient - Connection can be kept alive for 5000 MILLISECONDS
+10:58:01.603 [Test worker] DEBUG o.a.h.i.c.t.ThreadSafeClientConnManager - Released connection is reusable.
+10:58:01.603 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Releasing connection [{}-&gt;http://localhost:8200][null]
+10:58:01.603 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Pooling connection [{}-&gt;http://localhost:8200][null]; keep alive for 5000 MILLISECONDS
+10:58:01.603 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Notifying no-one, there are no waiting threads
+10:58:01.604 [Test worker] DEBUG c.m.c.DatabaseClientFactory - Creating new database client for server at localhost:8200
+10:58:01.604 [Test worker] DEBUG c.m.c.i.JerseyServices - Connecting to localhost at 8200 as admin
+10:58:01.679 [Test worker] DEBUG c.m.c.DatabaseClientFactory - Creating new database client for server at localhost:8200
+10:58:01.679 [Test worker] DEBUG c.m.c.i.JerseyServices - Connecting to localhost at 8200 as admin
+10:58:01.738 [Test worker] DEBUG c.m.c.DatabaseClientFactory - Creating new database client for server at localhost:8200
+10:58:01.738 [Test worker] DEBUG c.m.c.i.JerseyServices - Connecting to localhost at 8200 as rest-reader
+10:58:01.814 [Test worker] DEBUG c.m.c.DatabaseClientFactory - Creating new database client for server at localhost:8200
+10:58:01.814 [Test worker] DEBUG c.m.c.i.JerseyServices - Connecting to localhost at 8200 as admin
+10:58:01.850 [Finalizer] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+10:58:01.850 [Finalizer] DEBUG c.m.c.i.JerseyServices - Releasing connection
+10:58:01.851 [Finalizer] DEBUG o.a.h.i.c.t.ThreadSafeClientConnManager - Shutting down
+10:58:01.851 [Finalizer] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+10:58:01.851 [Finalizer] DEBUG c.m.c.i.JerseyServices - Releasing connection
+10:58:01.851 [Finalizer] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+10:58:01.851 [Finalizer] DEBUG c.m.c.i.JerseyServices - Releasing connection
+10:58:01.851 [Finalizer] DEBUG o.a.h.i.c.t.ThreadSafeClientConnManager - Shutting down
+10:58:01.851 [Finalizer] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+10:58:01.851 [Finalizer] DEBUG c.m.c.i.JerseyServices - Releasing connection
+10:58:01.890 [Test worker] DEBUG c.m.s.s.MarkLogicCombinationQueryTest - setting up test
+10:58:01.890 [Test worker] INFO  c.m.s.s.MarkLogicCombinationQueryTest - test setup complete.
+10:58:01.890 [Test worker] INFO  c.m.c.i.DocumentManagerImpl - Writing content for /directory1/doc1.xml
+10:58:01.890 [Test worker] DEBUG c.m.c.i.JerseyServices - Sending /directory1/doc1.xml document in transaction null
+10:58:01.891 [Test worker] DEBUG o.a.h.i.c.t.ThreadSafeClientConnManager - Get connection: {}-&gt;http://localhost:8200, timeout = 0
+10:58:01.891 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - [{}-&gt;http://localhost:8200] total kept alive: 0, total issued: 0, total allocated: 0 out of 200
+10:58:01.891 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - No free connections [{}-&gt;http://localhost:8200][null]
+10:58:01.891 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Available capacity: 100 out of 100 [{}-&gt;http://localhost:8200][null]
+10:58:01.891 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Creating new connection [{}-&gt;http://localhost:8200]
+10:58:01.891 [Test worker] DEBUG o.a.h.i.c.DefaultClientConnectionOperator - Connecting to localhost:8200
+10:58:01.892 [Test worker] DEBUG o.a.h.c.p.RequestAddCookies - CookieSpec selected: ignoreCookies
+10:58:01.892 [Test worker] DEBUG o.a.h.c.p.RequestAuthCache - Auth cache not set in the context
+10:58:01.892 [Test worker] DEBUG o.a.h.c.p.RequestTargetAuthentication - Target auth state: UNCHALLENGED
+10:58:01.892 [Test worker] DEBUG o.a.h.c.p.RequestProxyAuthentication - Proxy auth state: UNCHALLENGED
+10:58:01.892 [Test worker] DEBUG o.a.h.i.c.DefaultHttpClient - Attempt 1 to execute request
+10:58:01.892 [Test worker] DEBUG o.a.h.i.c.DefaultClientConnection - Sending request: PUT /v1/documents?category=content&amp;uri=/directory1/doc1.xml HTTP/1.1
+10:58:01.892 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;PUT /v1/documents?category=content&amp;uri=/directory1/doc1.xml HTTP/1.1[\r][\n]&quot;
+10:58:01.893 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Content-Type: application/xml[\r][\n]&quot;
+10:58:01.893 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Transfer-Encoding: chunked[\r][\n]&quot;
+10:58:01.893 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Host: localhost:8200[\r][\n]&quot;
+10:58:01.893 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Connection: Keep-Alive[\r][\n]&quot;
+10:58:01.893 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;[\r][\n]&quot;
+10:58:01.893 [Test worker] DEBUG o.a.h.headers - &gt;&gt; PUT /v1/documents?category=content&amp;uri=/directory1/doc1.xml HTTP/1.1
+10:58:01.893 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Content-Type: application/xml
+10:58:01.893 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Transfer-Encoding: chunked
+10:58:01.893 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Host: localhost:8200
+10:58:01.893 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Connection: Keep-Alive
+10:58:01.893 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;165[\r][\n]&quot;
+10:58:01.893 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;&lt;semantic-document&gt;[\n]&quot;
+10:58:01.893 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;&lt;title&gt;First Title&lt;/title&gt;[\n]&quot;
+10:58:01.893 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;&lt;size&gt;100&lt;/size&gt;[\n]&quot;
+10:58:01.893 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;&lt;sem:triples xmlns:sem=&quot;http://marklogic.com/semantics&quot;&gt;&lt;sem:triple&gt;&lt;sem:subject&gt;http://example.org/r9928&lt;/sem:subject&gt;&lt;sem:predicate&gt;http://example.org/p3&lt;/sem:predicate&gt;&lt;sem:object datatype=&quot;http://www.w3.org/2001/XMLSchema#int&quot;&gt;1&lt;/sem:object&gt;&lt;/sem:triple&gt;&lt;/sem:triples&gt;[\n]&quot;
+10:58:01.894 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;&lt;/semantic-document&gt;&quot;
+10:58:01.894 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;[\r][\n]&quot;
+10:58:01.894 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;0[\r][\n]&quot;
+10:58:01.894 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;[\r][\n]&quot;
+10:58:01.896 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;HTTP/1.1 401 Unauthorized[\r][\n]&quot;
+10:58:01.896 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Server: MarkLogic[\r][\n]&quot;
+10:58:01.897 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;WWW-Authenticate: Digest realm=&quot;public&quot;, qop=&quot;auth&quot;, nonce=&quot;2cdb503334e3aabb88fd34a17a2ff65a&quot;, opaque=&quot;49e46eed7df0d8bf&quot;[\r][\n]&quot;
+10:58:01.897 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Content-Type: application/json; charset=utf-8[\r][\n]&quot;
+10:58:01.897 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Content-Length: 104[\r][\n]&quot;
+10:58:01.897 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Connection: Keep-Alive[\r][\n]&quot;
+10:58:01.897 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Keep-Alive: timeout=5[\r][\n]&quot;
+10:58:01.897 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;[\r][\n]&quot;
+10:58:01.897 [Test worker] DEBUG o.a.h.i.c.DefaultClientConnection - Receiving response: HTTP/1.1 401 Unauthorized
+10:58:01.897 [Test worker] DEBUG o.a.h.headers - &lt;&lt; HTTP/1.1 401 Unauthorized
+10:58:01.897 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Server: MarkLogic
+10:58:01.897 [Test worker] DEBUG o.a.h.headers - &lt;&lt; WWW-Authenticate: Digest realm=&quot;public&quot;, qop=&quot;auth&quot;, nonce=&quot;2cdb503334e3aabb88fd34a17a2ff65a&quot;, opaque=&quot;49e46eed7df0d8bf&quot;
+10:58:01.897 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Content-Type: application/json; charset=utf-8
+10:58:01.897 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Content-Length: 104
+10:58:01.897 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Connection: Keep-Alive
+10:58:01.898 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Keep-Alive: timeout=5
+10:58:01.898 [Test worker] DEBUG o.a.h.i.c.DefaultHttpClient - Connection can be kept alive for 5000 MILLISECONDS
+10:58:01.898 [Test worker] DEBUG o.a.h.i.c.DefaultHttpClient - Authentication required
+10:58:01.898 [Test worker] DEBUG o.a.h.i.c.DefaultHttpClient - localhost:8200 requested authentication
+10:58:01.898 [Test worker] DEBUG o.a.h.i.c.TargetAuthenticationStrategy - Authentication schemes in the order of preference: [Negotiate, Kerberos, NTLM, Digest, Basic]
+10:58:01.898 [Test worker] DEBUG o.a.h.i.c.TargetAuthenticationStrategy - Challenge for Negotiate authentication scheme not available
+10:58:01.898 [Test worker] DEBUG o.a.h.i.c.TargetAuthenticationStrategy - Challenge for Kerberos authentication scheme not available
+10:58:01.898 [Test worker] DEBUG o.a.h.i.c.TargetAuthenticationStrategy - Challenge for NTLM authentication scheme not available
+10:58:01.898 [Test worker] DEBUG o.a.h.i.c.TargetAuthenticationStrategy - Challenge for Basic authentication scheme not available
+10:58:01.899 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;{&quot;errorResponse&quot;:   {&quot;statusCode&quot;:401,[\n]&quot;
+10:58:01.899 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;   &quot;status&quot;:&quot;Unauthorized&quot;,[\n]&quot;
+10:58:01.899 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;   &quot;message&quot;:&quot;401 Unauthorized&quot;[\n]&quot;
+10:58:01.899 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;  }[\n]&quot;
+10:58:01.899 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;}&quot;
+10:58:01.899 [Test worker] DEBUG o.a.h.i.c.t.ThreadSafeClientConnManager - Released connection is reusable.
+10:58:01.899 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Releasing connection [{}-&gt;http://localhost:8200][null]
+10:58:01.899 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Pooling connection [{}-&gt;http://localhost:8200][null]; keep alive for 5000 MILLISECONDS
+10:58:01.899 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Notifying no-one, there are no waiting threads
+10:58:01.900 [Test worker] DEBUG o.a.h.i.c.t.ThreadSafeClientConnManager - Get connection: {}-&gt;http://localhost:8200, timeout = 0
+10:58:01.900 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - [{}-&gt;http://localhost:8200] total kept alive: 1, total issued: 0, total allocated: 1 out of 200
+10:58:01.900 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Getting free connection [{}-&gt;http://localhost:8200][null]
+10:58:01.900 [Test worker] DEBUG o.a.h.i.c.DefaultHttpClient - Stale connection check
+10:58:01.902 [Test worker] DEBUG o.a.h.c.p.RequestAddCookies - CookieSpec selected: ignoreCookies
+10:58:01.902 [Test worker] DEBUG o.a.h.c.p.RequestAuthCache - Auth cache not set in the context
+10:58:01.902 [Test worker] DEBUG o.a.h.c.p.RequestProxyAuthentication - Proxy auth state: UNCHALLENGED
+10:58:01.902 [Test worker] DEBUG o.a.h.i.c.DefaultHttpClient - Attempt 1 to execute request
+10:58:01.902 [Test worker] DEBUG o.a.h.i.c.DefaultClientConnection - Sending request: PUT /v1/documents?category=content&amp;uri=/directory1/doc1.xml HTTP/1.1
+10:58:01.902 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;PUT /v1/documents?category=content&amp;uri=/directory1/doc1.xml HTTP/1.1[\r][\n]&quot;
+10:58:01.903 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Content-Type: application/xml[\r][\n]&quot;
+10:58:01.903 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Authorization: Digest username=&quot;admin&quot;,realm=&quot;public&quot;,nonce=&quot;2cdb503334e3aabb88fd34a17a2ff65a&quot;,opaque=&quot;49e46eed7df0d8bf&quot;,qop=auth,uri=&quot;/v1/documents&quot;,cnonce=&quot;e2d86a3b&quot;,nc=00000001,response=&quot;882ceb5df35eca6e3ee4be349c33c49a&quot;[\r][\n]&quot;
+10:58:01.903 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Transfer-Encoding: chunked[\r][\n]&quot;
+10:58:01.903 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Host: localhost:8200[\r][\n]&quot;
+10:58:01.903 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Connection: Keep-Alive[\r][\n]&quot;
+10:58:01.903 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;[\r][\n]&quot;
+10:58:01.903 [Test worker] DEBUG o.a.h.headers - &gt;&gt; PUT /v1/documents?category=content&amp;uri=/directory1/doc1.xml HTTP/1.1
+10:58:01.903 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Content-Type: application/xml
+10:58:01.903 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Authorization: Digest username=&quot;admin&quot;,realm=&quot;public&quot;,nonce=&quot;2cdb503334e3aabb88fd34a17a2ff65a&quot;,opaque=&quot;49e46eed7df0d8bf&quot;,qop=auth,uri=&quot;/v1/documents&quot;,cnonce=&quot;e2d86a3b&quot;,nc=00000001,response=&quot;882ceb5df35eca6e3ee4be349c33c49a&quot;
+10:58:01.903 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Transfer-Encoding: chunked
+10:58:01.903 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Host: localhost:8200
+10:58:01.903 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Connection: Keep-Alive
+10:58:01.904 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;165[\r][\n]&quot;
+10:58:01.904 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;&lt;semantic-document&gt;[\n]&quot;
+10:58:01.904 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;&lt;title&gt;First Title&lt;/title&gt;[\n]&quot;
+10:58:01.904 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;&lt;size&gt;100&lt;/size&gt;[\n]&quot;
+10:58:01.904 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;&lt;sem:triples xmlns:sem=&quot;http://marklogic.com/semantics&quot;&gt;&lt;sem:triple&gt;&lt;sem:subject&gt;http://example.org/r9928&lt;/sem:subject&gt;&lt;sem:predicate&gt;http://example.org/p3&lt;/sem:predicate&gt;&lt;sem:object datatype=&quot;http://www.w3.org/2001/XMLSchema#int&quot;&gt;1&lt;/sem:object&gt;&lt;/sem:triple&gt;&lt;/sem:triples&gt;[\n]&quot;
+10:58:01.904 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;&lt;/semantic-document&gt;&quot;
+10:58:01.904 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;[\r][\n]&quot;
+10:58:01.904 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;0[\r][\n]&quot;
+10:58:01.905 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;[\r][\n]&quot;
+10:58:01.913 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;HTTP/1.1 201 Created[\r][\n]&quot;
+10:58:01.913 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Location: /v1/documents?uri=/directory1/doc1.xml[\r][\n]&quot;
+10:58:01.913 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Server: MarkLogic[\r][\n]&quot;
+10:58:01.914 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Content-Length: 0[\r][\n]&quot;
+10:58:01.914 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Connection: Keep-Alive[\r][\n]&quot;
+10:58:01.914 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Keep-Alive: timeout=5[\r][\n]&quot;
+10:58:01.914 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;[\r][\n]&quot;
+10:58:01.914 [Test worker] DEBUG o.a.h.i.c.DefaultClientConnection - Receiving response: HTTP/1.1 201 Created
+10:58:01.914 [Test worker] DEBUG o.a.h.headers - &lt;&lt; HTTP/1.1 201 Created
+10:58:01.914 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Location: /v1/documents?uri=/directory1/doc1.xml
+10:58:01.914 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Server: MarkLogic
+10:58:01.914 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Content-Length: 0
+10:58:01.914 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Connection: Keep-Alive
+10:58:01.914 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Keep-Alive: timeout=5
+10:58:01.915 [Test worker] DEBUG o.a.h.i.c.DefaultHttpClient - Connection can be kept alive for 5000 MILLISECONDS
+10:58:01.915 [Test worker] DEBUG o.a.h.i.c.t.ThreadSafeClientConnManager - Released connection is reusable.
+10:58:01.915 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Releasing connection [{}-&gt;http://localhost:8200][null]
+10:58:01.915 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Pooling connection [{}-&gt;http://localhost:8200][null]; keep alive for 5000 MILLISECONDS
+10:58:01.915 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Notifying no-one, there are no waiting threads
+10:58:01.915 [Test worker] INFO  c.m.c.i.DocumentManagerImpl - Writing content for /directory2/doc2.xml
+10:58:01.915 [Test worker] DEBUG c.m.c.i.JerseyServices - Sending /directory2/doc2.xml document in transaction null
+10:58:01.916 [Test worker] DEBUG o.a.h.i.c.t.ThreadSafeClientConnManager - Get connection: {}-&gt;http://localhost:8200, timeout = 0
+10:58:01.916 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - [{}-&gt;http://localhost:8200] total kept alive: 1, total issued: 0, total allocated: 1 out of 200
+10:58:01.916 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Getting free connection [{}-&gt;http://localhost:8200][null]
+10:58:01.916 [Test worker] DEBUG o.a.h.i.c.DefaultHttpClient - Stale connection check
+10:58:01.918 [Test worker] DEBUG o.a.h.c.p.RequestAddCookies - CookieSpec selected: ignoreCookies
+10:58:01.918 [Test worker] DEBUG o.a.h.c.p.RequestAuthCache - Auth cache not set in the context
+10:58:01.918 [Test worker] DEBUG o.a.h.c.p.RequestProxyAuthentication - Proxy auth state: UNCHALLENGED
+10:58:01.918 [Test worker] DEBUG o.a.h.i.c.DefaultHttpClient - Attempt 1 to execute request
+10:58:01.918 [Test worker] DEBUG o.a.h.i.c.DefaultClientConnection - Sending request: PUT /v1/documents?category=content&amp;uri=/directory2/doc2.xml HTTP/1.1
+10:58:01.918 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;PUT /v1/documents?category=content&amp;uri=/directory2/doc2.xml HTTP/1.1[\r][\n]&quot;
+10:58:01.918 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Content-Type: application/xml[\r][\n]&quot;
+10:58:01.918 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Authorization: Digest username=&quot;admin&quot;,realm=&quot;public&quot;,nonce=&quot;2cdb503334e3aabb88fd34a17a2ff65a&quot;,opaque=&quot;49e46eed7df0d8bf&quot;,qop=auth,uri=&quot;/v1/documents&quot;,cnonce=&quot;bfc45e34&quot;,nc=00000002,response=&quot;7d40cf317629d2c22621e8f085e326cb&quot;[\r][\n]&quot;
+10:58:01.918 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Transfer-Encoding: chunked[\r][\n]&quot;
+10:58:01.918 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Host: localhost:8200[\r][\n]&quot;
+10:58:01.919 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Connection: Keep-Alive[\r][\n]&quot;
+10:58:01.919 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;[\r][\n]&quot;
+10:58:01.919 [Test worker] DEBUG o.a.h.headers - &gt;&gt; PUT /v1/documents?category=content&amp;uri=/directory2/doc2.xml HTTP/1.1
+10:58:01.919 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Content-Type: application/xml
+10:58:01.919 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Authorization: Digest username=&quot;admin&quot;,realm=&quot;public&quot;,nonce=&quot;2cdb503334e3aabb88fd34a17a2ff65a&quot;,opaque=&quot;49e46eed7df0d8bf&quot;,qop=auth,uri=&quot;/v1/documents&quot;,cnonce=&quot;bfc45e34&quot;,nc=00000002,response=&quot;7d40cf317629d2c22621e8f085e326cb&quot;
+10:58:01.919 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Transfer-Encoding: chunked
+10:58:01.919 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Host: localhost:8200
+10:58:01.919 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Connection: Keep-Alive
+10:58:01.919 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;166[\r][\n]&quot;
+10:58:01.919 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;&lt;semantic-document&gt;[\n]&quot;
+10:58:01.919 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;&lt;title&gt;Second Title&lt;/title&gt;[\n]&quot;
+10:58:01.919 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;&lt;size&gt;500&lt;/size&gt;[\n]&quot;
+10:58:01.919 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;&lt;sem:triples xmlns:sem=&quot;http://marklogic.com/semantics&quot;&gt;&lt;sem:triple&gt;&lt;sem:subject&gt;http://example.org/r9929&lt;/sem:subject&gt;&lt;sem:predicate&gt;http://example.org/p3&lt;/sem:predicate&gt;&lt;sem:object datatype=&quot;http://www.w3.org/2001/XMLSchema#int&quot;&gt;2&lt;/sem:object&gt;&lt;/sem:triple&gt;&lt;/sem:triples&gt;[\n]&quot;
+10:58:01.920 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;&lt;/semantic-document&gt;&quot;
+10:58:01.920 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;[\r][\n]&quot;
+10:58:01.920 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;0[\r][\n]&quot;
+10:58:01.920 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;[\r][\n]&quot;
+10:58:01.933 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;HTTP/1.1 201 Created[\r][\n]&quot;
+10:58:01.933 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Location: /v1/documents?uri=/directory2/doc2.xml[\r][\n]&quot;
+10:58:01.933 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Server: MarkLogic[\r][\n]&quot;
+10:58:01.933 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Content-Length: 0[\r][\n]&quot;
+10:58:01.933 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Connection: Keep-Alive[\r][\n]&quot;
+10:58:01.934 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Keep-Alive: timeout=5[\r][\n]&quot;
+10:58:01.934 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;[\r][\n]&quot;
+10:58:01.934 [Test worker] DEBUG o.a.h.i.c.DefaultClientConnection - Receiving response: HTTP/1.1 201 Created
+10:58:01.934 [Test worker] DEBUG o.a.h.headers - &lt;&lt; HTTP/1.1 201 Created
+10:58:01.934 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Location: /v1/documents?uri=/directory2/doc2.xml
+10:58:01.934 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Server: MarkLogic
+10:58:01.934 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Content-Length: 0
+10:58:01.934 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Connection: Keep-Alive
+10:58:01.934 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Keep-Alive: timeout=5
+10:58:01.934 [Test worker] DEBUG o.a.h.i.c.DefaultHttpClient - Connection can be kept alive for 5000 MILLISECONDS
+10:58:01.934 [Test worker] DEBUG o.a.h.i.c.t.ThreadSafeClientConnManager - Released connection is reusable.
+10:58:01.935 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Releasing connection [{}-&gt;http://localhost:8200][null]
+10:58:01.935 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Pooling connection [{}-&gt;http://localhost:8200][null]; keep alive for 5000 MILLISECONDS
+10:58:01.935 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Notifying no-one, there are no waiting threads
+10:58:01.935 [Test worker] DEBUG c.m.s.s.q.MarkLogicQuery - setting constraining query: com.marklogic.client.impl.StringQueryDefinitionImpl@4bcdf052
+10:58:01.936 [Test worker] DEBUG c.m.c.i.JerseyServices - Posting /graphs/sparql
+10:58:01.936 [Test worker] DEBUG o.a.h.i.c.t.ThreadSafeClientConnManager - Get connection: {}-&gt;http://localhost:8200, timeout = 0
+10:58:01.936 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - [{}-&gt;http://localhost:8200] total kept alive: 0, total issued: 0, total allocated: 0 out of 200
+10:58:01.936 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - No free connections [{}-&gt;http://localhost:8200][null]
+10:58:01.937 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Available capacity: 100 out of 100 [{}-&gt;http://localhost:8200][null]
+10:58:01.937 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Creating new connection [{}-&gt;http://localhost:8200]
+10:58:01.937 [Test worker] DEBUG o.a.h.i.c.DefaultClientConnectionOperator - Connecting to localhost:8200
+10:58:01.937 [Test worker] DEBUG o.a.h.c.p.RequestAddCookies - CookieSpec selected: ignoreCookies
+10:58:01.937 [Test worker] DEBUG o.a.h.c.p.RequestAuthCache - Auth cache not set in the context
+10:58:01.938 [Test worker] DEBUG o.a.h.c.p.RequestTargetAuthentication - Target auth state: UNCHALLENGED
+10:58:01.938 [Test worker] DEBUG o.a.h.c.p.RequestProxyAuthentication - Proxy auth state: UNCHALLENGED
+10:58:01.938 [Test worker] DEBUG o.a.h.i.c.DefaultHttpClient - Attempt 1 to execute request
+10:58:01.938 [Test worker] DEBUG o.a.h.i.c.DefaultClientConnection - Sending request: HEAD /v1/ping HTTP/1.1
+10:58:01.938 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;HEAD /v1/ping HTTP/1.1[\r][\n]&quot;
+10:58:01.938 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Host: localhost:8200[\r][\n]&quot;
+10:58:01.938 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Connection: Keep-Alive[\r][\n]&quot;
+10:58:01.938 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;[\r][\n]&quot;
+10:58:01.938 [Test worker] DEBUG o.a.h.headers - &gt;&gt; HEAD /v1/ping HTTP/1.1
+10:58:01.938 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Host: localhost:8200
+10:58:01.938 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Connection: Keep-Alive
+10:58:01.939 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;HTTP/1.1 401 Unauthorized[\r][\n]&quot;
+10:58:01.939 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Server: MarkLogic[\r][\n]&quot;
+10:58:01.939 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;WWW-Authenticate: Digest realm=&quot;public&quot;, qop=&quot;auth&quot;, nonce=&quot;dec92531da45ff03a9eddcf99657e533&quot;, opaque=&quot;7183ee9479c93051&quot;[\r][\n]&quot;
+10:58:01.939 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Content-Type: application/json; charset=utf-8[\r][\n]&quot;
+10:58:01.939 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Connection: Keep-Alive[\r][\n]&quot;
+10:58:01.939 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Keep-Alive: timeout=5[\r][\n]&quot;
+10:58:01.939 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;[\r][\n]&quot;
+10:58:01.940 [Test worker] DEBUG o.a.h.i.c.DefaultClientConnection - Receiving response: HTTP/1.1 401 Unauthorized
+10:58:01.940 [Test worker] DEBUG o.a.h.headers - &lt;&lt; HTTP/1.1 401 Unauthorized
+10:58:01.940 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Server: MarkLogic
+10:58:01.940 [Test worker] DEBUG o.a.h.headers - &lt;&lt; WWW-Authenticate: Digest realm=&quot;public&quot;, qop=&quot;auth&quot;, nonce=&quot;dec92531da45ff03a9eddcf99657e533&quot;, opaque=&quot;7183ee9479c93051&quot;
+10:58:01.940 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Content-Type: application/json; charset=utf-8
+10:58:01.940 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Connection: Keep-Alive
+10:58:01.940 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Keep-Alive: timeout=5
+10:58:01.940 [Test worker] DEBUG o.a.h.i.c.DefaultHttpClient - Authentication required
+10:58:01.940 [Test worker] DEBUG o.a.h.i.c.DefaultHttpClient - localhost:8200 requested authentication
+10:58:01.940 [Test worker] DEBUG o.a.h.i.c.TargetAuthenticationStrategy - Authentication schemes in the order of preference: [Negotiate, Kerberos, NTLM, Digest, Basic]
+10:58:01.940 [Test worker] DEBUG o.a.h.i.c.TargetAuthenticationStrategy - Challenge for Negotiate authentication scheme not available
+10:58:01.940 [Test worker] DEBUG o.a.h.i.c.TargetAuthenticationStrategy - Challenge for Kerberos authentication scheme not available
+10:58:01.940 [Test worker] DEBUG o.a.h.i.c.TargetAuthenticationStrategy - Challenge for NTLM authentication scheme not available
+10:58:01.940 [Test worker] DEBUG o.a.h.i.c.TargetAuthenticationStrategy - Challenge for Basic authentication scheme not available
+10:58:01.941 [Test worker] DEBUG o.a.h.i.c.DefaultClientConnection - Connection 0.0.0.0:59390&lt;-&gt;127.0.0.1:8200 shut down
+10:58:01.941 [Test worker] DEBUG o.a.h.i.c.t.ThreadSafeClientConnManager - Released connection is not reusable.
+10:58:01.941 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Releasing connection [{}-&gt;http://localhost:8200][null]
+10:58:01.941 [Test worker] DEBUG o.a.h.i.c.DefaultClientConnection - Connection 0.0.0.0:59390&lt;-&gt;127.0.0.1:8200 closed
+10:58:01.941 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Notifying no-one, there are no waiting threads
+10:58:01.942 [Test worker] DEBUG o.a.h.i.c.t.ThreadSafeClientConnManager - Get connection: {}-&gt;http://localhost:8200, timeout = 0
+10:58:01.942 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - [{}-&gt;http://localhost:8200] total kept alive: 0, total issued: 0, total allocated: 0 out of 200
+10:58:01.942 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - No free connections [{}-&gt;http://localhost:8200][null]
+10:58:01.942 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Available capacity: 100 out of 100 [{}-&gt;http://localhost:8200][null]
+10:58:01.942 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Creating new connection [{}-&gt;http://localhost:8200]
+10:58:01.942 [Test worker] DEBUG o.a.h.i.c.DefaultClientConnectionOperator - Connecting to localhost:8200
+10:58:01.942 [Test worker] DEBUG o.a.h.c.p.RequestAddCookies - CookieSpec selected: ignoreCookies
+10:58:01.943 [Test worker] DEBUG o.a.h.c.p.RequestAuthCache - Auth cache not set in the context
+10:58:01.943 [Test worker] DEBUG o.a.h.c.p.RequestProxyAuthentication - Proxy auth state: UNCHALLENGED
+10:58:01.943 [Test worker] DEBUG o.a.h.i.c.DefaultHttpClient - Attempt 1 to execute request
+10:58:01.943 [Test worker] DEBUG o.a.h.i.c.DefaultClientConnection - Sending request: HEAD /v1/ping HTTP/1.1
+10:58:01.943 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;HEAD /v1/ping HTTP/1.1[\r][\n]&quot;
+10:58:01.943 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Authorization: Digest username=&quot;admin&quot;,realm=&quot;public&quot;,nonce=&quot;dec92531da45ff03a9eddcf99657e533&quot;,opaque=&quot;7183ee9479c93051&quot;,qop=auth,uri=&quot;/v1/ping&quot;,cnonce=&quot;d1f0e4c7&quot;,nc=00000001,response=&quot;d6d67269e453cea4b800acf6d7be6049&quot;[\r][\n]&quot;
+10:58:01.943 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Host: localhost:8200[\r][\n]&quot;
+10:58:01.943 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Connection: Keep-Alive[\r][\n]&quot;
+10:58:01.943 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;[\r][\n]&quot;
+10:58:01.944 [Test worker] DEBUG o.a.h.headers - &gt;&gt; HEAD /v1/ping HTTP/1.1
+10:58:01.944 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Authorization: Digest username=&quot;admin&quot;,realm=&quot;public&quot;,nonce=&quot;dec92531da45ff03a9eddcf99657e533&quot;,opaque=&quot;7183ee9479c93051&quot;,qop=auth,uri=&quot;/v1/ping&quot;,cnonce=&quot;d1f0e4c7&quot;,nc=00000001,response=&quot;d6d67269e453cea4b800acf6d7be6049&quot;
+10:58:01.944 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Host: localhost:8200
+10:58:01.944 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Connection: Keep-Alive
+10:58:01.945 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;HTTP/1.1 204 No Content[\r][\n]&quot;
+10:58:01.945 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Server: MarkLogic[\r][\n]&quot;
+10:58:01.945 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Connection: Keep-Alive[\r][\n]&quot;
+10:58:01.945 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Keep-Alive: timeout=5[\r][\n]&quot;
+10:58:01.945 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;[\r][\n]&quot;
+10:58:01.945 [Test worker] DEBUG o.a.h.i.c.DefaultClientConnection - Receiving response: HTTP/1.1 204 No Content
+10:58:01.946 [Test worker] DEBUG o.a.h.headers - &lt;&lt; HTTP/1.1 204 No Content
+10:58:01.946 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Server: MarkLogic
+10:58:01.946 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Connection: Keep-Alive
+10:58:01.946 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Keep-Alive: timeout=5
+10:58:01.946 [Test worker] DEBUG o.a.h.i.c.DefaultHttpClient - Connection can be kept alive for 5000 MILLISECONDS
+10:58:01.946 [Test worker] DEBUG o.a.h.i.c.t.ThreadSafeClientConnManager - Released connection is reusable.
+10:58:01.946 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Releasing connection [{}-&gt;http://localhost:8200][null]
+10:58:01.946 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Pooling connection [{}-&gt;http://localhost:8200][null]; keep alive for 5000 MILLISECONDS
+10:58:01.946 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Notifying no-one, there are no waiting threads
+10:58:01.947 [Test worker] DEBUG o.a.h.i.c.t.ThreadSafeClientConnManager - Get connection: {}-&gt;http://localhost:8200, timeout = 0
+10:58:01.947 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - [{}-&gt;http://localhost:8200] total kept alive: 1, total issued: 0, total allocated: 1 out of 200
+10:58:01.947 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Getting free connection [{}-&gt;http://localhost:8200][null]
+10:58:01.947 [Test worker] DEBUG o.a.h.i.c.DefaultHttpClient - Stale connection check
+10:58:01.949 [Test worker] DEBUG o.a.h.c.p.RequestAddCookies - CookieSpec selected: ignoreCookies
+10:58:01.949 [Test worker] DEBUG o.a.h.c.p.RequestAuthCache - Auth cache not set in the context
+10:58:01.949 [Test worker] DEBUG o.a.h.c.p.RequestProxyAuthentication - Proxy auth state: UNCHALLENGED
+10:58:01.949 [Test worker] DEBUG o.a.h.i.c.DefaultHttpClient - Attempt 1 to execute request
+10:58:01.949 [Test worker] DEBUG o.a.h.i.c.DefaultClientConnection - Sending request: POST /v1/graphs/sparql?default-rulesets=include HTTP/1.1
+10:58:01.949 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;POST /v1/graphs/sparql?default-rulesets=include HTTP/1.1[\r][\n]&quot;
+10:58:01.949 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Content-Type: application/sparql-query[\r][\n]&quot;
+10:58:01.950 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Accept: application/sparql-results+json[\r][\n]&quot;
+10:58:01.950 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Authorization: Digest username=&quot;admin&quot;,realm=&quot;public&quot;,nonce=&quot;dec92531da45ff03a9eddcf99657e533&quot;,opaque=&quot;7183ee9479c93051&quot;,qop=auth,uri=&quot;/v1/graphs/sparql&quot;,cnonce=&quot;5813063f&quot;,nc=00000002,response=&quot;5fdaab9faefd62939317d642adcd2f3e&quot;[\r][\n]&quot;
+10:58:01.950 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Transfer-Encoding: chunked[\r][\n]&quot;
+10:58:01.950 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Host: localhost:8200[\r][\n]&quot;
+10:58:01.950 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Connection: Keep-Alive[\r][\n]&quot;
+10:58:01.950 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;[\r][\n]&quot;
+10:58:01.950 [Test worker] DEBUG o.a.h.headers - &gt;&gt; POST /v1/graphs/sparql?default-rulesets=include HTTP/1.1
+10:58:01.950 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Content-Type: application/sparql-query
+10:58:01.950 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Accept: application/sparql-results+json
+10:58:01.950 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Authorization: Digest username=&quot;admin&quot;,realm=&quot;public&quot;,nonce=&quot;dec92531da45ff03a9eddcf99657e533&quot;,opaque=&quot;7183ee9479c93051&quot;,qop=auth,uri=&quot;/v1/graphs/sparql&quot;,cnonce=&quot;5813063f&quot;,nc=00000002,response=&quot;5fdaab9faefd62939317d642adcd2f3e&quot;
+10:58:01.950 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Transfer-Encoding: chunked
+10:58:01.950 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Host: localhost:8200
+10:58:01.950 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Connection: Keep-Alive
+10:58:01.951 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;2e[\r][\n]&quot;
+10:58:01.951 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;ASK WHERE {&lt;http://example.org/r9928&gt; ?p ?o .}&quot;
+10:58:01.951 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;[\r][\n]&quot;
+10:58:01.951 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;0[\r][\n]&quot;
+10:58:01.951 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;[\r][\n]&quot;
+10:58:01.969 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;HTTP/1.1 200 OK[\r][\n]&quot;
+10:58:01.969 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Content-type: application/sparql-results+json; charset=UTF-8[\r][\n]&quot;
+10:58:01.969 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Server: MarkLogic[\r][\n]&quot;
+10:58:01.969 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Content-Length: 26[\r][\n]&quot;
+10:58:01.969 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Connection: Keep-Alive[\r][\n]&quot;
+10:58:01.969 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Keep-Alive: timeout=5[\r][\n]&quot;
+10:58:01.969 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;[\r][\n]&quot;
+10:58:01.970 [Test worker] DEBUG o.a.h.i.c.DefaultClientConnection - Receiving response: HTTP/1.1 200 OK
+10:58:01.970 [Test worker] DEBUG o.a.h.headers - &lt;&lt; HTTP/1.1 200 OK
+10:58:01.970 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Content-type: application/sparql-results+json; charset=UTF-8
+10:58:01.970 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Server: MarkLogic
+10:58:01.970 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Content-Length: 26
+10:58:01.970 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Connection: Keep-Alive
+10:58:01.970 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Keep-Alive: timeout=5
+10:58:01.970 [Test worker] DEBUG o.a.h.i.c.DefaultHttpClient - Connection can be kept alive for 5000 MILLISECONDS
+10:58:01.970 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;{&quot;head&quot;:{},&quot;boolean&quot;:true}&quot;
+10:58:01.972 [Test worker] DEBUG o.a.h.i.c.t.ThreadSafeClientConnManager - Released connection is reusable.
+10:58:01.973 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Releasing connection [{}-&gt;http://localhost:8200][null]
+10:58:01.973 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Pooling connection [{}-&gt;http://localhost:8200][null]; keep alive for 5000 MILLISECONDS
+10:58:01.973 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Notifying no-one, there are no waiting threads
+10:58:01.973 [Test worker] DEBUG c.m.s.s.q.MarkLogicQuery - setting constraining query: com.marklogic.client.impl.StringQueryDefinitionImpl@4bcdf052
+10:58:01.973 [Test worker] DEBUG c.m.c.i.JerseyServices - Posting /graphs/sparql
+10:58:01.974 [Test worker] DEBUG o.a.h.i.c.t.ThreadSafeClientConnManager - Get connection: {}-&gt;http://localhost:8200, timeout = 0
+10:58:01.974 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - [{}-&gt;http://localhost:8200] total kept alive: 1, total issued: 0, total allocated: 1 out of 200
+10:58:01.974 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Getting free connection [{}-&gt;http://localhost:8200][null]
+10:58:01.974 [Test worker] DEBUG o.a.h.i.c.DefaultHttpClient - Stale connection check
+10:58:01.975 [Test worker] DEBUG o.a.h.c.p.RequestAddCookies - CookieSpec selected: ignoreCookies
+10:58:01.976 [Test worker] DEBUG o.a.h.c.p.RequestAuthCache - Auth cache not set in the context
+10:58:01.976 [Test worker] DEBUG o.a.h.c.p.RequestProxyAuthentication - Proxy auth state: UNCHALLENGED
+10:58:01.976 [Test worker] DEBUG o.a.h.i.c.DefaultHttpClient - Attempt 1 to execute request
+10:58:01.976 [Test worker] DEBUG o.a.h.i.c.DefaultClientConnection - Sending request: POST /v1/graphs/sparql?default-rulesets=include HTTP/1.1
+10:58:01.976 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;POST /v1/graphs/sparql?default-rulesets=include HTTP/1.1[\r][\n]&quot;
+10:58:01.976 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Content-Type: application/sparql-query[\r][\n]&quot;
+10:58:01.976 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Accept: application/sparql-results+json[\r][\n]&quot;
+10:58:01.976 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Authorization: Digest username=&quot;admin&quot;,realm=&quot;public&quot;,nonce=&quot;dec92531da45ff03a9eddcf99657e533&quot;,opaque=&quot;7183ee9479c93051&quot;,qop=auth,uri=&quot;/v1/graphs/sparql&quot;,cnonce=&quot;195f778c&quot;,nc=00000003,response=&quot;6f8fd21fa21832eb780945e210960651&quot;[\r][\n]&quot;
+10:58:01.976 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Transfer-Encoding: chunked[\r][\n]&quot;
+10:58:01.976 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Host: localhost:8200[\r][\n]&quot;
+10:58:01.977 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Connection: Keep-Alive[\r][\n]&quot;
+10:58:01.977 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;[\r][\n]&quot;
+10:58:01.977 [Test worker] DEBUG o.a.h.headers - &gt;&gt; POST /v1/graphs/sparql?default-rulesets=include HTTP/1.1
+10:58:01.977 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Content-Type: application/sparql-query
+10:58:01.977 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Accept: application/sparql-results+json
+10:58:01.977 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Authorization: Digest username=&quot;admin&quot;,realm=&quot;public&quot;,nonce=&quot;dec92531da45ff03a9eddcf99657e533&quot;,opaque=&quot;7183ee9479c93051&quot;,qop=auth,uri=&quot;/v1/graphs/sparql&quot;,cnonce=&quot;195f778c&quot;,nc=00000003,response=&quot;6f8fd21fa21832eb780945e210960651&quot;
+10:58:01.977 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Transfer-Encoding: chunked
+10:58:01.977 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Host: localhost:8200
+10:58:01.977 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Connection: Keep-Alive
+10:58:01.977 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;2e[\r][\n]&quot;
+10:58:01.977 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;ASK WHERE {&lt;http://example.org/r9929&gt; ?p ?o .}&quot;
+10:58:01.977 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;[\r][\n]&quot;
+10:58:01.977 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;0[\r][\n]&quot;
+10:58:01.977 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;[\r][\n]&quot;
+10:58:01.995 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;HTTP/1.1 200 OK[\r][\n]&quot;
+10:58:01.996 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Content-type: application/sparql-results+json; charset=UTF-8[\r][\n]&quot;
+10:58:01.996 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Server: MarkLogic[\r][\n]&quot;
+10:58:01.996 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Content-Length: 26[\r][\n]&quot;
+10:58:01.996 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Connection: Keep-Alive[\r][\n]&quot;
+10:58:01.996 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Keep-Alive: timeout=5[\r][\n]&quot;
+10:58:01.996 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;[\r][\n]&quot;
+10:58:01.996 [Test worker] DEBUG o.a.h.i.c.DefaultClientConnection - Receiving response: HTTP/1.1 200 OK
+10:58:01.996 [Test worker] DEBUG o.a.h.headers - &lt;&lt; HTTP/1.1 200 OK
+10:58:01.997 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Content-type: application/sparql-results+json; charset=UTF-8
+10:58:01.997 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Server: MarkLogic
+10:58:01.997 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Content-Length: 26
+10:58:01.997 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Connection: Keep-Alive
+10:58:01.997 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Keep-Alive: timeout=5
+10:58:01.997 [Test worker] DEBUG o.a.h.i.c.DefaultHttpClient - Connection can be kept alive for 5000 MILLISECONDS
+10:58:01.997 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;{&quot;head&quot;:{},&quot;boolean&quot;:true}&quot;
+10:58:01.999 [Test worker] DEBUG o.a.h.i.c.t.ThreadSafeClientConnManager - Released connection is reusable.
+10:58:01.999 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Releasing connection [{}-&gt;http://localhost:8200][null]
+10:58:01.999 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Pooling connection [{}-&gt;http://localhost:8200][null]; keep alive for 5000 MILLISECONDS
+10:58:01.999 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Notifying no-one, there are no waiting threads
+10:58:01.999 [Test worker] DEBUG c.m.s.s.MarkLogicCombinationQueryTest - tearing down...
+10:58:01.999 [Test worker] INFO  c.m.s.s.MarkLogicCombinationQueryTest - tearDown complete.
+10:58:01.999 [Test worker] INFO  c.m.c.i.DocumentManagerImpl - Deleting /directory1/doc1.xml
+10:58:01.999 [Test worker] DEBUG c.m.c.i.JerseyServices - Deleting /directory1/doc1.xml in transaction null
+10:58:02.000 [Test worker] DEBUG o.a.h.i.c.t.ThreadSafeClientConnManager - Get connection: {}-&gt;http://localhost:8200, timeout = 0
+10:58:02.000 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - [{}-&gt;http://localhost:8200] total kept alive: 1, total issued: 0, total allocated: 1 out of 200
+10:58:02.000 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Getting free connection [{}-&gt;http://localhost:8200][null]
+10:58:02.000 [Test worker] DEBUG o.a.h.i.c.DefaultHttpClient - Stale connection check
+10:58:02.002 [Test worker] DEBUG o.a.h.c.p.RequestAddCookies - CookieSpec selected: ignoreCookies
+10:58:02.002 [Test worker] DEBUG o.a.h.c.p.RequestAuthCache - Auth cache not set in the context
+10:58:02.002 [Test worker] DEBUG o.a.h.c.p.RequestProxyAuthentication - Proxy auth state: UNCHALLENGED
+10:58:02.002 [Test worker] DEBUG o.a.h.i.c.DefaultHttpClient - Attempt 1 to execute request
+10:58:02.002 [Test worker] DEBUG o.a.h.i.c.DefaultClientConnection - Sending request: DELETE /v1/documents?category=content&amp;uri=/directory1/doc1.xml HTTP/1.1
+10:58:02.002 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;DELETE /v1/documents?category=content&amp;uri=/directory1/doc1.xml HTTP/1.1[\r][\n]&quot;
+10:58:02.002 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Authorization: Digest username=&quot;admin&quot;,realm=&quot;public&quot;,nonce=&quot;2cdb503334e3aabb88fd34a17a2ff65a&quot;,opaque=&quot;49e46eed7df0d8bf&quot;,qop=auth,uri=&quot;/v1/documents&quot;,cnonce=&quot;c40b29bc&quot;,nc=00000003,response=&quot;bb415ace6892e71f9a8855f68b5f1d6f&quot;[\r][\n]&quot;
+10:58:02.002 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Host: localhost:8200[\r][\n]&quot;
+10:58:02.002 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Connection: Keep-Alive[\r][\n]&quot;
+10:58:02.002 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;[\r][\n]&quot;
+10:58:02.002 [Test worker] DEBUG o.a.h.headers - &gt;&gt; DELETE /v1/documents?category=content&amp;uri=/directory1/doc1.xml HTTP/1.1
+10:58:02.003 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Authorization: Digest username=&quot;admin&quot;,realm=&quot;public&quot;,nonce=&quot;2cdb503334e3aabb88fd34a17a2ff65a&quot;,opaque=&quot;49e46eed7df0d8bf&quot;,qop=auth,uri=&quot;/v1/documents&quot;,cnonce=&quot;c40b29bc&quot;,nc=00000003,response=&quot;bb415ace6892e71f9a8855f68b5f1d6f&quot;
+10:58:02.003 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Host: localhost:8200
+10:58:02.003 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Connection: Keep-Alive
+10:58:02.009 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;HTTP/1.1 204 Document Deleted[\r][\n]&quot;
+10:58:02.009 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Server: MarkLogic[\r][\n]&quot;
+10:58:02.009 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Content-Length: 0[\r][\n]&quot;
+10:58:02.010 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Connection: Keep-Alive[\r][\n]&quot;
+10:58:02.010 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Keep-Alive: timeout=5[\r][\n]&quot;
+10:58:02.012 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;[\r][\n]&quot;
+10:58:02.012 [Test worker] DEBUG o.a.h.i.c.DefaultClientConnection - Receiving response: HTTP/1.1 204 Document Deleted
+10:58:02.012 [Test worker] DEBUG o.a.h.headers - &lt;&lt; HTTP/1.1 204 Document Deleted
+10:58:02.012 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Server: MarkLogic
+10:58:02.012 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Content-Length: 0
+10:58:02.012 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Connection: Keep-Alive
+10:58:02.012 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Keep-Alive: timeout=5
+10:58:02.012 [Test worker] DEBUG o.a.h.i.c.DefaultHttpClient - Connection can be kept alive for 5000 MILLISECONDS
+10:58:02.012 [Test worker] DEBUG o.a.h.i.c.t.ThreadSafeClientConnManager - Released connection is reusable.
+10:58:02.012 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Releasing connection [{}-&gt;http://localhost:8200][null]
+10:58:02.013 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Pooling connection [{}-&gt;http://localhost:8200][null]; keep alive for 5000 MILLISECONDS
+10:58:02.013 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Notifying no-one, there are no waiting threads
+10:58:02.013 [Test worker] INFO  c.m.c.i.DocumentManagerImpl - Deleting /directory2/doc2.xml
+10:58:02.013 [Test worker] DEBUG c.m.c.i.JerseyServices - Deleting /directory2/doc2.xml in transaction null
+10:58:02.014 [Test worker] DEBUG o.a.h.i.c.t.ThreadSafeClientConnManager - Get connection: {}-&gt;http://localhost:8200, timeout = 0
+10:58:02.014 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - [{}-&gt;http://localhost:8200] total kept alive: 1, total issued: 0, total allocated: 1 out of 200
+10:58:02.014 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Getting free connection [{}-&gt;http://localhost:8200][null]
+10:58:02.014 [Test worker] DEBUG o.a.h.i.c.DefaultHttpClient - Stale connection check
+10:58:02.016 [Test worker] DEBUG o.a.h.c.p.RequestAddCookies - CookieSpec selected: ignoreCookies
+10:58:02.016 [Test worker] DEBUG o.a.h.c.p.RequestAuthCache - Auth cache not set in the context
+10:58:02.016 [Test worker] DEBUG o.a.h.c.p.RequestProxyAuthentication - Proxy auth state: UNCHALLENGED
+10:58:02.016 [Test worker] DEBUG o.a.h.i.c.DefaultHttpClient - Attempt 1 to execute request
+10:58:02.016 [Test worker] DEBUG o.a.h.i.c.DefaultClientConnection - Sending request: DELETE /v1/documents?category=content&amp;uri=/directory2/doc2.xml HTTP/1.1
+10:58:02.016 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;DELETE /v1/documents?category=content&amp;uri=/directory2/doc2.xml HTTP/1.1[\r][\n]&quot;
+10:58:02.016 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Authorization: Digest username=&quot;admin&quot;,realm=&quot;public&quot;,nonce=&quot;2cdb503334e3aabb88fd34a17a2ff65a&quot;,opaque=&quot;49e46eed7df0d8bf&quot;,qop=auth,uri=&quot;/v1/documents&quot;,cnonce=&quot;e5bcf628&quot;,nc=00000004,response=&quot;55dafb60c78a57db61e240ee81ef2e94&quot;[\r][\n]&quot;
+10:58:02.017 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Host: localhost:8200[\r][\n]&quot;
+10:58:02.017 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;Connection: Keep-Alive[\r][\n]&quot;
+10:58:02.017 [Test worker] DEBUG o.a.h.wire -  &gt;&gt; &quot;[\r][\n]&quot;
+10:58:02.017 [Test worker] DEBUG o.a.h.headers - &gt;&gt; DELETE /v1/documents?category=content&amp;uri=/directory2/doc2.xml HTTP/1.1
+10:58:02.017 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Authorization: Digest username=&quot;admin&quot;,realm=&quot;public&quot;,nonce=&quot;2cdb503334e3aabb88fd34a17a2ff65a&quot;,opaque=&quot;49e46eed7df0d8bf&quot;,qop=auth,uri=&quot;/v1/documents&quot;,cnonce=&quot;e5bcf628&quot;,nc=00000004,response=&quot;55dafb60c78a57db61e240ee81ef2e94&quot;
+10:58:02.017 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Host: localhost:8200
+10:58:02.017 [Test worker] DEBUG o.a.h.headers - &gt;&gt; Connection: Keep-Alive
+10:58:02.025 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;HTTP/1.1 204 Document Deleted[\r][\n]&quot;
+10:58:02.025 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Server: MarkLogic[\r][\n]&quot;
+10:58:02.026 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Content-Length: 0[\r][\n]&quot;
+10:58:02.026 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Connection: Keep-Alive[\r][\n]&quot;
+10:58:02.026 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;Keep-Alive: timeout=5[\r][\n]&quot;
+10:58:02.026 [Test worker] DEBUG o.a.h.wire -  &lt;&lt; &quot;[\r][\n]&quot;
+10:58:02.026 [Test worker] DEBUG o.a.h.i.c.DefaultClientConnection - Receiving response: HTTP/1.1 204 Document Deleted
+10:58:02.026 [Test worker] DEBUG o.a.h.headers - &lt;&lt; HTTP/1.1 204 Document Deleted
+10:58:02.026 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Server: MarkLogic
+10:58:02.026 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Content-Length: 0
+10:58:02.026 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Connection: Keep-Alive
+10:58:02.026 [Test worker] DEBUG o.a.h.headers - &lt;&lt; Keep-Alive: timeout=5
+10:58:02.026 [Test worker] DEBUG o.a.h.i.c.DefaultHttpClient - Connection can be kept alive for 5000 MILLISECONDS
+10:58:02.026 [Test worker] DEBUG o.a.h.i.c.t.ThreadSafeClientConnManager - Released connection is reusable.
+10:58:02.026 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Releasing connection [{}-&gt;http://localhost:8200][null]
+10:58:02.026 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Pooling connection [{}-&gt;http://localhost:8200][null]; keep alive for 5000 MILLISECONDS
+10:58:02.026 [Test worker] DEBUG o.a.h.i.c.t.ConnPoolByRoute - Notifying no-one, there are no waiting threads
+</pre>
+</span>
+</div>
+</div>
+<div id="footer">
+<p>
+<div>
+<label class="hidden" id="label-for-line-wrapping-toggle" for="line-wrapping-toggle">Wrap lines
+<input id="line-wrapping-toggle" type="checkbox" autocomplete="off"/>
+</label>
+</div>Generated by 
+<a href="http://www.gradle.org">Gradle 2.3</a> at Aug 5, 2015 10:58:18 AM</p>
+</div>
+</div>
+</body>
+</html>
