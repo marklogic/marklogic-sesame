@@ -862,7 +862,7 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
     }
 
     @Test
-    public void testStatementWithDefinedContext() throws Exception{
+    public void testStatementWithDefinedContext1() throws Exception{
         Resource context1 = conn.getValueFactory().createURI("http://marklogic.com/test/context1");
 
         ValueFactory f= conn.getValueFactory();
@@ -874,6 +874,27 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
 
         Statement st1 = f.createStatement(alice, name, alicesName, context1);
         conn.add(st1);
+
+        String checkAliceQuery = "ASK { GRAPH <http://marklogic.com/test/context1> {<http://example.org/people/alice> <http://example.org/ontology/name> 'Alice1' .}}";
+        BooleanQuery booleanAliceQuery = conn.prepareBooleanQuery(QueryLanguage.SPARQL, checkAliceQuery);
+        Assert.assertTrue(booleanAliceQuery.evaluate());
+
+        conn.clear(context1);
+    }
+
+    @Test
+    public void testStatementWithDefinedContext2() throws Exception{
+        Resource context1 = conn.getValueFactory().createURI("http://marklogic.com/test/context1");
+
+        ValueFactory f= conn.getValueFactory();
+
+        URI alice = f.createURI("http://example.org/people/alice");
+        URI name = f.createURI("http://example.org/ontology/name");
+        URI person = f.createURI("http://example.org/ontology/Person");
+        Literal alicesName = f.createLiteral("Alice1");
+
+        Statement st1 = f.createStatement(alice, name, alicesName);
+        conn.add(st1,context1);
 
         String checkAliceQuery = "ASK { GRAPH <http://marklogic.com/test/context1> {<http://example.org/people/alice> <http://example.org/ontology/name> 'Alice1' .}}";
         BooleanQuery booleanAliceQuery = conn.prepareBooleanQuery(QueryLanguage.SPARQL, checkAliceQuery);

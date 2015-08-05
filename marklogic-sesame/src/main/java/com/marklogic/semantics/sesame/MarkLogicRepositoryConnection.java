@@ -550,11 +550,15 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     }
 
     private static Resource[] mergeResource(Resource o, Resource... arr) {
-        Resource[] newArray = new Resource[arr.length + 1];
-        newArray[0] = o;
-        System.arraycopy(arr, 0, newArray, 1, arr.length);
+        if(o != null) {
+            Resource[] newArray = new Resource[arr.length + 1];
+            newArray[0] = o;
+            System.arraycopy(arr, 0, newArray, 1, arr.length);
+            return newArray;
+        }else{
+            return arr;
+        }
 
-        return newArray;
     }
 
     private Iteration<Statement, QueryEvaluationException> toStatementIteration(TupleQueryResult iter, final Resource subj, final URI pred, final Value obj) {
