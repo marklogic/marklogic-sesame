@@ -55,7 +55,7 @@ public class MarkLogicQuery extends AbstractQuery implements Query,MarkLogicClie
     // constructor
     public MarkLogicQuery(MarkLogicClient client, SPARQLQueryBindingSet bindingSet, String baseUri, String queryString) {
         super();
-        setBaseURI(baseURI);
+        setBaseURI(baseUri);
         setQueryString(queryString);
         setMarkLogicClient(client);
         setBindings(bindingSet);
