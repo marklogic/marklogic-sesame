@@ -7,6 +7,7 @@ import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import info.aduna.iteration.CloseableIteration;
 import info.aduna.iteration.Iteration;
 import info.aduna.iteration.IteratorIteration;
@@ -113,16 +114,18 @@ public class MarkLogicRepositoryConnectionTest  extends  ConnectedRESTQA{
 	protected static final String NS = "http://marklogicsparql.com/";
 	
 	@BeforeClass
-	public static void initialSetup() throws Exception {
+	public static void initialSetup() throws Exception {/*
 		
-	/*	setupJavaRESTServer(dbName, fNames[0], restServer, restPort);
+		setupJavaRESTServer(dbName, fNames[0], restServer, restPort);
 		setupAppServicesConstraint(dbName);
 		enableCollectionLexicon(dbName);
 		enableTripleIndex(dbName);
 		
-		createUserRolesWithPrevilages("test-eval", "xdbc:eval", "xdbc:eval-in", "xdmp:eval-in", "any-uri", "xdbc:invoke");
-		createRESTUser("reader", "reader", "test-eval", "rest-reader");
-		createRESTUser("writer", "writer", "test-eval", "rest-writer");*/
+		//createUserRolesWithPrevilages("test-eval", "xdbc:eval", "xdbc:eval-in", "xdmp:eval-in", "any-uri", "xdbc:invoke");
+		createRESTUser("reader", "reader", "rest-reader");
+		createRESTUser("writer", "writer", "rest-writer");
+		
+	*/
 	}
 	
 /*	@AfterClass
@@ -916,13 +919,13 @@ public class MarkLogicRepositoryConnectionTest  extends  ConnectedRESTQA{
 		throws OpenRDFException
 	{
 		Statement st1 = vf.createStatement(john, fname, johnfname, dirgraph);
-		testAdminCon.begin();
-		testAdminCon.add(st1);
-		testAdminCon.prepareUpdate(QueryLanguage.SPARQL,
+		testWriterCon.begin();
+		testWriterCon.add(st1);
+		testWriterCon.prepareUpdate(QueryLanguage.SPARQL,
 				"DELETE DATA {<" + john.stringValue() + "> <" + fname.stringValue() + "> \"" + johnfname.stringValue() + "\"}").execute();
-		testAdminCon.commit();
+		testWriterCon.commit();
 
-		testAdminCon.exportStatements(null, null, null, false, new RDFHandlerBase() {
+		testWriterCon.exportStatements(null, null, null, false, new RDFHandlerBase() {
 
 			@Override
 			public void handleStatement(Statement st)
@@ -939,13 +942,11 @@ public class MarkLogicRepositoryConnectionTest  extends  ConnectedRESTQA{
 	{
 		Statement st1 = vf.createStatement(john, homeTel, johnhomeTel);
 		testAdminCon.begin();
-		johnhomeTel.doubleValue();
+		testAdminCon.prepareUpdate(
+				"INSERT DATA {GRAPH <" + dirgraph.stringValue()+"> { <" + john.stringValue() + "> <" + homeTel.stringValue() + "> \"" + johnhomeTel.doubleValue() + "\"^^<http://www.w3.org/2001/XMLSchema#double>}}").execute();
 		
-		testAdminCon.prepareUpdate(QueryLanguage.SPARQL,
-				"INSERT DATA {<" + john.stringValue() + "> <" + homeTel.stringValue() + ">\"" + johnhomeTel.doubleValue() + "\"^^<http://www.w3.org/2001/XMLSchema#double>}").execute();
-		testAdminCon.remove(st1);
+		testAdminCon.remove(st1,dirgraph);
 		testAdminCon.commit();
-
 		testAdminCon.exportStatements(null, null, null, false, new RDFHandlerBase() {
 
 			@Override
@@ -954,9 +955,134 @@ public class MarkLogicRepositoryConnectionTest  extends  ConnectedRESTQA{
 			{
 				assertThat(st, is(not(equalTo(st1))));
 			}
+		},dirgraph);
+	}
+
+	@Test
+	public void testInsertDeleteInsertWhere()
+		throws OpenRDFException
+	{
+		Statement st1 = vf.createStatement(john, email, johnemail, dirgraph);
+		Statement st2 = vf.createStatement(john, lname, johnlname, dirgraph);
+		
+		testAdminCon.add(st1);
+		testAdminCon.add(st2);
+		testAdminCon.begin();
+		testAdminCon.prepareUpdate(QueryLanguage.SPARQL,
+				"INSERT DATA {GRAPH <" + dirgraph.stringValue()+ "> { <" + john.stringValue() + "> <" + fname.stringValue() + "> \"" + johnfname.stringValue() + "\"} }").execute();
+		
+		testAdminCon.prepareUpdate(
+				"DELETE DATA {GRAPH <" + dirgraph.stringValue()+ "> { <" + john.stringValue() + "> <" + email.stringValue() + "> \"" + johnemail.stringValue() + "\"} }").execute();
+		
+		String query1 ="PREFIX ad: <http://marklogicsparql.com/addressbook#>"
+				+" INSERT {GRAPH <"
+				+ dirgraph.stringValue()
+				+ "> { <#1111> ad:email \"jsenelson@marklogic.com\"}}"
+				+ " where { GRAPH <"+ dirgraph.stringValue()+">{<#1111> ad:lastName  ?name .} } " ;
+		
+		testAdminCon.prepareUpdate(QueryLanguage.SPARQL,query1, "http://marklogicsparql.com/id").execute();
+		testAdminCon.commit();
+
+		Statement expSt = vf.createStatement(john, email, vf.createLiteral("jsnelson@marklogic.com"), dirgraph);
+		
+		testAdminCon.exportStatements(null, null, null, false, new RDFHandlerBase() {
+
+			@Override
+			public void handleStatement(Statement st)
+				throws RDFHandlerException
+			{
+				logger.debug("St object is :"+st.getObject().stringValue());
+				logger.debug("expSt object is :"+expSt.getObject().stringValue());
+				assertThat(st, is(equalTo(expSt)));
+			}
 		});
 	}
 
+	@Test
+	public void testAddRemoveAdd()
+		throws OpenRDFException
+	{
+		Statement st = vf.createStatement(john, lname, johnlname, dirgraph);
+		testAdminCon.add(st);
+		testAdminCon.begin();
+		testAdminCon.remove(st, dirgraph);
+		Assert.assertFalse(testAdminCon.hasStatement(st, false, dirgraph));
+		testAdminCon.add(st);
+		Assert.assertTrue(testAdminCon.hasStatement(st, false, dirgraph));
+		testAdminCon.commit();
+		Assert.assertFalse(testAdminCon.isEmpty());
+	}
 
+	@Test
+	public void testAddDeleteAdd()
+		throws OpenRDFException
+	{
+		Statement stmt = vf.createStatement(vf.createURI(URN_TEST_S1), vf.createURI(URN_TEST_P1),
+				vf.createURI(URN_TEST_O1));
+		testAdminCon.add(stmt);
+		testAdminCon.begin();
+		testAdminCon.prepareUpdate(QueryLanguage.SPARQL,
+				"DELETE DATA {<" + URN_TEST_S1 + "> <" + URN_TEST_P1 + "> <" + URN_TEST_O1 + ">}").execute();
+		testAdminCon.add(stmt);
+		testAdminCon.commit();
+		Assert.assertFalse(testAdminCon.isEmpty());
+	}
+
+	@Test
+	public void testAddRemoveInsert()
+		throws OpenRDFException
+	{
+		Statement stmt = vf.createStatement(vf.createURI(URN_TEST_S1), vf.createURI(URN_TEST_P1),
+				vf.createURI(URN_TEST_O1));
+		testCon.add(stmt);
+		testCon.begin();
+		testCon.remove(stmt);
+		testCon.prepareUpdate(QueryLanguage.SPARQL,
+				"INSERT DATA {<" + URN_TEST_S1 + "> <" + URN_TEST_P1 + "> <" + URN_TEST_O1 + ">}").execute();
+		testCon.commit();
+		Assert.assertFalse(testCon.isEmpty());
+	}
+
+	@Test
+	public void testAddDeleteInsert()
+		throws OpenRDFException
+	{
+		testCon.add(vf.createURI(URN_TEST_S1), vf.createURI(URN_TEST_P1), vf.createURI(URN_TEST_O1));
+		testCon.begin();
+		testCon.prepareUpdate(QueryLanguage.SPARQL,
+				"DELETE DATA {<" + URN_TEST_S1 + "> <" + URN_TEST_P1 + "> <" + URN_TEST_O1 + ">}").execute();
+		testCon.prepareUpdate(QueryLanguage.SPARQL,
+				"INSERT DATA {<" + URN_TEST_S1 + "> <" + URN_TEST_P1 + "> <" + URN_TEST_O1 + ">}").execute();
+		testCon.commit();
+		Assert.assertFalse(testCon.isEmpty());
+	}
+	
+	@Test
+	public void testOpen()
+		throws Exception
+	{
+		assertThat(testAdminCon.isOpen(), is(equalTo(true)));
+		assertThat(testWriterCon.isOpen(), is(equalTo(true)));
+		testAdminCon.close();
+		assertThat(testAdminCon.isOpen(), is(equalTo(false)));
+		assertThat(testWriterCon.isOpen(), is(equalTo(true)));
+	}
+	
+	@Test
+	public void testAutoCommit()
+		throws Exception
+	{
+		testAdminCon.setAutoCommit(false);
+		testAdminCon.begin();
+		testAdminCon.add(john, email, johnemail);
+
+		assertTrue("Uncommitted update should be visible to own connection",
+				testAdminCon.hasStatement(john, email, johnemail, false));
+
+		testAdminCon.commit();
+
+		assertTrue("Repository should contain statement after commit",
+				testAdminCon.hasStatement(john, email, johnemail, false));
+	}
 
 }

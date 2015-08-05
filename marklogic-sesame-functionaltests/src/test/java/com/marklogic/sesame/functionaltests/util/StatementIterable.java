@@ -4,12 +4,12 @@ import java.util.Iterator;
 
 import org.openrdf.model.Statement;
 
-public class StatementIterable<V extends Statement> implements Iterable{ 
+public class StatementIterable implements Iterable{ 
 
 	private StatementIterator sI;
 	
 	@Override
-	public Iterator iterator() {
+	public Iterator<Statement> iterator() {
 		// TODO Auto-generated method stub
 		return this.sI;
 	}

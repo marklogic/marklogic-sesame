@@ -24,7 +24,7 @@ public class StatementIterator implements Iterator{
 
 	@Override
 	public Statement next() {
-		Statement st = (Statement) sL.get(index);
+		Statement st =  sL.get(index);
 		index ++;
 		return st;
 	}
