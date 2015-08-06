@@ -344,12 +344,50 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
 
     // export
     @Override
-    public void exportStatements(Resource subj, URI pred, Value obj, boolean includeInferred, RDFHandler handler, Resource... contexts) throws RepositoryException, RDFHandlerException {
-    //TBD
+    public void exportStatements(Resource subject, URI predicate, Value object, boolean includeInferred, RDFHandler handler, Resource... contexts) throws RepositoryException, RDFHandlerException {
+        try {
+            StringBuilder ob = new StringBuilder();
+            if(object != null) {
+                if (object instanceof Literal) {
+                    Literal lit = (Literal) object;
+                    ob.append("\"");
+                    ob.append(SPARQLUtil.encodeString(lit.getLabel()));
+                    ob.append("\"");
+                    ob.append("^^<" + lit.getDatatype().stringValue() + ">");
+                    ob.append(" ");
+                } else {
+                    ob.append("<" + object.stringValue() + "> ");
+                }
+            }else{
+
+            }
+            StringBuilder sb = new StringBuilder();
+            if(contexts.length !=0) {
+                //if (baseURI != null) sb.append("BASE <" + baseURI + ">\n");
+                sb.append("CONSTRUCT {?s ?p ?o} WHERE {");
+
+                for (int i = 0; i < contexts.length; i++) {
+                    sb.append("GRAPH <" + contexts[i].stringValue() + "> {?s ?p ?o .} ");
+                }
+                sb.append("}");
+            }else{
+                sb.append(EVERYTHING);
+            }
+
+            GraphQuery query = prepareGraphQuery(sb.toString());
+            setBindings(query, subject, predicate, object, contexts);
+            query.evaluate(handler);
+        }
+        catch (MalformedQueryException e) {
+            throw new RepositoryException(e);
+        }
+        catch (QueryEvaluationException e) {
+            throw new RepositoryException(e);
+        }
     }
     @Override
     public void export(RDFHandler handler, Resource... contexts) throws RepositoryException, RDFHandlerException {
-    //TBD
+        exportStatements(null, null, null, true,handler);
     }
 
     // number of triples in repository context (graph)
