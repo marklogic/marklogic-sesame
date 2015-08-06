@@ -943,4 +943,54 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
 
         Assert.assertTrue(statements.hasNext());
     }
+
+    @Test
+    public void testGetStatementsEmpty() throws Exception{
+        Resource context1 = conn.getValueFactory().createURI("http://marklogic.com/test/my-graph");
+
+        ValueFactory f= conn.getValueFactory();
+        URI subj = f.createURI("http://semanticbible.org/ns/2006/NTNames#AlexandriaGeodata1");
+        RepositoryResult<Statement> statements = conn.getStatements(subj, null, null, true, context1);
+
+        Assert.assertFalse(statements.hasNext());
+    }
+
+    @Test
+    public void testPrepareGraphQueryWithSingleResult() throws Exception
+    {
+        Resource context1 = conn.getValueFactory().createURI("http://marklogic.com/test/context1");
+
+        ValueFactory f= conn.getValueFactory();
+
+        URI alice = f.createURI("http://example.org/people/alice");
+        URI name = f.createURI("http://example.org/ontology/name");
+        URI person = f.createURI("http://example.org/ontology/Person");
+        Literal alicesName = f.createLiteral("Alice1");
+
+        Statement st1 = f.createStatement(alice, name, alicesName);
+        conn.add(st1,context1);
+
+        String query = " DESCRIBE <http://example.org/people/alice> ";
+        GraphQuery queryObj = conn.prepareGraphQuery(query);
+        GraphQueryResult result = queryObj.evaluate();
+
+        Assert.assertTrue(result != null);
+        Assert.assertTrue(result.hasNext());
+        Statement st = result.next();
+        Assert.assertFalse(result.hasNext());
+        conn.clear(context1);
+    }
+
+    @Ignore
+    public void testPrepareGraphQueryWithNoResult() throws Exception
+    {
+
+        String query = " DESCRIBE <http://example.org/nonexistant> ";
+        GraphQuery queryObj = conn.prepareGraphQuery(query);
+        GraphQueryResult result = queryObj.evaluate();
+
+
+        Assert.assertTrue(result != null);
+        Assert.assertTrue(result.hasNext());
+    }
 }
