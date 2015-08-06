@@ -20,8 +20,6 @@
 package com.marklogic.semantics.sesame.config;
 
 import com.marklogic.semantics.sesame.MarkLogicRepository;
-import org.openrdf.model.ValueFactory;
-import org.openrdf.model.impl.ValueFactoryImpl;
 import org.openrdf.repository.Repository;
 import org.openrdf.repository.config.RepositoryConfigException;
 import org.openrdf.repository.config.RepositoryFactory;
@@ -37,16 +35,16 @@ public class MarkLogicRepositoryFactory implements RepositoryFactory {
 
 	protected final Logger logger = LoggerFactory.getLogger(MarkLogicRepositoryFactory.class);
 
-	public static ValueFactory vf= new ValueFactoryImpl();
-
 	public static final String REPOSITORY_TYPE = "marklogic:MarkLogicRepository";
 
+    @Override
 	public String getRepositoryType() {
-		return REPOSITORY_TYPE;
+		return this.REPOSITORY_TYPE;
 	}
 
+    @Override
 	public RepositoryImplConfig getConfig() {
-		return new MarkLogicRepositoryConfig();
+        return new MarkLogicRepositoryConfig();
 	}
 
     @Override
