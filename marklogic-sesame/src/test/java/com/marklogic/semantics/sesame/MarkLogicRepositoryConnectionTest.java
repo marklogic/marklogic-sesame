@@ -617,18 +617,17 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
 
     // this test requires access to https://raw.githubusercontent.com/marklogic/marklogic-sesame/develop/marklogic-sesame/src/test/resources/testdata/testData.trig
     @Test
-    @Ignore
     public void testAddTrigWithURL() throws Exception {
         URL dataURL = new URL("https://raw.githubusercontent.com/marklogic/marklogic-sesame/develop/marklogic-sesame/src/test/resources/testdata/testData.trig?token=AApzyAXWDMZiXGGf9DFnhq534MpEP-tKks5VwxFswA%3D%3D");
 
-        Resource context1 = conn.getValueFactory().createURI("http://[example.org/g1");
-        Resource context2 = conn.getValueFactory().createURI("http://[example.org/g2");
-        Resource context3 = conn.getValueFactory().createURI("http://[example.org/g3");
-        Resource context4 = conn.getValueFactory().createURI("http://[example.org/g4");
-        Resource context5 = conn.getValueFactory().createURI("http://[example.org/o1");
-        Resource context6 = conn.getValueFactory().createURI("http://[example.org/o2");
-        Resource context7 = conn.getValueFactory().createURI("http://[example.org/o3");
-        Resource context8 = conn.getValueFactory().createURI("http://[example.org/o4");
+        Resource context1 = conn.getValueFactory().createURI("http://example.org/g1");
+        Resource context2 = conn.getValueFactory().createURI("http://example.org/g2");
+        Resource context3 = conn.getValueFactory().createURI("http://example.org/g3");
+        Resource context4 = conn.getValueFactory().createURI("http://example.org/g4");
+        Resource context5 = conn.getValueFactory().createURI("http://example.org/o1");
+        Resource context6 = conn.getValueFactory().createURI("http://example.org/o2");
+        Resource context7 = conn.getValueFactory().createURI("http://example.org/o3");
+        Resource context8 = conn.getValueFactory().createURI("http://example.org/o4");
         conn.add(dataURL, dataURL.toString(), RDFFormat.TRIG, context3, context4);
 
         String checkQuery = "ASK { <http://example.org/r1> <http://example.org/p1> \"string value 0\" .}";
