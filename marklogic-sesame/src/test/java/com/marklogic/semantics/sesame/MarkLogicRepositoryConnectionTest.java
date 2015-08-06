@@ -1003,4 +1003,13 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
 
         conn.clear(context1);
     }
+
+    @Test
+    public void testSPARQLQueryWithEmptyResults()
+            throws Exception {
+        String queryString = "select * { <http://marklogic.com/nonexistent> ?p ?o } limit 100 ";
+        TupleQuery tupleQuery = conn.prepareTupleQuery(QueryLanguage.SPARQL, queryString);
+        TupleQueryResult results = tupleQuery.evaluate();
+        Assert.assertFalse(results.hasNext());
+    }
 }
