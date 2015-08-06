@@ -31,9 +31,8 @@ import org.openrdf.query.*;
 import org.openrdf.query.resultio.sparqlxml.SPARQLResultsXMLWriter;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.RepositoryResult;
-import org.openrdf.rio.RDFFormat;
-import org.openrdf.rio.RDFWriter;
-import org.openrdf.rio.Rio;
+import org.openrdf.rio.*;
+import org.openrdf.rio.rdfxml.RDFXMLWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -617,18 +616,17 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
 
     // this test requires access to https://raw.githubusercontent.com/marklogic/marklogic-sesame/develop/marklogic-sesame/src/test/resources/testdata/testData.trig
     @Test
-    @Ignore
     public void testAddTrigWithURL() throws Exception {
         URL dataURL = new URL("https://raw.githubusercontent.com/marklogic/marklogic-sesame/develop/marklogic-sesame/src/test/resources/testdata/testData.trig?token=AApzyAXWDMZiXGGf9DFnhq534MpEP-tKks5VwxFswA%3D%3D");
 
-        Resource context1 = conn.getValueFactory().createURI("http://[example.org/g1");
-        Resource context2 = conn.getValueFactory().createURI("http://[example.org/g2");
-        Resource context3 = conn.getValueFactory().createURI("http://[example.org/g3");
-        Resource context4 = conn.getValueFactory().createURI("http://[example.org/g4");
-        Resource context5 = conn.getValueFactory().createURI("http://[example.org/o1");
-        Resource context6 = conn.getValueFactory().createURI("http://[example.org/o2");
-        Resource context7 = conn.getValueFactory().createURI("http://[example.org/o3");
-        Resource context8 = conn.getValueFactory().createURI("http://[example.org/o4");
+        Resource context1 = conn.getValueFactory().createURI("http://example.org/g1");
+        Resource context2 = conn.getValueFactory().createURI("http://example.org/g2");
+        Resource context3 = conn.getValueFactory().createURI("http://example.org/g3");
+        Resource context4 = conn.getValueFactory().createURI("http://example.org/g4");
+        Resource context5 = conn.getValueFactory().createURI("http://example.org/o1");
+        Resource context6 = conn.getValueFactory().createURI("http://example.org/o2");
+        Resource context7 = conn.getValueFactory().createURI("http://example.org/o3");
+        Resource context8 = conn.getValueFactory().createURI("http://example.org/o4");
         conn.add(dataURL, dataURL.toString(), RDFFormat.TRIG, context3, context4);
 
         String checkQuery = "ASK { <http://example.org/r1> <http://example.org/p1> \"string value 0\" .}";
@@ -716,11 +714,6 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
         } finally {
             result.close();
         }
-    }
-
-    @Test
-    public void testHasStatement() {
-
     }
 
     @Test
@@ -981,16 +974,72 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
         conn.clear(context1);
     }
 
-    @Ignore
+    @Test
     public void testPrepareGraphQueryWithNoResult() throws Exception
     {
 
-        String query = " DESCRIBE <http://example.org/nonexistant> ";
+        String query = "DESCRIBE <http://example.org/nonexistant>";
         GraphQuery queryObj = conn.prepareGraphQuery(query);
         GraphQueryResult result = queryObj.evaluate();
 
-
         Assert.assertTrue(result != null);
-        Assert.assertTrue(result.hasNext());
+        Assert.assertFalse(result.hasNext());
+    }
+
+    @Test
+    public void testHasStatement() throws Exception
+    {
+        Resource context1 = conn.getValueFactory().createURI("http://marklogic.com/test/context1");
+        ValueFactory f= conn.getValueFactory();
+        URI alice = f.createURI("http://example.org/people/alice");
+        URI name = f.createURI("http://example.org/ontology/name");
+        Literal alicesName = f.createLiteral("Alice");
+
+        Statement st1 = f.createStatement(alice, name, alicesName);
+        conn.add(st1,context1);
+
+        Assert.assertTrue(conn.hasStatement(st1, false, context1));
+
+        conn.clear(context1);
+    }
+
+    @Test
+    public void testSPARQLQueryWithEmptyResults()
+            throws Exception {
+        String queryString = "select * { <http://marklogic.com/nonexistent> ?p ?o } limit 100 ";
+        TupleQuery tupleQuery = conn.prepareTupleQuery(QueryLanguage.SPARQL, queryString);
+        TupleQueryResult results = tupleQuery.evaluate();
+        Assert.assertFalse(results.hasNext());
+    }
+
+    @Test
+    public void testExportStatements()
+            throws Exception {
+        Resource context1 = conn.getValueFactory().createURI("http://marklogic.com/test/context1");
+        ValueFactory f= conn.getValueFactory();
+        final URI alice = f.createURI("http://example.org/people/alice");
+        URI name = f.createURI("http://example.org/ontology/name");
+        Literal alicesName = f.createLiteral("Alice");
+
+        Statement st1 = f.createStatement(alice, name, alicesName);
+        conn.add(st1, context1);
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+        RDFXMLWriter rdfWriter = new RDFXMLWriter(out);
+
+        String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+                "<rdf:RDF\n" +
+                "\txmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\">\n" +
+                "\n" +
+                "<rdf:Description rdf:about=\"http://example.org/people/alice\">\n" +
+                "\t<name xmlns=\"http://example.org/ontology/\" rdf:datatype=\"http://www.w3.org/2001/XMLSchema#string\">Alice</name>\n" +
+                "</rdf:Description>\n" +
+                "\n" +
+                "</rdf:RDF>";
+
+        conn.exportStatements(alice, null, alicesName, true, rdfWriter, context1);
+        Assert.assertEquals(expected,out.toString());
+        conn.clear(context1);
     }
 }
