@@ -1038,9 +1038,8 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
                 "\n" +
                 "</rdf:RDF>";
 
-        conn.exportStatements(alice, null, null, true, rdfWriter, context1);
+        conn.exportStatements(alice, null, alicesName, true, rdfWriter, context1);
         Assert.assertEquals(expected,out.toString());
         conn.clear(context1);
-
     }
 }
