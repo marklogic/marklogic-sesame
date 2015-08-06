@@ -347,7 +347,9 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     public void exportStatements(Resource subject, URI predicate, Value object, boolean includeInferred, RDFHandler handler, Resource... contexts) throws RepositoryException, RDFHandlerException {
         try {
             StringBuilder ob = new StringBuilder();
-            if(object != null) {
+            StringBuilder sb = new StringBuilder();
+
+            if(object != null && object instanceof Literal) {
                 if (object instanceof Literal) {
                     Literal lit = (Literal) object;
                     ob.append("\"");
@@ -358,20 +360,26 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
                 } else {
                     ob.append("<" + object.stringValue() + "> ");
                 }
-            }else{
-
-            }
-            StringBuilder sb = new StringBuilder();
-            if(contexts.length !=0) {
-                //if (baseURI != null) sb.append("BASE <" + baseURI + ">\n");
-                sb.append("CONSTRUCT {?s ?p ?o} WHERE {");
-
-                for (int i = 0; i < contexts.length; i++) {
-                    sb.append("GRAPH <" + contexts[i].stringValue() + "> {?s ?p ?o .} ");
+                    //if (baseURI != null) sb.append("BASE <" + baseURI + ">\n");
+                sb.append("CONSTRUCT {?s ?p "+ob.toString()+"} WHERE {");
+                if(contexts.length !=0) {
+                    for (int i = 0; i < contexts.length; i++) {
+                        sb.append("GRAPH <" + contexts[i].stringValue() + "> {?s ?p " + ob.toString() + " .} ");
+                    }
+                    sb.append("}");
+                }else{
+                    sb.append("?s ?p "+ob.toString()+" }");
                 }
-                sb.append("}");
             }else{
-                sb.append(EVERYTHING);
+                sb.append("CONSTRUCT {?s ?p ?o} WHERE {");
+                if(contexts.length !=0) {
+                    for (int i = 0; i < contexts.length; i++) {
+                        sb.append("GRAPH <" + contexts[i].stringValue() + "> {?s ?p " + ob.toString() + " .} ");
+                    }
+                    sb.append("}");
+                }else{
+                    sb.append("?s ?p "+ob.toString()+" }");
+                }
             }
 
             GraphQuery query = prepareGraphQuery(sb.toString());
