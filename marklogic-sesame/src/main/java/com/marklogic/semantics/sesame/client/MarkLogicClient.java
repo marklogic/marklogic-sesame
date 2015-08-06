@@ -20,6 +20,7 @@
 package com.marklogic.semantics.sesame.client;
 
 import com.marklogic.client.Transaction;
+import com.marklogic.semantics.sesame.MarkLogicTransactionException;
 import org.apache.commons.io.input.ReaderInputStream;
 import org.openrdf.model.Resource;
 import org.openrdf.model.URI;
@@ -59,12 +60,10 @@ public class MarkLogicClient {
 	protected static final Charset charset = UTF8;
 
 	protected static final TupleQueryResultFormat format = TupleQueryResultFormat.JSON;
-
 	protected static final RDFFormat rdfFormat = RDFFormat.NTRIPLES;
+	private final MarkLogicClientImpl _client;
 
 	private static Executor executor = Executors.newCachedThreadPool();
-
-	private MarkLogicClientImpl _client;
 
 	private ValueFactory f;
 
@@ -143,7 +142,7 @@ public class MarkLogicClient {
 		getClient().performAdd(new ReaderInputStream(in), baseURI, dataFormat, this.tx, contexts);
 	}
 	public void sendAdd(String baseURI, Resource subject, URI predicate, Value object, Resource... contexts){
-		getClient().performAdd(baseURI,(Resource)skolemize(subject),(URI)skolemize(predicate),skolemize(object),this.tx,contexts);
+		getClient().performAdd(baseURI, (Resource) skolemize(subject), (URI) skolemize(predicate), skolemize(object), this.tx, contexts);
 	}
 
 	//remove
@@ -160,23 +159,34 @@ public class MarkLogicClient {
 	}
 
 	//transaction
-	public void openTransaction(){
-		tx = getClient().getDatabaseClient().openTransaction();
+	public void openTransaction() throws MarkLogicTransactionException {
+        if (!isActiveTransaction()) {
+            this.tx = getClient().getDatabaseClient().openTransaction();
+        }else{
+            throw new MarkLogicTransactionException("Only one active transaction allowed.");
+        }
 	}
-	public void commitTransaction(){
-		tx.commit();
-		tx=null;
+	public void commitTransaction() throws MarkLogicTransactionException {
+        if (isActiveTransaction()) {
+            this.tx.commit();
+            this.tx=null;
+        }else{
+            throw new MarkLogicTransactionException("No active transaction to commit.");
+        }
 	}
-	public void rollbackTransaction(){
-		tx.rollback();
-		tx=null;
+	public void rollbackTransaction() throws MarkLogicTransactionException {
+        this.tx.rollback();
+        this.tx=null;
 	}
 	public boolean isActiveTransaction(){
-		return this.tx instanceof Transaction;
+		return this.tx != null;
 	}
-	public void setAutoCommit(){
-		//TBD-what to do if active ?
-		this.tx=null;
+	public void setAutoCommit() throws MarkLogicTransactionException {
+        if (isActiveTransaction()) {
+            throw new MarkLogicTransactionException("Active transaction.");
+        }else{
+            this.tx=null;
+        }
 	}
 
 	//parser

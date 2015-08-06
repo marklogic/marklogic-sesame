@@ -29,6 +29,7 @@ import org.openrdf.model.impl.StatementImpl;
 import org.openrdf.query.*;
 import org.openrdf.query.impl.DatasetImpl;
 import org.openrdf.query.parser.QueryParserUtil;
+import org.openrdf.query.parser.sparql.SPARQLUtil;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.RepositoryResult;
@@ -304,10 +305,33 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
         return hasStatement(st.getSubject(),st.getPredicate(),st.getObject(),includeInferred,contexts); //TBD
     }
     @Override
-    public boolean hasStatement(Resource subj, URI pred, Value obj, boolean includeInferred, Resource... contexts) throws RepositoryException {
+    public boolean hasStatement(Resource subject, URI predicate, Value object, boolean includeInferred, Resource... contexts) throws RepositoryException {
         try {
-            BooleanQuery query = prepareBooleanQuery(SPARQL, SOMETHING, null);
-            setBindings(query, subj, pred, obj, contexts);
+            StringBuilder ob = new StringBuilder();
+            if (object instanceof Literal) {
+                Literal lit = (Literal)object;
+                ob.append("\"");
+                ob.append(SPARQLUtil.encodeString(lit.getLabel()));
+                ob.append("\"");
+                ob.append("^^<" + lit.getDatatype().stringValue() + ">");
+                ob.append(" ");
+            }else {
+                ob.append("<" + object.stringValue() + "> ");
+            }
+            StringBuilder sb = new StringBuilder();
+            if(contexts.length !=0) {
+                //if (baseURI != null) sb.append("BASE <" + baseURI + ">\n");
+                sb.append("ASK { ");
+
+                for (int i = 0; i < contexts.length; i++) {
+                    sb.append("GRAPH <" + contexts[i].stringValue() + "> {<" + subject.stringValue() + "> <" + predicate.stringValue() + "> " + ob.toString() + " .} ");
+                }
+                sb.append("}");
+            }else{
+                sb.append(SOMETHING);
+            }
+            BooleanQuery query = prepareBooleanQuery(sb.toString(), null);
+            setBindings(query, subject, predicate, object, contexts);
             return query.evaluate();
         }
         catch (MalformedQueryException e) {
@@ -390,7 +414,11 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     }
     @Override
     public void setAutoCommit(boolean autoCommit) throws RepositoryException {
-        client.setAutoCommit();
+        try {
+            client.setAutoCommit();
+        } catch (MarkLogicTransactionException e) {
+            e.printStackTrace();
+        }
     }
     @Override
     public IsolationLevel getIsolationLevel() {

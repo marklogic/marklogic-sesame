@@ -70,10 +70,10 @@ public class MarkLogicClientImpl {
     private QueryDefinition constrainingQueryDef;
     private GraphPermissions graphPerms;
 
-    static public SPARQLQueryManager sparqlManager;
-    static public GraphManager graphManager;
+    private static  SPARQLQueryManager sparqlManager;
+    private static GraphManager graphManager;
 
-    protected DatabaseClient databaseClient;
+    private static DatabaseClient databaseClient;
 
     // constructor
     public MarkLogicClientImpl(String host, int port, String user, String password, String auth) {
