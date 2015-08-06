@@ -718,11 +718,6 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
     }
 
     @Test
-    public void testHasStatement() {
-
-    }
-
-    @Test
     public void testTransaction1() throws Exception {
         File inputFile = new File("src/test/resources/testdata/named-graph-1.ttl");
         String baseURI = "http://example.org/example1/";
@@ -990,5 +985,22 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
 
         Assert.assertTrue(result != null);
         Assert.assertFalse(result.hasNext());
+    }
+
+    @Test
+    public void testHasStatement() throws Exception
+    {
+        Resource context1 = conn.getValueFactory().createURI("http://marklogic.com/test/context1");
+        ValueFactory f= conn.getValueFactory();
+        URI alice = f.createURI("http://example.org/people/alice");
+        URI name = f.createURI("http://example.org/ontology/name");
+        Literal alicesName = f.createLiteral("Alice");
+
+        Statement st1 = f.createStatement(alice, name, alicesName);
+        conn.add(st1,context1);
+
+        Assert.assertTrue(conn.hasStatement(st1, false, context1));
+
+        conn.clear(context1);
     }
 }
