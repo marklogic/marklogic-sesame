@@ -29,9 +29,14 @@ import org.openrdf.model.impl.ValueFactoryImpl;
 import org.openrdf.model.vocabulary.RDF;
 import org.openrdf.query.*;
 import org.openrdf.query.resultio.sparqlxml.SPARQLResultsXMLWriter;
+import org.openrdf.repository.Repository;
+import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.RepositoryResult;
-import org.openrdf.rio.*;
+import org.openrdf.repository.sparql.SPARQLRepository;
+import org.openrdf.rio.RDFFormat;
+import org.openrdf.rio.RDFWriter;
+import org.openrdf.rio.Rio;
 import org.openrdf.rio.rdfxml.RDFXMLWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -328,7 +333,7 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
                     throws QueryResultHandlerException {
             }
         });
-        tupleQuery.evaluate();
+        //tupleQuery.evaluate();
     }
 
     @Test
@@ -1041,5 +1046,67 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
         conn.exportStatements(alice, null, alicesName, true, rdfWriter, context1);
         Assert.assertEquals(expected,out.toString());
         conn.clear(context1);
+    }
+
+    @Test
+    public void testIntegrateWithRemoteRepository() throws Exception{
+        final Resource context1 = conn.getValueFactory().createURI("http://marklogic.com/test/context1");
+
+        String endpointURL = "http://lod.openlinksw.com/sparql/";
+        Repository remoteSPARQL = new SPARQLRepository(endpointURL);
+
+        remoteSPARQL.initialize();
+
+        RepositoryConnection remoteconn =
+                remoteSPARQL.getConnection();
+        try {
+            String sparqlQuery =
+                    "SELECT ?s,?p,?o WHERE {\n" +
+                            "  <http://www.w3.org/People/Berners-Lee/card#i> ?p ?o .\n" +
+                            "}";
+            TupleQuery tupleQuery = remoteconn.prepareTupleQuery(QueryLanguage.SPARQL, sparqlQuery);
+            tupleQuery.evaluate(new TupleQueryResultHandler() {
+                @Override
+                public void startQueryResult(List<String> bindingNames) {
+                }
+
+                @Override
+                public void handleSolution(BindingSet bindingSet) {
+                    Resource subject = f.createURI("http://www.w3.org/People/Berners-Lee/card#i");
+                    URI predicate = (URI) bindingSet.getBinding("p").getValue();
+                    Value object = (Value) bindingSet.getBinding("o").getValue();
+                    try {
+                        conn.add(subject, predicate, object, context1);
+                    } catch (RepositoryException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void endQueryResult() {
+                }
+
+                @Override
+                public void handleBoolean(boolean arg0)
+                        throws QueryResultHandlerException {
+                }
+
+                @Override
+                public void handleLinks(List<String> arg0)
+                        throws QueryResultHandlerException {
+                }
+            });
+
+            String checkAliceQuery = "ASK { GRAPH <http://marklogic.com/test/context1> {<http://www.w3.org/People/Berners-Lee/card#i> <http://data.semanticweb.org/ns/swc/ontology#holdsRole> <http://events.linkeddata.org/ldow2009/#chairrole> .}}";
+            BooleanQuery booleanAliceQuery = conn.prepareBooleanQuery(QueryLanguage.SPARQL, checkAliceQuery);
+            Assert.assertTrue(booleanAliceQuery.evaluate());
+
+            conn.clear(context1);
+
+        }
+        finally {
+            remoteconn.close();
+        }
+
     }
 }
