@@ -390,7 +390,11 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     }
     @Override
     public void setAutoCommit(boolean autoCommit) throws RepositoryException {
-        client.setAutoCommit();
+        try {
+            client.setAutoCommit();
+        } catch (MarkLogicTransactionException e) {
+            e.printStackTrace();
+        }
     }
     @Override
     public IsolationLevel getIsolationLevel() {

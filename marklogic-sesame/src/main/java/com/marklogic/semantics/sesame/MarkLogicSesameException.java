@@ -19,11 +19,14 @@
  */
 package com.marklogic.semantics.sesame;
 
+import org.openrdf.repository.RepositoryException;
+
 /**
  *
  * @author James Fuller
  */
-public class MarkLogicSesameException extends Exception {
+@SuppressWarnings("serial")
+public class MarkLogicSesameException extends RepositoryException {
     public MarkLogicSesameException(String message) {
         super(message);
     }
