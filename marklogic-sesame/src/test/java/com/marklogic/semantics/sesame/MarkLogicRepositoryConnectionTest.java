@@ -981,16 +981,15 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
         conn.clear(context1);
     }
 
-    @Ignore
+    @Test
     public void testPrepareGraphQueryWithNoResult() throws Exception
     {
 
-        String query = " DESCRIBE <http://example.org/nonexistant> ";
+        String query = "DESCRIBE <http://example.org/nonexistant>";
         GraphQuery queryObj = conn.prepareGraphQuery(query);
         GraphQueryResult result = queryObj.evaluate();
 
-
         Assert.assertTrue(result != null);
-        Assert.assertTrue(result.hasNext());
+        Assert.assertFalse(result.hasNext());
     }
 }

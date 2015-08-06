@@ -21,8 +21,6 @@ package com.marklogic.semantics.sesame.client;
 
 import com.marklogic.client.Transaction;
 import org.apache.commons.io.input.ReaderInputStream;
-import org.openrdf.http.client.BackgroundGraphResult;
-import org.openrdf.http.client.BackgroundTupleResult;
 import org.openrdf.model.Resource;
 import org.openrdf.model.URI;
 import org.openrdf.model.Value;
@@ -95,7 +93,7 @@ public class MarkLogicClient {
 	public TupleQueryResult sendTupleQuery(String queryString,SPARQLQueryBindingSet bindings, long start, long pageLength, boolean includeInferred, String baseURI) throws IOException {
 		InputStream stream = getClient().performSPARQLQuery(queryString, bindings, start, pageLength, this.tx, includeInferred, baseURI);
 		TupleQueryResultParser parser = QueryResultIO.createParser(this.format, getValueFactory());
-		BackgroundTupleResult tRes = new BackgroundTupleResult(parser,stream);
+		MarkLogicBackgroundTupleResult tRes = new MarkLogicBackgroundTupleResult(parser,stream);
 		execute(tRes);
 		return tRes;
 	}
@@ -103,21 +101,24 @@ public class MarkLogicClient {
 	//graph query
 	public GraphQueryResult sendGraphQuery(String queryString, SPARQLQueryBindingSet bindings, boolean includeInferred, String baseURI) throws IOException {
 		InputStream stream = getClient().performGraphQuery(queryString, bindings, this.tx, includeInferred, baseURI);
+
 		RDFParser parser = Rio.createParser(this.rdfFormat, getValueFactory());
 		parser.setParserConfig(getParserConfig());
 		parser.setParseErrorListener(new ParseErrorLogger());
+		parser.setPreserveBNodeIDs(true);
 
-		BackgroundGraphResult gRes;
+		MarkLogicBackgroundGraphResult gRes;
 
 		// fixup - baseURI cannot be null
 		if(baseURI != null){
-			gRes= new BackgroundGraphResult(parser,stream,charset,baseURI);
+			gRes= new MarkLogicBackgroundGraphResult(parser,stream,charset,baseURI);
 		}else{
-			gRes= new BackgroundGraphResult(parser,stream,charset,"");
+			gRes= new MarkLogicBackgroundGraphResult(parser,stream,charset,"");
 		};
 
 		execute(gRes);
 		return gRes;
+
 	}
 
 	//boolean query
