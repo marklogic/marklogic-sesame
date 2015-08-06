@@ -91,15 +91,15 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     // prepareQuery entrypoint
     @Override
     public Query prepareQuery(String queryString) throws RepositoryException, MalformedQueryException {
-        return prepareTupleQuery(QueryLanguage.SPARQL, queryString, null);
+        return prepareQuery(QueryLanguage.SPARQL, queryString, null);
     }
     @Override
     public Query prepareQuery(String queryString, String baseURI) throws RepositoryException, MalformedQueryException {
-        return prepareTupleQuery(QueryLanguage.SPARQL, queryString, baseURI);
+        return prepareQuery(QueryLanguage.SPARQL, queryString, baseURI);
     }
     @Override
     public Query prepareQuery(QueryLanguage queryLanguage, String queryString) throws RepositoryException, MalformedQueryException {
-        return prepareTupleQuery(queryLanguage, queryString, null);
+        return prepareQuery(queryLanguage, queryString, null);
     }
     @Override
     public MarkLogicQuery prepareQuery(QueryLanguage queryLanguage, String queryString, String baseURI)
