@@ -1,0 +1,32 @@
+﻿<http://mydomain.org/resource/Joe> <http://dbpedia.org/ontology/parent> <http://mydomain.org/resource/John> .
+<http://mydomain.org/resource/Joe> <http://dbpedia.org/ontology/parent> <http://mydomain.org/resource/Sue> .
+<http://mydomain.org/resource/Joe> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Person> .
+<http://mydomain.org/resource/Joe> <http://xmlns.com/foaf/0.1/name> "Joe"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+<http://mydomain.org/resource/John> <http://dbpedia.org/ontology/parent> <http://mydomain.org/resource/Tom> .
+<http://mydomain.org/resource/John> <http://dbpedia.org/ontology/parent> <http://mydomain.org/resource/Mary> .
+<http://mydomain.org/resource/John> <http://dbpedia.org/ontology/child> <http://mydomain.org/resource/Joe> .
+<http://mydomain.org/resource/John> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Person> .
+<http://mydomain.org/resource/John> <http://xmlns.com/foaf/0.1/name> "John"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+<http://mydomain.org/resource/Sue> <http://dbpedia.org/ontology/parent> <http://mydomain.org/resource/Tim> .
+<http://mydomain.org/resource/Sue> <http://dbpedia.org/ontology/parent> <http://mydomain.org/resource/Amy> .
+<http://mydomain.org/resource/Sue> <http://dbpedia.org/ontology/child> <http://mydomain.org/resource/Joe> .
+<http://mydomain.org/resource/Sue> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Person> .
+<http://mydomain.org/resource/Sue> <http://xmlns.com/foaf/0.1/name> "Sue"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+<http://mydomain.org/resource/Tom> <http://dbpedia.org/ontology/child> <http://mydomain.org/resource/John> .
+<http://mydomain.org/resource/Tom> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Person> .
+<http://mydomain.org/resource/Tom> <http://xmlns.com/foaf/0.1/name> "Tom"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+<http://mydomain.org/resource/Mary> <http://dbpedia.org/ontology/child> <http://mydomain.org/resource/John> .
+<http://mydomain.org/resource/Mary> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Person> .
+<http://mydomain.org/resource/Mary> <http://xmlns.com/foaf/0.1/name> "Mary"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+<http://mydomain.org/resource/Tim> <http://dbpedia.org/ontology/child> <http://mydomain.org/resource/Sue> .
+<http://mydomain.org/resource/Tim> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Person> .
+<http://mydomain.org/resource/Tim> <http://xmlns.com/foaf/0.1/name> "Tim"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+<http://mydomain.org/resource/Amy> <http://dbpedia.org/ontology/child> <http://mydomain.org/resource/Sue> .
+<http://mydomain.org/resource/Amy> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Person> .
+<http://mydomain.org/resource/Amy> <http://xmlns.com/foaf/0.1/name> "Amy"^^<http://www.w3.org/2001/XMLSchema#string> .
