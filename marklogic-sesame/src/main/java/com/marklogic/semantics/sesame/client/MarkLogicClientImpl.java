@@ -22,12 +22,14 @@ package com.marklogic.semantics.sesame.client;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
+import com.marklogic.client.FailedRequestException;
 import com.marklogic.client.Transaction;
 import com.marklogic.client.impl.SPARQLBindingsImpl;
 import com.marklogic.client.io.FileHandle;
 import com.marklogic.client.io.InputStreamHandle;
 import com.marklogic.client.query.QueryDefinition;
 import com.marklogic.client.semantics.*;
+import com.marklogic.semantics.sesame.MarkLogicSesameException;
 import org.openrdf.model.Literal;
 import org.openrdf.model.Resource;
 import org.openrdf.model.URI;
@@ -215,21 +217,26 @@ public class MarkLogicClientImpl {
     }
 
     // performAdd
-    public void performAdd(File file, String baseURI, RDFFormat dataFormat,Transaction tx,Resource... contexts){
-        graphManager = getDatabaseClient().newGraphManager();
-        graphManager.setDefaultMimetype(dataFormat.getDefaultMIMEType());
-        if(dataFormat.equals(RDFFormat.NQUADS)||dataFormat.equals(RDFFormat.TRIG)){
-            //TBD- tx ?
-            graphManager.mergeGraphs(new FileHandle(file));
-        }else{
-            //TBD- must be more efficient
-            if(contexts.length != 0){
-                for(Resource context: contexts) {
-                    graphManager.merge(context.toString(), new FileHandle(file), tx);
+    public void performAdd(File file, String baseURI, RDFFormat dataFormat,Transaction tx,Resource... contexts) throws MarkLogicSesameException {
+        try {
+            graphManager = getDatabaseClient().newGraphManager();
+
+            graphManager.setDefaultMimetype(dataFormat.getDefaultMIMEType());
+            if (dataFormat.equals(RDFFormat.NQUADS) || dataFormat.equals(RDFFormat.TRIG)) {
+                //TBD- tx ?
+                graphManager.mergeGraphs(new FileHandle(file));
+            } else {
+                //TBD- must be more efficient
+                if (contexts.length != 0) {
+                    for (Resource context : contexts) {
+                        graphManager.merge(context.toString(), new FileHandle(file), tx);
+                    }
+                } else {
+                    graphManager.merge(null, new FileHandle(file), tx);
                 }
-            }else{
-                graphManager.merge(null, new FileHandle(file), tx);
             }
+        }catch (FailedRequestException e){
+            throw new MarkLogicSesameException("Request to MarkLogic server failed, check file and format.");
         }
     }
     public void performAdd(InputStream in, String baseURI, RDFFormat dataFormat,Transaction tx,Resource... contexts) {
