@@ -595,6 +595,20 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
         conn.clear(context1, context2);
     }
 
+    @Test
+    @Ignore
+    public void testAddGZippedRDF() throws Exception {
+        File inputFile = new File("src/test/resources/testdata/databases.rdf.gz");
+
+        FileInputStream fis = new FileInputStream(inputFile);
+
+        String baseURI = "http://example.org/example1/";
+        Resource context1 = conn.getValueFactory().createURI("http://marklogic.com/test/context1");
+        Resource context2 = conn.getValueFactory().createURI("http://marklogic.com/test/context2");
+        conn.add(fis, baseURI, RDFFormat.RDFXML, context1, context2);
+        conn.clear(context1, context2);
+    }
+
     // https://github.com/marklogic/marklogic-sesame/issues/19
     @Test
     public void testAddTurtleWithDefaultContext() throws Exception {
