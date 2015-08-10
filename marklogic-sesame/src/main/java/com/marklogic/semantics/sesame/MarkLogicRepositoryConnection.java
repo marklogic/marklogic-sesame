@@ -530,25 +530,25 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     }
     @Override
     public void add(Resource subject, URI predicate, Value object, Resource... contexts) throws RepositoryException {
-        client.sendAdd(null,subject, predicate, object, contexts);
+            client.sendAdd(null, subject, predicate, object, contexts);
     }
     @Override
     public void add(Statement st, Resource... contexts) throws RepositoryException {
-        client.sendAdd(null,st.getSubject(), st.getPredicate(), st.getObject(), mergeResource(st.getContext(), contexts));
+        add(st.getSubject(), st.getPredicate(), st.getObject(), mergeResource(st.getContext(), contexts));
     }
     @Override
     public void add(Iterable<? extends Statement> statements, Resource... contexts) throws RepositoryException {
         Iterator <? extends Statement> iter = statements.iterator();
         while(iter.hasNext()){
             Statement st = iter.next();
-            client.sendAdd(null,st.getSubject(), st.getPredicate(), st.getObject(), mergeResource(st.getContext(),contexts));
+            add(st.getSubject(), st.getPredicate(), st.getObject(), mergeResource(st.getContext(), contexts));
         }
     }
     @Override
     public <E extends Exception> void add(Iteration<? extends Statement, E> statements, Resource... contexts) throws RepositoryException, E {
         while(statements.hasNext()){
             Statement st = statements.next();
-            client.sendAdd(null,st.getSubject(), st.getPredicate(), st.getObject(), mergeResource(st.getContext(),contexts));
+            add(st.getSubject(), st.getPredicate(), st.getObject(), mergeResource(st.getContext(), contexts));
         }
     }
 
@@ -676,6 +676,14 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
             }
         };
     }
+
+    private Boolean notNull(Object item) {
+        if (item!=null)
+            return true;
+        else
+            return false;
+    }
+
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
 }
