@@ -250,50 +250,65 @@ public class MarkLogicClientImpl {
 
     public void performAdd(String baseURI,Resource subject,URI predicate, Value object,Transaction tx,Resource... contexts) {
         sparqlManager = getDatabaseClient().newSPARQLQueryManager();
+        SPARQLQueryBindingSet bindingSet = new SPARQLQueryBindingSet();
+        if(subject != null)bindingSet.addBinding("s",subject);
+        if(predicate != null)bindingSet.addBinding("p",predicate);
 
         StringBuilder ob = new StringBuilder();
-        if (object instanceof Literal) {
-            Literal lit = (Literal)object;
-            ob.append("\"");
-            ob.append(SPARQLUtil.encodeString(lit.getLabel()));
-            ob.append("\"");
-            ob.append("^^<" + lit.getDatatype().stringValue() + ">");
-            ob.append(" ");
-        }else {
-            ob.append("<" + object.stringValue() + "> ");
+        if (object != null){
+            if (object instanceof Literal) {
+                Literal lit = (Literal) object;
+                ob.append("\"");
+                ob.append(SPARQLUtil.encodeString(lit.getLabel()));
+                ob.append("\"");
+                ob.append("^^<" + lit.getDatatype().stringValue() + ">");
+                ob.append(" ");
+            } else {
+                ob.append("<" + object.stringValue() + "> ");
+            }
+        }else{
+            ob.append("?o");
         }
-
-        StringBuilder sb = new StringBuilder();
+    StringBuilder sb = new StringBuilder();
         if(baseURI != null) sb.append("BASE <"+baseURI+">\n");
         sb.append("INSERT DATA { ");
 
         for (int i = 0; i < contexts.length; i++)
         {
             if(contexts[i] != null) {
-                sb.append("GRAPH <"+ contexts[i].stringValue()+"> {<"+subject.stringValue()+"> <"+predicate.stringValue()+"> "+ob.toString()+" .} ");
+                sb.append("GRAPH <"+ contexts[i].stringValue()+"> { ?s ?p "+ob.toString()+" .} ");
             }else{
                 //sb.append("OPTIONAL {GRAPH ?ctx {<"+subject.stringValue()+"> <"+predicate.stringValue()+"> "+ob.toString()+" .} }");
             }
         }
         sb.append("}");
         SPARQLQueryDefinition qdef = sparqlManager.newQueryDefinition(sb.toString());
+        qdef.setBindings(getSPARQLBindings(bindingSet));
         sparqlManager.executeUpdate(qdef, tx);
     }
 
     // performRemove
     public void performRemove(String baseURI,Resource subject,URI predicate, Value object,Transaction tx,Resource... contexts) {
-        StringBuilder ob = new StringBuilder();
-        if (object instanceof Literal) {
-            Literal lit = (Literal)object;
-            ob.append("\"");
-            ob.append(SPARQLUtil.encodeString(lit.getLabel()));
-            ob.append("\"");
-            ob.append("^^<" + lit.getDatatype().stringValue() + ">");
-            ob.append(" ");
-        }else {
-            ob.append("<" + object.stringValue() + "> ");
-        }
+        SPARQLQueryBindingSet bindingSet = new SPARQLQueryBindingSet();
+        if(subject != null)bindingSet.addBinding("s",subject);
+        if(predicate != null)bindingSet.addBinding("p",predicate);
+        if(object != null)bindingSet.addBinding("o",object);
 
+        StringBuilder ob = new StringBuilder();
+        if (object != null){
+            if (object instanceof Literal) {
+                Literal lit = (Literal) object;
+                ob.append("\"");
+                ob.append(SPARQLUtil.encodeString(lit.getLabel()));
+                ob.append("\"");
+                ob.append("^^<" + lit.getDatatype().stringValue() + ">");
+                ob.append(" ");
+            } else {
+                ob.append("<" + object.stringValue() + "> ");
+            }
+        }else{
+            ob.append("?o");
+        }
         StringBuilder sb = new StringBuilder();
         if(baseURI != null) sb.append("BASE <"+baseURI+">\n");
         sb.append("DELETE WHERE { ");
@@ -301,13 +316,14 @@ public class MarkLogicClientImpl {
         for (int i = 0; i < contexts.length; i++)
         {
             if(contexts[i] != null) {
-                sb.append("GRAPH <"+ contexts[i].stringValue()+"> {<"+subject.stringValue()+"> <"+predicate.stringValue()+"> "+ob.toString()+" .} ");
+                sb.append("GRAPH <"+ contexts[i].stringValue()+"> { ?s ?p "+ob.toString()+" .} ");
             }else{
                 //sb.append("OPTIONAL {GRAPH ?ctx {<"+subject.stringValue()+"> <"+predicate.stringValue()+"> "+ob.toString()+" .} }");
             }
         }
         sb.append("}");
         SPARQLQueryDefinition qdef = sparqlManager.newQueryDefinition(sb.toString());
+        qdef.setBindings(getSPARQLBindings(bindingSet));
         sparqlManager.executeUpdate(qdef, tx);
     }
 

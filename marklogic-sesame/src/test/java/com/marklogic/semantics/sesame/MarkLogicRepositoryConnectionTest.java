@@ -1170,8 +1170,34 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
         Iteration<? extends Statement, RepositoryException> iter = conn.getStatements(alice, name,
                 null, false,null,context1);
 
-        Assert.assertEquals(1L,conn.size(context1));
+        Assert.assertEquals(1L, conn.size(context1));
 
         conn.clear(context1);
+    }
+
+    //https://github.com/marklogic/marklogic-sesame/issues/61
+    @Test
+    public void removeWithNullObject()
+            throws Exception
+    {
+        ValueFactory f= conn.getValueFactory();
+        Resource context1 = f.createURI("http://marklogic.com/test/context1");
+        final URI alice = f.createURI("http://example.org/people/alice");
+        URI name = f.createURI("http://example.org/ontology/name");
+        URI age = f.createURI("http://example.org/ontology/age");
+        Literal alicesName = f.createLiteral("Alice");
+        Literal alicesAge = f.createLiteral(22);
+
+        Statement st1 = f.createStatement(alice, name, alicesName);
+        Statement st2 = f.createStatement(alice, age, alicesAge);
+        conn.begin();
+        conn.add(st1, context1);
+        conn.add(st2, context1);
+        conn.commit();
+
+        Assert.assertEquals(2L, conn.size(context1));
+        conn.remove(alice, age, null, context1);
+        Assert.assertEquals(1L, conn.size(context1));
+        conn.remove(alice, null, alicesName, context1);
     }
 }
