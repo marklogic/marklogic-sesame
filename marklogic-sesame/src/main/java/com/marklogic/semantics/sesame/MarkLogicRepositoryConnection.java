@@ -119,7 +119,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
                 return prepareGraphQuery(queryLanguage, queryString, baseURI);   //all the rest use GraphQuery
             }
         }
-        throw new UnsupportedOperationException("Unsupported query language " + queryLanguage.getName());
+        throw new UnsupportedQueryLanguageException("Unsupported query language " + queryLanguage.getName());
     }
 
     // prepareTupleQuery
