@@ -23,6 +23,7 @@ import com.marklogic.client.semantics.SPARQLRuleset;
 import com.marklogic.semantics.sesame.query.MarkLogicTupleQuery;
 import info.aduna.iteration.ConvertingIteration;
 import info.aduna.iteration.ExceptionConvertingIteration;
+import info.aduna.iteration.Iteration;
 import org.junit.*;
 import org.openrdf.model.*;
 import org.openrdf.model.impl.ValueFactoryImpl;
@@ -1087,10 +1088,9 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
                 @Override
                 public void handleSolution(BindingSet bindingSet) {
                     Resource subject = f.createURI("http://www.w3.org/People/Berners-Lee/card#i");
-                    URI predicate = (URI) bindingSet.getBinding("p").getValue();
-                    Value object = (Value) bindingSet.getBinding("o").getValue();
+                    Statement st = conn.getValueFactory().createStatement(subject, (URI) bindingSet.getValue("p"), bindingSet.getValue("o"));
                     try {
-                        conn.add(subject, predicate, object, context1);
+                        conn.add(st, context1);
                     } catch (RepositoryException e) {
                         e.printStackTrace();
                     }
@@ -1122,5 +1122,29 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
             remoteconn.close();
         }
 
+    }
+
+    @Test
+    public void testRemoveStatementIteration()
+            throws Exception
+    {
+        ValueFactory f= conn.getValueFactory();
+        Resource context1 = f.createURI("http://marklogic.com/test/context1");
+        final URI alice = f.createURI("http://example.org/people/alice");
+        URI name = f.createURI("http://example.org/ontology/name");
+        Literal alicesName = f.createLiteral("Alice");
+
+        Statement st1 = f.createStatement(alice, name, alicesName);
+        conn.begin();
+        conn.add(st1, context1);
+        conn.commit();
+
+        Assert.assertEquals(1L, conn.size(context1));
+
+        Iteration<? extends Statement, RepositoryException> iter = conn.getStatements(alice, name,
+                null, false);
+
+        conn.remove(iter);
+        Assert.assertEquals(0L,conn.size(context1));
     }
 }

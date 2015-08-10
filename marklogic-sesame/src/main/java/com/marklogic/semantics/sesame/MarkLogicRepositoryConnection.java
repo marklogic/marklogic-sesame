@@ -610,9 +610,8 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
             query.setBinding("p", pred);
         }
         if (obj != null) {
-
-            Value o;
             if (obj instanceof Literal) {
+                Value o;
                 Literal lit = (Literal)obj;
                 o = getValueFactory().createLiteral(lit.stringValue(),lit.getDatatype().toString());
                 query.setBinding("o", o);
@@ -653,17 +652,10 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
         return new ConvertingIteration<BindingSet, Statement, QueryEvaluationException>(iter) {
             @Override
             protected Statement convert(BindingSet b) throws QueryEvaluationException {
-                Resource s = subj == null ? (Resource) b.getValue("s") : subj;
-                URI p = pred == null ? getValueFactory().createURI(b.getValue("p").stringValue()) : pred;
-                Value o;
-                if (obj instanceof Literal) {
-                    Literal lit = (Literal)b.getValue("o");
-                    o = getValueFactory().createLiteral(lit.stringValue(),lit.getDatatype().toString());
-                }else{
-                    o = b.getValue("o");
-                }
-                Resource ctx = (Resource) b.getValue("ctx");
-
+                Resource s = subj==null ? (Resource)b.getValue("s") : subj;
+                URI p = pred==null ? (URI)b.getValue("p") : pred;
+                Value o = obj==null ? b.getValue("o") : obj;
+                Resource ctx = (Resource)b.getValue("ctx");
                 return getValueFactory().createStatement(s, p, o, ctx);
             }
         };
