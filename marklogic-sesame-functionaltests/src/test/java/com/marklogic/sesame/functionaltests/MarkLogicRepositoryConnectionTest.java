@@ -7,6 +7,9 @@ import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -15,8 +18,10 @@ import info.aduna.iteration.Iteration;
 import info.aduna.iteration.Iterations;
 import info.aduna.iteration.IteratorIteration;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -44,10 +49,12 @@ import org.openrdf.model.URI;
 import org.openrdf.model.Value;
 import org.openrdf.model.ValueFactory;
 import org.openrdf.model.vocabulary.RDF;
+import org.openrdf.model.vocabulary.XMLSchema;
 import org.openrdf.query.BindingSet;
 import org.openrdf.query.BooleanQuery;
 import org.openrdf.query.GraphQuery;
 import org.openrdf.query.GraphQueryResult;
+import org.openrdf.query.Query;
 import org.openrdf.query.QueryLanguage;
 import org.openrdf.query.TupleQuery;
 import org.openrdf.query.TupleQueryResult;
@@ -96,9 +103,11 @@ public class MarkLogicRepositoryConnectionTest  extends  ConnectedRESTQA{
 	protected static MarkLogicRepositoryConnection testWriterCon;
 	protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 	protected ValueFactory vf;
+	protected ValueFactory vfWrite;
 	protected URI graph1;
 	protected URI graph2;
 	protected URI dirgraph;
+	protected URI dirgraph1;
 	
 	protected URI john;
 	protected URI micah;
@@ -156,6 +165,7 @@ public class MarkLogicRepositoryConnectionTest  extends  ConnectedRESTQA{
 		createRepository();
 		
 		vf = testAdminCon.getValueFactory();
+		vfWrite = testWriterCon.getValueFactory();
 		
 		john = vf.createURI(NS+ID+"#1111");
 		micah = vf.createURI(NS+ID+"#2222");
@@ -186,7 +196,7 @@ public class MarkLogicRepositoryConnectionTest  extends  ConnectedRESTQA{
 	public void tearDown()
 		throws Exception
 	{
-		//testAdminCon.clear();
+		testAdminCon.clear();
 		testAdminCon.close();
 		testAdminCon = null;
 
@@ -245,6 +255,7 @@ public class MarkLogicRepositoryConnectionTest  extends  ConnectedRESTQA{
         graph1 = testAdminCon.getValueFactory().createURI("http://marklogic.com/Graph1");
         graph2 = testAdminCon.getValueFactory().createURI("http://marklogic.com/Graph2");
         dirgraph = testAdminCon.getValueFactory().createURI("http://marklogic.com/dirgraph");
+        dirgraph1 = testAdminCon.getValueFactory().createURI("http://marklogic.com/dirgraph");
         
        //Creating MLSesame Connection object Using MarkLogicRepository overloaded constructor
         
@@ -327,7 +338,7 @@ public class MarkLogicRepositoryConnectionTest  extends  ConnectedRESTQA{
 				 " }";
 
 		boolean result1 = testAdminCon.prepareBooleanQuery(QueryLanguage.SPARQL, query1,"http://marklogic.com/baseball/rules").evaluate();
-		//Assert.assertTrue(result1);	
+		Assert.assertTrue(result1);	
 		
 		String query2 = "PREFIX  bb: <http://marklogic.com/baseball/players#>"+
 				" PREFIX  r: <http://marklogic.com/baseball/rules#>"+
@@ -1072,10 +1083,10 @@ public class MarkLogicRepositoryConnectionTest  extends  ConnectedRESTQA{
 	
 	@Test
 	public void testAddDifferentFormats() throws Exception {
-		/*testAdminCon.add(MarkLogicRepositoryConnectionTest.class.getResourceAsStream(TEST_DIR_PREFIX + "family-tree.nt"), "",
+		testAdminCon.add(MarkLogicRepositoryConnectionTest.class.getResourceAsStream(TEST_DIR_PREFIX + "journal.nt"), "",
 				RDFFormat.NTRIPLES, dirgraph);
-		Assert.assertEquals(testAdminCon.size(), 26L);
-		testAdminCon.clear();*/
+		Assert.assertEquals(testAdminCon.size(), 36L);
+		testAdminCon.clear();
 		
 		testAdminCon.add(new InputStreamReader(MarkLogicRepositoryConnectionTest.class.getResourceAsStream(TEST_DIR_PREFIX + "little.nq")), "",
 				RDFFormat.NQUADS);
@@ -1087,34 +1098,16 @@ public class MarkLogicRepositoryConnectionTest  extends  ConnectedRESTQA{
 		Assert.assertEquals(testAdminCon.size(), 15L);
 		testAdminCon.clear();
 		
-		File file = new File(MarkLogicRepositoryConnectionTest.class.getResource(TEST_DIR_PREFIX+ "semantics.json").getFile());
+		File file = new File(MarkLogicRepositoryConnectionTest.class.getResource(TEST_DIR_PREFIX+ "dir.json").getFile());
 		testAdminCon.add(file, "", RDFFormat.RDFJSON);
-		Assert.assertEquals(testAdminCon.size(), 10L);
+		Assert.assertEquals(testAdminCon.size(), 12L);
+		testAdminCon.clear();
+		
+		Reader fr = new FileReader(new File(MarkLogicRepositoryConnectionTest.class.getResource(TEST_DIR_PREFIX+ "dir.xml").getFile()));
+		testAdminCon.add(fr, "", RDFFormat.RDFXML);
+		Assert.assertEquals(testAdminCon.size(), 12L);
 		testAdminCon.clear();
 	}
-	
-	@Test
-	public void testPrepareQuery1() throws Exception {
-		testAdminCon.add(MarkLogicRepositoryConnectionTest.class.getResourceAsStream(TEST_DIR_PREFIX + "family-tree.nt"), "",
-				RDFFormat.NTRIPLES, dirgraph);
-		Assert.assertEquals(testAdminCon.size(), 26L);
-	}
-
-	@Test
-	public void testPrepareQuery2(){
-		
-	}
-	
-	@Test
-	public void testPrepareQuery3(){
-		
-	}
-	
-	@Test
-	public void testPrepareQuery4(){
-		
-	}
-	
 	
 	@Test
 	public void testOpen()
@@ -1331,6 +1324,431 @@ public class MarkLogicRepositoryConnectionTest  extends  ConnectedRESTQA{
 		testAdminCon.remove(iter);
 		Assert.assertEquals(0L,testAdminCon.size());
 	}
+	
+	
+	
+	@Test
+	public void testGetStatements()
+		throws Exception
+	{
+		testAdminCon.add(john, fname, johnfname);
+		testAdminCon.add(john, lname, johnlname);
+		testAdminCon.add(john, homeTel, johnhomeTel);
+		testAdminCon.add(john, email, johnemail);
+		
 
+		assertTrue("Repository should contain statement", testAdminCon.hasStatement(john, homeTel, johnhomeTel, false));
+
+		RepositoryResult<Statement> result = testAdminCon.getStatements(null, homeTel, null, false);
+
+		try {
+			assertNotNull("Iterator should not be null", result);
+			assertTrue("Iterator should not be empty", result.hasNext());
+
+			while (result.hasNext()) {
+				Statement st = result.next();
+				assertNull("Statement should not be in a context ", st.getContext());
+				assertTrue("Statement predicate should be equal to name ", st.getPredicate().equals(homeTel));
+			}
+		}
+		finally {
+			result.close();
+		}
+
+		List<Statement> list = Iterations.addAll(testAdminCon.getStatements(null, john, null, false),
+				new ArrayList<Statement>());
+
+		assertNull("List should be null", list);
+		assertTrue("List should not be empty", list.isEmpty());
+	}
+
+	@Test
+	public void testGetStatementsMalformedTypedLiteral()
+		throws Exception
+	{
+	
+		Literal invalidIntegerLiteral = vf.createLiteral("four", XMLSchema.INTEGER);
+		try {
+			testAdminCon.add(micah, homeTel, invalidIntegerLiteral, dirgraph);
+
+			RepositoryResult<Statement> statements = testAdminCon.getStatements(micah, homeTel, null, true);
+
+			assertNotNull(statements);
+			assertTrue(statements.hasNext());
+			Statement st = statements.next();
+			assertTrue(st.getObject() instanceof Literal);
+			assertTrue(st.getObject().equals(invalidIntegerLiteral));
+		}
+		catch (RepositoryException e) {
+			// shouldn't happen
+			fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testGetStatementsMalformedLanguageLiteral()
+		throws Exception
+	{
+		Literal invalidLanguageLiteral = vf.createLiteral("the number four", "japanese");
+		try {
+			testAdminCon.add(micah, homeTel, invalidLanguageLiteral,dirgraph);
+
+			RepositoryResult<Statement> statements = testAdminCon.getStatements(null, null, null, true,dirgraph);
+
+			assertNotNull(statements);
+			assertTrue(statements.hasNext());
+			Statement st = statements.next();
+			assertTrue(st.getObject() instanceof Literal);
+			assertTrue(st.getObject().equals(invalidLanguageLiteral));
+		}
+		catch (RepositoryException e) {
+			e.printStackTrace();
+			// shouldn't happen
+			fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testGetStatementsInSingleContext()
+		throws Exception
+	{
+		testAdminCon.begin();
+		testAdminCon.add(micah, lname, micahlname, dirgraph1);
+		testAdminCon.add(micah, fname, micahfname, dirgraph1);
+		testAdminCon.add(micah, homeTel, micahhomeTel, dirgraph1);
+		
+		testAdminCon.add(john, fname, johnfname, dirgraph);
+		testAdminCon.add(john, lname, johnlname, dirgraph);
+		testAdminCon.add(john, homeTel, johnhomeTel, dirgraph);
+	
+		testAdminCon.add(dirgraph, vf.createURI("TYPE"), vf.createLiteral("Directory Graph"));
+		testAdminCon.add(dirgraph1, vf.createURI("TYPE"), vf.createLiteral("Directory Graph 1"));
+		
+		testAdminCon.commit();
+		assertTrue("Repository should contain statement", testAdminCon.hasStatement(john, homeTel, johnhomeTel, false));
+		assertTrue("Repository should contain statement in dirgraph1",
+				testAdminCon.hasStatement(micah, lname, micahlname, false, dirgraph1));
+		assertFalse("Repository should not contain statement in context2",
+				testAdminCon.hasStatement(micah, lname, micahlname, false, dirgraph));
+
+		// Check handling of getStatements without context IDs
+		RepositoryResult<Statement> result = testAdminCon.getStatements(micah, lname, null, false, dirgraph1);
+		try {
+			while (result.hasNext()) {
+				Statement st = result.next();
+				assertThat(st.getSubject(), is(equalTo((Resource)micah)));
+				assertThat(st.getPredicate(), is(equalTo(lname)));
+				assertThat(st.getObject(), is(equalTo((Value)micahlname)));
+				assertThat(st.getContext(), is(equalTo((Resource)dirgraph1)));
+			}
+		}
+		finally {
+			result.close();
+		}
+
+		// Check handling of getStatements with a known context ID
+		result = testAdminCon.getStatements(null, null, null, false, dirgraph);
+		try {
+			while (result.hasNext()) {
+				Statement st = result.next();
+				assertThat(st.getContext(), is(equalTo((Resource)dirgraph)));
+			}
+		}
+		finally {
+			result.close();
+		}
+
+		// Check handling of getStatements with an unknown context ID
+		result = testAdminCon.getStatements(null, null, null, false, vf.createURI("unknownContext"));
+		try {
+			assertThat(result, is(notNullValue()));
+			assertThat(result.hasNext(), is(equalTo(false)));
+		}
+		finally {
+			result.close();
+		}
+
+		List<Statement> list = Iterations.addAll(testAdminCon.getStatements(null, lname, null, false, dirgraph1),
+				new ArrayList<Statement>());
+		assertNotNull("List should not be null", list);
+		assertFalse("List should not be empty", list.isEmpty());
+	}
+
+	@Test
+	public void testGetStatementsInMultipleContexts()
+		throws Exception
+	{
+		
+		testAdminCon.begin();
+		testAdminCon.add(micah, lname, micahlname, dirgraph1);
+		testAdminCon.add(micah, fname, micahfname, dirgraph1);
+		testAdminCon.add(micah, homeTel, micahhomeTel, dirgraph1);
+		
+
+		// get statements with either no context or dirgraph1
+		CloseableIteration<? extends Statement, RepositoryException> iter = testAdminCon.getStatements(null, null,
+				null, false, null, dirgraph1);
+
+		try {
+			int count = 0;
+			while (iter.hasNext()) {
+				count++;
+				Statement st = iter.next();
+				assertThat(st.getContext(), anyOf(is(nullValue(Resource.class)), is(equalTo((Resource)dirgraph1))));
+			}
+
+			assertEquals("there should be three statements", 3, count);
+		}
+		finally {
+			iter.close();
+		}
+
+		// get all statements with dirgraph1 or dirgraph. Note that context1 and
+		// context2 are both known
+		// in the store because they have been created through the store's own
+		// value vf.
+		iter = testAdminCon.getStatements(null, null, null, false, dirgraph1, dirgraph);
+
+		try {
+			int count = 0;
+			while (iter.hasNext()) {
+				count++;
+				Statement st = iter.next();
+				// we should have _only_ statements from context2
+				assertThat(st.getContext(), is(equalTo((Resource)dirgraph1)));
+			}
+			assertEquals("there should be two statements", 3, count);
+		}
+		finally {
+			iter.close();
+		}
+
+		// get all statements with unknownContext or context2.
+		iter = testAdminCon.getStatements(null, null, null, false, vfWrite.createURI("unknownContext"), dirgraph1);
+
+		try {
+			int count = 0;
+			while (iter.hasNext()) {
+				count++;
+			}
+			assertEquals("there should be two statements", 0, count);
+		}
+		finally {
+			iter.close();
+		}
+
+		// add statements to context1
+		testAdminCon.begin();
+		testAdminCon.add(john, fname, johnfname, dirgraph);
+		testAdminCon.add(john, lname, johnlname, dirgraph);
+		testAdminCon.add(john, homeTel, johnhomeTel, dirgraph);
+		testAdminCon.commit();
+
+		iter = testAdminCon.getStatements(null, null, null, false, dirgraph);
+		try {
+			assertThat(iter, is(notNullValue()));
+			assertThat(iter.hasNext(), is(equalTo(true)));
+		}
+		finally {
+			iter.close();
+		}
+
+		// get statements with either no context or context2
+		iter = testAdminCon.getStatements(null, null, null, false, null, dirgraph);
+		try {
+			int count = 0;
+			while (iter.hasNext()) {
+				count++;
+				Statement st = iter.next();
+				assertThat(st.getContext(), anyOf(is(nullValue(Resource.class)), is(equalTo((Resource)dirgraph))));
+			}
+			assertEquals("there should be four statements", 3, count);
+		}
+		finally {
+			iter.close();
+		}
+
+		// get all statements with context1 or context2
+		iter = testAdminCon.getStatements(null, null, null, false, dirgraph, dirgraph1);
+
+		try {
+			int count = 0;
+			while (iter.hasNext()) {
+				count++;
+				Statement st = iter.next();
+				assertThat(st.getContext(),
+						anyOf(is(equalTo((Resource)dirgraph)), is(equalTo((Resource)dirgraph1))));
+			}
+			assertEquals("there should be four statements", 7, count);
+		}
+		finally {
+			iter.close();
+		}
+	}
+	
+	@Test
+	public void testPrepareQuery1() throws Exception {
+		testAdminCon.add(MarkLogicRepositoryConnectionTest.class.getResourceAsStream(TEST_DIR_PREFIX + "companies_100.ttl"), "",
+				RDFFormat.TURTLE);
+		Assert.assertEquals(testAdminCon.size(), 1600L);
+		
+		StringBuilder queryBuilder = new StringBuilder(128);
+		queryBuilder.append("PREFIX demor: <http://demo/resource#>");
+		queryBuilder.append(" PREFIX demov: <http://demo/verb#>");
+		queryBuilder.append(" PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>");
+		queryBuilder.append(" SELECT (COUNT(?company) AS ?total)");
+		queryBuilder.append(" WHERE { ");
+		queryBuilder.append("  ?company a vcard:Organization .");
+		queryBuilder.append("  ?company demov:industry ?industry .");
+		queryBuilder.append("  ?company vcard:hasAddress/vcard:postal-code ?zip .");
+		queryBuilder.append("  ?company vcard:hasAddress/vcard:postal-code ?whatcode ");
+		queryBuilder.append(" } ");
+		
+
+		Query query = testAdminCon.prepareQuery(QueryLanguage.SPARQL, queryBuilder.toString());
+		query.setBinding("whatcode", vf.createLiteral("33333"));
+		TupleQueryResult result = null;
+        if (query instanceof TupleQuery) {
+            result = ((TupleQuery) query).evaluate();
+        
+        }
+		
+		try {
+			assertThat(result, is(notNullValue()));
+		
+			while (result.hasNext()) {
+				BindingSet solution = result.next();
+				assertThat(solution.hasBinding("total"), is(equalTo(true)));
+				Value totalResult = solution.getValue("total");
+				Assert.assertEquals(vf.createLiteral("12",XMLSchema.UNSIGNED_LONG),totalResult);
+				
+			}
+		}
+		finally {
+			result.close();
+		}
+	}
+
+	@Test
+	public void testPrepareQuery2() throws Exception{
+		
+		Reader ir = new BufferedReader(new InputStreamReader(MarkLogicRepositoryConnectionTest.class.getResourceAsStream(TEST_DIR_PREFIX + "property-paths.ttl")));
+		testAdminCon.add(ir, "", RDFFormat.TURTLE, null);
+		
+		StringBuilder queryBuilder = new StringBuilder(128);
+		queryBuilder.append(" prefix : <http://learningsparql.com/ns/papers#> ");
+		queryBuilder.append(" prefix c: <http://learningsparql.com/ns/citations#>");
+		queryBuilder.append(" SELECT ?s");
+		queryBuilder.append(" WHERE {  ");
+		queryBuilder.append(" ?s ^c:cites :paperK2 . ");
+		queryBuilder.append(" FILTER (?s != :paperK2)");
+		queryBuilder.append(" } ");
+		queryBuilder.append(" ORDER BY ?s ");
+		
+		Query query = testAdminCon.prepareQuery(queryBuilder.toString());
+		query.setBinding("whatcode", vf.createLiteral("33333"));
+		TupleQueryResult result = null;
+        if (query instanceof TupleQuery) {
+            result = ((TupleQuery) query).evaluate();
+        
+        }
+		
+		try {
+			assertThat(result, is(notNullValue()));
+		
+			while (result.hasNext()) {
+				BindingSet solution = result.next();
+				assertThat(solution.hasBinding("s"), is(equalTo(true)));
+				Value totalResult = solution.getValue("s");
+				Assert.assertEquals(vf.createURI("http://learningsparql.com/ns/papers#paperJ"),totalResult);
+				
+			}
+		}
+		finally {
+			result.close();
+		}
+	}
+	
+	@Test
+	public void testPrepareQuery3() throws Exception{
+
+		
+		Statement st1 = vf.createStatement(john, fname, johnfname);
+		Statement st2 = vf.createStatement(john, lname, johnlname);
+		Statement st3 = vf.createStatement(john, homeTel, johnhomeTel);
+				
+		
+		testWriterCon.add(st1,dirgraph);
+		testWriterCon.add(st2,dirgraph);
+		testWriterCon.add(st3,dirgraph);
+		
+		
+		Assert.assertEquals(3, testWriterCon.size(dirgraph));
+				
+		String query = " DESCRIBE  <http://marklogicsparql.com/id#1111>  ";
+		Query queryObj = testReaderCon.prepareQuery(query, "http://marklogicsparql.com/id");
+		GraphQueryResult result = null;
+		
+        if (queryObj instanceof GraphQuery) {
+            result = ((GraphQuery) queryObj).evaluate();
+        
+        }
+		
+
+		Literal [] expectedObjectresult = {johnfname, johnlname, johnhomeTel};
+		URI []  expectedPredicateresult = {fname, lname, homeTel};
+		int i = 0;
+	
+		try {
+			assertThat(result, is(notNullValue()));
+			assertThat(result.hasNext(), is(equalTo(true)));
+			while (result.hasNext()) {
+				Statement st = result.next();
+				URI subject = (URI) st.getSubject();
+				Assert.assertEquals(subject, john);
+				URI predicate = st.getPredicate();
+				Assert.assertEquals(predicate, expectedPredicateresult[i]);
+				Value object = st.getObject();
+				Assert.assertEquals(object, expectedObjectresult[i]);
+				i++;
+			}
+		}
+		finally {
+			result.close();
+		}
+	
+	
+		
+	}
+	
+	@Test
+	public void testPrepareQuery4(){
+		
+	}
+	
+	@Test
+	public void testPagination(){
+		
+	}
+	
+	@Test
+	public void  testPrepareNonSparql(){
+		
+	}
+	
+	@Test
+	public void  testPrepareInvalidSparql(){
+		
+	}
+	
+	@Test
+	public void  testUnsupportedIsolationLevel(){
+		
+	}
+	
+	@Test
+	public void testNoUpdateRole(){
+		
+	}
 	
 }
