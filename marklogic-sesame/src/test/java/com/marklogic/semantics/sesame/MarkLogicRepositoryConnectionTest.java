@@ -25,6 +25,7 @@ import info.aduna.iteration.ConvertingIteration;
 import info.aduna.iteration.ExceptionConvertingIteration;
 import info.aduna.iteration.Iteration;
 import org.junit.*;
+import org.junit.rules.ExpectedException;
 import org.openrdf.model.*;
 import org.openrdf.model.impl.ValueFactoryImpl;
 import org.openrdf.model.vocabulary.RDF;
@@ -56,6 +57,9 @@ import java.util.Properties;
  */
 // @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
+
+    @Rule
+    public ExpectedException exception = ExpectedException.none();
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -1124,7 +1128,7 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
 
     }
 
-    //https://github.com/marklogic/marklogic-sesame/issues/66
+    // https://github.com/marklogic/marklogic-sesame/issues/66
     @Test
     public void testRemoveStatementIteration()
             throws Exception
@@ -1149,7 +1153,7 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
         Assert.assertEquals(0L,conn.size(context1));
     }
 
-    //https://github.com/marklogic/marklogic-sesame/issues/68
+    // https://github.com/marklogic/marklogic-sesame/issues/68
     @Test
     public void getStatementWithNullContext()
             throws Exception
@@ -1175,7 +1179,7 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
         conn.clear(context1);
     }
 
-    //https://github.com/marklogic/marklogic-sesame/issues/61
+    // https://github.com/marklogic/marklogic-sesame/issues/61
     @Test
     public void removeWithNullObject()
             throws Exception
@@ -1199,5 +1203,18 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
         conn.remove(alice, age, null, context1);
         Assert.assertEquals(1L, conn.size(context1));
         conn.remove(alice, null, alicesName, context1);
+    }
+
+    // https://github.com/marklogic/marklogic-sesame/issues/63
+    @Test
+    public void addWithNull()
+            throws Exception
+    {
+        ValueFactory f= conn.getValueFactory();
+        final URI alice = f.createURI("http://example.org/people/alice");
+        URI name = f.createURI("http://example.org/ontology/name");
+
+        exception.expect(AssertionError.class);
+        Statement st = f.createStatement(alice, name, null);
     }
 }
