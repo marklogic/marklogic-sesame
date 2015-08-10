@@ -20,6 +20,7 @@
 package com.marklogic.semantics.sesame.client;
 
 import com.marklogic.client.Transaction;
+import com.marklogic.semantics.sesame.MarkLogicSesameException;
 import com.marklogic.semantics.sesame.MarkLogicTransactionException;
 import org.apache.commons.io.input.ReaderInputStream;
 import org.openrdf.model.Resource;
@@ -131,7 +132,7 @@ public class MarkLogicClient {
 	}
 
 	//add
-    public void sendAdd(File file, String baseURI, RDFFormat dataFormat, Resource... contexts) {
+    public void sendAdd(File file, String baseURI, RDFFormat dataFormat, Resource... contexts) throws MarkLogicSesameException {
 		getClient().performAdd(file, baseURI, dataFormat, this.tx, contexts);
     }
 	public void sendAdd(InputStream in, String baseURI, RDFFormat dataFormat, Resource... contexts){
