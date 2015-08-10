@@ -269,9 +269,12 @@ public class MarkLogicClientImpl {
 
         for (int i = 0; i < contexts.length; i++)
         {
-            sb.append("GRAPH <"+ contexts[i].stringValue()+"> {<"+subject.stringValue()+"> <"+predicate.stringValue()+"> "+ob.toString()+" .} ");
+            if(contexts[i] != null) {
+                sb.append("GRAPH <"+ contexts[i].stringValue()+"> {<"+subject.stringValue()+"> <"+predicate.stringValue()+"> "+ob.toString()+" .} ");
+            }else{
+                //sb.append("OPTIONAL {GRAPH ?ctx {<"+subject.stringValue()+"> <"+predicate.stringValue()+"> "+ob.toString()+" .} }");
+            }
         }
-
         sb.append("}");
         SPARQLQueryDefinition qdef = sparqlManager.newQueryDefinition(sb.toString());
         sparqlManager.executeUpdate(qdef, tx);
@@ -297,7 +300,11 @@ public class MarkLogicClientImpl {
 
         for (int i = 0; i < contexts.length; i++)
         {
-            sb.append("GRAPH <"+ contexts[i].stringValue()+"> {<"+subject.stringValue()+"> <"+predicate.stringValue()+"> "+ob.toString()+" .} ");
+            if(contexts[i] != null) {
+                sb.append("GRAPH <"+ contexts[i].stringValue()+"> {<"+subject.stringValue()+"> <"+predicate.stringValue()+"> "+ob.toString()+" .} ");
+            }else{
+                //sb.append("OPTIONAL {GRAPH ?ctx {<"+subject.stringValue()+"> <"+predicate.stringValue()+"> "+ob.toString()+" .} }");
+            }
         }
         sb.append("}");
         SPARQLQueryDefinition qdef = sparqlManager.newQueryDefinition(sb.toString());

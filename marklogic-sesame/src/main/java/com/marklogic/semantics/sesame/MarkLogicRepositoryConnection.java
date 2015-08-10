@@ -249,10 +249,13 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
                 StringBuilder sb= new StringBuilder();
                 if(contexts.length !=0){
                     sb.append("SELECT * WHERE { ");
-
                     for (int i = 0; i < contexts.length; i++)
                     {
-                        sb.append("GRAPH <"+ contexts[i].stringValue()+"> {?s ?p ?o .} ");
+                        if(contexts[i] != null) {
+                            sb.append("GRAPH <" + contexts[i].stringValue() + "> {?s ?p ?o .} ");
+                        }else{
+                            //sb.append("OPTIONAL { GRAPH ?ctx { ?s ?p ?o } }");
+                        }
                     }
                     sb.append("}");
                 }else {
@@ -322,9 +325,12 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
             if(contexts.length !=0) {
                 //if (baseURI != null) sb.append("BASE <" + baseURI + ">\n");
                 sb.append("ASK { ");
-
                 for (int i = 0; i < contexts.length; i++) {
-                    sb.append("GRAPH <" + contexts[i].stringValue() + "> {<" + subject.stringValue() + "> <" + predicate.stringValue() + "> " + ob.toString() + " .} ");
+                    if(contexts[i] != null) {
+                        sb.append("GRAPH <" + contexts[i].stringValue() + "> {?s ?p "+ob.toString()+" .} ");
+                    }else{
+                        //sb.append("OPTIONAL { GRAPH ?ctx { ?s ?p "+ob.toString()+" } }");
+                    }
                 }
                 sb.append("}");
             }else{
@@ -364,7 +370,11 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
                 sb.append("CONSTRUCT {?s ?p "+ob.toString()+"} WHERE {");
                 if(contexts.length !=0) {
                     for (int i = 0; i < contexts.length; i++) {
-                        sb.append("GRAPH <" + contexts[i].stringValue() + "> {?s ?p " + ob.toString() + " .} ");
+                        if(contexts[i] != null) {
+                            sb.append("GRAPH <" + contexts[i].stringValue() + "> {?s ?p "+ob.toString()+" .} ");
+                        }else{
+                            //sb.append("OPTIONAL { GRAPH ?ctx { ?s ?p "+ob.toString()+" } }");
+                        }
                     }
                     sb.append("}");
                 }else{
@@ -374,8 +384,11 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
                 sb.append("CONSTRUCT {?s ?p ?o} WHERE {");
                 if(contexts.length !=0) {
                     for (int i = 0; i < contexts.length; i++) {
-                        sb.append("GRAPH <" + contexts[i].stringValue() + "> {?s ?p " + ob.toString() + " .} ");
-                    }
+                        if(contexts[i] != null) {
+                            sb.append("GRAPH <" + contexts[i].stringValue() + "> {?s ?p "+ob.toString()+" .} ");
+                        }else{
+                            //sb.append("OPTIONAL { GRAPH ?ctx { ?s ?p "+ob.toString()+" } }");
+                        }                    }
                     sb.append("}");
                 }else{
                     sb.append("?s ?p "+ob.toString()+" }");
@@ -408,8 +421,11 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
 
                 for (int i = 0; i < contexts.length; i++)
                 {
-                    sb.append("GRAPH <"+ contexts[i].stringValue()+"> {?s ?p ?o .} ");
-                }
+                    if(contexts[i] != null) {
+                        sb.append("GRAPH <" + contexts[i].stringValue() + "> {?s ?p ?o .} ");
+                    }else{
+                        //sb.append("OPTIONAL { GRAPH ?ctx { ?s ?p ?o } }");
+                    }                }
                 sb.append("}");
             }else {
                 sb.append(EVERYTHING_WITH_GRAPH);
