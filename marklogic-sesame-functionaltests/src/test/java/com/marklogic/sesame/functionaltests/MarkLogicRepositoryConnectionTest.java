@@ -58,6 +58,7 @@ import org.openrdf.query.Query;
 import org.openrdf.query.QueryLanguage;
 import org.openrdf.query.TupleQuery;
 import org.openrdf.query.TupleQueryResult;
+import org.openrdf.query.UnsupportedQueryLanguageException;
 import org.openrdf.repository.Repository;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
@@ -78,6 +79,7 @@ import com.marklogic.semantics.sesame.MarkLogicRepository;
 import com.marklogic.semantics.sesame.MarkLogicRepositoryConnection;
 import com.marklogic.semantics.sesame.config.MarkLogicRepositoryConfig;
 import com.marklogic.semantics.sesame.config.MarkLogicRepositoryFactory;
+import com.marklogic.semantics.sesame.query.MarkLogicTupleQuery;
 import com.marklogic.sesame.functionaltests.util.ConnectedRESTQA;
 import com.marklogic.sesame.functionaltests.util.StatementIterable;
 import com.marklogic.sesame.functionaltests.util.StatementIterator;
@@ -1714,28 +1716,175 @@ public class MarkLogicRepositoryConnectionTest  extends  ConnectedRESTQA{
 		finally {
 			result.close();
 		}
+	}
 	
-	
+	@Test
+	public void testPrepareQuery4() throws Exception{
+		
+		URL url = MarkLogicRepositoryConnectionTest.class.getResource(TEST_DIR_PREFIX+"tigers.ttl");
+		testAdminCon.add(url, "", RDFFormat.TURTLE, graph1);
+		Assert.assertEquals(107L, testAdminCon.size());
+			
+		String query1 = "ASK "+
+				"WHERE"+ 
+				"{"+
+				" ?s <#position> ?o."+
+				 "}";
+
+		Query bq = testAdminCon.prepareQuery(query1, "http://marklogic.com/baseball/players");
+		bq.setBinding("o", vf.createLiteral("pitcher"));
+		boolean result1	= ((BooleanQuery)bq).evaluate();
+		Assert.assertTrue(result1);	
 		
 	}
 	
 	@Test
-	public void testPrepareQuery4(){
+	public void testPagination() throws Exception{
+		
+		URL url = MarkLogicRepositoryConnectionTest.class.getResource(TEST_DIR_PREFIX+"tigers.ttl");
+		testAdminCon.add(url, "", RDFFormat.TURTLE, graph1);
+		StringBuilder queryBuilder = new StringBuilder(128);
+		queryBuilder.append(" PREFIX  bb: <http://marklogic.com/baseball/players#> ");
+		queryBuilder.append(" PREFIX  r: <http://marklogic.com/baseball/rules#> ");
+		queryBuilder.append(" SELECT ?id ?lastname  ");
+		queryBuilder.append("  {  ");
+		queryBuilder.append(" ?id bb:lastname ?lastname. ");
+		queryBuilder.append(" } ");
+		queryBuilder.append(" ORDER BY ?lastname");
+		
+		Query query = testAdminCon.prepareQuery(queryBuilder.toString());
+		
+		TupleQueryResult result1 = ((MarkLogicTupleQuery) query).evaluate(1,2);
+		String [] expLname = {"Ausmus","Avila","Bernard","Cabrera","Carrera","Castellanos","Holaday","Joyner","Lamont","Nathan","Verlander"};
+		String [] expID ={"http://marklogic.com/baseball/players#157", "http://marklogic.com/baseball/players#120", "http://marklogic.com/baseball/players#130", "http://marklogic.com/baseball/players#123", "http://marklogic.com/baseball/players#131", "http://marklogic.com/baseball/players#124", "http://marklogic.com/baseball/players#121", "http://marklogic.com/baseball/players#159", "http://marklogic.com/baseball/players#158", "http://marklogic.com/baseball/players#107","http://marklogic.com/baseball/players#119"};
+		int i =0;
+		while (result1.hasNext()) {
+			BindingSet solution = result1.next();
+			assertThat(solution.hasBinding("lastname"), is(equalTo(true)));
+			Value totalResult = solution.getValue("lastname");
+			Assert.assertEquals(expLname[i],totalResult.stringValue());
+			i++;
+		}
+		Assert.assertEquals(2, i);
+		
+		i =10;
+		TupleQueryResult result2 = ((MarkLogicTupleQuery) query).evaluate(11,3);
+		while (result2.hasNext()) {
+			BindingSet solution = result2.next();
+			assertThat(solution.hasBinding("lastname"), is(equalTo(true)));
+			Value totalResult = solution.getValue("lastname");
+			Assert.assertEquals(expLname[i],totalResult.stringValue());
+			logger.debug("String values : "+ expLname[i] );
+			i++;
+		}
+		Assert.assertEquals(1, i-10);
+		
+		i =0;
+		TupleQueryResult result3 = ((MarkLogicTupleQuery) query).evaluate(-2, -4);
+		while (result3.hasNext()) {
+			BindingSet solution = result3.next();
+			assertThat(solution.hasBinding("lastname"), is(equalTo(true)));
+			Value totalResult = solution.getValue("lastname");
+			Assert.assertEquals(expLname[i],totalResult.stringValue());
+			logger.debug("String values : "+ expLname[i] );
+			i++;
+		}
+		Assert.assertEquals(11, i);
+		
+		i = 0;
+		TupleQueryResult result4 = ((MarkLogicTupleQuery) query).evaluate(-2,6);
+		while (result4.hasNext()) {
+			BindingSet solution = result4.next();
+			assertThat(solution.hasBinding("lastname"), is(equalTo(true)));
+			Value totalResult = solution.getValue("lastname");
+			Assert.assertEquals(expLname[i],totalResult.stringValue());
+			logger.debug("String values : "+ expLname[i] );
+			i++;
+		}
+		Assert.assertEquals(6, i);
+		
+		i = 2;
+		TupleQueryResult result5 = ((MarkLogicTupleQuery) query).evaluate(3,-2);
+		while (result5.hasNext()) {
+			BindingSet solution = result5.next();
+			assertThat(solution.hasBinding("lastname"), is(equalTo(true)));
+			Value totalResult = solution.getValue("lastname");
+			Assert.assertEquals(expLname[i],totalResult.stringValue());
+			logger.debug("String values : "+ expLname[i] );
+			i++;
+		}
+		Assert.assertEquals(11, i);        
+        
+	}
+	
+	@Test
+	public void  testPrepareNonSparql() throws Exception{
+		
+		URL url = MarkLogicRepositoryConnectionTest.class.getResource(TEST_DIR_PREFIX+"tigers.ttl");
+		testAdminCon.add(url, "", RDFFormat.TURTLE, graph1);
+		Assert.assertEquals(107L, testAdminCon.size());
+			
+		String query1 = "ASK "+
+				"WHERE"+ 
+				"{"+
+				" ?s <#position> ?o."+
+				 "}";
+
+		try{
+			
+			 testAdminCon.prepareGraphQuery(QueryLanguage.SERQL, query1, "http://marklogic.com/baseball/players").evaluate();
+		}
+		catch(UnsupportedQueryLanguageException ex){
+			Assert.assertEquals("Unsupported query language SeRQL", ex.getMessage());
+		}
+		
+		try{
+			
+			testAdminCon.prepareTupleQuery(QueryLanguage.SERQO, query1).evaluate(1,2);
+		}
+		catch(UnsupportedQueryLanguageException ex1){
+			Assert.assertEquals("Unsupported query language SeRQO", ex1.getMessage());
+		}
+		try{
+			
+			testAdminCon.prepareBooleanQuery(QueryLanguage.SERQL, query1).evaluate();
+		}
+		catch(UnsupportedQueryLanguageException ex1){
+			Assert.assertEquals("Unsupported query language SeRQL", ex1.getMessage());
+		}
+		try{
+			
+			testAdminCon.prepareUpdate(QueryLanguage.SERQO, query1);
+		}
+		catch(UnsupportedQueryLanguageException ex1){
+			Assert.assertEquals("Unsupported query language SeRQO", ex1.getMessage());
+		}
+			
+		try{
+			testAdminCon.prepareQuery(QueryLanguage.SERQL, query1);
+			
+		}
+		catch(UnsupportedQueryLanguageException ex1){
+			Assert.assertEquals("Unsupported query language SeRQL", ex1.getMessage());
+		}
 		
 	}
 	
 	@Test
-	public void testPagination(){
+	public void  testPrepareInvalidSparql() throws Exception{
+		Statement st1 = vf.createStatement(john, fname, johnfname);
+		testWriterCon.add(st1,dirgraph);
+		Assert.assertEquals(1, testWriterCon.size(dirgraph));
+				
+		String query = " DESCRIBE  <http://marklogicsparql.com/id#1111>  ";
 		
-	}
-	
-	@Test
-	public void  testPrepareNonSparql(){
-		
-	}
-	
-	@Test
-	public void  testPrepareInvalidSparql(){
+		try{
+			boolean tq = testReaderCon.prepareBooleanQuery(query, "http://marklogicsparql.com/id").evaluate();
+			
+		}
+		catch(IllegalArgumentException ex1){
+			Assert.assertEquals("Unsupported query language SeRQL", ex1.getMessage());
+		}
 		
 	}
 	
@@ -1746,6 +1895,16 @@ public class MarkLogicRepositoryConnectionTest  extends  ConnectedRESTQA{
 	
 	@Test
 	public void testNoUpdateRole(){
+		
+	}
+	
+	@Test
+	public void testRuleSets(){
+		
+	}
+	
+	@Test
+	public void testConstrainingQueries(){
 		
 	}
 	
