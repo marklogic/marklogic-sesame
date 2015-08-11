@@ -530,7 +530,11 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     }
     @Override
     public void add(Resource subject, URI predicate, Value object, Resource... contexts) throws RepositoryException {
+        if(contexts!=null) {
             client.sendAdd(null, subject, predicate, object, contexts);
+        }else{
+            add(subject,predicate,object);
+        }
     }
     @Override
     public void add(Statement st, Resource... contexts) throws RepositoryException {
@@ -555,7 +559,11 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     // remove
     @Override
     public void remove(Resource subject, URI predicate, Value object, Resource... contexts) throws RepositoryException {
-        client.sendRemove(null,subject,predicate,object,contexts);
+        if(contexts!=null) {
+            client.sendRemove(null, subject, predicate, object, contexts);
+        }else{
+            remove(subject,predicate,object);
+        }
     }
     @Override
     public void remove(Statement st, Resource... contexts) throws RepositoryException {

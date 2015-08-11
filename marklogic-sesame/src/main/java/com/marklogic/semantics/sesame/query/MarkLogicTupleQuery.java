@@ -35,6 +35,9 @@ public class MarkLogicTupleQuery extends MarkLogicQuery implements TupleQuery,Ma
 
     protected final Logger logger = LoggerFactory.getLogger(MarkLogicTupleQuery.class);
 
+    protected final long start = 1;
+    protected final long pageLength = 50;
+
     public MarkLogicTupleQuery(MarkLogicClient client, SPARQLQueryBindingSet bindingSet, String baseUri, String queryString) {
         super(client, bindingSet, baseUri, queryString);
     }
@@ -42,7 +45,7 @@ public class MarkLogicTupleQuery extends MarkLogicQuery implements TupleQuery,Ma
     //evaluate
     @Override
     public TupleQueryResult evaluate() throws QueryEvaluationException {
-        return evaluate(-1,-1);
+        return evaluate(this.start,this.pageLength);
     }
     public TupleQueryResult evaluate(long start, long pageLength)
             throws QueryEvaluationException {

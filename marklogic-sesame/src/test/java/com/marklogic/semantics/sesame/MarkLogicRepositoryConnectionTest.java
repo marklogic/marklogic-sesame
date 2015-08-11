@@ -600,6 +600,7 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
         conn.clear(context1, context2);
     }
 
+    // https://github.com/marklogic/marklogic-sesame/issues/65
     @Test
     public void testAddMalformedTurtle() throws Exception {
         File inputFile = new File("src/test/resources/testdata/malformed-literals.ttl");
@@ -609,6 +610,7 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
         conn.add(inputFile, baseURI, RDFFormat.TURTLE, context1);
         conn.clear(context1);
     }
+
     @Test
     @Ignore
     public void testAddGZippedRDF() throws Exception {
@@ -1101,7 +1103,7 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
                 @Override
                 public void handleSolution(BindingSet bindingSet) {
                     Resource subject = f.createURI("http://www.w3.org/People/Berners-Lee/card#i");
-                    Statement st = conn.getValueFactory().createStatement(subject, (URI) bindingSet.getValue("p"), bindingSet.getValue("o"));
+                    Statement st = conn.getValueFactory().createStatement(subject,(URI) bindingSet.getValue("p"), bindingSet.getValue("o"));
                     try {
                         conn.add(st, context1);
                     } catch (RepositoryException e) {
@@ -1225,5 +1227,26 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
 
         exception.expect(AssertionError.class);
         Statement st = f.createStatement(alice, name, null);
+    }
+
+    // https://github.com/marklogic/marklogic-sesame/issues/70
+    @Test
+    public void testAddWithNullContext() throws Exception {
+        ValueFactory f= conn.getValueFactory();
+        Resource context1 = f.createURI("http://marklogic.com/test/context1");
+        final URI william = f.createURI("http://example.org/people/william");
+        URI name = f.createURI("http://example.org/ontology/name");
+        URI age = f.createURI("http://example.org/ontology/age");
+        Literal williamName = f.createLiteral("William");
+        Literal williamAge = f.createLiteral(22);
+
+        Statement st1 = f.createStatement(william, name, williamName);
+        Statement st2 = f.createStatement(william, age, williamAge);
+
+        conn.add(st1, null);
+        conn.add(st2, null);
+
+        conn.remove(william, age, williamName);
+        conn.remove(william, name, williamAge);
     }
 }
