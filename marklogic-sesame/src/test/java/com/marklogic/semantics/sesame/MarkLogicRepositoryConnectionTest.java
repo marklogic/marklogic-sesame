@@ -19,6 +19,7 @@
  */
 package com.marklogic.semantics.sesame;
 
+import info.aduna.iteration.CloseableIteration;
 import info.aduna.iteration.Iteration;
 import info.aduna.iteration.Iterations;
 import org.junit.*;
@@ -780,7 +781,6 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
 
     // https://github.com/marklogic/marklogic-sesame/issues/82
     @Test
-
     public void testGetStatementWithMultipleContexts() throws Exception{
         Resource context5 = conn.getValueFactory().createURI("http://marklogic.com/test/context5");
         Resource context6 = conn.getValueFactory().createURI("http://marklogic.com/test/context6");
@@ -803,7 +803,38 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
 
         Model aboutEveryone = Iterations.addAll(statements, new LinkedHashModel());
 
-        Assert.assertEquals(4L, aboutEveryone.size());
+        Assert.assertEquals(6L, aboutEveryone.size());
         conn.clear(context5,context6);
     }
+
+    // https://github.com/marklogic/marklogic-sesame/issues/81
+    @Test
+    public void testGetStatementReturnCorrectContext() throws Exception{
+        Resource context5 = conn.getValueFactory().createURI("http://marklogic.com/test/context5");
+        Resource context6 = conn.getValueFactory().createURI("http://marklogic.com/test/context6");
+
+        ValueFactory f= conn.getValueFactory();
+
+        URI alice = f.createURI("http://example.org/people/alice");
+        URI bob = f.createURI("http://example.org/people/bob");
+        URI name = f.createURI("http://example.org/ontology/name");
+        URI person = f.createURI("http://example.org/ontology/Person");
+        Literal bobsName = f.createLiteral("Bob");
+        Literal alicesName = f.createLiteral("Alice");
+
+        conn.add(alice, RDF.TYPE, person, context5);
+        conn.add(alice, name, alicesName,context5, context6);
+        conn.add(bob, RDF.TYPE, person, context5);
+        conn.add(bob, name, bobsName, context5, context6);
+
+        CloseableIteration<? extends Statement, RepositoryException> iter = conn.getStatements(null, null, null, false, context5);
+
+
+        while(iter.hasNext()){
+            Statement st = iter.next();
+            Assert.assertEquals(context5, st.getContext());
+        }
+        conn.clear(context5,context6);
+    }
+
 }

@@ -259,7 +259,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
                             sb.append("FROM NAMED <"+DEFAULT_GRAPH_URI+">");
                         }
                     }
-                    sb.append("WHERE { GRAPH ?g { ?s ?p ?o }}");
+                    sb.append("WHERE { GRAPH ?ctx { ?s ?p ?o }}");
                 }else {
                     sb.append(EVERYTHING_WITH_GRAPH);
                 }
