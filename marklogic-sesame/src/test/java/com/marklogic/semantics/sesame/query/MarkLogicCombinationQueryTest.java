@@ -1,11 +1,12 @@
-package com.marklogic.semantics.sesame;
+package com.marklogic.semantics.sesame.query;
 
 
 import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.io.Format;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.query.*;
-import com.marklogic.semantics.sesame.query.MarkLogicBooleanQuery;
+import com.marklogic.semantics.sesame.MarkLogicRepositoryConnection;
+import com.marklogic.semantics.sesame.SesameTestBase;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;

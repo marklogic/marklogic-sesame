@@ -60,6 +60,8 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
 
     protected final Logger logger = LoggerFactory.getLogger(MarkLogicRepositoryConnection.class);
 
+    private static final String DEFAULT_GRAPH_URI = "http://marklogic.com/semantics#default-graph";
+
     private static final String EVERYTHING = "CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o }";
 
     private static final String EVERYTHING_WITH_GRAPH = "SELECT * WHERE {  ?s ?p ?o . OPTIONAL { GRAPH ?ctx { ?s ?p ?o } } }";
@@ -247,14 +249,14 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
         try {
             if (isQuadMode()) {
                 StringBuilder sb= new StringBuilder();
-                if(contexts.length !=0){
+                if(notNull(contexts) && contexts.length >0){
                     sb.append("SELECT * WHERE { ");
                     for (int i = 0; i < contexts.length; i++)
                     {
                         if(contexts[i] != null) {
                             sb.append("GRAPH <" + contexts[i].stringValue() + "> {?s ?p ?o .} ");
                         }else{
-                            //sb.append("OPTIONAL { GRAPH ?ctx { ?s ?p ?o } }");
+                            sb.append("GRAPH <"+DEFAULT_GRAPH_URI+"> {?s ?p ?o .}");
                         }
                     }
                     sb.append("}");
@@ -322,14 +324,14 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
                 ob.append("<" + object.stringValue() + "> ");
             }
             StringBuilder sb = new StringBuilder();
-            if(contexts.length !=0) {
+            if(notNull(contexts) && contexts.length>0) {
                 //if (baseURI != null) sb.append("BASE <" + baseURI + ">\n");
                 sb.append("ASK { ");
                 for (int i = 0; i < contexts.length; i++) {
                     if(contexts[i] != null) {
                         sb.append("GRAPH <" + contexts[i].stringValue() + "> {?s ?p "+ob.toString()+" .} ");
                     }else{
-                        //sb.append("OPTIONAL { GRAPH ?ctx { ?s ?p "+ob.toString()+" } }");
+                        sb.append("GRAPH <"+DEFAULT_GRAPH_URI+"> {?s ?p ?o .}");
                     }
                 }
                 sb.append("}");
@@ -368,12 +370,12 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
                 }
                     //if (baseURI != null) sb.append("BASE <" + baseURI + ">\n");
                 sb.append("CONSTRUCT {?s ?p "+ob.toString()+"} WHERE {");
-                if(contexts.length !=0) {
+                if(notNull(contexts) && contexts.length>0) {
                     for (int i = 0; i < contexts.length; i++) {
                         if(contexts[i] != null) {
                             sb.append("GRAPH <" + contexts[i].stringValue() + "> {?s ?p "+ob.toString()+" .} ");
                         }else{
-                            //sb.append("OPTIONAL { GRAPH ?ctx { ?s ?p "+ob.toString()+" } }");
+                            sb.append("GRAPH <"+DEFAULT_GRAPH_URI+"> {?s ?p "+ob.toString()+" .}");
                         }
                     }
                     sb.append("}");
@@ -382,12 +384,12 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
                 }
             }else{
                 sb.append("CONSTRUCT {?s ?p ?o} WHERE {");
-                if(contexts.length !=0) {
+                if(notNull(contexts) && contexts.length>0) {
                     for (int i = 0; i < contexts.length; i++) {
                         if(contexts[i] != null) {
                             sb.append("GRAPH <" + contexts[i].stringValue() + "> {?s ?p "+ob.toString()+" .} ");
                         }else{
-                            //sb.append("OPTIONAL { GRAPH ?ctx { ?s ?p "+ob.toString()+" } }");
+                            sb.append("GRAPH <"+DEFAULT_GRAPH_URI+"> {?s ?p "+ob.toString()+" .}");
                         }                    }
                     sb.append("}");
                 }else{
@@ -416,7 +418,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     public long size(Resource... contexts)  {
         try {
             StringBuilder sb= new StringBuilder();
-            if(contexts.length !=0){
+            if(notNull(contexts) && contexts.length>0){
                 sb.append("SELECT * WHERE { ");
 
                 for (int i = 0; i < contexts.length; i++)
@@ -424,7 +426,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
                     if(contexts[i] != null) {
                         sb.append("GRAPH <" + contexts[i].stringValue() + "> {?s ?p ?o .} ");
                     }else{
-                        //sb.append("OPTIONAL { GRAPH ?ctx { ?s ?p ?o } }");
+                        sb.append("GRAPH <"+DEFAULT_GRAPH_URI+"> {?s ?p ?o .}");
                     }                }
                 sb.append("}");
             }else {
@@ -530,11 +532,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     }
     @Override
     public void add(Resource subject, URI predicate, Value object, Resource... contexts) throws RepositoryException {
-        if(contexts!=null) {
-            client.sendAdd(null, subject, predicate, object, contexts);
-        }else{
-            add(subject,predicate,object);
-        }
+        client.sendAdd(null, subject, predicate, object, contexts);
     }
     @Override
     public void add(Statement st, Resource... contexts) throws RepositoryException {
@@ -559,11 +557,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     // remove
     @Override
     public void remove(Resource subject, URI predicate, Value object, Resource... contexts) throws RepositoryException {
-        if(contexts!=null) {
-            client.sendRemove(null, subject, predicate, object, contexts);
-        }else{
-            remove(subject,predicate,object);
-        }
+        client.sendRemove(null, subject, predicate, object, contexts);
     }
     @Override
     public void remove(Statement st, Resource... contexts) throws RepositoryException {

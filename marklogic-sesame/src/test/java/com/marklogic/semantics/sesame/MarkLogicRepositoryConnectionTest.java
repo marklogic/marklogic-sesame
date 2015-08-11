@@ -19,26 +19,18 @@
  */
 package com.marklogic.semantics.sesame;
 
-import com.marklogic.client.semantics.SPARQLRuleset;
-import com.marklogic.semantics.sesame.query.MarkLogicTupleQuery;
-import info.aduna.iteration.ConvertingIteration;
-import info.aduna.iteration.ExceptionConvertingIteration;
 import info.aduna.iteration.Iteration;
 import org.junit.*;
 import org.junit.rules.ExpectedException;
 import org.openrdf.model.*;
-import org.openrdf.model.impl.ValueFactoryImpl;
 import org.openrdf.model.vocabulary.RDF;
 import org.openrdf.query.*;
-import org.openrdf.query.resultio.sparqlxml.SPARQLResultsXMLWriter;
 import org.openrdf.repository.Repository;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.RepositoryResult;
 import org.openrdf.repository.sparql.SPARQLRepository;
 import org.openrdf.rio.RDFFormat;
-import org.openrdf.rio.RDFWriter;
-import org.openrdf.rio.Rio;
 import org.openrdf.rio.rdfxml.RDFXMLWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -125,454 +117,6 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
     }
 
     @Test
-    public void testSPARQLQueryWithPrepareQuery()
-            throws Exception {
-
-        String queryString = "select ?s ?p ?o { ?s ?p ?o } limit 1 ";
-        Query q = conn.prepareQuery(QueryLanguage.SPARQL, queryString);
-
-        if (q instanceof TupleQuery) {
-            TupleQueryResult result = ((TupleQuery) q).evaluate();
-            while (result.hasNext()) {
-                BindingSet tuple = result.next();
-                Assert.assertEquals("s", tuple.getBinding("s").getName());
-                Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#AlexandriaGeodata", tuple.getBinding("s").getValue().stringValue());
-            }
-        }
-    }
-
-    @Test
-    public void testSPARQLQuery()
-            throws Exception {
-
-        String queryString = "select * { ?s ?p ?o } limit 2 ";
-        TupleQuery tupleQuery = conn.prepareTupleQuery(QueryLanguage.SPARQL, queryString);
-        TupleQueryResult results = tupleQuery.evaluate();
-
-        Assert.assertEquals(results.getBindingNames().get(0), "s");
-        Assert.assertEquals(results.getBindingNames().get(1), "p");
-        Assert.assertEquals(results.getBindingNames().get(2), "o");
-
-        BindingSet bindingSet = results.next();
-
-        Value sV = bindingSet.getValue("s");
-        Value pV = bindingSet.getValue("p");
-        Value oV = bindingSet.getValue("o");
-
-        Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#AlexandriaGeodata", sV.stringValue());
-        Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#altitude", pV.stringValue());
-        Assert.assertEquals("0", oV.stringValue());
-
-        BindingSet bindingSet1 = results.next();
-
-        Value sV1 = bindingSet1.getValue("s");
-        Value pV1 = bindingSet1.getValue("p");
-        Value oV1 = bindingSet1.getValue("o");
-
-        Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#AmphipolisGeodata", sV1.stringValue());
-        Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#altitude", pV1.stringValue());
-        Assert.assertEquals("0", oV1.stringValue());
-    }
-
-    @Test
-    public void testPrepareTupleQueryQueryStringMethod() throws Exception{
-        String queryString = "select ?s ?p ?o { ?s ?p ?o } limit 10 ";
-        TupleQuery tupleQuery = conn.prepareTupleQuery(queryString);
-        tupleQuery = conn.prepareTupleQuery(queryString,"http://marklogic.com/test/baseuri");
-        TupleQueryResult results = tupleQuery.evaluate();
-
-        Assert.assertEquals(results.getBindingNames().get(0), "s");
-        Assert.assertEquals(results.getBindingNames().get(1), "p");
-        Assert.assertEquals(results.getBindingNames().get(2), "o");
-    }
-
-    @Test
-    public void testSPARQLQueryWithDefaultInferred()
-            throws Exception {
-
-        String queryString = "select ?s ?p ?o { ?s ?p ?o } limit 2 ";
-        TupleQuery tupleQuery = conn.prepareTupleQuery(QueryLanguage.SPARQL, queryString);
-        tupleQuery.setIncludeInferred(true);
-        TupleQueryResult results = tupleQuery.evaluate();
-        Assert.assertEquals(results.getBindingNames().get(0), "s");
-        Assert.assertEquals(results.getBindingNames().get(1), "p");
-        Assert.assertEquals(results.getBindingNames().get(2), "o");
-
-        BindingSet bindingSet = results.next();
-
-        Value sV = bindingSet.getValue("s");
-        Value pV = bindingSet.getValue("p");
-        Value oV = bindingSet.getValue("o");
-
-        Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#AlexandriaGeodata", sV.stringValue());
-        Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#altitude", pV.stringValue());
-        Assert.assertEquals("0", oV.stringValue());
-
-        BindingSet bindingSet1 = results.next();
-
-        Value sV1 = bindingSet1.getValue("s");
-        Value pV1 = bindingSet1.getValue("p");
-        Value oV1 = bindingSet1.getValue("o");
-
-        Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#AmphipolisGeodata", sV1.stringValue());
-        Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#altitude", pV1.stringValue());
-        Assert.assertEquals("0", oV1.stringValue());
-    }
-
-    @Test
-    public void testSPARQLQueryDistinct()
-            throws Exception {
-
-        try {
-            String queryString = "SELECT DISTINCT ?_ WHERE { GRAPH ?_ { ?s ?p ?o } }";
-            TupleQuery tupleQuery = conn.prepareTupleQuery(QueryLanguage.SPARQL, queryString);
-            TupleQueryResult result = tupleQuery.evaluate();
-            RepositoryResult<Resource> rr =
-                    new RepositoryResult<Resource>(
-                            new ExceptionConvertingIteration<Resource, RepositoryException>(
-                                    new ConvertingIteration<BindingSet, Resource, QueryEvaluationException>(result) {
-
-                                        @Override
-                                        protected Resource convert(BindingSet bindings)
-                                                throws QueryEvaluationException {
-                                            return (Resource) bindings.getValue("_");
-                                        }
-                                    }) {
-
-                                @Override
-                                protected RepositoryException convert(Exception e) {
-                                    return new RepositoryException(e);
-                                }
-                            });
-
-            Resource resource = rr.next();
-
-            logger.debug(resource.stringValue());
-
-        } catch (MalformedQueryException e) {
-            throw new RepositoryException(e);
-        } catch (QueryEvaluationException e) {
-            throw new RepositoryException(e);
-        }
-    }
-
-    @Test
-    public void testSPARQLQueryWithPagination()
-            throws Exception {
-        String queryString = "select ?s ?p ?o { ?s ?p ?o } limit 100 ";
-        MarkLogicTupleQuery tupleQuery = conn.prepareTupleQuery(QueryLanguage.SPARQL, queryString);
-        TupleQueryResult results = tupleQuery.evaluate(3, 1);
-
-        Assert.assertEquals(results.getBindingNames().get(0), "s");
-        Assert.assertEquals(results.getBindingNames().get(1), "p");
-        Assert.assertEquals(results.getBindingNames().get(2), "o");
-
-        BindingSet bindingSet = results.next();
-
-        Value sV = bindingSet.getValue("s");
-        Value pV = bindingSet.getValue("p");
-        Value oV = bindingSet.getValue("o");
-
-        Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#AntiochGeodata", sV.stringValue());
-        Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#altitude", pV.stringValue());
-        Assert.assertEquals("0", oV.stringValue());
-
-        Assert.assertFalse(results.hasNext());
-    }
-
-    @Test
-    public void testSPARQLQueryWithRuleset()
-            throws Exception {
-        String queryString = "select ?s ?p ?o { ?s ?p ?o } limit 100 ";
-        MarkLogicTupleQuery tupleQuery = conn.prepareTupleQuery(QueryLanguage.SPARQL, queryString);
-
-        tupleQuery.setRulesets(SPARQLRuleset.RDFS_FULL);
-        TupleQueryResult results = tupleQuery.evaluate();
-
-        Assert.assertEquals(results.getBindingNames().get(0), "s");
-        Assert.assertEquals(results.getBindingNames().get(1), "p");
-        Assert.assertEquals(results.getBindingNames().get(2), "o");
-
-        BindingSet bindingSet = results.next();
-
-        Value sV = bindingSet.getValue("s");
-        Value pV = bindingSet.getValue("p");
-        Value oV = bindingSet.getValue("o");
-
-        Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#AlexandriaGeodata", sV.stringValue());
-        Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#altitude", pV.stringValue());
-        Assert.assertEquals("0", oV.stringValue());
-
-    }
-
-    @Test
-    public void testSPARQLQueryWithResultsHandler()
-            throws Exception {
-        String queryString = "select ?s ?p ?o { ?s ?p ?o } limit 10";
-        TupleQuery tupleQuery = conn.prepareTupleQuery(QueryLanguage.SPARQL, queryString);
-
-        tupleQuery.evaluate(new TupleQueryResultHandler() {
-            @Override
-            public void startQueryResult(List<String> bindingNames) {
-                Assert.assertEquals(bindingNames.get(0), "s");
-                Assert.assertEquals(bindingNames.get(1), "p");
-                Assert.assertEquals(bindingNames.get(2), "o");
-            }
-
-            @Override
-            public void handleSolution(BindingSet bindingSet) {
-                Assert.assertEquals(bindingSet.getBinding("o").getValue().stringValue(), "0");
-            }
-
-            @Override
-            public void endQueryResult() {
-            }
-
-            @Override
-            public void handleBoolean(boolean arg0)
-                    throws QueryResultHandlerException {
-            }
-
-            @Override
-            public void handleLinks(List<String> arg0)
-                    throws QueryResultHandlerException {
-            }
-        });
-        //tupleQuery.evaluate();
-    }
-
-    @Test
-    public void testSPARQLQueryBindings()
-            throws Exception {
-
-        String queryString = "select ?s ?p ?o { ?s ?p ?o . filter (?s = ?b) filter (?p = ?c) }";
-        TupleQuery tupleQuery = conn.prepareTupleQuery(QueryLanguage.SPARQL, queryString);
-
-        tupleQuery.setBinding("b", ValueFactoryImpl.getInstance().createURI("http://semanticbible.org/ns/2006/NTNames#Jim"));
-        tupleQuery.setBinding("c", ValueFactoryImpl.getInstance().createURI("http://semanticbible.org/ns/2006/NTNames#parentOf"));
-
-        tupleQuery.removeBinding("c");
-
-        // TBD -  Assert. for confirmation of removal
-
-        Assert.assertEquals(null, tupleQuery.getBindings().getBinding("c"));
-
-        tupleQuery.clearBindings();
-
-        Assert.assertEquals(null, tupleQuery.getBindings().getBinding("b"));
-
-        tupleQuery.setBinding("b", ValueFactoryImpl.getInstance().createURI("http://semanticbible.org/ns/2006/NTNames#Jotham"));
-        tupleQuery.setBinding("c", ValueFactoryImpl.getInstance().createURI("http://semanticbible.org/ns/2006/NTNames#parentOf"));
-
-        TupleQueryResult results = tupleQuery.evaluate();
-
-        Assert.assertEquals(results.getBindingNames().get(0), "s");
-        Assert.assertEquals(results.getBindingNames().get(1), "p");
-        Assert.assertEquals(results.getBindingNames().get(2), "o");
-
-        logger.info(results.getBindingNames().toString());
-
-        Assert.assertTrue(results.hasNext());
-        BindingSet bindingSet = results.next();
-
-        Value sV = bindingSet.getValue("s");
-        Value pV = bindingSet.getValue("p");
-        Value oV = bindingSet.getValue("o");
-
-        Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#Jotham", sV.stringValue());
-        Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#parentOf", pV.stringValue());
-        Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#Ahaz", oV.stringValue());
-    }
-
-
-    @Test
-    public void testSPARQLWithWriter()
-            throws Exception {
-
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-
-        SPARQLResultsXMLWriter sparqlWriter = new SPARQLResultsXMLWriter(out);
-
-        String expected = "<?xml version='1.0' encoding='UTF-8'?>\n" +
-                "<sparql xmlns='http://www.w3.org/2005/sparql-results#'>\n" +
-                "\t<head>\n" +
-                "\t\t<variable name='s'/>\n" +
-                "\t\t<variable name='p'/>\n" +
-                "\t\t<variable name='o'/>\n" +
-                "\t</head>\n" +
-                "\t<results>\n" +
-                "\t\t<result>\n" +
-                "\t\t\t<binding name='s'>\n" +
-                "\t\t\t\t<uri>http://semanticbible.org/ns/2006/NTNames#AlexandriaGeodata</uri>\n" +
-                "\t\t\t</binding>\n" +
-                "\t\t\t<binding name='p'>\n" +
-                "\t\t\t\t<uri>http://semanticbible.org/ns/2006/NTNames#altitude</uri>\n" +
-                "\t\t\t</binding>\n" +
-                "\t\t\t<binding name='o'>\n" +
-                "\t\t\t\t<literal datatype='http://www.w3.org/2001/XMLSchema#int'>0</literal>\n" +
-                "\t\t\t</binding>\n" +
-                "\t\t</result>\n" +
-                "\t</results>\n" +
-                "</sparql>\n";
-
-        String queryString = "select * { ?s ?p ?o . } limit 1";
-        TupleQuery tupleQuery = conn.prepareTupleQuery(QueryLanguage.SPARQL, queryString);
-
-        tupleQuery.evaluate(sparqlWriter);
-
-        Assert.assertEquals(expected,out.toString());
-
-    }
-
-    @Ignore
-    public void incrementallyBuildQueryTest() throws MalformedQueryException, RepositoryException {
-
-        TupleQuery tupleQuery = conn.prepareTupleQuery(QueryLanguage.SPARQL, "");
-
-//        StringBuffer sb = new StringBuffer();
-//        sb.append("SELECT ?g ?s ?p ?o where {GRAPH ?g { ?s ?p ?o }");
-//        if (s != Node) {
-//            tupleQuery.setBinding("a", s.getURI());
-//            sb.append("FILTER (?s = ?a) ");
-//        }
-//        if (p != Node.ANY) {
-//            tupleQuery.setBinding("b", p.getURI());
-//            sb.append("FILTER (?p = ?b) ");
-//        }
-//        if (o != Node.ANY) {
-//            tupleQuery.setBinding("c",o);
-//            sb.append("FILTER (?o = ?c) ");
-//        }
-//        sb.append("}");
-//
-//        qdef.setSparql(sb.toString());
-
-    }
-
-    @Test
-    public void testConstructQuery()
-            throws Exception {
-        String queryString = "PREFIX nn: <http://semanticbible.org/ns/2006/NTNames#>\n" +
-                "PREFIX test: <http://marklogic.com#test>\n" +
-                "\n" +
-                "construct { ?s  test:test \"0\"} where  {GRAPH <http://marklogic.com/test/my-graph> {?s nn:childOf nn:Eve . }}";
-        GraphQuery graphQuery = conn.prepareGraphQuery(QueryLanguage.SPARQL, queryString);
-        GraphQueryResult results = graphQuery.evaluate();
-        Statement st1 = results.next();
-        Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#Abel", st1.getSubject().stringValue());
-        Statement st2 = results.next();
-        Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#Cain", st2.getSubject().stringValue());
-    }
-
-    @Test
-    public void testGraphQueryWithBaseURIInline()
-            throws Exception {
-        String queryString ="BASE <http://marklogic.com/test/baseuri>\n" +
-                "PREFIX nn: <http://semanticbible.org/ns/2006/NTNames#>\n" +
-                "PREFIX test: <http://marklogic.com#test>\n" +
-                "construct { ?s  test:test <relative>} where  {GRAPH <http://marklogic.com/test/my-graph> {?s nn:childOf nn:Eve . }}";
-        GraphQuery graphQuery = conn.prepareGraphQuery(QueryLanguage.SPARQL, queryString);
-        GraphQueryResult results = graphQuery.evaluate();
-        Statement st1 = results.next();
-        Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#Abel", st1.getSubject().stringValue());
-        Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#Abel", st1.getSubject().stringValue());
-        Statement st2 = results.next();
-        Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#Cain", st2.getSubject().stringValue());
-    }
-
-    @Test
-    public void testGraphQueryWithBaseURI()
-            throws Exception {
-        String queryString =
-                "PREFIX nn: <http://semanticbible.org/ns/2006/NTNames#>\n" +
-                "PREFIX test: <http://marklogic.com#test>\n" +
-                "construct { ?s  test:test <relative>} where  {GRAPH <http://marklogic.com/test/my-graph> {?s nn:childOf nn:Eve . }}";
-        GraphQuery graphQuery = conn.prepareGraphQuery( queryString,"http://marklogic.com/test/baseuri");
-        GraphQueryResult results = graphQuery.evaluate();
-        Statement st1 = results.next();
-        Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#Abel", st1.getSubject().stringValue());
-        Statement st2 = results.next();
-        Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#Cain", st2.getSubject().stringValue());
-    }
-
-    @Ignore
-    public void testConstructQueryWithWriter()
-            throws Exception {
-        RDFWriter writer = Rio.createWriter(RDFFormat.TURTLE, System.out);
-
-        String queryString = "PREFIX nn: <http://semanticbible.org/ns/2006/NTNames#>\n" +
-                "PREFIX test: <http://marklogic.com#test>\n" +
-                "\n" +
-                "construct { ?s  test:test \"0\"} where  {GRAPH <http://marklogic.com/test/my-graph> {?s nn:childOf nn:Eve . }}";
-        conn.prepareGraphQuery(QueryLanguage.SPARQL,
-                "CONSTRUCT {?s ?p ?o } WHERE {?s ?p ?o } ").evaluate(writer);
-    }
-
-
-    @Test
-    public void testDescribeQuery()
-            throws Exception {
-        String queryString = "DESCRIBE <http://semanticbible.org/ns/2006/NTNames#Shelah>";
-        GraphQuery graphQuery = conn.prepareGraphQuery(QueryLanguage.SPARQL, queryString);
-        GraphQueryResult results = graphQuery.evaluate();
-        Statement st1 = results.next();
-        Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#Shelah", st1.getSubject().stringValue());
-        Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#childOf", st1.getPredicate().stringValue());
-        Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#CainanSonOfArphaxad", st1.getObject().stringValue());
-    }
-
-    @Test
-    public void testBooleanQuery()
-            throws Exception {
-        String queryString = "ASK { GRAPH <http://marklogic.com/test/my-graph> {<http://semanticbible.org/ns/2006/NTNames#Shelah1> ?p ?o}}";
-        BooleanQuery booleanQuery = conn.prepareBooleanQuery(QueryLanguage.SPARQL, queryString);
-        boolean results = booleanQuery.evaluate();
-        Assert.assertEquals(false, results);
-        queryString = "ASK { GRAPH <http://marklogic.com/test/my-graph> { <http://semanticbible.org/ns/2006/NTNames#Shelah> ?p ?o}}";
-        booleanQuery = conn.prepareBooleanQuery(QueryLanguage.SPARQL, queryString);
-        results = booleanQuery.evaluate();
-        Assert.assertEquals(true, results);
-    }
-
-    @Test
-    public void testBooleanQueryWithOverloadedMethods()
-            throws Exception {
-        String queryString = "ASK { GRAPH <http://marklogic.com/test/my-graph> {<http://semanticbible.org/ns/2006/NTNames#Shelah1> ?p ?o}}";
-        BooleanQuery booleanQuery = conn.prepareBooleanQuery(queryString);
-        booleanQuery = conn.prepareBooleanQuery(queryString,"http://marklogic.com/test/baseuri");
-        boolean results = booleanQuery.evaluate();
-        Assert.assertEquals(false, results);
-        queryString = "ASK { GRAPH <http://marklogic.com/test/my-graph> { <http://semanticbible.org/ns/2006/NTNames#Shelah> ?p ?o}}";
-        booleanQuery = conn.prepareBooleanQuery(QueryLanguage.SPARQL, queryString);
-        results = booleanQuery.evaluate();
-        Assert.assertEquals(true, results);
-    }
-    @Test
-    public void testUpdateQuery()
-            throws Exception {
-        String defGraphQuery = "INSERT DATA { GRAPH <http://marklogic.com/test/g27> { <http://marklogic.com/test> <pp1> <oo1> } }";
-        String checkQuery = "ASK WHERE { <http://marklogic.com/test> <pp1> <oo1> }";
-        Update updateQuery = conn.prepareUpdate(QueryLanguage.SPARQL, defGraphQuery);
-        updateQuery.execute();
-        BooleanQuery booleanQuery = conn.prepareBooleanQuery(QueryLanguage.SPARQL, checkQuery);
-        boolean results = booleanQuery.evaluate();
-        Assert.assertEquals(true, results);
-    }
-
-    @Test
-    public void testUpdateQueryWithBaseURI()
-            throws Exception {
-        String defGraphQuery = "BASE <http://marklogic.com/test/baseuri> INSERT DATA { GRAPH <http://marklogic.com/test/context10> {  <http://marklogic.com/test/subject> <pp1> <oo1> } }";
-        String checkQuery = "BASE <http://marklogic.com/test/baseuri> ASK WHERE { <http://marklogic.com/test/subject> <pp1> <oo1> }";
-        Update updateQuery = conn.prepareUpdate(QueryLanguage.SPARQL, defGraphQuery,"http://marklogic.com/test/baseuri");
-        updateQuery.execute();
-        BooleanQuery booleanQuery = conn.prepareBooleanQuery(QueryLanguage.SPARQL, checkQuery);
-        boolean results = booleanQuery.evaluate();
-        Assert.assertEquals(true, results);
-        conn.clear(conn.getValueFactory().createURI("http://marklogic.com/test/context10"));
-    }
-
-    @Test
     public void testClearWithContext()
             throws Exception {
         String defGraphQuery = "INSERT DATA { GRAPH <http://marklogic.com/test/ns/cleartest> { <http://marklogic.com/cleartest> <pp1> <oo1> } }";
@@ -587,7 +131,6 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
         booleanQuery = conn.prepareBooleanQuery(QueryLanguage.SPARQL, checkQuery);
         results = booleanQuery.evaluate();
         Assert.assertEquals(false, results);
-
     }
 
     @Test
@@ -611,13 +154,12 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
         conn.clear(context1);
     }
 
+    // https://github.com/marklogic/marklogic-sesame/issues/64
     @Test
     @Ignore
     public void testAddGZippedRDF() throws Exception {
         File inputFile = new File("src/test/resources/testdata/databases.rdf.gz");
-
         FileInputStream fis = new FileInputStream(inputFile);
-
         String baseURI = "http://example.org/example1/";
         Resource context1 = conn.getValueFactory().createURI("http://marklogic.com/test/context1");
         Resource context2 = conn.getValueFactory().createURI("http://marklogic.com/test/context2");
@@ -629,13 +171,12 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
     @Test
     public void testAddTurtleWithDefaultContext() throws Exception {
         File inputFile = new File("src/test/resources/testdata/default-graph-2.ttl");
-
         conn.add(inputFile, null, RDFFormat.TURTLE);
-
         String checkQuery = "PREFIX dc:<http://purl.org/dc/elements/1.1/> PREFIX xsd:<http://www.w3.org/2001/XMLSchema#> ASK { <urn:x-local:graph1> dc:publisher ?o .}";
         BooleanQuery booleanQuery = conn.prepareBooleanQuery(QueryLanguage.SPARQL, checkQuery);
         conn.setNamespace("dc", "http://purl.org/dc/elements/1.1/");
         Assert.assertTrue(booleanQuery.evaluate());
+        conn.clear(conn.getValueFactory().createURI("http://marklogic.com/semantics#default-graph"));
     }
 
     @Test
@@ -739,16 +280,35 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
     @Test
     public void testContextIDs()
             throws Exception {
+        Resource context5 = conn.getValueFactory().createURI("http://marklogic.com/test/context7");
+        Resource context6 = conn.getValueFactory().createURI("http://marklogic.com/test/context8");
+        ValueFactory f= conn.getValueFactory();
+
+        URI alice = f.createURI("http://example.org/people/alice");
+        URI bob = f.createURI("http://example.org/people/bob");
+        URI name = f.createURI("http://example.org/ontology/name");
+        URI person = f.createURI("http://example.org/ontology/Person");
+        Literal bobsName = f.createLiteral("Bob");
+        Literal alicesName = f.createLiteral("Alice");
+
+        conn.add(alice, RDF.TYPE, person, context5);
+        conn.add(alice, name, alicesName,context5, context6);
+        conn.add(bob, RDF.TYPE, person, context5);
+        conn.add(bob, name, bobsName, context5, context6);
+
         RepositoryResult<Resource> result = conn.getContextIDs();
         try {
             Assert.assertTrue("result should not be empty", result.hasNext());
             logger.debug("ContextIDs");
             Resource result1 = result.next();
             logger.debug(result1.stringValue());
-            Assert.assertEquals("http://marklogic.com/test/my-graph", result1.stringValue());
+            Assert.assertEquals("http://marklogic.com/test/context7", result1.stringValue());
         } finally {
             result.close();
         }
+
+        conn.clear(context5,context6);
+
     }
 
     @Test
@@ -963,62 +523,28 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
 
     @Test
     public void testGetStatements() throws Exception{
-        Resource context1 = conn.getValueFactory().createURI("http://marklogic.com/test/my-graph");
-
+        File inputFile = new File("src/test/resources/testdata/test.owl");
+        conn.add(inputFile,null,RDFFormat.RDFXML);
         ValueFactory f= conn.getValueFactory();
         URI subj = f.createURI("http://semanticbible.org/ns/2006/NTNames#AlexandriaGeodata");
-        RepositoryResult<Statement> statements = conn.getStatements(subj, null, null, true, context1);
-
+        RepositoryResult<Statement> statements = conn.getStatements(subj, null, null, true);
         Assert.assertTrue(statements.hasNext());
+        conn.clear(conn.getValueFactory().createURI("http://marklogic.com/semantics#default-graph"));
     }
 
     @Test
     public void testGetStatementsEmpty() throws Exception{
+        File inputFile = new File("src/test/resources/testdata/test.owl");
+        conn.add(inputFile,null,RDFFormat.RDFXML);
         Resource context1 = conn.getValueFactory().createURI("http://marklogic.com/test/my-graph");
+        conn.add(inputFile,null,RDFFormat.RDFXML,context1);
 
         ValueFactory f= conn.getValueFactory();
         URI subj = f.createURI("http://semanticbible.org/ns/2006/NTNames#AlexandriaGeodata1");
         RepositoryResult<Statement> statements = conn.getStatements(subj, null, null, true, context1);
 
         Assert.assertFalse(statements.hasNext());
-    }
-
-    @Test
-    public void testPrepareGraphQueryWithSingleResult() throws Exception
-    {
-        Resource context1 = conn.getValueFactory().createURI("http://marklogic.com/test/context1");
-
-        ValueFactory f= conn.getValueFactory();
-
-        URI alice = f.createURI("http://example.org/people/alice");
-        URI name = f.createURI("http://example.org/ontology/name");
-        URI person = f.createURI("http://example.org/ontology/Person");
-        Literal alicesName = f.createLiteral("Alice1");
-
-        Statement st1 = f.createStatement(alice, name, alicesName);
-        conn.add(st1,context1);
-
-        String query = " DESCRIBE <http://example.org/people/alice> ";
-        GraphQuery queryObj = conn.prepareGraphQuery(query);
-        GraphQueryResult result = queryObj.evaluate();
-
-        Assert.assertTrue(result != null);
-        Assert.assertTrue(result.hasNext());
-        Statement st = result.next();
-        Assert.assertFalse(result.hasNext());
         conn.clear(context1);
-    }
-
-    @Test
-    public void testPrepareGraphQueryWithNoResult() throws Exception
-    {
-
-        String query = "DESCRIBE <http://example.org/nonexistant>";
-        GraphQuery queryObj = conn.prepareGraphQuery(query);
-        GraphQueryResult result = queryObj.evaluate();
-
-        Assert.assertTrue(result != null);
-        Assert.assertFalse(result.hasNext());
     }
 
     @Test
@@ -1036,15 +562,6 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
         Assert.assertTrue(conn.hasStatement(st1, false, context1));
 
         conn.clear(context1);
-    }
-
-    @Test
-    public void testSPARQLQueryWithEmptyResults()
-            throws Exception {
-        String queryString = "select * { <http://marklogic.com/nonexistent> ?p ?o } limit 100 ";
-        TupleQuery tupleQuery = conn.prepareTupleQuery(QueryLanguage.SPARQL, queryString);
-        TupleQueryResult results = tupleQuery.evaluate();
-        Assert.assertFalse(results.hasNext());
     }
 
     @Test
@@ -1078,7 +595,7 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
         conn.clear(context1);
     }
 
-    @Test
+    @Ignore
     public void testIntegrateWithRemoteRepository() throws Exception{
         final Resource context1 = conn.getValueFactory().createURI("http://marklogic.com/test/context1");
 
@@ -1192,7 +709,7 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
 
     // https://github.com/marklogic/marklogic-sesame/issues/61
     @Test
-    public void removeWithNullObject()
+    public void testRemoveWithNullObject()
             throws Exception
     {
         ValueFactory f= conn.getValueFactory();
@@ -1246,7 +763,16 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
         conn.add(st1, null);
         conn.add(st2, null);
 
-        conn.remove(william, age, williamName);
-        conn.remove(william, name, williamAge);
+        conn.remove(william, age, williamName,null);
+        conn.remove(william, name, williamAge,null);
+    }
+
+    // https://github.com/marklogic/marklogic-sesame/issues/83
+    @Test
+    public void testSizeWithNull() throws Exception {
+        File inputFile = new File("src/test/resources/testdata/test.owl");
+        conn.add(inputFile,null,RDFFormat.RDFXML);
+        Assert.assertEquals(4036L, conn.size(null));
+        conn.clear(conn.getValueFactory().createURI("http://marklogic.com/semantics#default-graph"));
     }
 }

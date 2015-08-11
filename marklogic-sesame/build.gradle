@@ -63,30 +63,6 @@ task wrapper(type: Wrapper) {
     gradleVersion = '2.4'
 }
 
-task removeTestData <<{
-    exec{
-        commandLine 'curl --anyauth --user admin:admin -i -X DELETE http://localhost:8200/v1/graphs?graph=http://marklogic.com/test/my-graph'.tokenize()
-    }
-    exec {
-        commandLine 'curl --anyauth --user admin:admin -i -X DELETE http://localhost:8200/v1/graphs?graph=http://marklogic.com/test/g27'.tokenize()
-    }
-    exec {
-        commandLine 'curl --anyauth --user admin:admin -i -X DELETE http://localhost:8200/v1/graphs?default'.tokenize()
-    }
-}
-
-task loadTestData << {
-    exec {
-        commandLine "curl --anyauth --user admin:admin -i -X POST -H Content-type:application/rdf+xml -d@$testData http://localhost:8200/v1/graphs?graph=http://marklogic.com/test/my-graph".tokenize()
-    }
-}
-
-test.dependsOn([loadTestData])
-
-test.finalizedBy([removeTestData])
-
-clean.dependsOn([removeTestData])
-
 jmh {
     //include = 'some regular expression' // include pattern (regular expression) for benchmarks to be executed
     //exclude = 'some regular expression' // exclude pattern (regular expression) for benchmarks to be executed
