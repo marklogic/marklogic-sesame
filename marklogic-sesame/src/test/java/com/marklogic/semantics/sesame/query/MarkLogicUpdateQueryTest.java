@@ -1,0 +1,89 @@
+package com.marklogic.semantics.sesame.query;
+
+import com.marklogic.client.io.FileHandle;
+import com.marklogic.client.query.QueryManager;
+import com.marklogic.client.semantics.GraphManager;
+import com.marklogic.client.semantics.RDFMimeTypes;
+import com.marklogic.semantics.sesame.MarkLogicRepositoryConnection;
+import com.marklogic.semantics.sesame.SesameTestBase;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.openrdf.model.ValueFactory;
+import org.openrdf.query.BooleanQuery;
+import org.openrdf.query.QueryLanguage;
+import org.openrdf.query.Update;
+import org.openrdf.repository.RepositoryException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+
+/**
+ * Created by jfuller on 8/11/15.
+ */
+public class MarkLogicUpdateQueryTest extends SesameTestBase {
+
+    private QueryManager qmgr;
+
+    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    protected MarkLogicRepositoryConnection conn;
+    protected ValueFactory f;
+
+    @Before
+    public void setUp() throws RepositoryException, FileNotFoundException {
+        logger.debug("setting up test");
+        rep.initialize();
+        f = rep.getValueFactory();
+        conn = rep.getConnection();
+        logger.info("test setup complete.");
+        File testData = new File("src/test/resources/testdata/test.owl");
+
+        GraphManager gmgr = writerClient.newGraphManager();
+        gmgr.setDefaultMimetype(RDFMimeTypes.RDFXML);
+        gmgr.write("/directory1/test.rdf", new FileHandle(testData));
+    }
+
+    @After
+    public void tearDown()
+            throws Exception {
+        logger.debug("tearing down...");
+        conn.close();
+        conn = null;
+        rep.shutDown();
+        rep = null;
+        logger.info("tearDown complete.");
+        GraphManager gmgr = writerClient.newGraphManager();
+        gmgr.delete("/directory1/test.rdf");
+    }
+
+    @Test
+    public void testUpdateQuery()
+            throws Exception {
+        String defGraphQuery = "INSERT DATA { GRAPH <http://marklogic.com/test/g27> { <http://marklogic.com/test> <pp1> <oo1> } }";
+        String checkQuery = "ASK WHERE { <http://marklogic.com/test> <pp1> <oo1> }";
+        Update updateQuery = conn.prepareUpdate(QueryLanguage.SPARQL, defGraphQuery);
+        updateQuery.execute();
+        BooleanQuery booleanQuery = conn.prepareBooleanQuery(QueryLanguage.SPARQL, checkQuery);
+        boolean results = booleanQuery.evaluate();
+        Assert.assertEquals(true, results);
+        conn.clear(conn.getValueFactory().createURI("http://marklogic.com/test/g27"));
+    }
+
+    @Test
+    public void testUpdateQueryWithBaseURI()
+            throws Exception {
+        String defGraphQuery = "BASE <http://marklogic.com/test/baseuri> INSERT DATA { GRAPH <http://marklogic.com/test/context10> {  <http://marklogic.com/test/subject> <pp1> <oo1> } }";
+        String checkQuery = "BASE <http://marklogic.com/test/baseuri> ASK WHERE { <http://marklogic.com/test/subject> <pp1> <oo1> }";
+        Update updateQuery = conn.prepareUpdate(QueryLanguage.SPARQL, defGraphQuery,"http://marklogic.com/test/baseuri");
+        updateQuery.execute();
+        BooleanQuery booleanQuery = conn.prepareBooleanQuery(QueryLanguage.SPARQL, checkQuery);
+        boolean results = booleanQuery.evaluate();
+        Assert.assertEquals(true, results);
+        conn.clear(conn.getValueFactory().createURI("http://marklogic.com/test/context10"));
+    }
+
+}
