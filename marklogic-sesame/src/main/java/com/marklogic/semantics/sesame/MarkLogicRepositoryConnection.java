@@ -250,20 +250,19 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
             if (isQuadMode()) {
                 StringBuilder sb= new StringBuilder();
                 if(notNull(contexts) && contexts.length >0){
-                    sb.append("SELECT * WHERE { ");
+                    sb.append("SELECT *  ");
                     for (int i = 0; i < contexts.length; i++)
                     {
                         if(contexts[i] != null) {
-                            sb.append("GRAPH <" + contexts[i].stringValue() + "> {?s ?p ?o .} ");
+                            sb.append("FROM NAMED <" + contexts[i].stringValue() + ">\n");
                         }else{
-                            sb.append("GRAPH <"+DEFAULT_GRAPH_URI+"> {?s ?p ?o .}");
+                            sb.append("FROM NAMED <"+DEFAULT_GRAPH_URI+">");
                         }
                     }
-                    sb.append("}");
+                    sb.append("WHERE { GRAPH ?g { ?s ?p ?o }}");
                 }else {
                     sb.append(EVERYTHING_WITH_GRAPH);
                 }
-
                 TupleQuery tupleQuery = prepareTupleQuery(sb.toString());
                 setBindings(tupleQuery, subj, pred, obj, contexts);
                 tupleQuery.setIncludeInferred(includeInferred);

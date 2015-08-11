@@ -20,9 +20,11 @@
 package com.marklogic.semantics.sesame;
 
 import info.aduna.iteration.Iteration;
+import info.aduna.iteration.Iterations;
 import org.junit.*;
 import org.junit.rules.ExpectedException;
 import org.openrdf.model.*;
+import org.openrdf.model.impl.LinkedHashModel;
 import org.openrdf.model.vocabulary.RDF;
 import org.openrdf.query.*;
 import org.openrdf.repository.Repository;
@@ -591,7 +593,7 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
                 "</rdf:RDF>";
 
         conn.exportStatements(alice, null, alicesName, true, rdfWriter, context1);
-        Assert.assertEquals(expected,out.toString());
+        Assert.assertEquals(expected, out.toString());
         conn.clear(context1);
     }
 
@@ -764,7 +766,7 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
         conn.add(st2, null);
 
         conn.remove(william, age, williamName,null);
-        conn.remove(william, name, williamAge,null);
+        conn.remove(william, name, williamAge, null);
     }
 
     // https://github.com/marklogic/marklogic-sesame/issues/83
@@ -774,5 +776,34 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
         conn.add(inputFile,null,RDFFormat.RDFXML);
         Assert.assertEquals(4036L, conn.size(null));
         conn.clear(conn.getValueFactory().createURI("http://marklogic.com/semantics#default-graph"));
+    }
+
+    // https://github.com/marklogic/marklogic-sesame/issues/82
+    @Test
+
+    public void testGetStatementWithMultipleContexts() throws Exception{
+        Resource context5 = conn.getValueFactory().createURI("http://marklogic.com/test/context5");
+        Resource context6 = conn.getValueFactory().createURI("http://marklogic.com/test/context6");
+
+        ValueFactory f= conn.getValueFactory();
+
+        URI alice = f.createURI("http://example.org/people/alice");
+        URI bob = f.createURI("http://example.org/people/bob");
+        URI name = f.createURI("http://example.org/ontology/name");
+        URI person = f.createURI("http://example.org/ontology/Person");
+        Literal bobsName = f.createLiteral("Bob");
+        Literal alicesName = f.createLiteral("Alice");
+
+        conn.add(alice, RDF.TYPE, person, context5);
+        conn.add(alice, name, alicesName,context5, context6);
+        conn.add(bob, RDF.TYPE, person, context5);
+        conn.add(bob, name, bobsName, context5, context6);
+
+        RepositoryResult<Statement> statements = conn.getStatements(null, null, null, true, context5, context6);
+
+        Model aboutEveryone = Iterations.addAll(statements, new LinkedHashModel());
+
+        Assert.assertEquals(4L, aboutEveryone.size());
+        conn.clear(context5,context6);
     }
 }
