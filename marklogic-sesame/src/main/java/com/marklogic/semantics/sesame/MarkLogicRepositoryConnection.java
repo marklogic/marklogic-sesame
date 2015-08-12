@@ -337,7 +337,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
             }else{
                 sb.append(SOMETHING);
             }
-            BooleanQuery query = prepareBooleanQuery(sb.toString(), null);
+            BooleanQuery query = prepareBooleanQuery(sb.toString()); // baseuri ?
             setBindings(query, subject, predicate, object, contexts);
             return query.evaluate();
         }
@@ -416,34 +416,13 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     @Override
     public long size(Resource... contexts)  {
         try {
-            StringBuilder sb= new StringBuilder();
-            if(notNull(contexts) && contexts.length>0){
-                sb.append("SELECT * WHERE { ");
-
-                for (int i = 0; i < contexts.length; i++)
-                {
-                    if(contexts[i] != null) {
-                        sb.append("GRAPH <" + contexts[i].stringValue() + "> {?s ?p ?o .} ");
-                    }else{
-                        sb.append("GRAPH <"+DEFAULT_GRAPH_URI+"> {?s ?p ?o .}");
-                    }                }
-                sb.append("}");
-            }else {
-                sb.append(EVERYTHING_WITH_GRAPH);
-            }
-            TupleQuery tupleQuery = prepareTupleQuery(sb.toString());
-            //tupleQuery.setIncludeInferred(includeInferred);
-            TupleQueryResult qRes = tupleQuery.evaluate();
+            RepositoryResult<Statement> statements = getStatements(null, null, null, true, contexts);
             long i = 0;
-            while (qRes.hasNext()) {
-                qRes.next();
+            while (statements.hasNext()) {
+                statements.next();
                 i++;
             }
             return i;
-        } catch (MalformedQueryException e) {
-            e.printStackTrace();
-        } catch (QueryEvaluationException e) {
-            e.printStackTrace();
         } catch (RepositoryException e) {
             e.printStackTrace();
         }
@@ -453,7 +432,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     // remove context (graph)
     @Override
     public void clear(Resource... contexts) throws RepositoryException {
-        if(contexts.length != 0){
+        if(notNull(contexts) && contexts.length>0){
             this.client.sendClear(contexts);
         }else{
             this.client.sendClearAll();

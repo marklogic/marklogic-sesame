@@ -837,4 +837,30 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
         conn.clear(context5,context6);
     }
 
+
+    // https://github.com/marklogic/marklogic-sesame/issues/90
+    @Test
+    public void testGetStatementIsEqualToSize() throws Exception{
+        Resource context5 = conn.getValueFactory().createURI("http://marklogic.com/test/context5");
+
+        ValueFactory f= conn.getValueFactory();
+
+        URI alice = f.createURI("http://example.org/people/alice");
+        URI bob = f.createURI("http://example.org/people/bob");
+        URI name = f.createURI("http://example.org/ontology/name");
+        URI person = f.createURI("http://example.org/ontology/Person");
+        Literal bobsName = f.createLiteral("Bob");
+        Literal alicesName = f.createLiteral("Alice");
+
+        conn.add(alice, RDF.TYPE, person, null,context5);
+        conn.add(alice, name, alicesName,null,context5);
+        conn.add(bob, RDF.TYPE, person, context5);
+        conn.add(bob, name, bobsName, context5);
+
+        RepositoryResult<Statement> statements = conn.getStatements(null, null, null, true, null,context5);
+        Model aboutPeople = Iterations.addAll(statements, new LinkedHashModel());
+
+        Assert.assertEquals(conn.size(null,context5),aboutPeople.size());
+        conn.clear(null,context5);
+    }
 }
