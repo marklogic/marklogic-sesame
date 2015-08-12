@@ -62,7 +62,7 @@ public class MarkLogicClient {
 
 	protected static final TupleQueryResultFormat format = TupleQueryResultFormat.JSON;
 	protected static final RDFFormat rdfFormat = RDFFormat.NTRIPLES;
-	private MarkLogicClientImpl _client;
+	private final MarkLogicClientImpl _client;
 
 	private static Executor executor = Executors.newCachedThreadPool();
 

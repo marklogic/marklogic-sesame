@@ -336,7 +336,11 @@ public class MarkLogicClientImpl {
     public void performClear(Transaction tx, Resource... contexts) {
         graphManager = getDatabaseClient().newGraphManager();
         for (Resource context : contexts) {
-            graphManager.delete(context.stringValue(), tx);
+            if(notNull(context)){
+                graphManager.delete(context.stringValue(), tx);
+            }else{
+                graphManager.delete(DEFAULT_GRAPH_URI, tx);
+            }
         }
     }
 
