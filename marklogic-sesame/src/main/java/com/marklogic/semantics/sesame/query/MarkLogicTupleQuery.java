@@ -19,8 +19,10 @@
  */
 package com.marklogic.semantics.sesame.query;
 
+import com.marklogic.client.FailedRequestException;
 import com.marklogic.semantics.sesame.client.MarkLogicClient;
 import org.openrdf.query.*;
+import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.sparql.query.SPARQLQueryBindingSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,9 +52,15 @@ public class MarkLogicTupleQuery extends MarkLogicQuery implements TupleQuery,Ma
     public TupleQueryResult evaluate(long start, long pageLength)
             throws QueryEvaluationException {
         try {
-            return getMarkLogicClient().sendTupleQuery(getQueryString(),getBindings(),start,pageLength,getIncludeInferred(),getBaseURI());
-        } catch (IOException e) {
-            throw new QueryEvaluationException(e);
+            return getMarkLogicClient().sendTupleQuery(getQueryString(), getBindings(), start, pageLength, getIncludeInferred(), getBaseURI());
+        }catch (RepositoryException e) {
+            throw new QueryEvaluationException(e.getMessage(), e);
+        }catch (MalformedQueryException e) {
+            throw new QueryEvaluationException(e.getMessage(), e);
+        }catch (IOException e) {
+            throw new QueryEvaluationException(e.getMessage(), e);
+        }catch(FailedRequestException e){
+            throw new QueryEvaluationException(e.getMessage(), e);
         }
     }
     @Override

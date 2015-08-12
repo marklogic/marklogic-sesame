@@ -20,23 +20,20 @@
 package com.marklogic.semantics.sesame.client;
 
 import com.marklogic.client.Transaction;
-import com.marklogic.semantics.sesame.MarkLogicSesameException;
 import com.marklogic.semantics.sesame.MarkLogicTransactionException;
 import org.apache.commons.io.input.ReaderInputStream;
+import org.openrdf.http.protocol.UnauthorizedException;
 import org.openrdf.model.Resource;
 import org.openrdf.model.URI;
 import org.openrdf.model.Value;
 import org.openrdf.model.ValueFactory;
-import org.openrdf.query.GraphQueryResult;
-import org.openrdf.query.TupleQueryResult;
+import org.openrdf.query.*;
 import org.openrdf.query.resultio.QueryResultIO;
 import org.openrdf.query.resultio.TupleQueryResultFormat;
 import org.openrdf.query.resultio.TupleQueryResultParser;
+import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.sparql.query.SPARQLQueryBindingSet;
-import org.openrdf.rio.ParserConfig;
-import org.openrdf.rio.RDFFormat;
-import org.openrdf.rio.RDFParser;
-import org.openrdf.rio.Rio;
+import org.openrdf.rio.*;
 import org.openrdf.rio.helpers.ParseErrorLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -90,7 +87,8 @@ public class MarkLogicClient {
 	}
 
 	//tuple query
-	public TupleQueryResult sendTupleQuery(String queryString,SPARQLQueryBindingSet bindings, long start, long pageLength, boolean includeInferred, String baseURI) throws IOException {
+	public TupleQueryResult sendTupleQuery(String queryString,SPARQLQueryBindingSet bindings, long start, long pageLength, boolean includeInferred, String baseURI) throws IOException, RepositoryException, MalformedQueryException, UnauthorizedException,
+    QueryInterruptedException {
 		InputStream stream = getClient().performSPARQLQuery(queryString, bindings, start, pageLength, this.tx, includeInferred, baseURI);
 		TupleQueryResultParser parser = QueryResultIO.createParser(this.format, getValueFactory());
 		MarkLogicBackgroundTupleResult tRes = new MarkLogicBackgroundTupleResult(parser,stream);
@@ -122,17 +120,19 @@ public class MarkLogicClient {
 	}
 
 	//boolean query
-	public boolean sendBooleanQuery(String queryString, SPARQLQueryBindingSet bindings, boolean includeInferred, String baseURI) {
+	public boolean sendBooleanQuery(String queryString, SPARQLQueryBindingSet bindings, boolean includeInferred, String baseURI) throws IOException, RepositoryException, MalformedQueryException, UnauthorizedException,
+    QueryInterruptedException {
 		return getClient().performBooleanQuery(queryString, bindings, this.tx, includeInferred, baseURI);
 	}
 
 	//update query
-	public void sendUpdateQuery(String queryString, SPARQLQueryBindingSet bindings, boolean includeInferred, String baseURI) {
+	public void sendUpdateQuery(String queryString, SPARQLQueryBindingSet bindings, boolean includeInferred, String baseURI) throws IOException, RepositoryException, MalformedQueryException, UnauthorizedException,
+    UpdateExecutionException {
 		getClient().performUpdateQuery(queryString, bindings, this.tx, includeInferred, baseURI);
 	}
 
 	//add
-    public void sendAdd(File file, String baseURI, RDFFormat dataFormat, Resource... contexts) throws MarkLogicSesameException {
+    public void sendAdd(File file, String baseURI, RDFFormat dataFormat, Resource... contexts) throws RDFParseException {
 		getClient().performAdd(file, baseURI, dataFormat, this.tx, contexts);
     }
 	public void sendAdd(InputStream in, String baseURI, RDFFormat dataFormat, Resource... contexts){

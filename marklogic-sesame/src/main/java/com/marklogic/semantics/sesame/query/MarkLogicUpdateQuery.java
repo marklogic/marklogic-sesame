@@ -19,11 +19,18 @@
  */
 package com.marklogic.semantics.sesame.query;
 
+import com.marklogic.client.FailedRequestException;
+import com.marklogic.client.ForbiddenUserException;
 import com.marklogic.semantics.sesame.client.MarkLogicClient;
+import org.openrdf.query.MalformedQueryException;
 import org.openrdf.query.Update;
+import org.openrdf.query.UpdateExecutionException;
+import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.sparql.query.SPARQLQueryBindingSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
 
 /**
  *
@@ -39,8 +46,20 @@ public class MarkLogicUpdateQuery extends MarkLogicQuery implements Update,MarkL
 
     //evaluate
     @Override
-    public void execute(){
-        getMarkLogicClient().sendUpdateQuery(getQueryString(), getBindings(), getIncludeInferred(),getBaseURI());
+    public void execute() throws UpdateExecutionException {
+        try {
+            getMarkLogicClient().sendUpdateQuery(getQueryString(), getBindings(), getIncludeInferred(), getBaseURI());
+        }catch(ForbiddenUserException e){
+            throw new UpdateExecutionException(e);
+        } catch (RepositoryException e) {
+            e.printStackTrace();
+        } catch (MalformedQueryException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch(FailedRequestException e){
+            throw new UpdateExecutionException(e.getMessage(), e);
+        }
     }
 
 }

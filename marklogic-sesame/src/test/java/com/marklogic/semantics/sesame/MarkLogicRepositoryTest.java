@@ -27,6 +27,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.openrdf.model.impl.ValueFactoryImpl;
 import org.openrdf.query.MalformedQueryException;
+import org.openrdf.query.UpdateExecutionException;
 import org.openrdf.repository.Repository;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
@@ -113,7 +114,7 @@ public class MarkLogicRepositoryTest extends SesameTestBase {
     }
 
     @Test
-    public void testMultipleReposWithDifferentUsers() throws RepositoryException, MalformedQueryException {
+    public void testMultipleReposWithDifferentUsers() throws RepositoryException, MalformedQueryException, UpdateExecutionException {
         readerRep.initialize();
         MarkLogicRepositoryConnection testReaderCon = readerRep.getConnection();
         exception.expect(Exception.class);
