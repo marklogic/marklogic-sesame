@@ -155,17 +155,6 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
         conn.clear(null);
     }
 
-    // https://github.com/marklogic/marklogic-sesame/issues/65
-    @Test
-    public void testAddMalformedTurtle() throws Exception {
-        File inputFile = new File("src/test/resources/testdata/malformed-literals.ttl");
-        String baseURI = "http://example.org/example1/";
-        Resource context1 = conn.getValueFactory().createURI("http://marklogic.com/test/context1");
-        exception.expect(MarkLogicSesameException.class);
-        conn.add(inputFile, baseURI, RDFFormat.TURTLE, context1);
-        conn.clear(context1);
-    }
-
     // https://github.com/marklogic/marklogic-sesame/issues/64
     @Test
     @Ignore

@@ -29,7 +29,6 @@ import com.marklogic.client.io.FileHandle;
 import com.marklogic.client.io.InputStreamHandle;
 import com.marklogic.client.query.QueryDefinition;
 import com.marklogic.client.semantics.*;
-import com.marklogic.semantics.sesame.MarkLogicSesameException;
 import org.openrdf.model.Literal;
 import org.openrdf.model.Resource;
 import org.openrdf.model.URI;
@@ -37,6 +36,7 @@ import org.openrdf.model.Value;
 import org.openrdf.query.Binding;
 import org.openrdf.repository.sparql.query.SPARQLQueryBindingSet;
 import org.openrdf.rio.RDFFormat;
+import org.openrdf.rio.RDFParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -245,7 +245,7 @@ public class MarkLogicClientImpl {
     }
 
     // performAdd
-    public void performAdd(File file, String baseURI, RDFFormat dataFormat, Transaction tx, Resource... contexts) throws MarkLogicSesameException {
+    public void performAdd(File file, String baseURI, RDFFormat dataFormat, Transaction tx, Resource... contexts) throws RDFParseException {
         try {
             graphManager = getDatabaseClient().newGraphManager();
 
@@ -264,7 +264,7 @@ public class MarkLogicClientImpl {
                 }
             }
         } catch (FailedRequestException e) {
-            throw new MarkLogicSesameException("Request to MarkLogic server failed, check file and format.");
+            throw new RDFParseException("Request to MarkLogic server failed, check file and format.");
         }
     }
 

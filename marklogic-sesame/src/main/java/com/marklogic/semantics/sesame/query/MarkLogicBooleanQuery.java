@@ -19,12 +19,17 @@
  */
 package com.marklogic.semantics.sesame.query;
 
+import com.marklogic.client.FailedRequestException;
 import com.marklogic.semantics.sesame.client.MarkLogicClient;
 import org.openrdf.query.BooleanQuery;
+import org.openrdf.query.MalformedQueryException;
 import org.openrdf.query.QueryEvaluationException;
+import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.sparql.query.SPARQLQueryBindingSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
 
 /**
  *
@@ -42,7 +47,17 @@ public class MarkLogicBooleanQuery extends MarkLogicQuery implements BooleanQuer
     //evaluate
     @Override
     public boolean evaluate() throws QueryEvaluationException {
-        return getMarkLogicClient().sendBooleanQuery(getQueryString(), getBindings(), getIncludeInferred(),getBaseURI());
+        try {
+            return getMarkLogicClient().sendBooleanQuery(getQueryString(), getBindings(), getIncludeInferred(),getBaseURI());
+        }catch (RepositoryException e) {
+            throw new QueryEvaluationException(e.getMessage(), e);
+        }catch (MalformedQueryException e) {
+            throw new QueryEvaluationException(e.getMessage(), e);
+        }catch (IOException e) {
+            throw new QueryEvaluationException(e.getMessage(), e);
+        }catch(FailedRequestException e){
+            throw new QueryEvaluationException(e.getMessage(), e);
+        }
     }
 
 }
