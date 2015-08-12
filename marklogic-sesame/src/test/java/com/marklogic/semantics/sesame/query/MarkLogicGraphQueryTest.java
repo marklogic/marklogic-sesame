@@ -7,9 +7,11 @@ import com.marklogic.client.semantics.RDFMimeTypes;
 import com.marklogic.semantics.sesame.MarkLogicRepositoryConnection;
 import com.marklogic.semantics.sesame.SesameTestBase;
 import org.junit.*;
+import org.junit.rules.ExpectedException;
 import org.openrdf.model.*;
 import org.openrdf.query.GraphQuery;
 import org.openrdf.query.GraphQueryResult;
+import org.openrdf.query.QueryEvaluationException;
 import org.openrdf.query.QueryLanguage;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.rio.RDFFormat;
@@ -25,6 +27,9 @@ import java.io.FileNotFoundException;
  * Created by jfuller on 8/11/15.
  */
 public class MarkLogicGraphQueryTest extends SesameTestBase {
+
+    @Rule
+    public ExpectedException exception = ExpectedException.none();
 
     private QueryManager qmgr;
 
@@ -106,6 +111,22 @@ public class MarkLogicGraphQueryTest extends SesameTestBase {
         Assert.assertEquals("http://marklogic.com/test/baseuri/relative", st1.getObject().stringValue());
         Statement st2 = results.next();
         Assert.assertEquals("http://marklogic.com/test/baseuri/relative", st1.getObject().stringValue());
+    }
+    @Test
+    public void testGraphQueryWithBaseURIWithEmptyBaseURI()
+            throws Exception {
+        String queryString =
+                "PREFIX nn: <http://semanticbible.org/ns/2006/NTNames#>\n" +
+                        "PREFIX test: <http://marklogic.com#test>\n" +
+                        "construct { ?s  test:test <relative>} WHERE {?s nn:childOf nn:Eve . }";
+        GraphQuery graphQuery = conn.prepareGraphQuery(queryString, "");
+        exception.expect(QueryEvaluationException.class);
+
+        GraphQueryResult results = graphQuery.evaluate();
+        Statement st1 = results.next();
+        Assert.assertEquals("http://relative", st1.getObject().stringValue());
+        Statement st2 = results.next();
+        Assert.assertEquals("http://relative", st1.getObject().stringValue());
     }
 
     @Ignore
