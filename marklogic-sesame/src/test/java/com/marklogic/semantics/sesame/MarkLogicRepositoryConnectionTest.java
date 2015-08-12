@@ -151,7 +151,7 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
     public void testAddTurtleWithNullContext() throws Exception {
         File inputFile = new File("src/test/resources/testdata/default-graph-1.ttl");
         conn.add(inputFile, "http://example.org/example1/", RDFFormat.TURTLE, null);
-        Assert.assertEquals(4040,conn.size(null));
+        Assert.assertEquals(4040, conn.size(null));
         conn.clear(null);
     }
 
@@ -871,5 +871,13 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
 
         Assert.assertEquals(conn.size(null,context5),aboutPeople.size());
         conn.clear(null,context5);
+    }
+
+    @Test
+    public void testCompareSizeAWithNullContext() throws Exception {
+        File inputFile = new File("src/test/resources/testdata/default-graph-1.ttl");
+        conn.add(inputFile, "http://example.org/example1/", RDFFormat.TURTLE, null);
+        Assert.assertEquals(conn.size(),conn.size(null));
+        conn.clear(null);
     }
 }
