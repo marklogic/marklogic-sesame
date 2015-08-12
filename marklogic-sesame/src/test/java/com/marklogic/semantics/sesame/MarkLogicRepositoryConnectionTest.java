@@ -146,6 +146,15 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
         conn.clear(context1, context2);
     }
 
+    // https://github.com/marklogic/marklogic-sesame/issues/70
+    @Test
+    public void testAddTurtleWithNullContext() throws Exception {
+        File inputFile = new File("src/test/resources/testdata/default-graph-1.ttl");
+        conn.add(inputFile, "http://example.org/example1/", RDFFormat.TURTLE, null);
+        Assert.assertEquals(4,conn.size(null));
+        conn.clear(null);
+    }
+
     // https://github.com/marklogic/marklogic-sesame/issues/65
     @Test
     public void testAddMalformedTurtle() throws Exception {
