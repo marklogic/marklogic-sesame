@@ -140,7 +140,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     @Override
     public MarkLogicTupleQuery prepareTupleQuery(QueryLanguage queryLanguage, String queryString, String baseURI) throws RepositoryException, MalformedQueryException {
         if (QueryLanguage.SPARQL.equals(queryLanguage)) {
-            return new MarkLogicTupleQuery(client, new SPARQLQueryBindingSet(), baseURI, queryString);
+            return new MarkLogicTupleQuery(this.client, new SPARQLQueryBindingSet(), baseURI, queryString);
         }
         throw new UnsupportedQueryLanguageException("Unsupported query language " + queryLanguage.getName());
     }
@@ -163,7 +163,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
             throws RepositoryException, MalformedQueryException
     {
         if (QueryLanguage.SPARQL.equals(queryLanguage)) {
-            return new MarkLogicGraphQuery(client, new SPARQLQueryBindingSet(), baseURI, queryString);
+            return new MarkLogicGraphQuery(this.client, new SPARQLQueryBindingSet(), baseURI, queryString);
         }
         throw new UnsupportedQueryLanguageException("Unsupported query language " + queryLanguage.getName());
     }
@@ -184,7 +184,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     @Override
     public MarkLogicBooleanQuery prepareBooleanQuery(QueryLanguage queryLanguage, String queryString, String baseURI) throws RepositoryException, MalformedQueryException {
         if (QueryLanguage.SPARQL.equals(queryLanguage)) {
-            return new MarkLogicBooleanQuery(client, new SPARQLQueryBindingSet(), baseURI, queryString);
+            return new MarkLogicBooleanQuery(this.client, new SPARQLQueryBindingSet(), baseURI, queryString);
         }
         throw new UnsupportedQueryLanguageException("Unsupported query language " + queryLanguage.getName());
     }
@@ -205,7 +205,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     @Override
     public MarkLogicUpdateQuery prepareUpdate(QueryLanguage queryLanguage, String queryString, String baseURI) throws RepositoryException, MalformedQueryException {
         if (QueryLanguage.SPARQL.equals(queryLanguage)) {
-            return new MarkLogicUpdateQuery(client, new SPARQLQueryBindingSet(), baseURI, queryString);
+            return new MarkLogicUpdateQuery(this.client, new SPARQLQueryBindingSet(), baseURI, queryString);
         }
         throw new UnsupportedQueryLanguageException("Unsupported query language " + queryLanguage.getName());
     }
@@ -454,9 +454,9 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     @Override
     public void clear(Resource... contexts) throws RepositoryException {
         if(contexts.length != 0){
-            client.sendClear(contexts);
+            this.client.sendClear(contexts);
         }else{
-            client.sendClearAll();
+            this.client.sendClearAll();
         }
     }
 
@@ -469,16 +469,16 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     //transactions
     @Override
     public boolean isActive() throws UnknownTransactionStateException, RepositoryException {
-        return client.isActiveTransaction();
+        return this.client.isActiveTransaction();
     }
     @Override
     public boolean isAutoCommit() throws RepositoryException {
-        return client.isActiveTransaction() == false;
+        return this.client.isActiveTransaction() == false;
     }
     @Override
     public void setAutoCommit(boolean autoCommit) throws RepositoryException {
         try {
-            client.setAutoCommit();
+            this.client.setAutoCommit();
         } catch (MarkLogicTransactionException e) {
             e.printStackTrace();
         }
@@ -495,7 +495,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     }
     @Override
     public void begin() throws RepositoryException {
-        client.openTransaction();
+        this.client.openTransaction();
     }
     @Override
     public void begin(IsolationLevel level) throws RepositoryException {
@@ -504,34 +504,34 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     }
     @Override
     public void commit() throws RepositoryException {
-        client.commitTransaction();
+        this.client.commitTransaction();
     }
     @Override
     public void rollback() throws RepositoryException {
-        client.rollbackTransaction();
+        this.client.rollbackTransaction();
     }
 
     // add
     @Override
     public void add(InputStream in, String baseURI, RDFFormat dataFormat, Resource... contexts) throws IOException, RDFParseException, RepositoryException {
-        client.sendAdd(in, baseURI, dataFormat, contexts);
+        this.client.sendAdd(in, baseURI, dataFormat, contexts);
     }
     @Override
     public void add(File file, String baseURI, RDFFormat dataFormat, Resource... contexts) throws IOException, RDFParseException, RepositoryException {
-        client.sendAdd(file, baseURI, dataFormat, contexts);
+        this.client.sendAdd(file, baseURI, dataFormat, contexts);
     }
     @Override
     public void add(Reader reader, String baseURI, RDFFormat dataFormat, Resource... contexts) throws IOException, RDFParseException, RepositoryException {
-        client.sendAdd(reader,baseURI,dataFormat,contexts);
+        this.client.sendAdd(reader,baseURI,dataFormat,contexts);
     }
     @Override
     public void add(URL url, String baseURI, RDFFormat dataFormat, Resource... contexts) throws IOException, RDFParseException, RepositoryException {
         InputStream in = new URL(url.toString()).openStream(); //TBD- naive impl, will need refactoring
-        client.sendAdd(in,baseURI,dataFormat,contexts);
+        this.client.sendAdd(in,baseURI,dataFormat,contexts);
     }
     @Override
     public void add(Resource subject, URI predicate, Value object, Resource... contexts) throws RepositoryException {
-        client.sendAdd(null, subject, predicate, object, contexts);
+        this.client.sendAdd(null, subject, predicate, object, contexts);
     }
     @Override
     public void add(Statement st, Resource... contexts) throws RepositoryException {
@@ -556,25 +556,25 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     // remove
     @Override
     public void remove(Resource subject, URI predicate, Value object, Resource... contexts) throws RepositoryException {
-        client.sendRemove(null, subject, predicate, object, contexts);
+        this.client.sendRemove(null, subject, predicate, object, contexts);
     }
     @Override
     public void remove(Statement st, Resource... contexts) throws RepositoryException {
-        client.sendRemove(null,st.getSubject(),st.getPredicate(),st.getObject(),mergeResource(st.getContext(),contexts));
+        this.client.sendRemove(null,st.getSubject(),st.getPredicate(),st.getObject(),mergeResource(st.getContext(),contexts));
     }
     @Override
     public void remove(Iterable<? extends Statement> statements, Resource... contexts) throws RepositoryException {
         Iterator <? extends Statement> iter = statements.iterator();
         while(iter.hasNext()){
             Statement st = iter.next();
-            client.sendRemove(null, st.getSubject(), st.getPredicate(), st.getObject(), mergeResource(st.getContext(),contexts));
+            this.client.sendRemove(null, st.getSubject(), st.getPredicate(), st.getObject(), mergeResource(st.getContext(),contexts));
         }
     }
     @Override
     public <E extends Exception> void remove(Iteration<? extends Statement, E> statements, Resource... contexts) throws RepositoryException, E {
         while(statements.hasNext()){
             Statement st = statements.next();
-            client.sendRemove(null, st.getSubject(), st.getPredicate(), st.getObject(), mergeResource(st.getContext(),contexts));
+            this.client.sendRemove(null, st.getSubject(), st.getPredicate(), st.getObject(), mergeResource(st.getContext(),contexts));
         }
     }
 

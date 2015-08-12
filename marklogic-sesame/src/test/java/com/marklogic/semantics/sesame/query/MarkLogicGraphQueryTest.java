@@ -171,4 +171,10 @@ public class MarkLogicGraphQueryTest extends SesameTestBase {
         Assert.assertFalse(result.hasNext());
     }
 
+    @Ignore
+    public void testCreateGraph() throws Exception
+    {
+        conn.prepareUpdate("CREATE GRAPH <http://example1.org>").execute();
+    }
+
 }

@@ -160,12 +160,11 @@ public class MarkLogicTupleQueryTest extends SesameTestBase {
     }
 
     @Test
-    @Ignore
     public void testSPARQLQueryDistinct()
             throws Exception {
 
         try {
-            String queryString = "SELECT DISTINCT ?_ WHERE { GRAPH ?_ { ?s ?p ?o . } }";
+            String queryString = "SELECT DISTINCT ?_ WHERE { GRAPH ?ctx { ?s ?p ?o . } }";
             TupleQuery tupleQuery = conn.prepareTupleQuery(QueryLanguage.SPARQL, queryString);
             TupleQueryResult result = tupleQuery.evaluate();
             RepositoryResult<Resource> rr =

@@ -31,12 +31,18 @@ public class SesameTestBase {
 
     public static String adminUser;
     public static String adminPassword;
+    public static String validUser;
+    public static String validPassword;
+    public static String invalidUser;
+    public static String invalidPassword;
     public static String writerUser;
     public static String writerPassword;
     public static String readerUser;
     public static String readerPassword;
 
     public MarkLogicRepository rep;
+    public MarkLogicRepository writerRep;
+    public MarkLogicRepository readerRep;
 
     public DatabaseClient readerClient;
     public DatabaseClient writerClient;
@@ -56,17 +62,24 @@ public class SesameTestBase {
         password = props.getProperty("mlPassword");
         adminUser = props.getProperty("mlAdminUsername");
         adminPassword = props.getProperty("mlAdminPassword");
+
+        validUser = props.getProperty("validUsername");
+        validPassword = props.getProperty("validPassword");
+        invalidUser = props.getProperty("invalidUsername");
+        invalidPassword = props.getProperty("invalidPassword");
+
         writerUser = props.getProperty("writerUser");
         writerPassword = props.getProperty("writerPassword");
         readerUser = props.getProperty("readerUser");
         readerPassword = props.getProperty("readerPassword");
 
-        adminClient = DatabaseClientFactory.newClient(host, port, adminUser, adminPassword, DatabaseClientFactory.Authentication.DIGEST);
-        writerClient = DatabaseClientFactory.newClient(host, port, adminUser, adminPassword, DatabaseClientFactory.Authentication.DIGEST);
-        readerClient = DatabaseClientFactory.newClient(host, port, readerUser, readerPassword, DatabaseClientFactory.Authentication.DIGEST);
+        adminClient = DatabaseClientFactory.newClient(host, port, validUser, validPassword, DatabaseClientFactory.Authentication.DIGEST);
+        writerClient = DatabaseClientFactory.newClient(host, port, writerUser, writerPassword, DatabaseClientFactory.Authentication.DIGEST);
+        readerClient = DatabaseClientFactory.newClient(host, port, writerUser, writerPassword, DatabaseClientFactory.Authentication.DIGEST);
 
-        rep = new MarkLogicRepository(host,port,adminUser,adminPassword, "DIGEST");
-
+        rep = new MarkLogicRepository(host,port,validUser,validPassword, "DIGEST");
+        writerRep = new MarkLogicRepository(host,port,writerUser,writerPassword, "DIGEST");
+        readerRep = new MarkLogicRepository(host,port,readerUser,readerPassword, "DIGEST");
     }
 }
 
