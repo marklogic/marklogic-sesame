@@ -255,12 +255,12 @@ public class MarkLogicClientImpl {
                 graphManager.mergeGraphs(new FileHandle(file));
             } else {
                 //TBD- must be more efficient
-                if (contexts.length != 0) {
+                if (notNull(contexts) && contexts.length>0) {
                     for (Resource context : contexts) {
                         graphManager.merge(context.toString(), new FileHandle(file), tx);
                     }
                 } else {
-                    graphManager.merge(null, new FileHandle(file), tx);
+                    graphManager.merge(DEFAULT_GRAPH_URI, new FileHandle(file), tx);
                 }
             }
         } catch (FailedRequestException e) {
@@ -276,10 +276,10 @@ public class MarkLogicClientImpl {
             graphManager.mergeGraphs(new InputStreamHandle(in));
         } else {
             //TBD- must be more efficient
-            if (contexts.length != 0) {
+            if (notNull(contexts) && contexts.length>0) {
                 graphManager.merge(contexts[0].stringValue(), new InputStreamHandle(in), tx);
             } else {
-                graphManager.merge(null, new InputStreamHandle(in), tx);
+                graphManager.merge(DEFAULT_GRAPH_URI, new InputStreamHandle(in), tx);
             }
         }
     }
