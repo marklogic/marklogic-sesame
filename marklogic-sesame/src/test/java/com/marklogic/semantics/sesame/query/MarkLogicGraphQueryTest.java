@@ -92,6 +92,7 @@ public class MarkLogicGraphQueryTest extends SesameTestBase {
         Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#Cain", st2.getSubject().stringValue());
     }
 
+    // https://github.com/marklogic/marklogic-sesame/issues/45
     @Test
     public void testGraphQueryWithBaseURI()
             throws Exception {
@@ -99,12 +100,12 @@ public class MarkLogicGraphQueryTest extends SesameTestBase {
                 "PREFIX nn: <http://semanticbible.org/ns/2006/NTNames#>\n" +
                         "PREFIX test: <http://marklogic.com#test>\n" +
                         "construct { ?s  test:test <relative>} WHERE {?s nn:childOf nn:Eve . }";
-        GraphQuery graphQuery = conn.prepareGraphQuery( queryString,"http://marklogic.com/test/baseuri");
+        GraphQuery graphQuery = conn.prepareGraphQuery(queryString, "http://marklogic.com/test/baseuri/");
         GraphQueryResult results = graphQuery.evaluate();
         Statement st1 = results.next();
-        Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#Abel", st1.getSubject().stringValue());
+        Assert.assertEquals("http://marklogic.com/test/baseuri/relative", st1.getObject().stringValue());
         Statement st2 = results.next();
-        Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#Cain", st2.getSubject().stringValue());
+        Assert.assertEquals("http://marklogic.com/test/baseuri/relative", st1.getObject().stringValue());
     }
 
     @Ignore
@@ -162,7 +163,6 @@ public class MarkLogicGraphQueryTest extends SesameTestBase {
     @Test
     public void testPrepareGraphQueryWithNoResult() throws Exception
     {
-
         String query = "DESCRIBE <http://example.org/nonexistant>";
         GraphQuery queryObj = conn.prepareGraphQuery(query);
         GraphQueryResult result = queryObj.evaluate();
