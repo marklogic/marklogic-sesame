@@ -104,8 +104,8 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
         }
         String host = props.getProperty("mlHost");
         int port = Integer.parseInt(props.getProperty("mlRestPort"));
-        String user = props.getProperty("mlUsername");
-        String pass = props.getProperty("mlPassword");
+        String user = props.getProperty("validUsername");
+        String pass = props.getProperty("validPassword");
 
         rep = new MarkLogicRepository(host, port, user, pass, "DIGEST");
 
