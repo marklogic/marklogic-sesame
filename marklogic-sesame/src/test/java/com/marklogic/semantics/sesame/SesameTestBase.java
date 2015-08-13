@@ -73,7 +73,7 @@ public class SesameTestBase {
         readerUser = props.getProperty("readerUser");
         readerPassword = props.getProperty("readerPassword");
 
-        adminClient = DatabaseClientFactory.newClient(host, port, validUser, validPassword, DatabaseClientFactory.Authentication.DIGEST);
+        adminClient = DatabaseClientFactory.newClient(host, port, adminUser, adminPassword, DatabaseClientFactory.Authentication.DIGEST);
         writerClient = DatabaseClientFactory.newClient(host, port, writerUser, writerPassword, DatabaseClientFactory.Authentication.DIGEST);
         readerClient = DatabaseClientFactory.newClient(host, port, writerUser, writerPassword, DatabaseClientFactory.Authentication.DIGEST);
 
