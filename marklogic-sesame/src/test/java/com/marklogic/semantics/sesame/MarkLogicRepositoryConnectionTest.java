@@ -869,4 +869,5 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
         Assert.assertEquals(conn.size(),conn.size(null));
         conn.clear(null);
     }
+
 }

@@ -7,10 +7,7 @@ import com.marklogic.client.query.QueryManager;
 import com.marklogic.client.semantics.Capability;
 import com.marklogic.client.semantics.GraphManager;
 import com.marklogic.semantics.sesame.query.MarkLogicUpdateQuery;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.openrdf.model.Resource;
 import org.openrdf.model.ValueFactory;
 import org.openrdf.query.BooleanQuery;
@@ -101,6 +98,16 @@ public class MarkLogicGraphPermsTest extends SesameTestBase {
         Assert.assertEquals(true, results);
 
         conn.clear(context);
+    }
+
+    @Ignore
+    public void testGetGraphPermsofResult(){
+
+    }
+
+    @Ignore
+    public void testGetGraphPermsofStatement(){
+
     }
 
 }

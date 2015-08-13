@@ -175,7 +175,8 @@ public class MarkLogicClientImpl {
         ;
         qdef.setIncludeDefaultRulesets(includeInferred);
         qdef.setBindings(getSPARQLBindings(bindings));
-        sparqlManager.executeSelect(qdef, handle, start, pageLength, tx);
+        sparqlManager.setPageLength(pageLength);
+        sparqlManager.executeSelect(qdef, handle, start, tx);
         return handle.get();
     }
 
