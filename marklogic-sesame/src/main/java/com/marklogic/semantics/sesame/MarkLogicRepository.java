@@ -33,28 +33,42 @@ import java.io.File;
 
 /**
  *
+ * Sesame repository representing a MarkLogic's triple store,
+ * exposing MarkLogic specific features;
+ *
+ *  * permissions
+ *  * combination queries
+ *  * base uri
+ *  * rulesets for inferencing
+ *
  * @author James Fuller
  */
 public class MarkLogicRepository extends RepositoryBase implements Repository,MarkLogicClientDependent {
 
     protected final Logger logger = LoggerFactory.getLogger(MarkLogicRepository.class);
 
+    // MarkLogicClient vars
     private MarkLogicClient client;
-
     private String host;
-
     private int port;
-
     private String user;
-
     private String password;
-
     private String auth;
 
     private boolean quadMode;
 
     private ValueFactory f;
 
+    /**
+     *
+     * constructor inited with connection vars to MarkLogic server
+     *
+     * @param host
+     * @param port
+     * @param user
+     * @param password
+     * @param auth
+     */
     public MarkLogicRepository(String host, int port, String user, String password, String auth) {
         super();
         this.f = new ValueFactoryImpl();
@@ -67,6 +81,12 @@ public class MarkLogicRepository extends RepositoryBase implements Repository,Ma
         this.auth = auth;
         this.client = getMarkLogicClient();
     }
+
+    /**
+     * constructor inited with java api client DatabaseClient
+     *
+     * @param databaseClient
+     */
     public MarkLogicRepository(Object databaseClient) {
         super();
         this.f = new ValueFactoryImpl();
@@ -75,39 +95,84 @@ public class MarkLogicRepository extends RepositoryBase implements Repository,Ma
     }
 
 
-    // valuefactory
+    /**
+     * gets the Valuefactory used for creating URIs, blank nodes, literals and statements.
+     *
+     * @return ValueFactory
+     */
     public ValueFactory getValueFactory() {
         return this.f;
     }
+
+    /**
+     * sets the ValueFactory used for creating URIs, blank nodes, literals and statements
+     *
+     * @param f
+     */
     public void setValueFactory(ValueFactory f) {
         this.f=f;
     }
 
-    // initialize
+    /**
+     * deprecated
+     * implemented to honor Repository interface
+     *
+     * @throws RepositoryException
+     */
     @Override
     protected void initializeInternal() throws RepositoryException {
     }
 
-    //shutdown
+    /**
+     * deprecated
+     * implemented to honor Repository interface
+     *
+     * @throws RepositoryException
+     */
     @Override
     protected void shutDownInternal() throws RepositoryException {
     }
 
-    // DataDir has no relevance to MarkLogic
+    /**
+     * MarkLogic has no concept of data directory, so this returns null
+     * implemented to honor Repository interface
+     *
+     * @return
+     */
     @Override
     public File getDataDir() {
         return null;
     }
+
+    /**
+     * MarkLogic has no concept of data directory, so this does nothing
+     * implemented to honor Repository interface
+     *
+     * @param dataDir
+     */
     @Override
     public void setDataDir(File dataDir) {
     }
 
-    //
+    /**
+     * MarkLogic, with the correct perms,is always writeable so this returns true
+     * implemented to honor Repository interface
+     *
+     * @return boolean
+     * @throws RepositoryException
+     */
     @Override
     public boolean isWritable() throws RepositoryException {
         return true;
     }
 
+    /**
+     * returns a MarkLogicConnection object which is the entry point to
+     * performing all queries.
+     *
+     * @return MarkLogicRepositoryConnection
+     * @throws RepositoryException
+     */
     @Override
     public MarkLogicRepositoryConnection getConnection()
             throws RepositoryException {
@@ -117,7 +182,11 @@ public class MarkLogicRepository extends RepositoryBase implements Repository,Ma
         return new MarkLogicRepositoryConnection(this, client, quadMode);
     }
 
-    // MarkLogicClient
+    /**
+     * returns MarkLogicClient object which manages communication to ML server via Java api client
+     *
+     * @return MarkLogicClient
+     */
     @Override
     public synchronized MarkLogicClient getMarkLogicClient() {
         if (client == null) {
@@ -125,16 +194,32 @@ public class MarkLogicRepository extends RepositoryBase implements Repository,Ma
         }
         return client;
     }
+
+    /**
+     * sets MarkLogicClient used by this repository
+     *
+     * @param client
+     */
     @Override
     public synchronized void setMarkLogicClient(MarkLogicClient client) {
         this.client = client;
     }
 
 
-    // quad mode
+    /**
+     * returns if repository is in quadmode or not
+     *
+     * @return boolean
+     */
     public boolean isQuadMode() {
         return quadMode;
     }
+
+    /**
+     * sets quadmode for this repository
+     *
+     * @param quadMode
+     */
     public void setQuadMode(boolean quadMode) {
         this.quadMode = quadMode;
     }

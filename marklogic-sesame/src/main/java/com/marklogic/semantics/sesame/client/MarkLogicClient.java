@@ -47,6 +47,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 /**
+ * internal class which straddles Sesame and MarkLogic java api client
  *
  * @author James Fuller
  */
@@ -69,24 +70,57 @@ public class MarkLogicClient {
 
 	private Transaction tx = null;
 
-	// constructor
+	/**
+	 *
+ 	 * @param host
+	 * @param port
+	 * @param user
+	 * @param password
+	 * @param auth
+	 */
 	public MarkLogicClient(String host, int port, String user, String password,String auth) {
 		this._client = new MarkLogicClientImpl(host,port,user,password,auth);
 	}
 
+	/**
+	 *
+	 * @param databaseClient
+	 */
 	public MarkLogicClient(Object databaseClient) {
 		this._client = new MarkLogicClientImpl(databaseClient);
 	}
 
-	// valuefactory
+	/**
+	 *
+	 * @return
+	 */
 	public ValueFactory getValueFactory() {
 		return this.f;
 	}
+
+	/**
+	 *
+	 * @param f
+	 */
 	public void setValueFactory(ValueFactory f) {
 		this.f=f;
 	}
 
-	//tuple query
+	/**
+	 *
+	 * @param queryString
+	 * @param bindings
+	 * @param start
+	 * @param pageLength
+	 * @param includeInferred
+	 * @param baseURI
+	 * @return
+	 * @throws IOException
+	 * @throws RepositoryException
+	 * @throws MalformedQueryException
+	 * @throws UnauthorizedException
+	 * @throws QueryInterruptedException
+	 */
 	public TupleQueryResult sendTupleQuery(String queryString,SPARQLQueryBindingSet bindings, long start, long pageLength, boolean includeInferred, String baseURI) throws IOException, RepositoryException, MalformedQueryException, UnauthorizedException,
     QueryInterruptedException {
 		InputStream stream = getClient().performSPARQLQuery(queryString, bindings, start, pageLength, this.tx, includeInferred, baseURI);
@@ -96,7 +130,15 @@ public class MarkLogicClient {
 		return tRes;
 	}
 
-	//graph query
+	/**
+	 *
+	 * @param queryString
+	 * @param bindings
+	 * @param includeInferred
+	 * @param baseURI
+	 * @return
+	 * @throws IOException
+	 */
 	public GraphQueryResult sendGraphQuery(String queryString, SPARQLQueryBindingSet bindings, boolean includeInferred, String baseURI) throws IOException {
 		InputStream stream = getClient().performGraphQuery(queryString, bindings, this.tx, includeInferred, baseURI);
 
@@ -119,39 +161,104 @@ public class MarkLogicClient {
 
 	}
 
-	//boolean query
+	/**
+	 *
+	 * @param queryString
+	 * @param bindings
+	 * @param includeInferred
+	 * @param baseURI
+	 * @return
+	 * @throws IOException
+	 * @throws RepositoryException
+	 * @throws MalformedQueryException
+	 * @throws UnauthorizedException
+	 * @throws QueryInterruptedException
+	 */
 	public boolean sendBooleanQuery(String queryString, SPARQLQueryBindingSet bindings, boolean includeInferred, String baseURI) throws IOException, RepositoryException, MalformedQueryException, UnauthorizedException,
     QueryInterruptedException {
 		return getClient().performBooleanQuery(queryString, bindings, this.tx, includeInferred, baseURI);
 	}
 
-	//update query
+	/**
+	 *
+	 * @param queryString
+	 * @param bindings
+	 * @param includeInferred
+	 * @param baseURI
+	 * @throws IOException
+	 * @throws RepositoryException
+	 * @throws MalformedQueryException
+	 * @throws UnauthorizedException
+	 * @throws UpdateExecutionException
+	 */
 	public void sendUpdateQuery(String queryString, SPARQLQueryBindingSet bindings, boolean includeInferred, String baseURI) throws IOException, RepositoryException, MalformedQueryException, UnauthorizedException,
     UpdateExecutionException {
 		getClient().performUpdateQuery(queryString, bindings, this.tx, includeInferred, baseURI);
 	}
 
-	//add
+	/**
+	 *
+	 * @param file
+	 * @param baseURI
+	 * @param dataFormat
+	 * @param contexts
+	 * @throws RDFParseException
+	 */
     public void sendAdd(File file, String baseURI, RDFFormat dataFormat, Resource... contexts) throws RDFParseException {
 		getClient().performAdd(file, baseURI, dataFormat, this.tx, contexts);
     }
+
+	/**
+	 *
+	 * @param in
+	 * @param baseURI
+	 * @param dataFormat
+	 * @param contexts
+	 */
 	public void sendAdd(InputStream in, String baseURI, RDFFormat dataFormat, Resource... contexts){
 		getClient().performAdd(in, baseURI, dataFormat, this.tx, contexts);
 	}
+
+	/**
+	 *
+	 * @param in
+	 * @param baseURI
+	 * @param dataFormat
+	 * @param contexts
+	 */
 	public void sendAdd(Reader in, String baseURI, RDFFormat dataFormat, Resource... contexts){
 		//TBD- must deal with char encoding
 		getClient().performAdd(new ReaderInputStream(in), baseURI, dataFormat, this.tx, contexts);
 	}
+
+	/**
+	 *
+	 * @param baseURI
+	 * @param subject
+	 * @param predicate
+	 * @param object
+	 * @param contexts
+	 */
 	public void sendAdd(String baseURI, Resource subject, URI predicate, Value object, Resource... contexts){
 		getClient().performAdd(baseURI, (Resource) skolemize(subject), (URI) skolemize(predicate), skolemize(object), this.tx, contexts);
 	}
 
-	//remove
+	/**
+	 *
+	 * @param baseURI
+	 * @param subject
+	 * @param predicate
+	 * @param object
+	 * @param contexts
+	 */
 	public void sendRemove(String baseURI, Resource subject,URI predicate, Value object, Resource... contexts){
 		getClient().performRemove(baseURI, (Resource) skolemize(subject), (URI) skolemize(predicate), skolemize(object), this.tx, contexts);
 	}
 
-	//clear
+	/**
+	 *
+	 * @param contexts
+	 */
 	public void sendClear(Resource... contexts){
 		getClient().performClear(this.tx, contexts);
 	}
@@ -159,7 +266,10 @@ public class MarkLogicClient {
 		getClient().performClearAll(this.tx);
 	}
 
-	//transaction
+	/**
+	 *
+	 * @throws MarkLogicTransactionException
+	 */
 	public void openTransaction() throws MarkLogicTransactionException {
         if (!isActiveTransaction()) {
             this.tx = getClient().getDatabaseClient().openTransaction();
@@ -167,6 +277,11 @@ public class MarkLogicClient {
             throw new MarkLogicTransactionException("Only one active transaction allowed.");
         }
 	}
+
+	/**
+	 *
+	 * @throws MarkLogicTransactionException
+	 */
 	public void commitTransaction() throws MarkLogicTransactionException {
         if (isActiveTransaction()) {
             this.tx.commit();
@@ -175,13 +290,28 @@ public class MarkLogicClient {
             throw new MarkLogicTransactionException("No active transaction to commit.");
         }
 	}
+
+	/**
+	 *
+	 * @throws MarkLogicTransactionException
+	 */
 	public void rollbackTransaction() throws MarkLogicTransactionException {
         this.tx.rollback();
         this.tx=null;
 	}
+
+	/**
+	 *
+	 * @return
+	 */
 	public boolean isActiveTransaction(){
 		return this.tx != null;
 	}
+
+	/**
+	 *
+	 * @throws MarkLogicTransactionException
+	 */
 	public void setAutoCommit() throws MarkLogicTransactionException {
         if (isActiveTransaction()) {
             throw new MarkLogicTransactionException("Active transaction.");
@@ -190,40 +320,75 @@ public class MarkLogicClient {
         }
 	}
 
-	//parser
+	/**
+	 *
+	 * @return
+	 */
 	public ParserConfig getParserConfig() {
 		return this.parserConfig;
 	}
+
+	/**
+	 *
+	 * @param parserConfig
+	 */
 	public void setParserConfig(ParserConfig parserConfig) {
 		this.parserConfig=parserConfig;
 	}
 
-	// rulesets
+	/**
+	 *
+	 * @param rulesets
+	 */
 	public void setRulesets(Object rulesets){
 		getClient().setRulesets(rulesets);
 	}
+
+	/**
+	 *
+	 * @return
+	 */
 	public Object getRulesets(){
 		return getClient().getRulesets();
 	}
 
-    // constraining query
+	/**
+	 *
+	 * @param constrainingQueryDefinition
+	 */
     public void setConstrainingQueryDefinition(Object constrainingQueryDefinition){
 		getClient().setConstrainingQueryDefinition(constrainingQueryDefinition);
     }
-    public Object getConstrainingQueryDefinition(){
+
+	/**
+	 *
+	 * @return
+	 */
+	public Object getConstrainingQueryDefinition(){
         return getClient().getConstrainingQueryDefinition();
     }
 
-    // graph perms
+	/**
+	 *
+	 * @param graphPerms
+	 */
     public void setGraphPerms(Object graphPerms){
         getClient().setGraphPerms(graphPerms);
     }
-    public Object getGraphPerms(){
+
+	/**
+	 *
+	 * @return
+	 */
+	public Object getGraphPerms(){
         return getClient().getGraphPerms();
     }
 
 
-    //execute
+	/**
+	 *
+	 * @param command
+	 */
 	protected void execute(Runnable command) {
 		executor.execute(command);
 	}
@@ -233,12 +398,19 @@ public class MarkLogicClient {
     // private ////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    //
+	/**
+	 *
+	 * @return
+	 */
 	private MarkLogicClientImpl getClient(){
 		return this._client;
 	}
 
-    //
+	/**
+	 *
+	 * @param s
+	 * @return
+	 */
 	private Value skolemize(Value s) {
 		if (s instanceof org.openrdf.model.BNode) {
 			return getValueFactory().createURI("http://marklogic.com/semantics/blank/" + s.toString());

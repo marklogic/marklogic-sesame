@@ -25,6 +25,12 @@ import org.openrdf.rio.RDFParser;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 
+/**
+ * wrapper on Sesame BackgroundGraphResult so we can handle errors
+ *
+ *
+ */
+
 public class MarkLogicBackgroundGraphResult extends BackgroundGraphResult
 {
 

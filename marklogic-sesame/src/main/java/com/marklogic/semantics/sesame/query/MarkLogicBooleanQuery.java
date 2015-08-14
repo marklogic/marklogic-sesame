@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 
 /**
+ * boolean query
  *
  * @author James Fuller
  */
@@ -39,12 +40,23 @@ public class MarkLogicBooleanQuery extends MarkLogicQuery implements BooleanQuer
 
     protected final Logger logger = LoggerFactory.getLogger(MarkLogicBooleanQuery.class);
 
-    // constructor
+    /**
+     * constructor
+     *
+     * @param client
+     * @param bindingSet
+     * @param baseUri
+     * @param queryString
+     */
     public MarkLogicBooleanQuery(MarkLogicClient client, SPARQLQueryBindingSet bindingSet, String baseUri, String queryString) {
         super(client, bindingSet, baseUri, queryString);
     }
 
-    //evaluate
+    /**
+     *
+     * @return
+     * @throws QueryEvaluationException
+     */
     @Override
     public boolean evaluate() throws QueryEvaluationException {
         try {

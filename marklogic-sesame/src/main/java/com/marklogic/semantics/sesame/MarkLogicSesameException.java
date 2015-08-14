@@ -22,6 +22,7 @@ package com.marklogic.semantics.sesame;
 import org.openrdf.repository.RepositoryException;
 
 /**
+ * specific exception for throwing MarkLogic related errors
  *
  * @author James Fuller
  */

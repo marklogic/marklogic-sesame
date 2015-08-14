@@ -24,6 +24,9 @@ import org.openrdf.model.Statement;
 import org.openrdf.query.*;
 import org.openrdf.repository.RepositoryException;
 
+/**
+ * interface which defines MarkLogic specific overrides
+ */
 public interface MarkLogicRepositoryConnectionDependent {
 
     public Query prepareQuery(String queryString) throws RepositoryException, MalformedQueryException;

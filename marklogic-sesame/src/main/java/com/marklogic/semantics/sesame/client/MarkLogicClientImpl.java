@@ -46,6 +46,8 @@ import java.net.URISyntaxException;
 import java.util.Locale;
 
 /**
+ * internal class for interacting with java api client
+ *
  * @author James Fuller
  */
 public class MarkLogicClientImpl {

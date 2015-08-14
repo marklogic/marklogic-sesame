@@ -34,10 +34,18 @@ public class MarkLogicUpdate {
 		this.client = client;
 	}
 
+	/**
+	 *
+	 * @throws UpdateExecutionException
+	 */
 	public void execute()
 			throws UpdateExecutionException {
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	private MarkLogicClient getClient() {
 		return this.client;
 	}
