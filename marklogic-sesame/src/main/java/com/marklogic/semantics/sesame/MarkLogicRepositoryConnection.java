@@ -53,6 +53,7 @@ import java.util.Iterator;
 import static org.openrdf.query.QueryLanguage.SPARQL;
 
 /**
+ * RepositoryConnection to MarkLogic triplestore
  *
  * @author James Fuller
  */
@@ -74,7 +75,13 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
 
     private MarkLogicClient client;
 
-    //constructor
+    /**
+     * constructor
+     *
+      * @param repository
+     * @param client
+     * @param quadMode
+     */
     public MarkLogicRepositoryConnection(MarkLogicRepository repository, MarkLogicClient client, boolean quadMode) {
         super(repository);
         this.client = client;
@@ -82,28 +89,71 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
         client.setValueFactory(repository.getValueFactory());
     }
 
-    // valuefactory
+    /**
+     *
+     * @return
+     */
     @Override
     public ValueFactory getValueFactory() {
         return client.getValueFactory();
     }
+
+    /**
+     *
+     * @param f
+     */
     public void setValueFactory(ValueFactory f) {
         client.setValueFactory(f);
     }
 
-    // prepareQuery entrypoint
+    /**
+     * prepareQuery will route to all different query forms
+     *
+     * @param queryString
+     * @return
+     * @throws RepositoryException
+     * @throws MalformedQueryException
+     */
     @Override
     public Query prepareQuery(String queryString) throws RepositoryException, MalformedQueryException {
         return prepareQuery(QueryLanguage.SPARQL, queryString, null);
     }
+
+    /**
+     *
+     * @param queryString
+     * @param baseURI
+     * @return
+     * @throws RepositoryException
+     * @throws MalformedQueryException
+     */
     @Override
     public Query prepareQuery(String queryString, String baseURI) throws RepositoryException, MalformedQueryException {
         return prepareQuery(QueryLanguage.SPARQL, queryString, baseURI);
     }
+
+    /**
+     *
+     * @param queryLanguage
+     * @param queryString
+     * @return
+     * @throws RepositoryException
+     * @throws MalformedQueryException
+     */
     @Override
     public Query prepareQuery(QueryLanguage queryLanguage, String queryString) throws RepositoryException, MalformedQueryException {
         return prepareQuery(queryLanguage, queryString, null);
     }
+
+    /**
+     *
+     * @param queryLanguage
+     * @param queryString
+     * @param baseURI
+     * @return
+     * @throws RepositoryException
+     * @throws MalformedQueryException
+     */
     @Override
     public MarkLogicQuery prepareQuery(QueryLanguage queryLanguage, String queryString, String baseURI)
             throws RepositoryException, MalformedQueryException
@@ -124,19 +174,53 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
         throw new UnsupportedQueryLanguageException("Unsupported query language " + queryLanguage.getName());
     }
 
-    // prepareTupleQuery
+    /**
+     * sets up TupleQuery
+     *
+     * @param queryString
+     * @return MarkLogicTupleQuery
+     * @throws RepositoryException
+     * @throws MalformedQueryException
+     */
     @Override
     public MarkLogicTupleQuery prepareTupleQuery(String queryString) throws RepositoryException, MalformedQueryException {
         return prepareTupleQuery(QueryLanguage.SPARQL, queryString);
     }
+    /**
+     *
+     * @param queryString
+     * @param baseURI
+     * @return
+     * @throws RepositoryException
+     * @throws MalformedQueryException
+     */
     @Override
     public MarkLogicTupleQuery prepareTupleQuery(String queryString,String baseURI) throws RepositoryException, MalformedQueryException {
         return prepareTupleQuery(QueryLanguage.SPARQL, queryString, baseURI);
     }
+
+    /**
+     *
+     * @param queryLanguage
+     * @param queryString
+     * @return
+     * @throws RepositoryException
+     * @throws MalformedQueryException
+     */
     @Override
     public MarkLogicTupleQuery prepareTupleQuery(QueryLanguage queryLanguage, String queryString) throws RepositoryException, MalformedQueryException {
         return prepareTupleQuery(queryLanguage, queryString, null);
     }
+
+    /**
+     *
+     * @param queryLanguage
+     * @param queryString
+     * @param baseURI
+     * @return
+     * @throws RepositoryException
+     * @throws MalformedQueryException
+     */
     @Override
     public MarkLogicTupleQuery prepareTupleQuery(QueryLanguage queryLanguage, String queryString, String baseURI) throws RepositoryException, MalformedQueryException {
         if (QueryLanguage.SPARQL.equals(queryLanguage)) {
@@ -145,19 +229,54 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
         throw new UnsupportedQueryLanguageException("Unsupported query language " + queryLanguage.getName());
     }
 
-    // prepareGraphQuery
+    /**
+     * sets up graph query
+     *
+     * @param queryString
+     * @return MarkLogicGraphQuery
+     * @throws RepositoryException
+     * @throws MalformedQueryException
+     */
     @Override
     public MarkLogicGraphQuery prepareGraphQuery(String queryString) throws RepositoryException, MalformedQueryException {
         return prepareGraphQuery(QueryLanguage.SPARQL, queryString, null);
     }
+
+    /**
+     *
+     * @param queryString
+     * @param baseURI
+     * @return
+     * @throws RepositoryException
+     * @throws MalformedQueryException
+     */
     @Override
     public MarkLogicGraphQuery prepareGraphQuery(String queryString,String baseURI) throws RepositoryException, MalformedQueryException {
         return prepareGraphQuery(QueryLanguage.SPARQL, queryString, baseURI);
     }
+
+    /**
+     *
+     * @param queryLanguage
+     * @param queryString
+     * @return
+     * @throws RepositoryException
+     * @throws MalformedQueryException
+     */
     @Override
     public MarkLogicGraphQuery prepareGraphQuery(QueryLanguage queryLanguage, String queryString) throws RepositoryException, MalformedQueryException {
         return prepareGraphQuery(queryLanguage, queryString, null);
     }
+
+    /**
+     *
+     * @param queryLanguage
+     * @param queryString
+     * @param baseURI
+     * @return
+     * @throws RepositoryException
+     * @throws MalformedQueryException
+     */
     @Override
     public MarkLogicGraphQuery prepareGraphQuery(QueryLanguage queryLanguage, String queryString, String baseURI)
             throws RepositoryException, MalformedQueryException
@@ -168,19 +287,54 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
         throw new UnsupportedQueryLanguageException("Unsupported query language " + queryLanguage.getName());
     }
 
-    // prepareBooleanQuery
+    /**
+     * sets up boolean query
+     *
+     * @param queryString
+     * @return MarkLogicBooleanQuery
+     * @throws RepositoryException
+     * @throws MalformedQueryException
+     */
     @Override
     public MarkLogicBooleanQuery prepareBooleanQuery(String queryString) throws RepositoryException, MalformedQueryException {
         return prepareBooleanQuery(QueryLanguage.SPARQL, queryString, null);
     }
+
+    /**
+     *
+     * @param queryString
+     * @param baseURI
+     * @return
+     * @throws RepositoryException
+     * @throws MalformedQueryException
+     */
     @Override
     public MarkLogicBooleanQuery prepareBooleanQuery(String queryString,String baseURI) throws RepositoryException, MalformedQueryException {
         return prepareBooleanQuery(QueryLanguage.SPARQL, queryString, baseURI);
     }
+
+    /**
+     *
+     * @param queryLanguage
+     * @param queryString
+     * @return
+     * @throws RepositoryException
+     * @throws MalformedQueryException
+     */
     @Override
     public MarkLogicBooleanQuery prepareBooleanQuery(QueryLanguage queryLanguage, String queryString) throws RepositoryException, MalformedQueryException {
         return prepareBooleanQuery(queryLanguage, queryString, null);
     }
+
+    /**
+     *
+     * @param queryLanguage
+     * @param queryString
+     * @param baseURI
+     * @return
+     * @throws RepositoryException
+     * @throws MalformedQueryException
+     */
     @Override
     public MarkLogicBooleanQuery prepareBooleanQuery(QueryLanguage queryLanguage, String queryString, String baseURI) throws RepositoryException, MalformedQueryException {
         if (QueryLanguage.SPARQL.equals(queryLanguage)) {
@@ -189,19 +343,54 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
         throw new UnsupportedQueryLanguageException("Unsupported query language " + queryLanguage.getName());
     }
 
-    // prepareUpdate
+    /**
+     * sets up update query
+     *
+     * @param queryString
+     * @return MarkLogicUpdateQuery
+     * @throws RepositoryException
+     * @throws MalformedQueryException
+     */
     @Override
     public MarkLogicUpdateQuery prepareUpdate(String queryString) throws RepositoryException, MalformedQueryException {
         return prepareUpdate(QueryLanguage.SPARQL, queryString, null);
     }
+
+    /**
+     *
+     * @param queryString
+     * @param baseURI
+     * @return
+     * @throws RepositoryException
+     * @throws MalformedQueryException
+     */
     @Override
     public MarkLogicUpdateQuery prepareUpdate(String queryString,String baseURI) throws RepositoryException, MalformedQueryException {
         return prepareUpdate(QueryLanguage.SPARQL, queryString, baseURI);
     }
+
+    /**
+     *
+     * @param queryLanguage
+     * @param queryString
+     * @return
+     * @throws RepositoryException
+     * @throws MalformedQueryException
+     */
     @Override
     public MarkLogicUpdateQuery prepareUpdate(QueryLanguage queryLanguage, String queryString) throws RepositoryException, MalformedQueryException {
        return prepareUpdate(queryLanguage, queryString, null);
     }
+
+    /**
+     *
+     * @param queryLanguage
+     * @param queryString
+     * @param baseURI
+     * @return
+     * @throws RepositoryException
+     * @throws MalformedQueryException
+     */
     @Override
     public MarkLogicUpdateQuery prepareUpdate(QueryLanguage queryLanguage, String queryString, String baseURI) throws RepositoryException, MalformedQueryException {
         if (QueryLanguage.SPARQL.equals(queryLanguage)) {
@@ -210,7 +399,12 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
         throw new UnsupportedQueryLanguageException("Unsupported query language " + queryLanguage.getName());
     }
 
-    // get list of contexts (graphs)
+    /**
+     * returns list of graph names
+     *
+     * @return RepositoryResult<Resource>
+     * @throws RepositoryException
+     */
     @Override
     public RepositoryResult<Resource> getContextIDs() throws RepositoryException {
 
@@ -243,8 +437,16 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
         }
     }
 
-    // statements
-
+    /**
+     * returns statements
+     *
+     * @param subj
+     * @param pred
+     * @param obj
+     * @param includeInferred
+     * @return RepositoryResult<Statement>
+     * @throws RepositoryException
+     */
     public RepositoryResult<Statement> getStatements(Resource subj, URI pred, Value obj, boolean includeInferred) throws RepositoryException {
         try {
             if (isQuadMode()) {
@@ -292,6 +494,17 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
         }
     }
 
+    /**
+     * returns statements
+     *
+     * @param subj
+     * @param pred
+     * @param obj
+     * @param includeInferred
+     * @param contexts
+     * @return RepositoryResult<Statement>
+     * @throws RepositoryException
+     */
     @Override
     public RepositoryResult<Statement> getStatements(Resource subj, URI pred, Value obj, boolean includeInferred, Resource... contexts) throws RepositoryException {
         try {
@@ -339,10 +552,31 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
             throw new RepositoryException(e);
         }
     }
+
+    /**
+     * returns true or false if a statement exists in repository / context
+     *
+     * @param st
+     * @param includeInferred
+     * @param contexts
+     * @return boolean
+     * @throws RepositoryException
+     */
     @Override
     public boolean hasStatement(Statement st, boolean includeInferred, Resource... contexts) throws RepositoryException {
         return hasStatement(st.getSubject(),st.getPredicate(),st.getObject(),includeInferred,contexts); //TBD
     }
+
+    /**
+     * returns true or false if a statement exists in repository / context
+     * @param subject
+     * @param predicate
+     * @param object
+     * @param includeInferred
+     * @param contexts
+     * @return boolean
+     * @throws RepositoryException
+     */
     @Override
     public boolean hasStatement(Resource subject, URI predicate, Value object, boolean includeInferred, Resource... contexts) throws RepositoryException {
         try {
@@ -384,7 +618,18 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
         }
     }
 
-    // export
+    /**
+     * exports statements via RDFHandler
+     *
+     * @param subject
+     * @param predicate
+     * @param object
+     * @param includeInferred
+     * @param handler
+     * @param contexts
+     * @throws RepositoryException
+     * @throws RDFHandlerException
+     */
     @Override
     public void exportStatements(Resource subject, URI predicate, Value object, boolean includeInferred, RDFHandler handler, Resource... contexts) throws RepositoryException, RDFHandlerException {
         try {
@@ -442,12 +687,27 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
             throw new RepositoryException(e);
         }
     }
+
+    /**
+     * exports statements via RDFHandler
+     *
+     * @param handler
+     * @param contexts
+     * @throws RepositoryException
+     * @throws RDFHandlerException
+     */
     @Override
     public void export(RDFHandler handler, Resource... contexts) throws RepositoryException, RDFHandlerException {
         exportStatements(null, null, null, true, handler);
     }
 
 
+    /**
+     * returns number of triples in the entire triple store
+     *
+     * @return long
+     */
+    @Override
     public long size(){
         try {
             RepositoryResult<Statement> statements = getStatements(null,null,null,true);
@@ -463,7 +723,12 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
         return 0;
     }
 
-    // number of triples in repository context (graph)
+    /**
+     * returns number of triples in supplied context
+     *
+     * @param contexts
+     * @return long
+     */
     @Override
     public long size(Resource... contexts)  {
         try {
@@ -480,32 +745,67 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
         return 0;
     }
 
-    // remove context (graph)
-
+    /**
+     * clears all triples from repository
+     *
+     * @throws RepositoryException
+     */
     @Override
     public void clear() throws RepositoryException{
         this.client.sendClearAll();
     }
+
+    /**
+     * clears triples in repository context
+     *
+     * @param contexts
+     * @throws RepositoryException
+     */
     @Override
     public void clear(Resource... contexts) throws RepositoryException {
             this.client.sendClear(contexts);
     }
 
-    // is repository empty
+    /**
+     * returns true or false if the repository contains triples or not
+     *
+     * @return boolean
+     * @throws RepositoryException
+     */
     @Override
     public boolean isEmpty() throws RepositoryException {
         return size() == 0;
     }
 
-    //transactions
+    /**
+     * returns true if a transaction is open and active
+     *
+     * @return boolean
+     * @throws UnknownTransactionStateException
+     * @throws RepositoryException
+     */
     @Override
     public boolean isActive() throws UnknownTransactionStateException, RepositoryException {
         return this.client.isActiveTransaction();
     }
+
+    /**
+     * deprecated
+     *
+     * @return
+     * @throws RepositoryException
+     */
     @Override
     public boolean isAutoCommit() throws RepositoryException {
         return this.client.isActiveTransaction() == false;
     }
+
+    /**
+     * sets MarkLogicClient autocommit
+     *
+     * @param autoCommit
+     * @throws RepositoryException
+     */
     @Override
     public void setAutoCommit(boolean autoCommit) throws RepositoryException {
         try {
@@ -514,60 +814,170 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
             e.printStackTrace();
         }
     }
+
+    /**
+     * sets transaction isolationlevel
+     *
+     * @return level
+     */
     @Override
     public IsolationLevel getIsolationLevel() {
         return IsolationLevels.SNAPSHOT;
     }
+
+    /**
+     * sets transaction isolationlevel
+     *
+     * @param level
+     * @throws IllegalStateException
+     */
     @Override
     public void setIsolationLevel(IsolationLevel level) throws IllegalStateException {
         if(level != IsolationLevels.SNAPSHOT){
          throw new IllegalStateException();
         }
     }
+
+    /**
+     * opens a new transaction
+     *
+     * @throws RepositoryException
+     */
     @Override
     public void begin() throws RepositoryException {
         this.client.openTransaction();
     }
+
+    /**
+     * opens a new transaction
+     *
+     * @param level
+     * @throws RepositoryException
+     */
     @Override
     public void begin(IsolationLevel level) throws RepositoryException {
         setIsolationLevel(level);
         begin();
     }
+
+    /**
+     * commits a transaction
+     *
+     * @throws RepositoryException
+     */
     @Override
     public void commit() throws RepositoryException {
         this.client.commitTransaction();
     }
+
+    /**
+     * rollbacks an open transaction
+     *
+     * @throws RepositoryException
+     */
     @Override
     public void rollback() throws RepositoryException {
         this.client.rollbackTransaction();
     }
 
-    // add
+    /**
+     * add triples
+     *
+     * @param in
+     * @param baseURI
+     * @param dataFormat
+     * @param contexts
+     * @throws IOException
+     * @throws RDFParseException
+     * @throws RepositoryException
+     */
     @Override
     public void add(InputStream in, String baseURI, RDFFormat dataFormat, Resource... contexts) throws IOException, RDFParseException, RepositoryException {
         this.client.sendAdd(in, baseURI, dataFormat, contexts);
     }
+
+    /**
+     * add triples
+     *
+     * @param file
+     * @param baseURI
+     * @param dataFormat
+     * @param contexts
+     * @throws IOException
+     * @throws RDFParseException
+     * @throws RepositoryException
+     */
     @Override
     public void add(File file, String baseURI, RDFFormat dataFormat, Resource... contexts) throws IOException, RDFParseException, RepositoryException {
         this.client.sendAdd(file, baseURI, dataFormat, contexts);
     }
+
+    /**
+     * add triples
+     *
+     * @param reader
+     * @param baseURI
+     * @param dataFormat
+     * @param contexts
+     * @throws IOException
+     * @throws RDFParseException
+     * @throws RepositoryException
+     */
     @Override
     public void add(Reader reader, String baseURI, RDFFormat dataFormat, Resource... contexts) throws IOException, RDFParseException, RepositoryException {
         this.client.sendAdd(reader,baseURI,dataFormat,contexts);
     }
+
+    /**
+     * add triples
+     *
+     * @param url
+     * @param baseURI
+     * @param dataFormat
+     * @param contexts
+     * @throws IOException
+     * @throws RDFParseException
+     * @throws RepositoryException
+     */
     @Override
     public void add(URL url, String baseURI, RDFFormat dataFormat, Resource... contexts) throws IOException, RDFParseException, RepositoryException {
         InputStream in = new URL(url.toString()).openStream(); //TBD- naive impl, will need refactoring
         this.client.sendAdd(in,baseURI,dataFormat,contexts);
     }
+
+    /**
+     * add single statement of triples
+     *
+     * @param subject
+     * @param predicate
+     * @param object
+     * @param contexts
+     * @throws RepositoryException
+     */
     @Override
     public void add(Resource subject, URI predicate, Value object, Resource... contexts) throws RepositoryException {
         this.client.sendAdd(null, subject, predicate, object, contexts);
     }
+
+    /**
+     * add triples
+     *
+     * @param st
+     * @param contexts
+     * @throws RepositoryException
+     */
     @Override
     public void add(Statement st, Resource... contexts) throws RepositoryException {
         add(st.getSubject(), st.getPredicate(), st.getObject(), mergeResource(st.getContext(), contexts));
     }
+
+    /**
+     * add triples
+     *
+     * @param statements
+     * @param contexts
+     * @throws RepositoryException
+     */
     @Override
     public void add(Iterable<? extends Statement> statements, Resource... contexts) throws RepositoryException {
         Iterator <? extends Statement> iter = statements.iterator();
@@ -576,6 +986,16 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
             add(st.getSubject(), st.getPredicate(), st.getObject(), mergeResource(st.getContext(), contexts));
         }
     }
+
+    /**
+     * add triples
+     *
+     * @param statements
+     * @param contexts
+     * @param <E>
+     * @throws RepositoryException
+     * @throws E
+     */
     @Override
     public <E extends Exception> void add(Iteration<? extends Statement, E> statements, Resource... contexts) throws RepositoryException, E {
         while(statements.hasNext()){
@@ -584,16 +1004,39 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
         }
     }
 
-    // remove
 
+    /**
+     * remove triples
+     *
+     * @param subject
+     * @param predicate
+     * @param object
+     * @param contexts
+     * @throws RepositoryException
+     */
     @Override
     public void remove(Resource subject, URI predicate, Value object, Resource... contexts) throws RepositoryException {
         this.client.sendRemove(null, subject, predicate, object, contexts);
     }
+
+    /**
+     * remove triples
+     *
+     * @param st
+     * @param contexts
+     * @throws RepositoryException
+     */
     @Override
     public void remove(Statement st, Resource... contexts) throws RepositoryException {
         this.client.sendRemove(null,st.getSubject(),st.getPredicate(),st.getObject(),mergeResource(st.getContext(),contexts));
     }
+
+    /**
+     * remove triples
+     *
+     * @param statements
+     * @throws RepositoryException
+     */
     @Override
     public void remove(Iterable<? extends Statement> statements) throws RepositoryException {
         Iterator <? extends Statement> iter = statements.iterator();
@@ -602,6 +1045,14 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
             this.client.sendRemove(null, st.getSubject(), st.getPredicate(), st.getObject());
         }
     }
+
+    /**
+     * remove triples
+     *
+     * @param statements
+     * @param contexts
+     * @throws RepositoryException
+     */
     @Override
     public void remove(Iterable<? extends Statement> statements, Resource... contexts) throws RepositoryException {
         Iterator <? extends Statement> iter = statements.iterator();
@@ -610,6 +1061,15 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
             this.client.sendRemove(null, st.getSubject(), st.getPredicate(), st.getObject(), mergeResource(st.getContext(),contexts));
         }
     }
+
+    /**
+     * remove triples
+     *
+     * @param statements
+     * @param <E>
+     * @throws RepositoryException
+     * @throws E
+     */
     @Override
     public <E extends Exception> void remove(Iteration<? extends Statement, E> statements) throws RepositoryException, E {
         while(statements.hasNext()){
@@ -617,6 +1077,16 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
             this.client.sendRemove(null, st.getSubject(), st.getPredicate(), st.getObject());
         }
     }
+
+    /**
+     * remove triples
+     *
+     * @param statements
+     * @param contexts
+     * @param <E>
+     * @throws RepositoryException
+     * @throws E
+     */
     @Override
     public <E extends Exception> void remove(Iteration<? extends Statement, E> statements, Resource... contexts) throws RepositoryException, E {
         while(statements.hasNext()){
@@ -625,11 +1095,29 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
         }
     }
 
-    // without commit
+    /**
+     * add without commit
+     *
+     * @param subject
+     * @param predicate
+     * @param object
+     * @param contexts
+     * @throws RepositoryException
+     */
     @Override
     protected void addWithoutCommit(Resource subject, URI predicate, Value object, Resource... contexts) throws RepositoryException {
         add(subject, predicate, object, contexts);
     }
+
+    /**
+     * remove without commit
+     *
+     * @param subject
+     * @param predicate
+     * @param object
+     * @param contexts
+     * @throws RepositoryException
+     */
     @Override
     protected void removeWithoutCommit(Resource subject, URI predicate, Value object, Resource... contexts) throws RepositoryException {
         remove(subject, predicate, object, contexts);
@@ -639,21 +1127,50 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     // not in scope for 1.0.0 /////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     *
+     * @return
+     * @throws RepositoryException
+     */
     @Override
     public RepositoryResult<Namespace> getNamespaces() throws RepositoryException {
         return null;
     }
 
+    /**
+     *
+     * @param prefix
+     * @return
+     * @throws RepositoryException
+     */
     @Override
     public String getNamespace(String prefix) throws RepositoryException {
         return null;
     }
+
+    /**
+     *
+     * @param prefix
+     * @param name
+     * @throws RepositoryException
+     */
     @Override
     public void setNamespace(String prefix, String name) throws RepositoryException {
     }
+
+    /**
+     *
+     * @param prefix
+     * @throws RepositoryException
+     */
     @Override
     public void removeNamespace(String prefix) throws RepositoryException {
     }
+
+    /**
+     *
+     * @throws RepositoryException
+     */
     @Override
     public void clearNamespaces() throws RepositoryException {
     }
@@ -665,6 +1182,15 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     // private ////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     *
+     * @param query
+     * @param subj
+     * @param pred
+     * @param obj
+     * @param contexts
+     * @throws RepositoryException
+     */
     private void setBindings(Query query, Resource subj, URI pred, Value obj, Resource... contexts)
             throws RepositoryException {
         if (subj != null) {
@@ -700,10 +1226,21 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
         }
     }
 
+    /**
+     *
+     * @return
+     */
     private boolean isQuadMode() {
         return quadMode;
     }
 
+    /**
+     * private utility for merging Resource varargs
+     *
+     * @param o
+     * @param arr
+     * @return
+     */
     private static Resource[] mergeResource(Resource o, Resource... arr) {
         if(o != null) {
             Resource[] newArray = new Resource[arr.length + 1];
@@ -716,6 +1253,14 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
 
     }
 
+    /**
+     *
+     * @param iter
+     * @param subj
+     * @param pred
+     * @param obj
+     * @return iterator
+     */
     private Iteration<Statement, QueryEvaluationException> toStatementIteration(TupleQueryResult iter, final Resource subj, final URI pred, final Value obj) {
         return new ConvertingIteration<BindingSet, Statement, QueryEvaluationException>(iter) {
             @Override
@@ -729,6 +1274,12 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
         };
     }
 
+    /**
+     * private utility method that tests if an object is null
+     *
+     * @param item
+     * @return boolean
+     */
     private Boolean notNull(Object item) {
         if (item!=null)
             return true;

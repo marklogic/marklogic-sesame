@@ -20,21 +20,58 @@
 package com.marklogic.semantics.sesame.query;
 
 /**
+ * interface defining MarkLogic specific query features
  *
  * @author James Fuller
  */
 public interface MarkLogicQueryDependent {
 
+    /**
+     * gets query inference ruleset
+     * @return java api client Ruleset
+     */
     Object getRulesets();
+
+    /**
+     * sets query inference ruleset to be used when query executes
+     * @param rulesets
+     */
     void setRulesets(Object rulesets);
 
+    /**
+     * gets base uri to be used by query
+     * @return string
+     */
     String getBaseURI();
+
+    /**
+     * sets base uri to be used by query
+     * @param baseURI
+     */
     void setBaseURI(String baseURI);
 
+    /**
+     * gets constraining query to be used by query
+     * @return
+     */
     Object getConstrainingQueryDefinition();
+
+    /**
+     * sets constraining query to be used by query
+     *
+     * @param constrainingQueryDefinition
+     */
     void setConstrainingQueryDefinition(Object constrainingQueryDefinition);
 
+    /**
+     *  gets graph permissions to be used by query
+     */
     Object getGraphPerms();
+
+    /**
+     * sets graph permissions to be used by query
+     * @param graphPerms
+     */
     void setGraphPerms(Object graphPerms);
 
 }
