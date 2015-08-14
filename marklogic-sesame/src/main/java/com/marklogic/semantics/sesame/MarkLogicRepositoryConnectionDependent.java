@@ -19,6 +19,8 @@
  */
 package com.marklogic.semantics.sesame;
 
+import info.aduna.iteration.Iteration;
+import org.openrdf.model.Statement;
 import org.openrdf.query.*;
 import org.openrdf.repository.RepositoryException;
 
@@ -39,4 +41,9 @@ public interface MarkLogicRepositoryConnectionDependent {
     public GraphQuery prepareGraphQuery(String queryString) throws RepositoryException, MalformedQueryException;
     public GraphQuery prepareGraphQuery(String queryString, String baseURI) throws RepositoryException, MalformedQueryException;
 
+    public void clear() throws RepositoryException;
+    public long size();
+
+    public void remove(Iterable<? extends Statement> statements) throws RepositoryException;
+    public <E extends Exception> void remove(Iteration<? extends Statement, E> statements) throws RepositoryException, E;
 }

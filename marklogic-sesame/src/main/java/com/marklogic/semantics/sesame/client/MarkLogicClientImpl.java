@@ -257,8 +257,12 @@ public class MarkLogicClientImpl {
             } else {
                 //TBD- must be more efficient
                 if (notNull(contexts) && contexts.length>0) {
-                    for (Resource context : contexts) {
-                        graphManager.merge(context.toString(), new FileHandle(file), tx);
+                    for (int i = 0; i < contexts.length; i++) {
+                        if(notNull(contexts[i])){
+                            graphManager.merge(contexts[i].toString(), new FileHandle(file), tx);
+                        }else{
+                            graphManager.merge(DEFAULT_GRAPH_URI, new FileHandle(file), tx);
+                        }
                     }
                 } else {
                     graphManager.merge(DEFAULT_GRAPH_URI, new FileHandle(file), tx);
@@ -278,7 +282,13 @@ public class MarkLogicClientImpl {
         } else {
             //TBD- must be more efficient
             if (notNull(contexts) && contexts.length>0) {
-                graphManager.merge(contexts[0].stringValue(), new InputStreamHandle(in), tx);
+                for (int i = 0; i < contexts.length; i++) {
+                    if(notNull(contexts[i])){
+                        graphManager.merge(contexts[i].toString(),  new InputStreamHandle(in), tx);
+                    }else{
+                        graphManager.merge(DEFAULT_GRAPH_URI,  new InputStreamHandle(in), tx);
+                    }
+                }
             } else {
                 graphManager.merge(DEFAULT_GRAPH_URI, new InputStreamHandle(in), tx);
             }
@@ -292,7 +302,7 @@ public class MarkLogicClientImpl {
         if(notNull(contexts) && contexts.length>0) {
             sb.append("INSERT DATA { ");
             for (int i = 0; i < contexts.length; i++) {
-                if (contexts[i] != null) {
+                if (notNull(contexts[i])) {
                     sb.append("GRAPH <" + contexts[i].stringValue() + "> { ?s ?p ?o .} ");
                 } else {
                     sb.append("GRAPH <" + DEFAULT_GRAPH_URI + "> { ?s ?p ?o .} ");
@@ -300,7 +310,7 @@ public class MarkLogicClientImpl {
             }
             sb.append("}");
         }else {
-            sb.append("INSERT DATA { ?s ?p ?o }");
+            sb.append("INSERT DATA { GRAPH <" + DEFAULT_GRAPH_URI + "> {?s ?p ?o .}}");
         }
         SPARQLQueryDefinition qdef = sparqlManager.newQueryDefinition(sb.toString());
         if(notNull(subject)) qdef.withBinding("s", subject.stringValue());
@@ -316,7 +326,7 @@ public class MarkLogicClientImpl {
         if(notNull(contexts) && contexts.length>0) {
             sb.append("DELETE WHERE { ");
             for (int i = 0; i < contexts.length; i++) {
-                if (contexts[i] != null) {
+                if (notNull(contexts[i])) {
                     sb.append("GRAPH <" + contexts[i].stringValue() + "> { ?s ?p ?o .} ");
                 } else {
                     sb.append("GRAPH <" + DEFAULT_GRAPH_URI + "> { ?s ?p ?o .} ");
@@ -324,7 +334,7 @@ public class MarkLogicClientImpl {
             }
             sb.append("}");
         }else{
-            sb.append("DELETE WHERE { ?s ?p ?o }");
+            sb.append("DELETE WHERE { GRAPH ?ctx{ ?s ?p ?q .}}");
         }
         SPARQLQueryDefinition qdef = sparqlManager.newQueryDefinition(sb.toString());
         if(notNull(subject)) qdef.withBinding("s", subject.stringValue());
@@ -336,12 +346,16 @@ public class MarkLogicClientImpl {
     // performClear
     public void performClear(Transaction tx, Resource... contexts) {
         graphManager = getDatabaseClient().newGraphManager();
-        for (Resource context : contexts) {
-            if(notNull(context)){
-                graphManager.delete(context.stringValue(), tx);
-            }else{
-                graphManager.delete(DEFAULT_GRAPH_URI, tx);
+        if(notNull(contexts)) {
+            for (int i = 0; i < contexts.length; i++) {
+                if (notNull(contexts[i])) {
+                    graphManager.delete(contexts[i].stringValue(), tx);
+                } else {
+                    graphManager.delete(DEFAULT_GRAPH_URI, tx);
+                }
             }
+        }else{
+            graphManager.delete(DEFAULT_GRAPH_URI, tx);
         }
     }
 
@@ -381,7 +395,6 @@ public class MarkLogicClientImpl {
     protected SPARQLBindings getSPARQLBindings(SPARQLQueryBindingSet bindings) {
         SPARQLBindings sps = new SPARQLBindingsImpl();
         for (Binding binding : bindings) {
-
             sps.bind(binding.getName(), binding.getValue().stringValue());
             logger.debug("binding:" + binding.getName() + "=" + binding.getValue());
         }

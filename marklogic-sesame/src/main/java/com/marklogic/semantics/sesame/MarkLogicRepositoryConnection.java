@@ -131,7 +131,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     }
     @Override
     public MarkLogicTupleQuery prepareTupleQuery(String queryString,String baseURI) throws RepositoryException, MalformedQueryException {
-        return prepareTupleQuery(QueryLanguage.SPARQL, queryString,baseURI);
+        return prepareTupleQuery(QueryLanguage.SPARQL, queryString, baseURI);
     }
     @Override
     public MarkLogicTupleQuery prepareTupleQuery(QueryLanguage queryLanguage, String queryString) throws RepositoryException, MalformedQueryException {
@@ -215,7 +215,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     public RepositoryResult<Resource> getContextIDs() throws RepositoryException {
 
         try{
-            String queryString = "SELECT DISTINCT ?_ WHERE { GRAPH ?_ { ?s ?p ?o } }";
+            String queryString = "SELECT DISTINCT ?_ WHERE { GRAPH ?ctx { ?s ?p ?o } }";
             TupleQuery tupleQuery = prepareTupleQuery(QueryLanguage.SPARQL, queryString);
             TupleQueryResult result = tupleQuery.evaluate();
             return
@@ -244,25 +244,60 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     }
 
     // statements
+
+    public RepositoryResult<Statement> getStatements(Resource subj, URI pred, Value obj, boolean includeInferred) throws RepositoryException {
+        try {
+            if (isQuadMode()) {
+                StringBuilder sb= new StringBuilder();
+                sb.append("SELECT * {GRAPH ?ctx { ?s ?p ?o . }}");
+                TupleQuery tupleQuery = prepareTupleQuery(sb.toString());
+                setBindings(tupleQuery, subj, pred, obj);
+                tupleQuery.setIncludeInferred(includeInferred);
+                TupleQueryResult qRes = tupleQuery.evaluate();
+                return new RepositoryResult<Statement>(
+                        new ExceptionConvertingIteration<Statement, RepositoryException>(
+                                toStatementIteration(qRes, subj, pred, obj)) {
+                            @Override
+                            protected RepositoryException convert(Exception e) {
+                                return new RepositoryException(e);
+                            }
+                        });
+            }
+            if (subj != null && pred != null && obj != null) {
+                if (hasStatement(subj, pred, obj, includeInferred)) {
+                    Statement st = new StatementImpl(subj, pred, obj);
+                    CloseableIteration<Statement, RepositoryException> cursor;
+                    cursor = new SingletonIteration<Statement, RepositoryException>(st);
+                    return new RepositoryResult<Statement>(cursor);
+                } else {
+                    return new RepositoryResult<Statement>(new EmptyIteration<Statement, RepositoryException>());
+                }
+            }
+
+            GraphQuery query = prepareGraphQuery(EVERYTHING);
+            setBindings(query, subj, pred, obj);
+            GraphQueryResult result = query.evaluate();
+            return new RepositoryResult<Statement>(
+                    new ExceptionConvertingIteration<Statement, RepositoryException>(result) {
+
+                        @Override
+                        protected RepositoryException convert(Exception e) {
+                            return new RepositoryException(e);
+                        }
+                    });
+        } catch (MalformedQueryException e) {
+            throw new RepositoryException(e);
+        } catch (QueryEvaluationException e) {
+            throw new RepositoryException(e);
+        }
+    }
+
     @Override
     public RepositoryResult<Statement> getStatements(Resource subj, URI pred, Value obj, boolean includeInferred, Resource... contexts) throws RepositoryException {
         try {
             if (isQuadMode()) {
                 StringBuilder sb= new StringBuilder();
-                if(notNull(contexts) && contexts.length >0){
-                    sb.append("SELECT *  ");
-                    for (int i = 0; i < contexts.length; i++)
-                    {
-                        if(contexts[i] != null) {
-                            sb.append("FROM NAMED <" + contexts[i].stringValue() + ">\n");
-                        }else{
-                            sb.append("FROM NAMED <"+DEFAULT_GRAPH_URI+">");
-                        }
-                    }
-                    sb.append("WHERE { GRAPH ?ctx { ?s ?p ?o }}");
-                }else {
-                    sb.append(EVERYTHING_WITH_GRAPH);
-                }
+                sb.append("SELECT * {GRAPH ?ctx {?s ?p ?o . }}");
                 TupleQuery tupleQuery = prepareTupleQuery(sb.toString());
                 setBindings(tupleQuery, subj, pred, obj, contexts);
                 tupleQuery.setIncludeInferred(includeInferred);
@@ -327,7 +362,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
                 //if (baseURI != null) sb.append("BASE <" + baseURI + ">\n");
                 sb.append("ASK { ");
                 for (int i = 0; i < contexts.length; i++) {
-                    if(contexts[i] != null) {
+                    if(notNull(contexts[i])) {
                         sb.append("GRAPH <" + contexts[i].stringValue() + "> {?s ?p "+ob.toString()+" .} ");
                     }else{
                         sb.append("GRAPH <"+DEFAULT_GRAPH_URI+"> {?s ?p ?o .}");
@@ -371,7 +406,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
                 sb.append("CONSTRUCT {?s ?p "+ob.toString()+"} WHERE {");
                 if(notNull(contexts) && contexts.length>0) {
                     for (int i = 0; i < contexts.length; i++) {
-                        if(contexts[i] != null) {
+                        if(notNull(contexts[i])) {
                             sb.append("GRAPH <" + contexts[i].stringValue() + "> {?s ?p "+ob.toString()+" .} ");
                         }else{
                             sb.append("GRAPH <"+DEFAULT_GRAPH_URI+"> {?s ?p "+ob.toString()+" .}");
@@ -409,14 +444,30 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     }
     @Override
     public void export(RDFHandler handler, Resource... contexts) throws RepositoryException, RDFHandlerException {
-        exportStatements(null, null, null, true,handler);
+        exportStatements(null, null, null, true, handler);
+    }
+
+
+    public long size(){
+        try {
+            RepositoryResult<Statement> statements = getStatements(null,null,null,true);
+            long i = 0;
+            while (statements.hasNext()) {
+                statements.next();
+                i++;
+            }
+            return i;
+        } catch (RepositoryException e) {
+            e.printStackTrace();
+        }
+        return 0;
     }
 
     // number of triples in repository context (graph)
     @Override
     public long size(Resource... contexts)  {
         try {
-            RepositoryResult<Statement> statements = getStatements(null, null, null, true, contexts);
+            RepositoryResult<Statement> statements = getStatements(null,null,null,true,contexts);
             long i = 0;
             while (statements.hasNext()) {
                 statements.next();
@@ -430,13 +481,14 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     }
 
     // remove context (graph)
+
+    @Override
+    public void clear() throws RepositoryException{
+        this.client.sendClearAll();
+    }
     @Override
     public void clear(Resource... contexts) throws RepositoryException {
-        if(notNull(contexts) && contexts.length>0){
             this.client.sendClear(contexts);
-        }else{
-            this.client.sendClearAll();
-        }
     }
 
     // is repository empty
@@ -533,6 +585,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     }
 
     // remove
+
     @Override
     public void remove(Resource subject, URI predicate, Value object, Resource... contexts) throws RepositoryException {
         this.client.sendRemove(null, subject, predicate, object, contexts);
@@ -542,11 +595,26 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
         this.client.sendRemove(null,st.getSubject(),st.getPredicate(),st.getObject(),mergeResource(st.getContext(),contexts));
     }
     @Override
+    public void remove(Iterable<? extends Statement> statements) throws RepositoryException {
+        Iterator <? extends Statement> iter = statements.iterator();
+        while(iter.hasNext()){
+            Statement st = iter.next();
+            this.client.sendRemove(null, st.getSubject(), st.getPredicate(), st.getObject());
+        }
+    }
+    @Override
     public void remove(Iterable<? extends Statement> statements, Resource... contexts) throws RepositoryException {
         Iterator <? extends Statement> iter = statements.iterator();
         while(iter.hasNext()){
             Statement st = iter.next();
             this.client.sendRemove(null, st.getSubject(), st.getPredicate(), st.getObject(), mergeResource(st.getContext(),contexts));
+        }
+    }
+    @Override
+    public <E extends Exception> void remove(Iteration<? extends Statement, E> statements) throws RepositoryException, E {
+        while(statements.hasNext()){
+            Statement st = statements.next();
+            this.client.sendRemove(null, st.getSubject(), st.getPredicate(), st.getObject());
         }
     }
     @Override
@@ -602,7 +670,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
         if (subj != null) {
             query.setBinding("s", subj);
         }
-        if (pred != null) {
+        if (pred != null && pred instanceof URI) {
             query.setBinding("p", pred);
         }
         if (obj != null) {
@@ -617,12 +685,16 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
         }
         if (contexts != null && contexts.length > 0) {
             DatasetImpl dataset = new DatasetImpl();
-            for (Resource ctx : contexts) {
-                if (ctx == null || ctx instanceof URI) {
-                    dataset.addDefaultGraph((URI) ctx);
+            if(notNull(contexts)){
+            for (int i = 0; i < contexts.length; i++) {
+                if (notNull(contexts[i]) || contexts[i] instanceof URI) {
+                    dataset.addDefaultGraph((URI) contexts[i]);
                 } else {
-                    throw new RepositoryException("Contexts must be URIs");
+                    dataset.addDefaultGraph(getValueFactory().createURI(DEFAULT_GRAPH_URI));
                 }
+            }
+            }else{
+                dataset.addDefaultGraph(getValueFactory().createURI(DEFAULT_GRAPH_URI));
             }
             query.setDataset(dataset);
         }
