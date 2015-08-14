@@ -166,7 +166,7 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
         File inputFile3 = new File("src/test/resources/testdata/default-graph-2.ttl");
         conn.add(inputFile3, "http://example.org/example1/", RDFFormat.TURTLE, context2);
 
-        conn.clear(null,context1);
+        conn.clear(null, context1);
         RepositoryResult<Statement> statements = conn.getStatements(null, null, null, true);
         Model model = Iterations.addAll(statements, new LinkedHashModel());
 
@@ -944,4 +944,11 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
         conn.clear();
     }
 
+    // https://github.com/marklogic/marklogic-sesame/issues/83
+    @Test
+    public void testSizeWithNullContext() throws Exception {
+        Resource context5 = conn.getValueFactory().createURI("http://marklogic.com/test/context5");
+        Assert.assertEquals(0, conn.size(null));
+        conn.clear();
+    }
 }
