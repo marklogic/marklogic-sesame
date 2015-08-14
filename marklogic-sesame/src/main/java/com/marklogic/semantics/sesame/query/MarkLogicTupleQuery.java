@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 
 /**
+ * tuple query
  *
  * @author James Fuller
  */
@@ -40,15 +41,35 @@ public class MarkLogicTupleQuery extends MarkLogicQuery implements TupleQuery,Ma
     protected final long start = 1;
     protected final long pageLength = 1000000;
 
+    /**
+     * constructor
+     *
+     * @param client
+     * @param bindingSet
+     * @param baseUri
+     * @param queryString
+     */
     public MarkLogicTupleQuery(MarkLogicClient client, SPARQLQueryBindingSet bindingSet, String baseUri, String queryString) {
         super(client, bindingSet, baseUri, queryString);
     }
 
-    //evaluate
+    /**
+     *
+     * @return
+     * @throws QueryEvaluationException
+     */
     @Override
     public TupleQueryResult evaluate() throws QueryEvaluationException {
         return evaluate(this.start,this.pageLength);
     }
+
+    /**
+     *
+     * @param start
+     * @param pageLength
+     * @return
+     * @throws QueryEvaluationException
+     */
     public TupleQueryResult evaluate(long start, long pageLength)
             throws QueryEvaluationException {
         try {
@@ -63,6 +84,13 @@ public class MarkLogicTupleQuery extends MarkLogicQuery implements TupleQuery,Ma
             throw new QueryEvaluationException(e.getMessage(), e);
         }
     }
+
+    /**
+     *
+     * @param resultHandler
+     * @throws QueryEvaluationException
+     * @throws TupleQueryResultHandlerException
+     */
     @Override
     public void evaluate(TupleQueryResultHandler resultHandler) throws QueryEvaluationException, TupleQueryResultHandlerException {
         TupleQueryResult queryResult = evaluate();

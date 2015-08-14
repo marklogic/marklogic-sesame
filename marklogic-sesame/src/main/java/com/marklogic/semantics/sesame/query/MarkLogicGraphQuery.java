@@ -33,6 +33,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 
 /**
+ * graph query
  *
  * @author James Fuller
  */
@@ -40,12 +41,23 @@ public class MarkLogicGraphQuery extends MarkLogicQuery implements GraphQuery,Ma
 
     protected final Logger logger = LoggerFactory.getLogger(MarkLogicGraphQuery.class);
 
-    // constructor
+    /**
+     * constructor
+     *
+     * @param client
+     * @param bindingSet
+     * @param baseUri
+     * @param queryString
+     */
     public MarkLogicGraphQuery(MarkLogicClient client, SPARQLQueryBindingSet bindingSet, String baseUri, String queryString) {
         super(client, bindingSet, baseUri, queryString);
     }
 
-    //evaluate
+    /**
+     *
+     * @return
+     * @throws QueryEvaluationException
+     */
     @Override
     public GraphQueryResult evaluate()
             throws QueryEvaluationException {
@@ -55,6 +67,13 @@ public class MarkLogicGraphQuery extends MarkLogicQuery implements GraphQuery,Ma
             throw new QueryEvaluationException(e);
         }
     }
+
+    /**
+     *
+     * @param resultHandler
+     * @throws QueryEvaluationException
+     * @throws RDFHandlerException
+     */
     @Override
     public void evaluate(RDFHandler resultHandler) throws QueryEvaluationException, RDFHandlerException {
         GraphQueryResult queryResult = evaluate();

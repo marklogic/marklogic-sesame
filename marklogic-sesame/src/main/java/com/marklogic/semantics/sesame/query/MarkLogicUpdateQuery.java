@@ -33,6 +33,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 
 /**
+ * update query
  *
  * @author James Fuller
  */
@@ -40,11 +41,22 @@ public class MarkLogicUpdateQuery extends MarkLogicQuery implements Update,MarkL
 
     protected final Logger logger = LoggerFactory.getLogger(MarkLogicUpdateQuery.class);
 
+    /**
+     *  constructor
+     *
+     * @param client
+     * @param bindingSet
+     * @param baseUri
+     * @param queryString
+     */
     public MarkLogicUpdateQuery(MarkLogicClient client, SPARQLQueryBindingSet bindingSet, String baseUri, String queryString) {
         super(client, bindingSet, baseUri, queryString);
     }
 
-    //evaluate
+    /**
+     *
+      * @throws UpdateExecutionException
+     */
     @Override
     public void execute() throws UpdateExecutionException {
         try {

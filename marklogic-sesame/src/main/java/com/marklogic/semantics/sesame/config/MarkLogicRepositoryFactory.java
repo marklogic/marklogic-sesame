@@ -28,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * factory for generating MarkLogicRepository's
  *
  * @author James Fuller
  */

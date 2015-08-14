@@ -33,6 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * base query class
  *
  * @author James Fuller
  */
@@ -52,7 +53,14 @@ public class MarkLogicQuery extends AbstractQuery implements Query,MarkLogicClie
 
     private boolean includeInferred;
 
-    // constructor
+    /**
+     * constructor
+     *
+     * @param client
+     * @param bindingSet
+     * @param baseUri
+     * @param queryString
+     */
     public MarkLogicQuery(MarkLogicClient client, SPARQLQueryBindingSet bindingSet, String baseUri, String queryString) {
         super();
         setBaseURI(baseUri);
@@ -62,115 +70,230 @@ public class MarkLogicQuery extends AbstractQuery implements Query,MarkLogicClie
         setIncludeInferred(true); // is default set true
     }
 
-    // MarkLogicClient
+    /**
+     * sets MarkLogicClient
+     *
+     * @param client
+     */
     @Override
     public void setMarkLogicClient(MarkLogicClient client) {
         this.client=client;
     }
+
+    /**
+     * get MarkLogicClient
+     *
+     * @return
+     */
     @Override
     public MarkLogicClient getMarkLogicClient() {
         return this.client;
     }
 
-    // query string
+    /**
+     * sets the query string
+     *
+     * @return
+     */
     public String getQueryString() {
         return QueryStringUtil.getQueryString(this.queryString, getBindings());
     }
+
+    /**
+     * sets the query string
+     *
+     * @param queryString
+     */
     public void setQueryString(String queryString) {
         this.queryString = queryString;
     }
 
-    // bindings
+    /**
+     * sets bindings used by query
+     *
+     * @param bindingSet
+     */
     public void setBindings(SPARQLQueryBindingSet bindingSet) {
         this.bindingSet=bindingSet;
     }
+
+    /**
+     * gets bindings used by query
+     *
+     * @return
+     */
     @Override
     public SPARQLQueryBindingSet getBindings() {
         return this.bindingSet;
     }
+
+    /**
+     * set individual binding
+     *
+     * @param name
+     * @param stringValue
+     */
     public void setBinding(String name, String stringValue) {
         bindingSet.addBinding(name, ValueFactoryImpl.getInstance().createURI(stringValue));
     }
 
-    // binding
+    /**
+     * set individual binding and value
+     * @param name
+     * @param value
+     */
     @Override
     public void setBinding(String name, Value value) {
         bindingSet.addBinding(name, value);
     }
+
+    /**
+     * remove binding
+     *
+     * @param name
+     */
     @Override
     public void removeBinding(String name) {
         bindingSet.removeBinding(name);
     }
+
+    /**
+     * clear bindings
+     *
+     */
     @Override
     public void clearBindings() {
         bindingSet.removeAll(bindingSet.getBindingNames());
     }
 
-    // include inferred
+    /**
+     * set true or false to use default inference ruleset
+     *
+     * @param includeInferred
+     */
     @Override
     public void setIncludeInferred(boolean includeInferred) {
         this.includeInferred=includeInferred;
     }
+
+    /**
+     * return true or fales if using default inference ruleset
+     *
+     * @return boolean
+     */
     @Override
     public boolean getIncludeInferred() {
         return this.includeInferred;
     }
 
-    // dataset
+    /**
+     * implemented to honor interface
+     *
+     * @param dataset
+     */
     @Override
     public void setDataset(Dataset dataset) {
     }
+
+    /**
+     * implemented to honor interface
+     *
+     * @return
+     */
     @Override
     public Dataset getDataset() {
         return null;
     }
 
-    // execution time
+    /**
+     * sets maximum execution time for query
+     *
+     * @param maxExecTime
+     */
     @Override
     public void setMaxExecutionTime(int maxExecTime) {
     }
+
+    /**
+     *
+     * @return int
+     */
     @Override
     public int getMaxExecutionTime() {
         return 0;
     }
 
-    // base uri
+    /**
+     *
+     * @return
+     */
     @Override
     public String getBaseURI() {
         return baseURI;
     }
+
+    /**
+     *
+     * @param baseURI
+     */
     @Override
     public void setBaseURI(String baseURI) {
         this.baseURI = baseURI;
     }
 
-    // constraining query
+    /**
+     * sets constraining query
+     *
+     * @param constrainingQueryDefinition
+     */
     @Override
     public void setConstrainingQueryDefinition(Object constrainingQueryDefinition) {
         logger.debug("setting constraining query: {}",constrainingQueryDefinition.toString());
         getMarkLogicClient().setConstrainingQueryDefinition(constrainingQueryDefinition);
     }
+
+    /**
+     *
+     * @return
+     */
     @Override
     public Object getConstrainingQueryDefinition() {
         return getMarkLogicClient().getConstrainingQueryDefinition();
     }
 
-    // rulesets
+    /**
+     * sets the inference rulesets to be used by query
+     *
+     * @param rulesets
+     */
     public void setRulesets(Object rulesets){
         getMarkLogicClient().setRulesets(rulesets);
     }
+
+    /**
+     *
+     * @return
+     */
     public Object getRulesets(){
         return getMarkLogicClient().getRulesets();
     }
 
-    // graph perms
+    /**
+     * sets the graph permissions to be used by query
+     *
+     * @param graphPerms
+     */
     @Override
     public void setGraphPerms(Object graphPerms) {
         getMarkLogicClient().setGraphPerms(graphPerms);
     }
+
+    /**
+     *
+     * @return
+     */
     @Override
     public Object getGraphPerms() {
         return getMarkLogicClient().getGraphPerms();
     }
-
 }
