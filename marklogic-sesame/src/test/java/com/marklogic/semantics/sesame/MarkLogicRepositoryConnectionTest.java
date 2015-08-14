@@ -242,9 +242,8 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
         FileInputStream is = new FileInputStream(inputFile);
         String baseURI = "http://example.org/example1/";
         Resource context3 = conn.getValueFactory().createURI("http://marklogic.com/test/context3");
-        Resource context4 = conn.getValueFactory().createURI("http://marklogic.com/test/context4");
         conn.add(is, baseURI, RDFFormat.TURTLE, context3); // TBD - add multiple context
-        conn.clear(context3, context4);
+        conn.clear(context3);
     }
 
     // this test requires access to https://raw.githubusercontent.com/marklogic/marklogic-sesame/develop/marklogic-sesame/src/test/resources/testdata/testData.trig
@@ -365,7 +364,7 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
             result.close();
         }
 
-        conn.clear(context5,context6);
+        conn.clear(context5, context6);
 
     }
 
@@ -394,9 +393,11 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
 
     @Test
     public void testTransaction3() throws Exception {
-        Resource context1 = conn.getValueFactory().createURI("http://marklogic.com/test/my-graph");
+        File inputFile = new File("src/test/resources/testdata/named-graph-1.ttl");
+        String baseURI = "http://example.org/example1/";
+        Resource context1 = conn.getValueFactory().createURI("http://marklogic.com/test/transactiontest");
         conn.begin();
-        conn.clear(context1);
+        conn.add(inputFile, baseURI, RDFFormat.TURTLE, context1);
         conn.rollback();
     }
 
