@@ -19,6 +19,7 @@
  */
 package com.marklogic.semantics.sesame;
 
+import com.marklogic.client.ResourceNotFoundException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -27,7 +28,10 @@ import org.junit.rules.ExpectedException;
 import org.openrdf.IsolationLevels;
 import org.openrdf.model.Resource;
 import org.openrdf.model.ValueFactory;
-import org.openrdf.query.*;
+import org.openrdf.query.MalformedQueryException;
+import org.openrdf.query.QueryEvaluationException;
+import org.openrdf.query.TupleQueryResult;
+import org.openrdf.query.UpdateExecutionException;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.rio.RDFFormat;
 import org.openrdf.rio.RDFParseException;
@@ -35,6 +39,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.FileInputStream;
 
 /**
  *
@@ -114,4 +119,26 @@ public class MarkLogicExceptionsTest extends SesameTestBase {
         testReaderCon.prepareUpdate("CREATE GRAPH <abc>").execute();
     }
 
+    @Test
+    public void testAddWithInputStream() throws Exception {
+        exception.expect(ResourceNotFoundException.class);
+
+        File inputFile = new File("src/test/resources/testdata/default-graph-1.ttl");
+        FileInputStream is = new FileInputStream(inputFile);
+        String baseURI = "http://example.org/example1/";
+        Resource context3 = conn.getValueFactory().createURI("http://marklogic.com/test/context3");
+        Resource context4 = conn.getValueFactory().createURI("http://marklogic.com/test/context4");
+        conn.add(is, baseURI, RDFFormat.TURTLE, context3); // TBD - add multiple context
+        conn.clear(context3, context4); // ensure we throw error as context not defined
+    }
+
+
+    @Test
+    public void testTransaction3() throws Exception {
+        exception.expect(ResourceNotFoundException.class);
+        Resource context1 = conn.getValueFactory().createURI("http://marklogic.com/test/my-graph");
+        conn.begin();
+        conn.clear(context1);
+        conn.rollback();
+    }
 }
