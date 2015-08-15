@@ -78,7 +78,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     /**
      * constructor
      *
-      * @param repository
+     * @param repository
      * @param client
      * @param quadMode
      */
@@ -90,8 +90,9 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     }
 
     /**
+     * gets the current value factory
      *
-     * @return
+     * @return ValueFactory
      */
     @Override
     public ValueFactory getValueFactory() {
@@ -99,6 +100,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     }
 
     /**
+     * sets the current value factory
      *
      * @param f
      */
@@ -107,10 +109,10 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     }
 
     /**
-     * prepareQuery will route to all different query forms
+     * overload for prepareQuery
      *
      * @param queryString
-     * @return
+     * @return MarkLogicQuery
      * @throws RepositoryException
      * @throws MalformedQueryException
      */
@@ -120,10 +122,11 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     }
 
     /**
+     * overload for prepareQuery
      *
      * @param queryString
      * @param baseURI
-     * @return
+     * @return MarkLogicQuery
      * @throws RepositoryException
      * @throws MalformedQueryException
      */
@@ -133,10 +136,11 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     }
 
     /**
+     * overload for prepareQuery
      *
      * @param queryLanguage
      * @param queryString
-     * @return
+     * @return MarkLogicQuery
      * @throws RepositoryException
      * @throws MalformedQueryException
      */
@@ -146,11 +150,14 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     }
 
     /**
+     * base method for prepareQuery
+     *
+     * routes to all other query forms (prepareTupleQuery,prepareBooleanQuery,prepareGraphQuery)
      *
      * @param queryLanguage
      * @param queryString
      * @param baseURI
-     * @return
+     * @return MarkLogicQuery
      * @throws RepositoryException
      * @throws MalformedQueryException
      */
@@ -175,7 +182,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     }
 
     /**
-     * sets up TupleQuery
+     * overload for prepareTupleQuery
      *
      * @param queryString
      * @return MarkLogicTupleQuery
@@ -187,10 +194,11 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
         return prepareTupleQuery(QueryLanguage.SPARQL, queryString);
     }
     /**
+     * overload for prepareTupleQuery
      *
      * @param queryString
      * @param baseURI
-     * @return
+     * @return MarkLogicTupleQuery
      * @throws RepositoryException
      * @throws MalformedQueryException
      */
@@ -200,10 +208,11 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     }
 
     /**
+     * overload for prepareTupleQuery
      *
      * @param queryLanguage
      * @param queryString
-     * @return
+     * @return MarkLogicTupleQuery
      * @throws RepositoryException
      * @throws MalformedQueryException
      */
@@ -213,11 +222,12 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     }
 
     /**
+     * base method for prepareTupleQuery
      *
      * @param queryLanguage
      * @param queryString
      * @param baseURI
-     * @return
+     * @return MarkLogicTupleQuery
      * @throws RepositoryException
      * @throws MalformedQueryException
      */
@@ -230,7 +240,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     }
 
     /**
-     * sets up graph query
+     * overload for prepareGraphQuery
      *
      * @param queryString
      * @return MarkLogicGraphQuery
@@ -243,10 +253,11 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     }
 
     /**
+     * overload for prepareGraphQuery
      *
      * @param queryString
      * @param baseURI
-     * @return
+     * @return MarkLogicGraphQuery
      * @throws RepositoryException
      * @throws MalformedQueryException
      */
@@ -256,10 +267,11 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     }
 
     /**
+     * overload for prepareGraphQuery
      *
      * @param queryLanguage
      * @param queryString
-     * @return
+     * @return MarkLogicGraphQuery
      * @throws RepositoryException
      * @throws MalformedQueryException
      */
@@ -269,11 +281,12 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     }
 
     /**
+     * base method for prepareGraphQuery
      *
      * @param queryLanguage
      * @param queryString
      * @param baseURI
-     * @return
+     * @return MarkLogicGraphQuery
      * @throws RepositoryException
      * @throws MalformedQueryException
      */
@@ -288,7 +301,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     }
 
     /**
-     * sets up boolean query
+     * overload for prepareBooleanQuery
      *
      * @param queryString
      * @return MarkLogicBooleanQuery
@@ -301,10 +314,11 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     }
 
     /**
+     * overload for prepareBooleanQuery
      *
      * @param queryString
      * @param baseURI
-     * @return
+     * @return MarkLogicBooleanQuery
      * @throws RepositoryException
      * @throws MalformedQueryException
      */
@@ -314,10 +328,11 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     }
 
     /**
+     * overload for prepareBooleanQuery
      *
      * @param queryLanguage
      * @param queryString
-     * @return
+     * @return MarkLogicBooleanQuery
      * @throws RepositoryException
      * @throws MalformedQueryException
      */
@@ -327,11 +342,12 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     }
 
     /**
+     * base method for prepareBooleanQuery
      *
      * @param queryLanguage
      * @param queryString
      * @param baseURI
-     * @return
+     * @return MarkLogicBooleanQuery
      * @throws RepositoryException
      * @throws MalformedQueryException
      */
@@ -344,7 +360,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     }
 
     /**
-     * sets up update query
+     * overload for prepareUpdate
      *
      * @param queryString
      * @return MarkLogicUpdateQuery
@@ -357,10 +373,11 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     }
 
     /**
+     * overload for prepareUpdate
      *
      * @param queryString
      * @param baseURI
-     * @return
+     * @return MarkLogicUpdateQuery
      * @throws RepositoryException
      * @throws MalformedQueryException
      */
@@ -370,10 +387,11 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     }
 
     /**
+     * overload for prepareUpdate
      *
      * @param queryLanguage
      * @param queryString
-     * @return
+     * @return MarkLogicUpdateQuery
      * @throws RepositoryException
      * @throws MalformedQueryException
      */
@@ -383,6 +401,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     }
 
     /**
+     * base method for prepareUpdate
      *
      * @param queryLanguage
      * @param queryString
@@ -400,7 +419,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     }
 
     /**
-     * returns list of graph names
+     * returns list of graph names as Resource
      *
      * @return RepositoryResult<Resource>
      * @throws RepositoryException
@@ -438,7 +457,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     }
 
     /**
-     * returns statements
+     * returns all statements
      *
      * @param subj
      * @param pred
@@ -495,7 +514,9 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     }
 
     /**
-     * returns statements
+     * returns statements from supplied context
+     *
+     * TBD - should share code path with above getStatements
      *
      * @param subj
      * @param pred
@@ -553,6 +574,8 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
         }
     }
 
+    // all statements
+
     /**
      * returns true or false if a statement exists in repository / context
      *
@@ -569,6 +592,9 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
 
     /**
      * returns true or false if a statement exists in repository / context
+     *
+     * TBD- should refactor
+     *
      * @param subject
      * @param predicate
      * @param object
@@ -580,6 +606,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     @Override
     public boolean hasStatement(Resource subject, URI predicate, Value object, boolean includeInferred, Resource... contexts) throws RepositoryException {
         try {
+            StringBuilder sb= new StringBuilder();
             StringBuilder ob = new StringBuilder();
             if (object instanceof Literal) {
                 Literal lit = (Literal)object;
@@ -591,7 +618,6 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
             }else {
                 ob.append("<" + object.stringValue() + "> ");
             }
-            StringBuilder sb = new StringBuilder();
             if(notNull(contexts) && contexts.length>0) {
                 //if (baseURI != null) sb.append("BASE <" + baseURI + ">\n");
                 sb.append("ASK { ");
@@ -620,6 +646,8 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
 
     /**
      * exports statements via RDFHandler
+     *
+     * TBD- should refactor
      *
      * @param subject
      * @param predicate
@@ -691,6 +719,8 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     /**
      * exports statements via RDFHandler
      *
+     * TBD- should refactor
+     *
      * @param handler
      * @param contexts
      * @throws RepositoryException
@@ -704,6 +734,8 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
 
     /**
      * returns number of triples in the entire triple store
+     *
+     * TBD- once COUNT aggregate is sorted, will refactor
      *
      * @return long
      */
@@ -725,6 +757,8 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
 
     /**
      * returns number of triples in supplied context
+     *
+     * TBD- once COUNT aggregate is sorted, will refactor
      *
      * @param contexts
      * @return long
@@ -767,7 +801,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     }
 
     /**
-     * returns true or false if the repository contains triples or not
+     * returns true or false if the repository is empty or not
      *
      * @return boolean
      * @throws RepositoryException
@@ -899,6 +933,8 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     /**
      * add triples
      *
+     * will use file uri as base URI if none supplied
+     *
      * @param file
      * @param baseURI
      * @param dataFormat
@@ -909,7 +945,12 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
      */
     @Override
     public void add(File file, String baseURI, RDFFormat dataFormat, Resource... contexts) throws IOException, RDFParseException, RepositoryException {
-        this.client.sendAdd(file, baseURI, dataFormat, contexts);
+        logger.debug("base uri:{}",baseURI);
+        if(notNull(baseURI)) {
+            this.client.sendAdd(file, baseURI, dataFormat, contexts);
+        }else{
+            this.client.sendAdd(file, file.getCanonicalPath(), dataFormat, contexts);
+        }
     }
 
     /**
@@ -931,6 +972,8 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     /**
      * add triples
      *
+     * sets base URI to url if none is supplied
+     *
      * @param url
      * @param baseURI
      * @param dataFormat
@@ -942,7 +985,11 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     @Override
     public void add(URL url, String baseURI, RDFFormat dataFormat, Resource... contexts) throws IOException, RDFParseException, RepositoryException {
         InputStream in = new URL(url.toString()).openStream(); //TBD- naive impl, will need refactoring
-        this.client.sendAdd(in,baseURI,dataFormat,contexts);
+        if(notNull(baseURI)) {
+            this.client.sendAdd(in, baseURI, dataFormat, contexts);
+        }else{
+            this.client.sendAdd(in, url.toString(), dataFormat, contexts);
+        }
     }
 
     /**
@@ -974,6 +1021,8 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     /**
      * add triples
      *
+     * TBD - will use write cache
+     *
      * @param statements
      * @param contexts
      * @throws RepositoryException
@@ -989,6 +1038,8 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
 
     /**
      * add triples
+     *
+     * TBD- will use write cache
      *
      * @param statements
      * @param contexts
@@ -1034,6 +1085,8 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     /**
      * remove triples
      *
+     * TBD- will use write cache
+     *
      * @param statements
      * @throws RepositoryException
      */
@@ -1048,6 +1101,8 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
 
     /**
      * remove triples
+     *
+     * TBD -will use write cache
      *
      * @param statements
      * @param contexts
@@ -1065,6 +1120,8 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     /**
      * remove triples
      *
+     * TBD - will use write cache
+     *
      * @param statements
      * @param <E>
      * @throws RepositoryException
@@ -1080,6 +1137,8 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
 
     /**
      * remove triples
+     *
+     * TBD -will use write cache
      *
      * @param statements
      * @param contexts
@@ -1098,6 +1157,8 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     /**
      * add without commit
      *
+     * supplied to honor interface
+     *
      * @param subject
      * @param predicate
      * @param object
@@ -1111,6 +1172,8 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
 
     /**
      * remove without commit
+     *
+     * supplied to honor interface
      *
      * @param subject
      * @param predicate
@@ -1129,6 +1192,8 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
 
     /**
      *
+     * supplied to honor interface
+     *
      * @return
      * @throws RepositoryException
      */
@@ -1138,6 +1203,8 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     }
 
     /**
+     *
+     * supplied to honor interface
      *
      * @param prefix
      * @return
@@ -1150,6 +1217,8 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
 
     /**
      *
+     * supplied to honor interface
+     *
      * @param prefix
      * @param name
      * @throws RepositoryException
@@ -1160,6 +1229,8 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
 
     /**
      *
+     * supplied to honor interface
+     *
      * @param prefix
      * @throws RepositoryException
      */
@@ -1168,6 +1239,8 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     }
 
     /**
+     *
+     * supplied to honor interface
      *
      * @throws RepositoryException
      */
@@ -1183,6 +1256,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
+     * set bindings ?s, ?p and special handling of Value ?o (and ?ctx)
      *
      * @param query
      * @param subj
@@ -1227,6 +1301,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     }
 
     /**
+     * return if quadMode is enabled or not (should be)
      *
      * @return
      */
@@ -1254,6 +1329,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     }
 
     /**
+     * convert bindings
      *
      * @param iter
      * @param subj
@@ -1277,6 +1353,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     /**
      * private utility method that tests if an object is null
      *
+     * TBD -
      * @param item
      * @return boolean
      */
