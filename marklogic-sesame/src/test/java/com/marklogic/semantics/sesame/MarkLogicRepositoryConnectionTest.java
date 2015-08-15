@@ -201,6 +201,15 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
         conn.clear(context1, context2);
     }
 
+    // TBD- when base uri is wired into java api client, enable this test
+    @Ignore
+    public void testAddTurtleUseURLForBaseURI() throws Exception {
+        File inputFile = new File("src/test/resources/testdata/default-graph-3.ttl");
+        Resource context1 = conn.getValueFactory().createURI("http://marklogic.com/test/context1");
+        Resource context2 = conn.getValueFactory().createURI("http://marklogic.com/test/context2");
+        conn.add(inputFile, null, RDFFormat.TURTLE, context1, context2);
+        conn.clear(context1, context2);
+    }
     // https://github.com/marklogic/marklogic-sesame/issues/70
     @Test
     public void testAddTurtleWithNullContext() throws Exception {
