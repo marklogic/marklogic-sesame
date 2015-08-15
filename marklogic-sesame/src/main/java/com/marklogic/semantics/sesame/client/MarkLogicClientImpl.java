@@ -248,6 +248,7 @@ public class MarkLogicClientImpl {
     }
 
     // performAdd
+    // TBD- need to wire in baseURI when method is exposed to java api client
     public void performAdd(File file, String baseURI, RDFFormat dataFormat, Transaction tx, Resource... contexts) throws RDFParseException {
         try {
             graphManager = getDatabaseClient().newGraphManager();
@@ -275,6 +276,7 @@ public class MarkLogicClientImpl {
         }
     }
 
+    // TBD- need to wire in baseURI when method is exposed to java api client
     public void performAdd(InputStream in, String baseURI, RDFFormat dataFormat, Transaction tx, Resource... contexts) {
         graphManager = getDatabaseClient().newGraphManager();
         graphManager.setDefaultMimetype(dataFormat.getDefaultMIMEType());
