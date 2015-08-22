@@ -46,8 +46,7 @@ public class MarkLogicRepositoryTest extends  ConnectedRESTQA{
 	
 	@BeforeClass
 	public static void initialSetup() throws Exception {
-		
-		
+			
 		setupJavaRESTServer(dbName, fNames[0], restServer, restPort);
 		setupAppServicesConstraint(dbName);
 		enableCollectionLexicon(dbName);
