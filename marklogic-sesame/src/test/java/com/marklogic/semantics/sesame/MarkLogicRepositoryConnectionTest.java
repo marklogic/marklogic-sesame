@@ -19,6 +19,7 @@
  */
 package com.marklogic.semantics.sesame;
 
+import static org.junit.Assert.assertEquals;
 import info.aduna.iteration.CloseableIteration;
 import info.aduna.iteration.Iteration;
 import info.aduna.iteration.Iterations;
@@ -802,8 +803,33 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
         conn.remove(alice, age, null, context1);
         Assert.assertEquals(1L, conn.size(context1));
         conn.remove(alice, null, alicesName, context1);
+        Assert.assertEquals(1L, conn.size(context1));
     }
 
+    // https://github.com/marklogic/marklogic-sesame/issues/132
+    @Test
+    public void testRemoveStatement()
+            throws Exception
+    {
+        ValueFactory f= conn.getValueFactory();
+        Resource context1 = f.createURI("http://marklogic.com/test/context1");
+        final URI alice = f.createURI("http://example.org/people/alice");
+        URI name = f.createURI("http://example.org/ontology/name");
+        URI age = f.createURI("http://example.org/ontology/age");
+        Literal alicesName = f.createLiteral("Alice");
+        Literal alicesAge = f.createLiteral(22);
+
+        Statement st1 = f.createStatement(alice, name, alicesName);
+        Statement st2 = f.createStatement(alice, age, alicesAge);
+        conn.begin();
+        conn.add(st1, context1);
+        conn.add(st2, context1);
+        conn.commit();
+        Statement st3 = f.createStatement(alice, name, f.createLiteral(9999));
+        
+        conn.remove(st3);
+        assertEquals("Remove Statement (no context) should not remove anything.", 2L, conn.size());
+    }
     // https://github.com/marklogic/marklogic-sesame/issues/63
     @Test
     public void addWithNull()

@@ -338,7 +338,7 @@ public class MarkLogicClientImpl {
             }
             sb.append("}");
         }else{
-            sb.append("DELETE WHERE { GRAPH ?ctx{ ?s ?p ?q .}}");
+            sb.append("DELETE WHERE { GRAPH ?ctx{ ?s ?p ?o .}}");
         }
         SPARQLQueryDefinition qdef = sparqlManager.newQueryDefinition(sb.toString());
         if(notNull(subject)) qdef.withBinding("s", subject.stringValue());
