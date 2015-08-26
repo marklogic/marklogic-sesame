@@ -1,13 +1,11 @@
 package com.marklogic.semantics.sesame;
 
 
-import com.marklogic.client.document.XMLDocumentManager;
-import com.marklogic.client.io.StringHandle;
-import com.marklogic.client.query.QueryManager;
-import com.marklogic.client.semantics.Capability;
-import com.marklogic.client.semantics.GraphManager;
-import com.marklogic.semantics.sesame.query.MarkLogicUpdateQuery;
-import org.junit.*;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
 import org.openrdf.model.Resource;
 import org.openrdf.model.ValueFactory;
 import org.openrdf.query.BooleanQuery;
@@ -15,6 +13,12 @@ import org.openrdf.query.QueryLanguage;
 import org.openrdf.repository.RepositoryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.marklogic.client.document.XMLDocumentManager;
+import com.marklogic.client.io.StringHandle;
+import com.marklogic.client.semantics.Capability;
+import com.marklogic.client.semantics.GraphManager;
+import com.marklogic.semantics.sesame.query.MarkLogicUpdateQuery;
 
 public class MarkLogicGraphPermsTest extends SesameTestBase {
 

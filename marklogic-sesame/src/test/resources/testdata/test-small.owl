@@ -694,6 +694,58 @@ Paul describes her as "our sister", presumably in Christ rather than literally. 
   <ReligiousBelief rdf:ID="Stoic">
     <rdfs:label xml:lang="en">Stoic</rdfs:label>
   </ReligiousBelief>
+  <Man rdf:ID="Jotham">
+    <description xml:lang="en">One of the ancestors of Jesus mentioned in Matthew's geneaology</description>
+    <rdfs:label xml:lang="en">Jotham</rdfs:label>
+    <ethnicity rdf:resource="#Jewish"/>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >His occupation as King comes from Old Testament sources, 2Chron.26-27. </rdfs:comment>
+    <parentOf rdf:resource="#Ahaz"/>
+  </Man>
+  <Man rdf:ID="Shelah">
+      <hasOnlyGenealogyMention rdf:datatype=
+          "http://www.w3.org/2001/XMLSchema#boolean"
+          >true</hasOnlyGenealogyMention>
+      <rdfs:label xml:lang="en">Shelah</rdfs:label>
+      <childOf>
+          <Man rdf:ID="CainanSonOfArphaxad">
+              <parentOf rdf:resource="#Shelah"/>
+              <description rdf:datatype=
+                  "http://www.w3.org/2001/XMLSchema#string"
+                  >One of the ancestors of Jesus mentioned in Luke's geneaology</description>
+          </Man>
+      </childOf>
+  </Man>
+  <Woman rdf:ID="Eve">
+      <rdfs:label xml:lang="en">Eve</rdfs:label>
+      <hasOnlyGenealogyMention rdf:datatype=
+          "http://www.w3.org/2001/XMLSchema#boolean"
+          >false</hasOnlyGenealogyMention>
+      <parentOf>
+          <Man rdf:ID="Abel">
+              <rdfs:label xml:lang="en">Abel</rdfs:label>
+              <childOf rdf:resource="#Adam"/>
+              <childOf rdf:resource="#Eve"/>
+              <siblingOf>
+                  <Man rdf:ID="Cain">
+                      <siblingOf rdf:resource="#Abel"/>
+                      <description rdf:datatype=
+                          "http://www.w3.org/2001/XMLSchema#string"
+                          >the first son of Adam and Eve, who killed his brother Abel</description>
+                      <rdfs:label xml:lang="en"
+                          >Cain</rdfs:label>
+                      <childOf rdf:resource="#Adam"/>
+                      <childOf rdf:resource="#Eve"/>
+                  </Man>
+              </siblingOf>
+          </Man>
+      </parentOf>
+      <parentOf rdf:resource="#Cain"/>
+      <spouseOf rdf:resource="#Adam"/>
+      <description rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+          >the first woman created by God</description>
+  </Woman>
 </rdf:RDF>
+
 
 <!-- Created with Protege (with OWL Plugin 3.2, Build 355)  http://protege.stanford.edu -->

@@ -45,7 +45,7 @@ public class MarkLogicTupleQueryTest extends SesameTestBase {
         f = rep.getValueFactory();
         conn = rep.getConnection();
         logger.info("test setup complete.");
-        File testData = new File("src/test/resources/testdata/test.owl");
+        File testData = new File(TESTFILE_OWL);
 
         GraphManager gmgr = writerClient.newGraphManager();
         gmgr.setDefaultMimetype(RDFMimeTypes.RDFXML);
@@ -76,7 +76,7 @@ public class MarkLogicTupleQueryTest extends SesameTestBase {
             while (result.hasNext()) {
                 BindingSet tuple = result.next();
                 Assert.assertEquals("s", tuple.getBinding("s").getName());
-                Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#AlexandriaGeodata", tuple.getBinding("s").getValue().stringValue());
+                Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#AttaliaGeodata", tuple.getBinding("s").getValue().stringValue());
             }
         }
     }
@@ -99,7 +99,7 @@ public class MarkLogicTupleQueryTest extends SesameTestBase {
         Value pV = bindingSet.getValue("p");
         Value oV = bindingSet.getValue("o");
 
-        Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#AlexandriaGeodata", sV.stringValue());
+        Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#AttaliaGeodata", sV.stringValue());
         Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#altitude", pV.stringValue());
         Assert.assertEquals("0", oV.stringValue());
 
@@ -109,7 +109,7 @@ public class MarkLogicTupleQueryTest extends SesameTestBase {
         Value pV1 = bindingSet1.getValue("p");
         Value oV1 = bindingSet1.getValue("o");
 
-        Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#AmphipolisGeodata", sV1.stringValue());
+        Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#BabylonGeodata", sV1.stringValue());
         Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#altitude", pV1.stringValue());
         Assert.assertEquals("0", oV1.stringValue());
     }
@@ -144,7 +144,7 @@ public class MarkLogicTupleQueryTest extends SesameTestBase {
         Value pV = bindingSet.getValue("p");
         Value oV = bindingSet.getValue("o");
 
-        Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#AlexandriaGeodata", sV.stringValue());
+        Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#AttaliaGeodata", sV.stringValue());
         Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#altitude", pV.stringValue());
         Assert.assertEquals("0", oV.stringValue());
 
@@ -154,7 +154,7 @@ public class MarkLogicTupleQueryTest extends SesameTestBase {
         Value pV1 = bindingSet1.getValue("p");
         Value oV1 = bindingSet1.getValue("o");
 
-        Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#AmphipolisGeodata", sV1.stringValue());
+        Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#BabylonGeodata", sV1.stringValue());
         Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#altitude", pV1.stringValue());
         Assert.assertEquals("0", oV1.stringValue());
     }
@@ -213,7 +213,7 @@ public class MarkLogicTupleQueryTest extends SesameTestBase {
         Value pV = bindingSet.getValue("p");
         Value oV = bindingSet.getValue("o");
 
-        Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#AntiochGeodata", sV.stringValue());
+        Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#BethanyBeyondtheJordanGeodata", sV.stringValue());
         Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#altitude", pV.stringValue());
         Assert.assertEquals("0", oV.stringValue());
 
@@ -239,7 +239,7 @@ public class MarkLogicTupleQueryTest extends SesameTestBase {
         Value pV = bindingSet.getValue("p");
         Value oV = bindingSet.getValue("o");
 
-        Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#AlexandriaGeodata", sV.stringValue());
+        Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#AttaliaGeodata", sV.stringValue());
         Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#altitude", pV.stringValue());
         Assert.assertEquals("0", oV.stringValue());
 
@@ -343,7 +343,7 @@ public class MarkLogicTupleQueryTest extends SesameTestBase {
                 "\t<results>\n" +
                 "\t\t<result>\n" +
                 "\t\t\t<binding name='s'>\n" +
-                "\t\t\t\t<uri>http://semanticbible.org/ns/2006/NTNames#AlexandriaGeodata</uri>\n" +
+                "\t\t\t\t<uri>http://semanticbible.org/ns/2006/NTNames#AttaliaGeodata</uri>\n" +
                 "\t\t\t</binding>\n" +
                 "\t\t\t<binding name='p'>\n" +
                 "\t\t\t\t<uri>http://semanticbible.org/ns/2006/NTNames#altitude</uri>\n" +

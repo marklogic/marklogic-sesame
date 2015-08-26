@@ -55,8 +55,6 @@ import java.util.Properties;
 // @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
 
-    private static final String TESTFILE_OWL = "src/test/resources/testdata/test-small.owl";
-
     @Rule
     public ExpectedException exception = ExpectedException.none();
 
@@ -598,7 +596,7 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
         File inputFile = new File(TESTFILE_OWL);
         conn.add(inputFile,null,RDFFormat.RDFXML);
         ValueFactory f= conn.getValueFactory();
-        URI subj = f.createURI("http://semanticbible.org/ns/2006/NTNames#AlexandriaGeodata");
+        URI subj = f.createURI("http://semanticbible.org/ns/2006/NTNames#AttaliaGeodata");
         RepositoryResult<Statement> statements = conn.getStatements(subj, null, null, true);
         Assert.assertTrue(statements.hasNext());
         conn.clear(conn.getValueFactory().createURI("http://marklogic.com/semantics#default-graph"));
@@ -612,7 +610,7 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
         conn.add(inputFile,null,RDFFormat.RDFXML,context1);
 
         ValueFactory f= conn.getValueFactory();
-        URI subj = f.createURI("http://semanticbible.org/ns/2006/NTNames#AlexandriaGeodata1");
+        URI subj = f.createURI("http://semanticbible.org/ns/2006/NTNames#AttaliaGeodata1");
         RepositoryResult<Statement> statements = conn.getStatements(subj, null, null, true, context1);
 
         Assert.assertFalse(statements.hasNext());
@@ -735,22 +733,31 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
     {
         ValueFactory f= conn.getValueFactory();
         Resource context1 = f.createURI("http://marklogic.com/test/context1");
+        Resource context2 = f.createURI("http://marklogic.com/test/context2");
+        Resource context3 = f.createURI("http://marklogic.com/test/context3");
+        
         final URI alice = f.createURI("http://example.org/people/alice");
         URI name = f.createURI("http://example.org/ontology/name");
         Literal alicesName = f.createLiteral("Alice");
+        URI age = f.createURI("http://example.org/ontology/age");
+        Literal alicesAge = f.createLiteral(11);
 
         Statement st1 = f.createStatement(alice, name, alicesName);
+        Statement st2 = f.createStatement(alice, age, alicesAge);
+        
         conn.begin();
         conn.add(st1, context1);
+        conn.add(st2, context2);
+        conn.add(st1, context3);
         conn.commit();
 
         Assert.assertEquals(1L, conn.size(context1));
 
-        Iteration<? extends Statement, RepositoryException> iter = conn.getStatements(alice, name,
+        Iteration<? extends Statement, RepositoryException> iter = conn.getStatements(null, null,
                 null, false);
 
         conn.remove(iter);
-        Assert.assertEquals(0L, conn.size(context1));
+        Assert.assertEquals(0L, conn.size(context1, context2, context3));
     }
 
     // https://github.com/marklogic/marklogic-sesame/issues/68
@@ -803,7 +810,7 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
         conn.remove(alice, age, null, context1);
         Assert.assertEquals(1L, conn.size(context1));
         conn.remove(alice, null, alicesName, context1);
-        Assert.assertEquals(1L, conn.size(context1));
+        Assert.assertEquals(0L, conn.size(context1));
     }
 
     // https://github.com/marklogic/marklogic-sesame/issues/132
@@ -826,21 +833,9 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
         conn.add(st2, context1);
         conn.commit();
         Statement st3 = f.createStatement(alice, name, f.createLiteral(9999));
-        
+
         conn.remove(st3);
         assertEquals("Remove Statement (no context) should not remove anything.", 2L, conn.size());
-    }
-    // https://github.com/marklogic/marklogic-sesame/issues/63
-    @Test
-    public void addWithNull()
-            throws Exception
-    {
-        ValueFactory f= conn.getValueFactory();
-        final URI alice = f.createURI("http://example.org/people/alice");
-        URI name = f.createURI("http://example.org/ontology/name");
-
-        exception.expect(AssertionError.class);
-        Statement st = f.createStatement(alice, name, null);
     }
 
     // https://github.com/marklogic/marklogic-sesame/issues/70
@@ -869,7 +864,7 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
     public void testSizeWithNull() throws Exception {
         File inputFile = new File(TESTFILE_OWL);
         conn.add(inputFile,null,RDFFormat.RDFXML);
-        Assert.assertEquals(418L, conn.size(null));
+        Assert.assertEquals(449, conn.size(null));
         conn.clear(conn.getValueFactory().createURI("http://marklogic.com/semantics#default-graph"));
     }
 

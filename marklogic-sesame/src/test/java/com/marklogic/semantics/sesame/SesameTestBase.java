@@ -48,6 +48,8 @@ public class SesameTestBase {
     public DatabaseClient writerClient;
     public DatabaseClient adminClient;
 
+    protected static final String TESTFILE_OWL = "src/test/resources/testdata/test-small.owl";
+
     public SesameTestBase() {
         Properties props = new Properties();
         try {
