@@ -529,13 +529,31 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
      */
     @Override
     public RepositoryResult<Statement> getStatements(Resource subj, URI pred, Value obj, boolean includeInferred, Resource... contexts) throws RepositoryException {
+        if (contexts == null) {
+            contexts = new Resource[] { null };
+        }
         try {
             if (isQuadMode()) {
-                StringBuilder sb= new StringBuilder();
-                sb.append("SELECT * {GRAPH ?ctx {?s ?p ?o . }}");
+                StringBuffer sb = new StringBuffer();
+                sb.append("SELECT * WHERE { GRAPH ?ctx { ?s ?p ?o } filter (?ctx = (");
+                boolean first = true;
+                for (Resource context : contexts) {
+                    if (first) {
+                        first = !first;
+                    }
+                    else {
+                        sb.append(",");
+                    }
+                    if (context == null) {
+                        sb.append("IRI(\"http://marklogic.com/semantics#default-graph\")");
+                    } else {
+                        sb.append("IRI(\"" + context.toString() + "\")");
+                    }
+                }
+                sb.append(") ) }");
                 TupleQuery tupleQuery = prepareTupleQuery(sb.toString());
-                setBindings(tupleQuery, subj, pred, obj, contexts);
                 tupleQuery.setIncludeInferred(includeInferred);
+                setBindings(tupleQuery, subj, pred, obj, (Resource) null);
                 TupleQueryResult qRes = tupleQuery.evaluate();
                 return new RepositoryResult<Statement>(
                         new ExceptionConvertingIteration<Statement, RepositoryException>(
@@ -545,8 +563,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
                                 return new RepositoryException(e);
                             }
                         });
-            }
-            if (subj != null && pred != null && obj != null) {
+            } else if (subj != null && pred != null && obj != null) {
                 if (hasStatement(subj, pred, obj, includeInferred, contexts)) {
                     Statement st = new StatementImpl(subj, pred, obj);
                     CloseableIteration<Statement, RepositoryException> cursor;
@@ -556,18 +573,19 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
                     return new RepositoryResult<Statement>(new EmptyIteration<Statement, RepositoryException>());
                 }
             }
-
-            GraphQuery query = prepareGraphQuery(EVERYTHING);
-            setBindings(query, subj, pred, obj, contexts);
-            GraphQueryResult result = query.evaluate();
-            return new RepositoryResult<Statement>(
-                    new ExceptionConvertingIteration<Statement, RepositoryException>(result) {
-
-                        @Override
-                        protected RepositoryException convert(Exception e) {
-                            return new RepositoryException(e);
-                        }
-                    });
+            else {
+                GraphQuery query = prepareGraphQuery(EVERYTHING);
+                setBindings(query, subj, pred, obj, contexts);
+                GraphQueryResult result = query.evaluate();
+                return new RepositoryResult<Statement>(
+                        new ExceptionConvertingIteration<Statement, RepositoryException>(result) {
+    
+                            @Override
+                            protected RepositoryException convert(Exception e) {
+                                return new RepositoryException(e);
+                            }
+                        });
+            }
         } catch (MalformedQueryException e) {
             throw new RepositoryException(e);
         } catch (QueryEvaluationException e) {
@@ -1372,7 +1390,10 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
                 Resource s = subj==null ? (Resource)b.getValue("s") : subj;
                 URI p = pred==null ? (URI)b.getValue("p") : pred;
                 Value o = obj==null ? b.getValue("o") : obj;
-                Resource ctx = (Resource)b.getValue("ctx");
+                URI ctx = (URI)b.getValue("ctx");
+                if (ctx.stringValue().equals(DEFAULT_GRAPH_URI)) {
+                    ctx = null;
+                }
                 return getValueFactory().createStatement(s, p, o, ctx);
             }
         };

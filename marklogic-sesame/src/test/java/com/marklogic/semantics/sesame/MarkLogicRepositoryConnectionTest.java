@@ -20,6 +20,7 @@
 package com.marklogic.semantics.sesame;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import info.aduna.iteration.CloseableIteration;
 import info.aduna.iteration.Iteration;
 import info.aduna.iteration.Iterations;
@@ -127,7 +128,7 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
             throws Exception {
         Resource context1 = conn.getValueFactory().createURI("http://marklogic.com/test/context1");
         File inputFile1 = new File("src/test/resources/testdata/default-graph-1.ttl");
-        conn.add(inputFile1, "http://example.org/example1/", RDFFormat.TURTLE, null);
+        conn.add(inputFile1, "http://example.org/example1/", RDFFormat.TURTLE, (Resource) null);
         File inputFile2 = new File("src/test/resources/testdata/default-graph-2.ttl");
         conn.add(inputFile2, "http://example.org/example1/", RDFFormat.TURTLE, context1);
         String defGraphQuery = "INSERT DATA { GRAPH <http://marklogic.com/test/ns/cleartest> { <http://marklogic.com/cleartest> <pp1> <oo1> } }";
@@ -143,7 +144,7 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
         Resource context1 = conn.getValueFactory().createURI("http://marklogic.com/test/context1");
         Resource context2 = conn.getValueFactory().createURI("http://marklogic.com/test/context2");
         File inputFile1 = new File("src/test/resources/testdata/default-graph-1.ttl");
-        conn.add(inputFile1, "http://example.org/example1/", RDFFormat.TURTLE, null);
+        conn.add(inputFile1, "http://example.org/example1/", RDFFormat.TURTLE, (Resource) null);
         File inputFile2 = new File("src/test/resources/testdata/default-graph-2.ttl");
         conn.add(inputFile2, "http://example.org/example1/", RDFFormat.TURTLE, context1);
         File inputFile3 = new File("src/test/resources/testdata/default-graph-2.ttl");
@@ -162,7 +163,7 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
         Resource context1 = conn.getValueFactory().createURI("http://marklogic.com/test/context1");
         Resource context2 = conn.getValueFactory().createURI("http://marklogic.com/test/context2");
         File inputFile1 = new File("src/test/resources/testdata/default-graph-1.ttl");
-        conn.add(inputFile1, "http://example.org/example1/", RDFFormat.TURTLE, null);
+        conn.add(inputFile1, "http://example.org/example1/", RDFFormat.TURTLE, (Resource) null);
         File inputFile2 = new File("src/test/resources/testdata/default-graph-2.ttl");
         conn.add(inputFile2, "http://example.org/example1/", RDFFormat.TURTLE, context1);
         File inputFile3 = new File("src/test/resources/testdata/default-graph-2.ttl");
@@ -216,10 +217,10 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
     @Test
     public void testAddTurtleWithNullContext() throws Exception {
         File inputFile = new File("src/test/resources/testdata/default-graph-1.ttl");
-        conn.add(inputFile, "http://example.org/example1/", RDFFormat.TURTLE, null);
-        Assert.assertEquals(4, conn.size(null));
+        conn.add(inputFile, "http://example.org/example1/", RDFFormat.TURTLE, (Resource) null);
+        Assert.assertEquals(4, conn.size((Resource) null));
         Assert.assertEquals(4, conn.size());
-        conn.clear(null);
+        conn.clear((Resource) null);
     }
 
     // https://github.com/marklogic/marklogic-sesame/issues/64
@@ -500,7 +501,6 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
         URI bob = f.createURI("http://example.org/people/bob");
         URI name = f.createURI("http://example.org/ontology/name");
         URI age = f.createURI("http://example.org/ontology/age");
-        URI person = f.createURI("http://example.org/ontology/Person");
         Literal bobsAge = f.createLiteral(123123123123D);
         Literal alicesName = f.createLiteral("Alice");
 
@@ -557,7 +557,6 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
 
         URI alice = f.createURI("http://example.org/people/alice");
         URI name = f.createURI("http://example.org/ontology/name");
-        URI person = f.createURI("http://example.org/ontology/Person");
         Literal alicesName = f.createLiteral("Alice1");
 
         Statement st1 = f.createStatement(alice, name, alicesName, context1);
@@ -578,7 +577,6 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
 
         URI alice = f.createURI("http://example.org/people/alice");
         URI name = f.createURI("http://example.org/ontology/name");
-        URI person = f.createURI("http://example.org/ontology/Person");
         Literal alicesName = f.createLiteral("Alice1");
 
         Statement st1 = f.createStatement(alice, name, alicesName);
@@ -767,7 +765,7 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
 
     // https://github.com/marklogic/marklogic-sesame/issues/68
     @Test
-    public void getStatementWithNullContext()
+    public void testGetStatementWithNullContext()
             throws Exception
     {
         ValueFactory f= conn.getValueFactory();
@@ -779,16 +777,35 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
         Statement st1 = f.createStatement(alice, name, alicesName);
         conn.begin();
         conn.add(st1, context1);
+        conn.add(st1);
         conn.commit();
 
         Assert.assertEquals(1L, conn.size(context1));
+        Assert.assertEquals(2L, conn.size(null, context1));
 
         Iteration<? extends Statement, RepositoryException> iter = conn.getStatements(alice, name,
                 null, false, null, context1);
 
-        Assert.assertEquals(1L, conn.size(context1));
-
-        conn.clear(context1);
+        while (iter.hasNext()) {
+            Statement s = iter.next();
+            System.out.println(s.getContext());
+            assertTrue("All statements in context must be null or 'context1'", s.getContext() == null || s.getContext().equals(context1));
+        }
+        
+        iter = conn.getStatements(alice, name, null, false, context1);
+        while (iter.hasNext()) {
+            Statement s = iter.next();
+            System.out.println(s.getContext());
+            assertTrue("All statements in context must be context1'", s.getContext().equals(context1));
+        }
+        
+        iter = conn.getStatements(alice, name, null, false, (Resource) null);
+        while (iter.hasNext()) {
+            Statement s = iter.next();
+            System.out.println(s.getContext());
+            assertTrue("All statements in context must be null'", s.getContext() == null);
+        }
+        conn.clear(context1, null);
     }
 
     // https://github.com/marklogic/marklogic-sesame/issues/61

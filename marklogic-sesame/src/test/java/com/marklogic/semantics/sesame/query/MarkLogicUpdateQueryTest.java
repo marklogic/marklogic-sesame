@@ -40,7 +40,7 @@ public class MarkLogicUpdateQueryTest extends SesameTestBase {
         f = rep.getValueFactory();
         conn = rep.getConnection();
         logger.info("test setup complete.");
-        File testData = new File("src/test/resources/testdata/test.owl");
+        File testData = new File(TESTFILE_OWL);
 
         GraphManager gmgr = writerClient.newGraphManager();
         gmgr.setDefaultMimetype(RDFMimeTypes.RDFXML);
