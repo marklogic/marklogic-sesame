@@ -755,7 +755,12 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
 
         Iteration<? extends Statement, RepositoryException> iter = conn.getStatements(null, null,
                 null, false);
-
+        
+        conn.remove(iter, context1);
+        Assert.assertEquals(0L, conn.size(context1));
+        Assert.assertEquals(1L, conn.size(context1, context2));
+        
+        iter = conn.getStatements(null, null, null, false);
         conn.remove(iter);
         Assert.assertEquals(0L, conn.size(context1, context2, context3));
     }
