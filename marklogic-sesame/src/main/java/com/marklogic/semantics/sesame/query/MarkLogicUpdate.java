@@ -20,6 +20,7 @@
 package com.marklogic.semantics.sesame.query;
 
 import com.marklogic.semantics.sesame.client.MarkLogicClient;
+
 import org.openrdf.query.UpdateExecutionException;
 
 /**
@@ -46,7 +47,8 @@ public class MarkLogicUpdate {
 	 *
 	 * @return
 	 */
-	private MarkLogicClient getClient() {
+	@SuppressWarnings("unused")
+    private MarkLogicClient getClient() {
 		return this.client;
 	}
 }

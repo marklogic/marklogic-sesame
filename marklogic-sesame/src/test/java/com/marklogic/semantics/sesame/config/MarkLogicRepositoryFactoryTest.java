@@ -20,6 +20,7 @@
 package com.marklogic.semantics.sesame.config;
 
 import com.marklogic.semantics.sesame.MarkLogicRepositoryConnection;
+
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
@@ -57,6 +58,7 @@ public class MarkLogicRepositoryFactoryTest {
         Repository otherrepo = factory.getRepository(config);
         exception.expect(RepositoryException.class);
         //try to get connection without initialising repo, throws error
+        @SuppressWarnings("unused")
         RepositoryConnection conn = otherrepo.getConnection();
     }
 
@@ -73,6 +75,7 @@ public class MarkLogicRepositoryFactoryTest {
         Repository otherrepo = factory.getRepository(config);
         exception.expect(RepositoryException.class);
         //try to get connection without initialising repo, will throw error
+        @SuppressWarnings("unused")
         RepositoryConnection conn = otherrepo.getConnection();
     }
 }

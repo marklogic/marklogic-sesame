@@ -19,18 +19,18 @@
  */
 package com.marklogic.semantics.sesame.query;
 
-import com.marklogic.semantics.sesame.client.MarkLogicClient;
-import com.marklogic.semantics.sesame.client.MarkLogicClientDependent;
 import org.openrdf.model.Value;
 import org.openrdf.model.impl.ValueFactoryImpl;
 import org.openrdf.query.Dataset;
 import org.openrdf.query.Query;
-import org.openrdf.query.QueryLanguage;
 import org.openrdf.query.impl.AbstractQuery;
 import org.openrdf.repository.sparql.query.QueryStringUtil;
 import org.openrdf.repository.sparql.query.SPARQLQueryBindingSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.marklogic.semantics.sesame.client.MarkLogicClient;
+import com.marklogic.semantics.sesame.client.MarkLogicClientDependent;
 
 /**
  * base query class
@@ -42,8 +42,6 @@ public class MarkLogicQuery extends AbstractQuery implements Query,MarkLogicClie
     protected final Logger logger = LoggerFactory.getLogger(MarkLogicQuery.class);
 
     private MarkLogicClient client;
-
-    private QueryLanguage queryLanguage = QueryLanguage.SPARQL;
 
     private String queryString;
 

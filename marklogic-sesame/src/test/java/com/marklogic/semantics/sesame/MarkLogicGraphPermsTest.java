@@ -18,8 +18,6 @@ import org.slf4j.LoggerFactory;
 
 public class MarkLogicGraphPermsTest extends SesameTestBase {
 
-    private QueryManager qmgr;
-
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     protected MarkLogicRepositoryConnection conn;
@@ -60,8 +58,6 @@ public class MarkLogicGraphPermsTest extends SesameTestBase {
         XMLDocumentManager docMgr = writerClient.newXMLDocumentManager();
         docMgr.write("/directory1/doc1.xml", new StringHandle().with(tripleDocOne));
         docMgr.write("/directory2/doc2.xml", new StringHandle().with(tripleDocTwo));
-        qmgr = writerClient.newQueryManager();
-
     }
 
     @After

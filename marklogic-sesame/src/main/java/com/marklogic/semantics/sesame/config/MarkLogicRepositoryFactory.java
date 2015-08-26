@@ -40,7 +40,7 @@ public class MarkLogicRepositoryFactory implements RepositoryFactory {
 
     @Override
 	public String getRepositoryType() {
-		return this.REPOSITORY_TYPE;
+		return REPOSITORY_TYPE;
 	}
 
     @Override

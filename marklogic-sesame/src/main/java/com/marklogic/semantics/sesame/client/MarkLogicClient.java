@@ -124,7 +124,7 @@ public class MarkLogicClient {
 	public TupleQueryResult sendTupleQuery(String queryString,SPARQLQueryBindingSet bindings, long start, long pageLength, boolean includeInferred, String baseURI) throws IOException, RepositoryException, MalformedQueryException, UnauthorizedException,
     QueryInterruptedException {
 		InputStream stream = getClient().performSPARQLQuery(queryString, bindings, start, pageLength, this.tx, includeInferred, baseURI);
-		TupleQueryResultParser parser = QueryResultIO.createParser(this.format, getValueFactory());
+		TupleQueryResultParser parser = QueryResultIO.createParser(format, getValueFactory());
 		MarkLogicBackgroundTupleResult tRes = new MarkLogicBackgroundTupleResult(parser,stream);
 		execute(tRes);
 		return tRes;
@@ -142,7 +142,7 @@ public class MarkLogicClient {
 	public GraphQueryResult sendGraphQuery(String queryString, SPARQLQueryBindingSet bindings, boolean includeInferred, String baseURI) throws IOException {
 		InputStream stream = getClient().performGraphQuery(queryString, bindings, this.tx, includeInferred, baseURI);
 
-		RDFParser parser = Rio.createParser(this.rdfFormat, getValueFactory());
+		RDFParser parser = Rio.createParser(rdfFormat, getValueFactory());
 		parser.setParserConfig(getParserConfig());
 		parser.setParseErrorListener(new ParseErrorLogger());
 		parser.setPreserveBNodeIDs(true);

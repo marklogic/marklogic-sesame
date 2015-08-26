@@ -1,12 +1,14 @@
 package com.marklogic.semantics.sesame.benchmarks;
 
-import com.marklogic.semantics.sesame.MarkLogicRepository;
-import com.marklogic.semantics.sesame.MarkLogicRepositoryConnection;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Properties;
+
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openrdf.model.Resource;
 import org.openrdf.model.Statement;
 import org.openrdf.model.Value;
-import org.openrdf.model.ValueFactory;
 import org.openrdf.query.BindingSet;
 import org.openrdf.query.TupleQuery;
 import org.openrdf.query.TupleQueryResult;
@@ -15,10 +17,8 @@ import org.openrdf.rio.RDFFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.Properties;
+import com.marklogic.semantics.sesame.MarkLogicRepository;
+import com.marklogic.semantics.sesame.MarkLogicRepositoryConnection;
 
 public class MarkLogicRepositoryConnectionNaivePerfTest {
 
@@ -44,7 +44,6 @@ public class MarkLogicRepositoryConnectionNaivePerfTest {
         MarkLogicRepository rep = new MarkLogicRepository(host,port,user,pass,"DIGEST");
         rep.initialize();
 
-        ValueFactory f = rep.getValueFactory();
         MarkLogicRepositoryConnection conn = rep.getConnection();
         rep.shutDown();
         rep.initialize();
@@ -61,8 +60,11 @@ public class MarkLogicRepositoryConnectionNaivePerfTest {
 
         while(results.hasNext()) {
             BindingSet bindingSet = results.next();
+            @SuppressWarnings("unused")
             Value sV = bindingSet.getValue("s");
+            @SuppressWarnings("unused")
             Value pV = bindingSet.getValue("p");
+            @SuppressWarnings("unused")
             Value oV = bindingSet.getValue("o");
         }
         Resource subject = conn.getValueFactory().createURI("urn:x-local:graph1");

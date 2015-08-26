@@ -22,6 +22,7 @@ package com.marklogic.semantics.sesame;
 import info.aduna.iteration.CloseableIteration;
 import info.aduna.iteration.Iteration;
 import info.aduna.iteration.Iterations;
+
 import org.junit.*;
 import org.junit.rules.ExpectedException;
 import org.openrdf.model.*;
@@ -52,6 +53,8 @@ import java.util.Properties;
  */
 // @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
+
+    private static final String TESTFILE_OWL = "src/test/resources/testdata/test-small.owl";
 
     @Rule
     public ExpectedException exception = ExpectedException.none();
@@ -591,7 +594,7 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
 
     @Test
     public void testGetStatements() throws Exception{
-        File inputFile = new File("src/test/resources/testdata/test.owl");
+        File inputFile = new File(TESTFILE_OWL);
         conn.add(inputFile,null,RDFFormat.RDFXML);
         ValueFactory f= conn.getValueFactory();
         URI subj = f.createURI("http://semanticbible.org/ns/2006/NTNames#AlexandriaGeodata");
@@ -602,7 +605,7 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
 
     @Test
     public void testGetStatementsEmpty() throws Exception{
-        File inputFile = new File("src/test/resources/testdata/test.owl");
+        File inputFile = new File(TESTFILE_OWL);
         conn.add(inputFile,null,RDFFormat.RDFXML);
         Resource context1 = conn.getValueFactory().createURI("http://marklogic.com/test/my-graph");
         conn.add(inputFile,null,RDFFormat.RDFXML,context1);
@@ -838,9 +841,9 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
     // https://github.com/marklogic/marklogic-sesame/issues/83
     @Test
     public void testSizeWithNull() throws Exception {
-        File inputFile = new File("src/test/resources/testdata/test.owl");
+        File inputFile = new File(TESTFILE_OWL);
         conn.add(inputFile,null,RDFFormat.RDFXML);
-        Assert.assertEquals(4036L, conn.size(null));
+        Assert.assertEquals(418L, conn.size(null));
         conn.clear(conn.getValueFactory().createURI("http://marklogic.com/semantics#default-graph"));
     }
 
@@ -871,7 +874,7 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
         Assert.assertEquals(6L, aboutEveryone.size());
 
         statements = conn.getStatements(null, null, null, true, context5,context6);
-        List aboutList = Iterations.asList(statements);
+        List<Statement> aboutList = Iterations.asList(statements);
 
         Assert.assertEquals(6L, aboutList.size()); // TBD- why does it dedupe ?
 
@@ -939,17 +942,23 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
     public void testCompareSizeAWithNullContext() throws Exception {
         Resource context5 = conn.getValueFactory().createURI("http://marklogic.com/test/context5");
 
+        Resource context6 = conn.getValueFactory().createURI("http://marklogic.com/test/context6");
+
         File inputFile1 = new File("src/test/resources/testdata/default-graph-1.ttl");
         conn.add(inputFile1, "http://example.org/example1/", RDFFormat.TURTLE, null);
 
         File inputFile2 = new File("src/test/resources/testdata/default-graph-2.ttl");
         conn.add(inputFile2, "http://example.org/example1/", RDFFormat.TURTLE, context5);
 
-        Assert.assertEquals(8, conn.size());
-        Assert.assertEquals(8, conn.size(null));
-        Assert.assertEquals(8, conn.size(context5));
-        Assert.assertEquals(8, conn.size(null,context5));
-        Assert.assertEquals(8, conn.size(context5,null,context5));
+        File inputFile3 = new File("src/test/resources/testdata/default-graph-3.ttl");
+        conn.add(inputFile3, "http://example.org/example1/", RDFFormat.TURTLE, context6);
+
+        Assert.assertEquals(12, conn.size());
+        Assert.assertEquals(4, conn.size((Resource) null));
+        Assert.assertEquals(4, conn.size(context5));
+        Assert.assertEquals(8, conn.size((Resource) null,context5));
+        Assert.assertEquals(8, conn.size(context5,(Resource) null,context5));
+        Assert.assertEquals(12, conn.size(context6,(Resource) null,context5));
         conn.clear();
     }
 

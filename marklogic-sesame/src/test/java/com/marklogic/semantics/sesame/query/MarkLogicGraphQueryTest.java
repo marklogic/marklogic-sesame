@@ -1,14 +1,20 @@
 package com.marklogic.semantics.sesame.query;
 
-import com.marklogic.client.io.FileHandle;
-import com.marklogic.client.query.QueryManager;
-import com.marklogic.client.semantics.GraphManager;
-import com.marklogic.client.semantics.RDFMimeTypes;
-import com.marklogic.semantics.sesame.MarkLogicRepositoryConnection;
-import com.marklogic.semantics.sesame.SesameTestBase;
-import org.junit.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Rule;
+import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.openrdf.model.*;
+import org.openrdf.model.Literal;
+import org.openrdf.model.Resource;
+import org.openrdf.model.Statement;
+import org.openrdf.model.URI;
+import org.openrdf.model.ValueFactory;
 import org.openrdf.query.GraphQuery;
 import org.openrdf.query.GraphQueryResult;
 import org.openrdf.query.QueryEvaluationException;
@@ -20,8 +26,11 @@ import org.openrdf.rio.Rio;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.FileNotFoundException;
+import com.marklogic.client.io.FileHandle;
+import com.marklogic.client.semantics.GraphManager;
+import com.marklogic.client.semantics.RDFMimeTypes;
+import com.marklogic.semantics.sesame.MarkLogicRepositoryConnection;
+import com.marklogic.semantics.sesame.SesameTestBase;
 
 /**
  * Created by jfuller on 8/11/15.
@@ -30,8 +39,6 @@ public class MarkLogicGraphQueryTest extends SesameTestBase {
 
     @Rule
     public ExpectedException exception = ExpectedException.none();
-
-    private QueryManager qmgr;
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 

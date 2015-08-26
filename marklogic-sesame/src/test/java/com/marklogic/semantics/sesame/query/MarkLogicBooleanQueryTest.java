@@ -1,11 +1,8 @@
 package com.marklogic.semantics.sesame.query;
 
-import com.marklogic.client.io.FileHandle;
-import com.marklogic.client.query.QueryManager;
-import com.marklogic.client.semantics.GraphManager;
-import com.marklogic.client.semantics.RDFMimeTypes;
-import com.marklogic.semantics.sesame.MarkLogicRepositoryConnection;
-import com.marklogic.semantics.sesame.SesameTestBase;
+import java.io.File;
+import java.io.FileNotFoundException;
+
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -17,15 +14,16 @@ import org.openrdf.repository.RepositoryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.FileNotFoundException;
+import com.marklogic.client.io.FileHandle;
+import com.marklogic.client.semantics.GraphManager;
+import com.marklogic.client.semantics.RDFMimeTypes;
+import com.marklogic.semantics.sesame.MarkLogicRepositoryConnection;
+import com.marklogic.semantics.sesame.SesameTestBase;
 
 /**
  * Created by jfuller on 8/11/15.
  */
 public class MarkLogicBooleanQueryTest extends SesameTestBase {
-
-    private QueryManager qmgr;
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 

@@ -66,7 +66,7 @@ public class MarkLogicClientImpl {
 
     private String auth;
 
-    protected static DatabaseClientFactory.Authentication authType = DatabaseClientFactory.Authentication.valueOf(
+    protected DatabaseClientFactory.Authentication authType = DatabaseClientFactory.Authentication.valueOf(
             "DIGEST"
     );
 
@@ -126,7 +126,7 @@ public class MarkLogicClientImpl {
         return password;
     }
 
-    public void setPassword() {
+    public void setPassword(String password) {
         this.password = password;
     }
 
@@ -144,7 +144,7 @@ public class MarkLogicClientImpl {
 
     // auth type
     public void setAuthType(DatabaseClientFactory.Authentication authType) {
-        MarkLogicClientImpl.authType = authType;
+        this.authType = authType;
     }
 
     public DatabaseClientFactory.Authentication getAuthType() {
@@ -344,6 +344,7 @@ public class MarkLogicClientImpl {
         if(notNull(subject)) qdef.withBinding("s", subject.stringValue());
         if(notNull(predicate)) qdef.withBinding("p", predicate.stringValue());
         if(notNull(object)) bindObject(qdef, "o", object);
+        sparqlManager.clearPageLength();
         sparqlManager.executeUpdate(qdef, tx);
     }
 

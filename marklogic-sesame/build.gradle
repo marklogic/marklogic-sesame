@@ -38,7 +38,7 @@ repositories {
 dependencies {
     compile('org.openrdf.sesame:sesame-runtime:2.8.5')
 
-    compile('com.marklogic:java-client-api:4.0-SNAPSHOT')
+    compile('com.marklogic:java-client-api:3.0-SNAPSHOT')
 
     compile('org.slf4j:slf4j-api:1.7.10')
     compile "ch.qos.logback:logback-classic:$logbackVersion"

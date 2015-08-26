@@ -21,7 +21,9 @@ package com.marklogic.semantics.sesame;
 
 import com.marklogic.semantics.sesame.client.MarkLogicClient;
 import com.marklogic.semantics.sesame.query.*;
+
 import info.aduna.iteration.*;
+
 import org.openrdf.IsolationLevel;
 import org.openrdf.IsolationLevels;
 import org.openrdf.model.*;
@@ -483,8 +485,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
                                 return new RepositoryException(e);
                             }
                         });
-            }
-            if (subj != null && pred != null && obj != null) {
+            } else if (subj != null && pred != null && obj != null) {
                 if (hasStatement(subj, pred, obj, includeInferred)) {
                     Statement st = new StatementImpl(subj, pred, obj);
                     CloseableIteration<Statement, RepositoryException> cursor;
@@ -742,19 +743,23 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     @Override
     public long size(){
         try {
-            RepositoryResult<Statement> statements = getStatements(null,null,null,true);
-            long i = 0;
-            while (statements.hasNext()) {
-                statements.next();
-                i++;
-            }
-            return i;
-        } catch (RepositoryException e) {
+            String sizeQuery = "SELECT (count(?s) as ?ct) where { GRAPH ?g { ?s ?p ?o } }";
+            TupleQuery tupleQuery = prepareTupleQuery(sizeQuery);
+            //setBindings(tupleQuery, subj, pred, obj);
+            tupleQuery.setIncludeInferred(false);
+            TupleQueryResult qRes = tupleQuery.evaluate();
+            // just one answer
+            BindingSet result = qRes.next();
+            long resultValue = ((Literal) result.getBinding("ct").getValue()).longValue();
+            return resultValue;
+        } catch (RepositoryException | MalformedQueryException e) {
+            e.printStackTrace();
+        } catch (QueryEvaluationException e) {
             e.printStackTrace();
         }
         return 0;
     }
-
+    
     /**
      * returns number of triples in supplied context
      *
@@ -765,15 +770,38 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
      */
     @Override
     public long size(Resource... contexts)  {
+        if (contexts == null) {
+            contexts = new Resource[] { null };
+        }
         try {
-            RepositoryResult<Statement> statements = getStatements(null,null,null,true,contexts);
-            long i = 0;
-            while (statements.hasNext()) {
-                statements.next();
-                i++;
+            StringBuffer sb = new StringBuffer();
+            sb.append("SELECT (count(?s) as ?ct) where { GRAPH ?g { ?s ?p ?o } filter (?g = (");
+            boolean first = true;
+            for (Resource context : contexts) {
+                if (first) {
+                    first = !first;
+                }
+                else {
+                    sb.append(",");
+                }
+                if (context == null) {
+                    sb.append("IRI(\"http://marklogic.com/semantics#default-graph\")");
+                } else {
+                    sb.append("IRI(\"" + context.toString() + "\")");
+                }
             }
-            return i;
-        } catch (RepositoryException e) {
+            sb.append(") ) }");
+            TupleQuery tupleQuery = prepareTupleQuery(sb.toString());
+            tupleQuery.setIncludeInferred(false);
+            TupleQueryResult qRes = tupleQuery.evaluate();
+            // just one answer
+            BindingSet result = qRes.next();
+            long resultValue = ((Literal) result.getBinding("ct").getValue()).longValue();
+            // if 'null' was one or more of the arguments, then totalSize will be non-zero.
+            return resultValue;
+        } catch (RepositoryException | MalformedQueryException e) {
+            e.printStackTrace();
+        } catch (QueryEvaluationException e) {
             e.printStackTrace();
         }
         return 0;
