@@ -28,9 +28,12 @@ public class StatementIterator implements Iterator{
 		index ++;
 		return st;
 	}
-	
+
 	@Override
-	public void remove(){
+	public void remove() {
+		// TODO Auto-generated method stub
 		
 	}
+	
+	
 }
