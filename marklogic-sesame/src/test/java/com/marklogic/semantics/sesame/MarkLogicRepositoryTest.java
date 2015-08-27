@@ -21,6 +21,7 @@ package com.marklogic.semantics.sesame;
 
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
+
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
@@ -67,6 +68,7 @@ public class MarkLogicRepositoryTest extends SesameTestBase {
         // should throw error as we shutdown repo
         exception.expect(RepositoryException.class);
         exception.expectMessage("MarkLogicRepository not initialized.");
+        @SuppressWarnings("unused")
         RepositoryConnection conn = rep.getConnection();
     }
 
@@ -122,7 +124,7 @@ public class MarkLogicRepositoryTest extends SesameTestBase {
 
         writerRep.initialize();
         MarkLogicRepositoryConnection testWriterCon = writerRep.getConnection();
-        testReaderCon.prepareUpdate("CREATE GRAPH <abcdef10>").execute();
+        testWriterCon.prepareUpdate("CREATE GRAPH <abcdef10>").execute();
         writerRep.shutDown();
         readerRep.shutDown();
     }

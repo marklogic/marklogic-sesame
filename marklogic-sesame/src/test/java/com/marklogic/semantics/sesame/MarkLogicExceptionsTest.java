@@ -20,6 +20,7 @@
 package com.marklogic.semantics.sesame;
 
 import com.marklogic.client.ResourceNotFoundException;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -79,12 +80,14 @@ public class MarkLogicExceptionsTest extends SesameTestBase {
     @Test
     public void TestMalformedQuery() throws RepositoryException, MalformedQueryException, QueryEvaluationException {
         exception.expect(QueryEvaluationException.class);
+        @SuppressWarnings("unused")
         TupleQueryResult results = conn.prepareTupleQuery("A malformed query").evaluate();
     }
 
     @Test
     public void TestMalformedBooleanQuery() throws RepositoryException, MalformedQueryException, QueryEvaluationException {
         exception.expect(QueryEvaluationException.class);
+        @SuppressWarnings("unused")
         boolean results = conn.prepareBooleanQuery("A malformed query").evaluate();
     }
 

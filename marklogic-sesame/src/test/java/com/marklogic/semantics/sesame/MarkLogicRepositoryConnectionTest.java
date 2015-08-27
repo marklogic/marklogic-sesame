@@ -864,7 +864,6 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
     @Test
     public void testAddWithNullContext() throws Exception {
         ValueFactory f= conn.getValueFactory();
-        Resource context1 = f.createURI("http://marklogic.com/test/context1");
         final URI william = f.createURI("http://example.org/people/william");
         URI name = f.createURI("http://example.org/ontology/name");
         URI age = f.createURI("http://example.org/ontology/age");
@@ -874,11 +873,11 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
         Statement st1 = f.createStatement(william, name, williamName);
         Statement st2 = f.createStatement(william, age, williamAge);
 
-        conn.add(st1, null);
-        conn.add(st2, null);
+        conn.add(st1, (Resource) null);
+        conn.add(st2, (Resource) null);
 
-        conn.remove(william, age, williamName, null);
-        conn.remove(william, name, williamAge, null);
+        conn.remove(william, age, williamName, (Resource) null);
+        conn.remove(william, name, williamAge, (Resource) null);
     }
 
     // https://github.com/marklogic/marklogic-sesame/issues/83
@@ -886,7 +885,7 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
     public void testSizeWithNull() throws Exception {
         File inputFile = new File(TESTFILE_OWL);
         conn.add(inputFile,null,RDFFormat.RDFXML);
-        Assert.assertEquals(449, conn.size(null));
+        Assert.assertEquals(449, conn.size((Resource) null));
         conn.clear(conn.getValueFactory().createURI("http://marklogic.com/semantics#default-graph"));
     }
 
@@ -910,7 +909,7 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
         conn.add(bob, RDF.TYPE, person, context5);
         conn.add(bob, name, bobsName, context5, context6);
 
-        RepositoryResult<Statement> statements = conn.getStatements(null, null, null, true, context6);
+        RepositoryResult<Statement> statements = conn.getStatements(null, null, null, true);
 
         Model aboutEveryone = Iterations.addAll(statements, new LinkedHashModel());
 
@@ -988,7 +987,7 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
         Resource context6 = conn.getValueFactory().createURI("http://marklogic.com/test/context6");
 
         File inputFile1 = new File("src/test/resources/testdata/default-graph-1.ttl");
-        conn.add(inputFile1, "http://example.org/example1/", RDFFormat.TURTLE, null);
+        conn.add(inputFile1, "http://example.org/example1/", RDFFormat.TURTLE, (Resource) null);
 
         File inputFile2 = new File("src/test/resources/testdata/default-graph-2.ttl");
         conn.add(inputFile2, "http://example.org/example1/", RDFFormat.TURTLE, context5);
@@ -1005,11 +1004,4 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
         conn.clear();
     }
 
-    // https://github.com/marklogic/marklogic-sesame/issues/83
-    @Test
-    public void testSizeWithNullContext() throws Exception {
-        Resource context5 = conn.getValueFactory().createURI("http://marklogic.com/test/context5");
-        Assert.assertEquals(0, conn.size(null));
-        conn.clear();
-    }
 }

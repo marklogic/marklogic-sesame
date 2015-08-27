@@ -1,3 +1,18 @@
+/*
+ * Copyright 2015 MarkLogic Corporation
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.marklogic.semantics.sesame.query;
 
 
@@ -86,8 +101,6 @@ public class MarkLogicCombinationQueryTest extends SesameTestBase {
     @Test
     public void testCombinationQuery() throws MalformedQueryException, RepositoryException, QueryEvaluationException {
 
-        String query = "SELECT * { ?s ?p ?o .}";
-
         String query1 = "ASK WHERE {<http://example.org/r9928> ?p ?o .}";
         String query2 = "ASK WHERE {<http://example.org/r9929> ?p ?o .}";
 
@@ -109,6 +122,10 @@ public class MarkLogicCombinationQueryTest extends SesameTestBase {
 
         askQuery = conn.prepareBooleanQuery(QueryLanguage.SPARQL,query2);
         askQuery.setConstrainingQueryDefinition(rawCombined);
+        Assert.assertEquals(false, askQuery.evaluate());
+        
+        askQuery = conn.prepareBooleanQuery(QueryLanguage.SPARQL,query1);
+        askQuery.setConstrainingQueryDefinition(negRawCombined);
         Assert.assertEquals(false, askQuery.evaluate());
     }
 

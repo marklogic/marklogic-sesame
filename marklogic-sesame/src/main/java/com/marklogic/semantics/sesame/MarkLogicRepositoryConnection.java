@@ -67,11 +67,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
 
     private static final String EVERYTHING = "CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o }";
 
-    private static final String EVERYTHING_WITH_GRAPH = "SELECT * WHERE {  ?s ?p ?o . OPTIONAL { GRAPH ?ctx { ?s ?p ?o } } }";
-
     private static final String SOMETHING = "ASK { ?s ?p ?o }";
-
-    private static final String NAMEDGRAPHS = "SELECT DISTINCT ?_ WHERE { GRAPH ?_ { ?s ?p ?o } }";
 
     private final boolean quadMode;
 
