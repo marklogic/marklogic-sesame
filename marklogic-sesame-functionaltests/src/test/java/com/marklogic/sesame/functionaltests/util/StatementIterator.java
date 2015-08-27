@@ -29,4 +29,8 @@ public class StatementIterator implements Iterator{
 		return st;
 	}
 	
+	@Override
+	public void remove(){
+		
+	}
 }
