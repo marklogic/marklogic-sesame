@@ -106,6 +106,24 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
         client.setValueFactory(f);
     }
 
+    @Override
+    /**
+     * Releases the connection to the database.  Ensures that open transactions
+     * are complete.
+     */
+    public void close()
+        throws RepositoryException
+    {
+        super.close();
+        try {
+            if (this.isActive()) {
+                client.rollbackTransaction();
+            }
+        } catch (Exception e) {
+            
+        }
+    }
+    
     /**
      * overload for prepareQuery
      *
@@ -602,7 +620,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
      */
     @Override
     public boolean hasStatement(Statement st, boolean includeInferred, Resource... contexts) throws RepositoryException {
-        return hasStatement(st.getSubject(),st.getPredicate(),st.getObject(),includeInferred,contexts); //TBD
+        return hasStatement(st.getSubject(),st.getPredicate(),st.getObject(),includeInferred,contexts);
     }
 
     /**
@@ -620,34 +638,34 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
      */
     @Override
     public boolean hasStatement(Resource subject, URI predicate, Value object, boolean includeInferred, Resource... contexts) throws RepositoryException {
-        try {
+        String queryString = null;
+        if (contexts.length == 0) {
+            queryString = SOMETHING;
+        }
+        else {
+            
             StringBuilder sb= new StringBuilder();
-            StringBuilder ob = new StringBuilder();
-            if (object instanceof Literal) {
-                Literal lit = (Literal)object;
-                ob.append("\"");
-                ob.append(SPARQLUtil.encodeString(lit.getLabel()));
-                ob.append("\"");
-                ob.append("^^<" + lit.getDatatype().stringValue() + ">");
-                ob.append(" ");
-            }else {
-                ob.append("<" + object.stringValue() + "> ");
-            }
-            if(notNull(contexts) && contexts.length>0) {
-                //if (baseURI != null) sb.append("BASE <" + baseURI + ">\n");
-                sb.append("ASK { ");
-                for (int i = 0; i < contexts.length; i++) {
-                    if(notNull(contexts[i])) {
-                        sb.append("GRAPH <" + contexts[i].stringValue() + "> {?s ?p "+ob.toString()+" .} ");
-                    }else{
-                        sb.append("GRAPH <"+DEFAULT_GRAPH_URI+"> {?s ?p ?o .}");
+            //if (baseURI != null) sb.append("BASE <" + baseURI + ">\n");
+            sb.append("ASK { GRAPH ?ctx { ?s ?p ?o } filter (?ctx = (");
+                boolean first = true;
+                for (Resource context : contexts) {
+                    if (first) {
+                        first = !first;
+                    }
+                    else {
+                        sb.append(",");
+                    }
+                    if (context == null) {
+                        sb.append("IRI(\"http://marklogic.com/semantics#default-graph\")");
+                    } else {
+                        sb.append("IRI(\"" + context.toString() + "\")");
                     }
                 }
-                sb.append("}");
-            }else{
-                sb.append(SOMETHING);
-            }
-            BooleanQuery query = prepareBooleanQuery(sb.toString()); // baseuri ?
+                sb.append(") ) }");
+            queryString = sb.toString();
+        }
+        try {
+            BooleanQuery query = prepareBooleanQuery(queryString); // baseuri ?
             setBindings(query, subject, predicate, object, contexts);
             return query.evaluate();
         }
@@ -784,27 +802,29 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
      */
     @Override
     public long size(Resource... contexts)  {
-        if (contexts == null) {
-            contexts = new Resource[] { null };
-        }
         try {
             StringBuffer sb = new StringBuffer();
-            sb.append("SELECT (count(?s) as ?ct) where { GRAPH ?g { ?s ?p ?o } filter (?g = (");
+            sb.append("SELECT (count(?s) as ?ct) where { GRAPH ?g { ?s ?p ?o }");
             boolean first = true;
-            for (Resource context : contexts) {
-                if (first) {
-                    first = !first;
+            // with no args, measure the whole triple store.
+            if (contexts != null && contexts.length > 0) {
+                sb.append("filter (?g = (");
+                for (Resource context : contexts) {
+                    if (first) {
+                        first = !first;
+                    }
+                    else {
+                        sb.append(",");
+                    }
+                    if (context == null) {
+                        sb.append("IRI(\"http://marklogic.com/semantics#default-graph\")");
+                    } else {
+                        sb.append("IRI(\"" + context.toString() + "\")");
+                    }
                 }
-                else {
-                    sb.append(",");
-                }
-                if (context == null) {
-                    sb.append("IRI(\"http://marklogic.com/semantics#default-graph\")");
-                } else {
-                    sb.append("IRI(\"" + context.toString() + "\")");
-                }
+                sb.append(") )");
             }
-            sb.append(") ) }");
+            sb.append("}");
             TupleQuery tupleQuery = prepareTupleQuery(sb.toString());
             tupleQuery.setIncludeInferred(false);
             TupleQueryResult qRes = tupleQuery.evaluate();
@@ -1316,14 +1336,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
             query.setBinding("p", pred);
         }
         if (obj != null) {
-            if (obj instanceof Literal) {
-                Value o;
-                Literal lit = (Literal)obj;
-                o = getValueFactory().createLiteral(lit.stringValue(),lit.getDatatype().toString());
-                query.setBinding("o", o);
-            }else{
-                query.setBinding("o", obj);
-            }
+            query.setBinding("o", obj);
         }
         if (contexts != null && contexts.length > 0) {
             DatasetImpl dataset = new DatasetImpl();

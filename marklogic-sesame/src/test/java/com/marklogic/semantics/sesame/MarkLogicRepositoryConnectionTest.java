@@ -561,6 +561,10 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
 
         Statement st1 = f.createStatement(alice, name, alicesName, context1);
         conn.add(st1);
+        assertEquals("Statement must incrment size of database.", 1, conn.size());
+        assertEquals("Statement must incrment size of database.", 1, conn.size(context1));
+        assertEquals("Statement must not incrment size of default graph.", 0, conn.size((Resource) null));
+        
 
         String checkAliceQuery = "ASK { GRAPH <http://marklogic.com/test/context1> {<http://example.org/people/alice> <http://example.org/ontology/name> 'Alice1' .}}";
         BooleanQuery booleanAliceQuery = conn.prepareBooleanQuery(QueryLanguage.SPARQL, checkAliceQuery);
@@ -628,7 +632,10 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
         conn.add(st1,context1);
 
         Assert.assertTrue(conn.hasStatement(st1, false, context1));
-
+        Assert.assertTrue(conn.hasStatement(st1, false, context1, null));
+        Assert.assertFalse(conn.hasStatement(st1, false, (Resource) null));
+        Assert.assertTrue(conn.hasStatement(st1, false));
+        Assert.assertTrue(conn.hasStatement(null, null, null, false));
         conn.clear(context1);
     }
 
