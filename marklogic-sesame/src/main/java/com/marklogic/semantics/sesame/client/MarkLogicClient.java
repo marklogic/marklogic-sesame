@@ -154,7 +154,7 @@ public class MarkLogicClient {
 			gRes= new MarkLogicBackgroundGraphResult(parser,stream,charset,baseURI);
 		}else{
 			gRes= new MarkLogicBackgroundGraphResult(parser,stream,charset,"");
-		};
+		}
 
 		execute(gRes);
 		return gRes;
