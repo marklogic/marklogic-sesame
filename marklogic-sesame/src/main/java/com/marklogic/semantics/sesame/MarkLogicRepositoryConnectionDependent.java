@@ -28,25 +28,24 @@ import org.openrdf.repository.RepositoryException;
  * interface which defines MarkLogic specific overrides
  */
 public interface MarkLogicRepositoryConnectionDependent {
+    Query prepareQuery(String queryString) throws RepositoryException, MalformedQueryException;
+    Query prepareQuery(String queryString, String baseURI) throws RepositoryException, MalformedQueryException;
 
-    public Query prepareQuery(String queryString) throws RepositoryException, MalformedQueryException;
-    public Query prepareQuery(String queryString, String baseURI) throws RepositoryException, MalformedQueryException;
+    TupleQuery prepareTupleQuery(String queryString) throws RepositoryException, MalformedQueryException;
+    TupleQuery prepareTupleQuery(String queryString,String baseURI) throws RepositoryException, MalformedQueryException;
 
-    public TupleQuery prepareTupleQuery(String queryString) throws RepositoryException, MalformedQueryException;
-    public TupleQuery prepareTupleQuery(String queryString,String baseURI) throws RepositoryException, MalformedQueryException;
+    Update prepareUpdate(String queryString) throws RepositoryException, MalformedQueryException;
+    Update prepareUpdate(String queryString, String baseURI) throws RepositoryException, MalformedQueryException;
 
-    public Update prepareUpdate(String queryString) throws RepositoryException, MalformedQueryException;
-    public Update prepareUpdate(String queryString, String baseURI) throws RepositoryException, MalformedQueryException;
+    BooleanQuery prepareBooleanQuery(String queryString) throws RepositoryException, MalformedQueryException;
+    BooleanQuery prepareBooleanQuery(String queryString, String baseURI) throws RepositoryException, MalformedQueryException;
 
-    public BooleanQuery prepareBooleanQuery(String queryString) throws RepositoryException, MalformedQueryException;
-    public BooleanQuery prepareBooleanQuery(String queryString, String baseURI) throws RepositoryException, MalformedQueryException;
+    GraphQuery prepareGraphQuery(String queryString) throws RepositoryException, MalformedQueryException;
+    GraphQuery prepareGraphQuery(String queryString, String baseURI) throws RepositoryException, MalformedQueryException;
 
-    public GraphQuery prepareGraphQuery(String queryString) throws RepositoryException, MalformedQueryException;
-    public GraphQuery prepareGraphQuery(String queryString, String baseURI) throws RepositoryException, MalformedQueryException;
+    void clear() throws RepositoryException;
+    long size();
 
-    public void clear() throws RepositoryException;
-    public long size();
-
-    public void remove(Iterable<? extends Statement> statements) throws RepositoryException;
-    public <E extends Exception> void remove(Iteration<? extends Statement, E> statements) throws RepositoryException, E;
+    void remove(Iterable<? extends Statement> statements) throws RepositoryException;
+    <E extends Exception> void remove(Iteration<? extends Statement, E> statements) throws RepositoryException, E;
 }

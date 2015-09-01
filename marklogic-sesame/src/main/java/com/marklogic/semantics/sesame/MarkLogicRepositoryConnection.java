@@ -893,7 +893,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
      */
     @Override
     public boolean isAutoCommit() throws RepositoryException {
-        return this.client.isActiveTransaction() == false;
+        return this.client.isActiveTransaction();
     }
 
     /**
