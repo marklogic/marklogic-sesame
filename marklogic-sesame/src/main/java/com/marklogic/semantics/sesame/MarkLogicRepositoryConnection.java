@@ -885,31 +885,6 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
         return this.client.isActiveTransaction();
     }
 
-    /**
-     * deprecated
-     *
-     * @return
-     * @throws RepositoryException
-     */
-    @Override
-    public boolean isAutoCommit() throws RepositoryException {
-        return this.client.isActiveTransaction();
-    }
-
-    /**
-     * sets MarkLogicClient autocommit
-     *
-     * @param autoCommit
-     * @throws RepositoryException
-     */
-    @Override
-    public void setAutoCommit(boolean autoCommit) throws RepositoryException {
-        try {
-            this.client.setAutoCommit();
-        } catch (MarkLogicTransactionException e) {
-            e.printStackTrace();
-        }
-    }
 
     /**
      * sets transaction isolationlevel
