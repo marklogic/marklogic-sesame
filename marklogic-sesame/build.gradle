@@ -7,7 +7,7 @@ buildscript {
         maven {url "http://rjrudin.github.io/marklogic-java/releases"}
     }
     dependencies {
-        classpath "com.rjrudin:ml-gradle:2.0b3"
+        classpath "com.rjrudin:ml-gradle:2.0b5"
     }
 }
 
@@ -17,8 +17,8 @@ plugins {
 
 apply plugin: 'me.champeau.gradle.jmh'
 apply plugin: 'ml-gradle'
-apply plugin: 'eclipse'
-//apply plugin: 'idea'
+//apply plugin: 'eclipse'
+apply plugin: 'idea'
 apply plugin: 'java'
 apply plugin: 'maven'
 
@@ -38,8 +38,10 @@ repositories {
 dependencies {
     compile('org.openrdf.sesame:sesame-runtime:2.8.5')
 
-    compile('com.marklogic:java-client-api:3.0-SNAPSHOT')
-
+    compile('com.marklogic:java-client-api:4.0-SNAPSHOT') {
+        exclude(group: 'org.slf4j')
+        exclude(group: 'ch.qos.logback')
+    }
     compile('org.slf4j:slf4j-api:1.7.10')
     compile "ch.qos.logback:logback-classic:$logbackVersion"
     compile "org.slf4j:jcl-over-slf4j:$slf4jVersion"
@@ -82,4 +84,8 @@ jmh {
     warmupIterations = 1 // Number of warmup iterations to do.
     warmupMode = 'INDI' // Warmup mode for warming up selected benchmarks. Warmup modes are: [INDI, BULK, BULK_INDI].
     warmupBenchmarks = ['.*Warmup'] // Warmup benchmarks to include in the run in addition to already selected. JMH will not measure these benchmarks, but only use them for the warmup.
+}
+
+javadoc {
+    options.overview = "src/main/java/com/marklogic/semantics/sesame/overview.html"
 }
