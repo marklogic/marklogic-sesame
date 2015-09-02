@@ -318,12 +318,13 @@ public class MarkLogicRepositoryConnectionTest  extends  ConnectedRESTQA{
         Assert.assertEquals("marklogic:MarkLogicRepository", factory.getRepositoryType());
         testAdminRepository = (MarkLogicRepository) factory.getRepository(adminconfig);
         testAdminRepository.initialize();
+        
         testAdminCon = testAdminRepository.getConnection();
         Assert.assertTrue(testAdminCon instanceof MarkLogicRepositoryConnection);
         
         Repository otherrepo =  factory.getRepository(adminconfig);
         try{
-        	 //try to get connection without initialising repo, will throw error
+        	 //try to get connection without initializing repo, will throw error
             RepositoryConnection conn = otherrepo.getConnection();
             Assert.assertTrue(false);
        }
@@ -381,6 +382,7 @@ public class MarkLogicRepositoryConnectionTest  extends  ConnectedRESTQA{
 				+ "tigers.ttl");
 		testAdminCon.add(in, "", RDFFormat.TURTLE);
 		in.close();
+		Thread.currentThread().sleep(10000);
 		Assert.assertEquals(107L, testAdminCon.size());
 		
 		String query1 = "PREFIX  bb: <http://marklogic.com/baseball/players#>"+
@@ -523,7 +525,7 @@ public class MarkLogicRepositoryConnectionTest  extends  ConnectedRESTQA{
 		testAdminCon.add(st9, dirgraph);
 		testAdminCon.add(st10, dirgraph);
 		
-					
+		Thread.currentThread().sleep(10000);			
 		Assert.assertEquals(10, testAdminCon.size(dirgraph));	
 		
 		StringBuilder queryBuilder = new StringBuilder();
@@ -757,7 +759,6 @@ public class MarkLogicRepositoryConnectionTest  extends  ConnectedRESTQA{
 		String [] epectedPersonresult = {"http://marklogicsparql.com/id#3333", "http://marklogicsparql.com/id#2222"};
 		String [] expectedLnameresult = {"Ling", "Dubinko"};
 		String [] expectedFnameresult = {"Fei", "Micah"};
-		Double [] expectedPhoneresult = {null , 22222222D};
 		int i = 0;
 		try {
 			assertThat(result, is(notNullValue()));
@@ -773,8 +774,7 @@ public class MarkLogicRepositoryConnectionTest  extends  ConnectedRESTQA{
 				Assert.assertEquals(epectedPersonresult[i], personResult.stringValue());
 				Assert.assertEquals(expectedLnameresult[i], lnameResult.stringValue());
 				Assert.assertEquals(expectedFnameresult[i], fnameResult.stringValue());
-				Assert.assertEquals(expectedPhoneresult[i],  new Double(phoneResult.doubleValue()) );
-				
+				assertThat(phoneResult.doubleValue(), anyOf(is(nullValue(Double.class)), is(equalTo(new  Double(22222222D)))));
 				i++;
 			}
 		}
@@ -817,7 +817,7 @@ public class MarkLogicRepositoryConnectionTest  extends  ConnectedRESTQA{
 		queryBuilder.append("   OPTIONAL {?person <#homeTel> ?phonenumber .} ");
 		queryBuilder.append("   FILTER NOT EXISTS {?person ?p ?o .}");
 		queryBuilder.append(" } ");
-		queryBuilder.append(" ORDER BY ?o");
+		queryBuilder.append(" ORDER BY ?person");
 		
 		TupleQuery query = testAdminCon.prepareTupleQuery(queryBuilder.toString(),"http://marklogicsparql.com/addressbook");
 		TupleQueryResult result = query.evaluate();
@@ -981,7 +981,7 @@ public class MarkLogicRepositoryConnectionTest  extends  ConnectedRESTQA{
 		
 	}
 	
-	// ISSUE 44, 53
+	// ISSUE 44, 53, 138
 	@Test
 	public void testPrepareGraphQuery3() throws Exception
 	{
@@ -1594,27 +1594,27 @@ public class MarkLogicRepositoryConnectionTest  extends  ConnectedRESTQA{
 	public void testAddDifferentFormats() throws Exception {
 		testAdminCon.add(MarkLogicRepositoryConnectionTest.class.getResourceAsStream(TEST_DIR_PREFIX + "journal.nt"), "",
 				RDFFormat.NTRIPLES, dirgraph);
-		Assert.assertEquals(testAdminCon.size(), 36L);
+		Assert.assertEquals(36L,testAdminCon.size());
 		testAdminCon.clear();
 		
 		testAdminCon.add(new InputStreamReader(MarkLogicRepositoryConnectionTest.class.getResourceAsStream(TEST_DIR_PREFIX + "little.nq")), "",
 				RDFFormat.NQUADS);
-		Assert.assertEquals(testAdminCon.size(), 9L);
+		Assert.assertEquals( 9L,testAdminCon.size());
 		testAdminCon.clear();
 		
 		URL url = MarkLogicRepositoryConnectionTest.class.getResource(TEST_DIR_PREFIX+"semantics.trig");
 		testAdminCon.add(url, "",RDFFormat.TRIG);
-		Assert.assertEquals(testAdminCon.size(), 15L);
+		Assert.assertEquals(15L,testAdminCon.size());
 		testAdminCon.clear();
 		
 		File file = new File(MarkLogicRepositoryConnectionTest.class.getResource(TEST_DIR_PREFIX+ "dir.json").getFile());
 		testAdminCon.add(file, "", RDFFormat.RDFJSON);
-		Assert.assertEquals(testAdminCon.size(), 12L);
+		Assert.assertEquals(12L, testAdminCon.size());
 		testAdminCon.clear();
 		
 		Reader fr = new FileReader(new File(MarkLogicRepositoryConnectionTest.class.getResource(TEST_DIR_PREFIX+ "dir.xml").getFile()));
 		testAdminCon.add(fr, "", RDFFormat.RDFXML);
-		Assert.assertEquals(testAdminCon.size(), 12L);
+		Assert.assertEquals(12L, testAdminCon.size());
 		testAdminCon.clear();
 	}
 	
@@ -1901,6 +1901,8 @@ public class MarkLogicRepositoryConnectionTest  extends  ConnectedRESTQA{
 		Assert.assertEquals(6L, testAdminCon.size());
 		
 		testAdminCon.remove(john,email, null);
+		assertThat(testAdminCon.hasStatement(john, fname, johnfname, false,  dirgraph), is(equalTo(true)));
+		assertThat(testAdminCon.hasStatement(john, lname, johnlname, false,  dirgraph), is(equalTo(false)));
 		testAdminCon.remove(john,null,null);
 		
 		assertThat(testAdminCon.hasStatement(john, lname, johnlname, false,  dirgraph), is(equalTo(false)));
@@ -1954,7 +1956,7 @@ public class MarkLogicRepositoryConnectionTest  extends  ConnectedRESTQA{
 
 		testAdminCon.remove(c);
 
-		assertThat(testAdminCon.hasStatement(john, lname, johnlname, false, dirgraph), is(equalTo(false)));
+		assertThat(testAdminCon.hasStatement(john, lname, johnlname, false), is(equalTo(false)));
 		assertThat(testAdminCon.hasStatement(micah, homeTel, micahhomeTel, false, dirgraph), is(equalTo(false)));
 		assertThat(testAdminCon.isEmpty(), is(equalTo(true)));
 	}
@@ -2089,7 +2091,7 @@ public class MarkLogicRepositoryConnectionTest  extends  ConnectedRESTQA{
 	public void testGetStatementsMalformedLanguageLiteral()
 		throws Exception
 	{
-		Literal invalidLanguageLiteral = vf.createLiteral("the number four", "japanese");
+		Literal invalidLanguageLiteral = vf.createLiteral("the number four", "en_us");
 		try {
 			testAdminCon.add(micah, homeTel, invalidLanguageLiteral,dirgraph);
 
@@ -2244,7 +2246,7 @@ public class MarkLogicRepositoryConnectionTest  extends  ConnectedRESTQA{
 				assertThat(st.getContext(), anyOf(is(nullValue(Resource.class)), is(equalTo((Resource)dirgraph1))));
 			}
 
-			assertEquals("there should be three statements", 4, count);
+			assertEquals("there should be four statements", 4, count);
 		}
 		finally {
 			iter.close();
@@ -2260,7 +2262,7 @@ public class MarkLogicRepositoryConnectionTest  extends  ConnectedRESTQA{
 				Statement st = iter.next();
 				assertThat(st.getContext(), is(equalTo((Resource)dirgraph1)));
 			}
-			assertEquals("there should be two statements", 3 , count);
+			assertEquals("there should be three statements", 3 , count);
 		}
 		finally {
 			iter.close();
@@ -2529,6 +2531,7 @@ public class MarkLogicRepositoryConnectionTest  extends  ConnectedRESTQA{
 		
 	}
 	
+	//ISSUE # 133
 	@Test
 	public void  testUnsupportedIsolationLevel() throws Exception{
 		Assert.assertEquals(IsolationLevels.SNAPSHOT, testAdminCon.getIsolationLevel());
@@ -2546,8 +2549,8 @@ public class MarkLogicRepositoryConnectionTest  extends  ConnectedRESTQA{
 			if(testAdminCon.isActive())
 				testAdminCon.rollback();
 		}
-	//	assertThat(testAdminCon.hasStatement(john, fname, johnfname, false), is(equalTo(true)));
-	//	assertThat(testWriterCon.hasStatement(john, fname, johnfname, false), is(equalTo(true)));
+		assertThat(testAdminCon.hasStatement(john, fname, johnfname, false), is(equalTo(true)));
+		assertThat(testWriterCon.hasStatement(john, fname, johnfname, false), is(equalTo(true)));
 		try{
 			testAdminCon.setIsolationLevel(IsolationLevels.SNAPSHOT_READ);
 			Assert.assertTrue(1>2);
@@ -2897,31 +2900,4 @@ public class MarkLogicRepositoryConnectionTest  extends  ConnectedRESTQA{
         docMgr.write("/directory2/doc2.xml", new StringHandle().with(tripleDocTwo));
     }
 	   
-	//ISSUE 125
-   @Test
-	public void testAutoCommit() throws Exception{
-		
-		testAdminCon.setAutoCommit(false);
-		testAdminCon.add(micah, lname, micahlname, dirgraph1);
-		testAdminCon.add(micah, fname, micahfname, dirgraph1);
-		
-		String query1 = "ASK WHERE {?s ?p \"Micah\" .}";
-	    MarkLogicBooleanQuery askQuery = (MarkLogicBooleanQuery) testAdminCon.prepareBooleanQuery(QueryLanguage.SPARQL,query1);
-	    Assert.assertEquals(false, askQuery.evaluate());
-	    
-	    testAdminCon.begin();
-	    testAdminCon.add(micah, fname, micahfname, dirgraph1);
-		testAdminCon.commit();
-		
-		askQuery = (MarkLogicBooleanQuery) testAdminCon.prepareBooleanQuery(QueryLanguage.SPARQL,query1);
-	    Assert.assertEquals(true, askQuery.evaluate());
-	    Assert.assertEquals(1, testAdminCon.size());
-	    
-	    testAdminCon.setAutoCommit(true);
-	    testAdminCon.add(micah, lname, micahlname, dirgraph1);
-		String query2= "ASK WHERE {?s ?p \"Dubinko\" .}";
-	    askQuery = (MarkLogicBooleanQuery) testAdminCon.prepareBooleanQuery(QueryLanguage.SPARQL,query2);
-	    Assert.assertEquals(true, askQuery.evaluate());
-		
-	}
 }
