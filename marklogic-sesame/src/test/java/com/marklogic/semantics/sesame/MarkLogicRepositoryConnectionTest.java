@@ -19,12 +19,9 @@
  */
 package com.marklogic.semantics.sesame;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import info.aduna.iteration.CloseableIteration;
 import info.aduna.iteration.Iteration;
 import info.aduna.iteration.Iterations;
-
 import org.junit.*;
 import org.junit.rules.ExpectedException;
 import org.openrdf.model.*;
@@ -48,6 +45,9 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.Properties;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  *
@@ -427,12 +427,6 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
         Assert.assertEquals(true, conn.isActive());
     }
 
-    @Ignore
-    public void testSizeWithLargerGraph() throws Exception {
-        Resource context1 = conn.getValueFactory().createURI("http://marklogic.com/test/my-graph");
-        Assert.assertEquals(4036, conn.size(context1));
-    }
-
     @Test
     public void testSizeWithEmptyGraph() throws Exception {
         Resource context1 = conn.getValueFactory().createURI("http://marklogic.com/test/nonexistent");
@@ -504,7 +498,7 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
         Literal bobsAge = f.createLiteral(123123123123D);
         Literal alicesName = f.createLiteral("Alice");
 
-        conn.add(alice, name, alicesName,context);
+        conn.add(alice, name, alicesName, context);
         conn.add(bob, age, bobsAge, context);
 
         String checkAliceQuery = "ASK { <http://example.org/people/alice> <http://example.org/ontology/name> 'Alice' .}";
@@ -584,7 +578,7 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
         Literal alicesName = f.createLiteral("Alice1");
 
         Statement st1 = f.createStatement(alice, name, alicesName);
-        conn.add(st1,context1);
+        conn.add(st1, context1);
 
         String checkAliceQuery = "ASK { GRAPH <http://marklogic.com/test/context1> {<http://example.org/people/alice> <http://example.org/ontology/name> 'Alice1' .}}";
         BooleanQuery booleanAliceQuery = conn.prepareBooleanQuery(QueryLanguage.SPARQL, checkAliceQuery);
@@ -885,6 +879,15 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
 
         conn.remove(william, age, williamName, (Resource) null);
         conn.remove(william, name, williamAge, (Resource) null);
+    }
+
+    //https://github.com/marklogic/marklogic-sesame/issues/139
+    @Test
+    public void testSizeWithLargerGraph() throws Exception {
+        File inputFile = new File(TESTFILE_OWL);
+        conn.add(inputFile,null,RDFFormat.RDFXML);
+        Assert.assertEquals(449, conn.size());
+        conn.clear(conn.getValueFactory().createURI("http://marklogic.com/semantics#default-graph"));
     }
 
     // https://github.com/marklogic/marklogic-sesame/issues/83
