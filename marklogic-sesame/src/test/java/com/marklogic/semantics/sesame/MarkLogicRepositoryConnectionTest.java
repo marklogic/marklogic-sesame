@@ -24,6 +24,7 @@ import info.aduna.iteration.Iteration;
 import info.aduna.iteration.Iterations;
 import org.junit.*;
 import org.junit.rules.ExpectedException;
+import org.openrdf.OpenRDFException;
 import org.openrdf.model.*;
 import org.openrdf.model.impl.LinkedHashModel;
 import org.openrdf.model.vocabulary.RDF;
@@ -78,7 +79,7 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
     public void tearDown()
             throws Exception {
         logger.debug("tearing down...");
-        conn.clear();
+        //conn.clear();
         conn.close();
         conn = null;
         rep.shutDown();
@@ -533,7 +534,7 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
 
         RepositoryResult<Statement> statements = conn.getStatements(alice, null, null, true,context1);
 
-        conn.add(statements,context2);
+        conn.add(statements, context2);
         conn.clear(context1);
 
         checkAliceQuery = "ASK { GRAPH <http://marklogic.com/test/context2> {<http://example.org/people/alice> <http://example.org/ontology/name> 'Alice1' .}}";
@@ -601,9 +602,9 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
     @Test
     public void testGetStatementsEmpty() throws Exception{
         File inputFile = new File(TESTFILE_OWL);
-        conn.add(inputFile,null,RDFFormat.RDFXML);
+        conn.add(inputFile, null, RDFFormat.RDFXML);
         Resource context1 = conn.getValueFactory().createURI("http://marklogic.com/test/my-graph");
-        conn.add(inputFile,null,RDFFormat.RDFXML,context1);
+        conn.add(inputFile, null, RDFFormat.RDFXML, context1);
 
         ValueFactory f= conn.getValueFactory();
         URI subj = f.createURI("http://semanticbible.org/ns/2006/NTNames#AttaliaGeodata1");
@@ -978,8 +979,8 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
         Literal bobsName = f.createLiteral("Bob");
         Literal alicesName = f.createLiteral("Alice");
 
-        conn.add(alice, RDF.TYPE, person, null,context5);
-        conn.add(alice, name, alicesName,null,context5);
+        conn.add(alice, RDF.TYPE, person, null, context5);
+        conn.add(alice, name, alicesName, null, context5);
         conn.add(bob, RDF.TYPE, person, context5);
         conn.add(bob, name, bobsName, context5);
 
@@ -1008,10 +1009,37 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
         Assert.assertEquals(12, conn.size());
         Assert.assertEquals(4, conn.size((Resource) null));
         Assert.assertEquals(4, conn.size(context5));
-        Assert.assertEquals(8, conn.size((Resource) null,context5));
-        Assert.assertEquals(8, conn.size(context5,(Resource) null,context5));
-        Assert.assertEquals(12, conn.size(context6,(Resource) null,context5));
+        Assert.assertEquals(8, conn.size((Resource) null, context5));
+        Assert.assertEquals(8, conn.size(context5, (Resource) null, context5));
+        Assert.assertEquals(12, conn.size(context6, (Resource) null, context5));
         conn.clear();
     }
 
+
+    // https://github.com/marklogic/marklogic-sesame/issues/118
+    @Test
+    public void testAddDeleteInsertWithTransaction()
+            throws OpenRDFException
+    {
+        ValueFactory vf= conn.getValueFactory();
+        conn.clear();
+        URI fei = vf.createURI("http://marklogicsparql.com/id#3333");
+        URI lname = vf.createURI("http://marklogicsparql.com/addressbook#lastName");
+        URI email = vf.createURI("http://marklogicsparql.com/addressbook#email");
+        Literal feilname = vf.createLiteral("Ling");
+        Literal feiemail = vf.createLiteral("fei.ling@marklogic.com");
+
+        conn.add(fei, lname, feilname);
+        conn.add(fei, email, feiemail);
+        conn.begin();
+        conn.prepareUpdate("" +
+                "DELETE { <http://marklogicsparql.com/id#3333> <#email> \"fei.ling@marklogic.com\"} INSERT { <http://marklogicsparql.com/id#3333> <#email> \"fling@marklogic.com\"}" +
+                " where{ ?s <#email> ?o}","http://marklogicsparql.com/addressbook").execute();
+        conn.commit();
+        logger.info(
+                "hasStatement:{}",conn.hasStatement(vf.createStatement(fei, email, vf.createLiteral("fling@marklogic.com")), false)
+        );
+        Assert.assertTrue("The value of email should be updated", conn.hasStatement(vf.createStatement(fei, email, vf.createLiteral("fling@marklogic.com")), false));
+        Assert.assertFalse(conn.isEmpty());
+    }
 }
