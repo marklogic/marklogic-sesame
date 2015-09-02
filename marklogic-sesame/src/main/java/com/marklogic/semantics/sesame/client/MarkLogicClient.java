@@ -296,8 +296,12 @@ public class MarkLogicClient {
 	 * @throws MarkLogicTransactionException
 	 */
 	public void rollbackTransaction() throws MarkLogicTransactionException {
-        this.tx.rollback();
-        this.tx=null;
+		if(this.tx != null) {
+			this.tx.rollback();
+			this.tx = null;
+		}else{
+			throw new MarkLogicTransactionException("No active transaction to rollback.");
+		}
 	}
 
 	/**
