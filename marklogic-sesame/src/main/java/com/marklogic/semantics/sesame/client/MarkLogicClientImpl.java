@@ -240,7 +240,7 @@ public class MarkLogicClientImpl {
     }
 
     // performAdd
-    // TBD- need to wire in baseURI when method is exposed to java api client
+    // as we use mergeGraphs, baseURI is always file.toURI
     public void performAdd(File file, String baseURI, RDFFormat dataFormat, Transaction tx, Resource... contexts) throws RDFParseException {
         try {
             graphManager = getDatabaseClient().newGraphManager();

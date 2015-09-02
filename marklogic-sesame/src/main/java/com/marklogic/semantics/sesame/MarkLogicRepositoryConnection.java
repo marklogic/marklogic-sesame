@@ -981,11 +981,10 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
      */
     @Override
     public void add(File file, String baseURI, RDFFormat dataFormat, Resource... contexts) throws IOException, RDFParseException, RepositoryException {
-        logger.debug("base uri:{}",baseURI);
         if(notNull(baseURI)) {
             this.client.sendAdd(file, baseURI, dataFormat, contexts);
         }else{
-            this.client.sendAdd(file, file.getCanonicalPath(), dataFormat, contexts);
+            this.client.sendAdd(file, file.toURI().toString(), dataFormat, contexts);
         }
     }
 
