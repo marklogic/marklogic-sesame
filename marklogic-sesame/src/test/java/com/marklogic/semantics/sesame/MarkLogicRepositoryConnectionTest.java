@@ -79,7 +79,7 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
     public void tearDown()
             throws Exception {
         logger.debug("tearing down...");
-        //conn.clear();
+        conn.clear();
         conn.close();
         conn = null;
         rep.shutDown();
@@ -1022,7 +1022,6 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
             throws OpenRDFException
     {
         ValueFactory vf= conn.getValueFactory();
-        conn.clear();
         URI fei = vf.createURI("http://marklogicsparql.com/id#3333");
         URI lname = vf.createURI("http://marklogicsparql.com/addressbook#lastName");
         URI email = vf.createURI("http://marklogicsparql.com/addressbook#email");
@@ -1037,7 +1036,7 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
                 " where{ ?s <#email> ?o}","http://marklogicsparql.com/addressbook").execute();
         conn.commit();
         logger.info(
-                "hasStatement:{}",conn.hasStatement(vf.createStatement(fei, email, vf.createLiteral("fling@marklogic.com")), false)
+                "hasStatement:{}", conn.hasStatement(vf.createStatement(fei, email, vf.createLiteral("fling@marklogic.com")), false)
         );
         Assert.assertTrue("The value of email should be updated", conn.hasStatement(vf.createStatement(fei, email, vf.createLiteral("fling@marklogic.com")), false));
         Assert.assertFalse(conn.isEmpty());
