@@ -175,6 +175,7 @@ public class MarkLogicClientImpl {
 
         qdef.setIncludeDefaultRulesets(includeInferred);
         qdef.setBindings(getSPARQLBindings(bindings));
+        if(notNull(graphPerms)){ qdef.setUpdatePermissions(graphPerms);};
         sparqlManager.setPageLength(pageLength);
         sparqlManager.executeSelect(qdef, handle, start, tx);
         return handle.get();
@@ -199,6 +200,7 @@ public class MarkLogicClientImpl {
 
         qdef.setIncludeDefaultRulesets(includeInferred);
         qdef.setBindings(getSPARQLBindings(bindings));
+        if(notNull(graphPerms)){ qdef.setUpdatePermissions(graphPerms);};
         sparqlManager.executeDescribe(qdef, handle, tx);
         return handle.get();
     }
@@ -218,6 +220,7 @@ public class MarkLogicClientImpl {
         }
 
         qdef.setBindings(getSPARQLBindings(bindings));
+        if(notNull(graphPerms)){ qdef.setUpdatePermissions(graphPerms);};
         return sparqlManager.executeAsk(qdef, tx);
     }
 
@@ -235,6 +238,7 @@ public class MarkLogicClientImpl {
         }
 
         qdef.setIncludeDefaultRulesets(includeInferred);
+        if(notNull(graphPerms)){ qdef.setUpdatePermissions(graphPerms);};
         qdef.setBindings(getSPARQLBindings(bindings));
         sparqlManager.executeUpdate(qdef, tx);
     }
@@ -268,7 +272,6 @@ public class MarkLogicClientImpl {
         }
     }
 
-    // TBD- need to wire in baseURI when method is exposed to java api client
     public void performAdd(InputStream in, String baseURI, RDFFormat dataFormat, Transaction tx, Resource... contexts) {
         graphManager = getDatabaseClient().newGraphManager();
         graphManager.setDefaultMimetype(dataFormat.getDefaultMIMEType());
