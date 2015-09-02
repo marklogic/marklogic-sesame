@@ -17,8 +17,8 @@ plugins {
 
 apply plugin: 'me.champeau.gradle.jmh'
 apply plugin: 'ml-gradle'
-//apply plugin: 'eclipse'
-apply plugin: 'idea'
+apply plugin: 'eclipse'
+//apply plugin: 'idea'
 apply plugin: 'java'
 apply plugin: 'maven'
 
