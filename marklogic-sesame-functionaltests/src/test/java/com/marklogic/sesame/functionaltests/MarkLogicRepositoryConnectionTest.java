@@ -113,7 +113,7 @@ public class MarkLogicRepositoryConnectionTest  extends  ConnectedRESTQA{
 	private static String dbName = "MLSesame";
 	private static String [] fNames = {"MLSesame-1"};
 	private static String restServer = "REST-MLSesame-API-Server";
-	private static int restPort = 8011;
+	private static int restPort = 8023;
 		
 	protected static DatabaseClient databaseClient ;
 	protected static MarkLogicRepository testAdminRepository;
