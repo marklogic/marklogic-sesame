@@ -668,6 +668,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
         }
         try {
             BooleanQuery query = prepareBooleanQuery(queryString); // baseuri ?
+
             setBindings(query, subject, predicate, object, contexts);
             return query.evaluate();
         }
