@@ -104,7 +104,7 @@ public class MarkLogicGraphPermsTest extends SesameTestBase {
         String defGraphQuery = "INSERT DATA { GRAPH <http://marklogic.com/test/graph/permstest> { <http://marklogic.com/test> <pp1> <oo1> } }";
         String checkQuery = "ASK WHERE {  GRAPH <http://marklogic.com/test/graph/permstest> {<http://marklogic.com/test> <pp1> <oo1> }}";
         MarkLogicUpdateQuery updateQuery = conn.prepareUpdate(QueryLanguage.SPARQL, defGraphQuery);
-        updateQuery.setGraphPerms(gmgr.permission("read-privileged", Capability.READ));
+        updateQuery.setGraphPerms(gmgr.permission("test-role", Capability.READ));
         updateQuery.execute();
 
         BooleanQuery booleanQuery = conn.prepareBooleanQuery(QueryLanguage.SPARQL, checkQuery);

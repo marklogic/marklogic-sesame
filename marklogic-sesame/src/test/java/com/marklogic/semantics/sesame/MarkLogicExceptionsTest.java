@@ -144,4 +144,11 @@ public class MarkLogicExceptionsTest extends SesameTestBase {
         conn.clear(context1);
         conn.rollback();
     }
+
+    // https://github.com/marklogic/marklogic-sesame/issues/121
+    @Test
+    public void testDanglingRollback() throws Exception {
+        exception.expect(MarkLogicTransactionException.class);
+        conn.rollback();
+    }
 }

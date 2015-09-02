@@ -69,6 +69,8 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
 
     private static final String SOMETHING = "ASK { ?s ?p ?o }";
 
+    private static final String COUNT_EVERYTHING = "SELECT (count(?s) as ?ct) where { GRAPH ?g { ?s ?p ?o } }";
+
     private final boolean quadMode;
 
     private MarkLogicClient client;
@@ -666,6 +668,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
         }
         try {
             BooleanQuery query = prepareBooleanQuery(queryString); // baseuri ?
+
             setBindings(query, subject, predicate, object, contexts);
             return query.evaluate();
         }
@@ -768,16 +771,13 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     /**
      * returns number of triples in the entire triple store
      *
-     * TBD- once COUNT aggregate is sorted, will refactor
      *
      * @return long
      */
     @Override
     public long size(){
         try {
-            String sizeQuery = "SELECT (count(?s) as ?ct) where { GRAPH ?g { ?s ?p ?o } }";
-            TupleQuery tupleQuery = prepareTupleQuery(sizeQuery);
-            //setBindings(tupleQuery, subj, pred, obj);
+            TupleQuery tupleQuery = prepareTupleQuery(COUNT_EVERYTHING);
             tupleQuery.setIncludeInferred(false);
             TupleQueryResult qRes = tupleQuery.evaluate();
             // just one answer
@@ -795,10 +795,11 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     /**
      * returns number of triples in supplied context
      *
-     * TBD- once COUNT aggregate is sorted, will refactor
      *
      * @param contexts
      * @return long
+     * @throws RepositoryException
+     * @throws MalformedQueryException
      */
     @Override
     public long size(Resource... contexts)  {
@@ -817,7 +818,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
                         sb.append(",");
                     }
                     if (context == null) {
-                        sb.append("IRI(\"http://marklogic.com/semantics#default-graph\")");
+                        sb.append("IRI(\""+DEFAULT_GRAPH_URI+"\")");
                     } else {
                         sb.append("IRI(\"" + context.toString() + "\")");
                     }
@@ -884,7 +885,6 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     public boolean isActive() throws UnknownTransactionStateException, RepositoryException {
         return this.client.isActiveTransaction();
     }
-
 
     /**
      * sets transaction isolationlevel
@@ -982,11 +982,10 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
      */
     @Override
     public void add(File file, String baseURI, RDFFormat dataFormat, Resource... contexts) throws IOException, RDFParseException, RepositoryException {
-        logger.debug("base uri:{}",baseURI);
         if(notNull(baseURI)) {
             this.client.sendAdd(file, baseURI, dataFormat, contexts);
         }else{
-            this.client.sendAdd(file, file.getCanonicalPath(), dataFormat, contexts);
+            this.client.sendAdd(file, file.toURI().toString(), dataFormat, contexts);
         }
     }
 

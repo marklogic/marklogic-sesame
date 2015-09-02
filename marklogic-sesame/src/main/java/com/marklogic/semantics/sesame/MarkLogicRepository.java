@@ -73,7 +73,6 @@ public class MarkLogicRepository extends RepositoryBase implements Repository,Ma
         super();
         this.f = new ValueFactoryImpl();
         this.quadMode = true;
-        this.auth="DIGEST";
         this.host = host;
         this.port = port;
         this.user = user;
@@ -93,8 +92,7 @@ public class MarkLogicRepository extends RepositoryBase implements Repository,Ma
         this.quadMode = true;
         this.client = new MarkLogicClient(databaseClient);
     }
-
-
+    
     /**
      * gets the Valuefactory used for creating URIs, blank nodes, literals and statements.
      *
@@ -189,10 +187,10 @@ public class MarkLogicRepository extends RepositoryBase implements Repository,Ma
      */
     @Override
     public synchronized MarkLogicClient getMarkLogicClient() {
-        if (client == null) {
-            client = new MarkLogicClient(host, port, user, password, auth); // consider factory method ?
+        if (this.client == null) {
+            this.client = new MarkLogicClient(host, port, user, password, auth); // consider factory method ?
         }
-        return client;
+        return this.client;
     }
 
     /**

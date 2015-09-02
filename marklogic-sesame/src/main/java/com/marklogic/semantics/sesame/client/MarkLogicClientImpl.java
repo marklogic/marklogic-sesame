@@ -163,10 +163,8 @@ public class MarkLogicClientImpl {
 
     public InputStream performSPARQLQuery(String queryString, SPARQLQueryBindingSet bindings, InputStreamHandle handle, long start, long pageLength, Transaction tx, boolean includeInferred, String baseURI) throws JsonProcessingException {
         sparqlManager = getDatabaseClient().newSPARQLQueryManager();
-        StringBuilder sb = new StringBuilder();
-        if (notNull(baseURI) && baseURI != "") sb.append("BASE <" + baseURI + ">\n");
-        sb.append(queryString);
-        SPARQLQueryDefinition qdef = sparqlManager.newQueryDefinition(sb.toString());
+        SPARQLQueryDefinition qdef = sparqlManager.newQueryDefinition(queryString);
+        if(notNull(baseURI) && baseURI != ""){ qdef.setBaseUri(baseURI);}
         if (rulesets instanceof SPARQLRuleset) {
             qdef.setRulesets(rulesets);
         }
@@ -177,6 +175,7 @@ public class MarkLogicClientImpl {
 
         qdef.setIncludeDefaultRulesets(includeInferred);
         qdef.setBindings(getSPARQLBindings(bindings));
+        if(notNull(graphPerms)){ qdef.setUpdatePermissions(graphPerms);};
         sparqlManager.setPageLength(pageLength);
         sparqlManager.executeSelect(qdef, handle, start, tx);
         return handle.get();
@@ -189,10 +188,8 @@ public class MarkLogicClientImpl {
 
     public InputStream performGraphQuery(String queryString, SPARQLQueryBindingSet bindings, InputStreamHandle handle, Transaction tx, boolean includeInferred, String baseURI) throws JsonProcessingException {
         sparqlManager = getDatabaseClient().newSPARQLQueryManager();
-        StringBuilder sb = new StringBuilder();
-        if (notNull(baseURI) && baseURI != "") sb.append("BASE <" + baseURI + ">\n");
-        sb.append(queryString);
-        SPARQLQueryDefinition qdef = sparqlManager.newQueryDefinition(sb.toString());
+        SPARQLQueryDefinition qdef = sparqlManager.newQueryDefinition(queryString);
+        if(notNull(baseURI) && baseURI != ""){ qdef.setBaseUri(baseURI);}
         if (rulesets instanceof SPARQLRuleset) {
             qdef.setRulesets(rulesets);
         }
@@ -203,6 +200,7 @@ public class MarkLogicClientImpl {
 
         qdef.setIncludeDefaultRulesets(includeInferred);
         qdef.setBindings(getSPARQLBindings(bindings));
+        if(notNull(graphPerms)){ qdef.setUpdatePermissions(graphPerms);};
         sparqlManager.executeDescribe(qdef, handle, tx);
         return handle.get();
     }
@@ -210,10 +208,8 @@ public class MarkLogicClientImpl {
     // performBooleanQuery
     public boolean performBooleanQuery(String queryString, SPARQLQueryBindingSet bindings, Transaction tx, boolean includeInferred, String baseURI) {
         sparqlManager = getDatabaseClient().newSPARQLQueryManager();
-        StringBuilder sb = new StringBuilder();
-        if (notNull(baseURI) && baseURI != "") sb.append("BASE <" + baseURI + ">\n");
-        sb.append(queryString);
-        SPARQLQueryDefinition qdef = sparqlManager.newQueryDefinition(sb.toString());
+        SPARQLQueryDefinition qdef = sparqlManager.newQueryDefinition(queryString);
+        if(notNull(baseURI) && baseURI != ""){ qdef.setBaseUri(baseURI);}
         qdef.setIncludeDefaultRulesets(includeInferred);
         if (rulesets instanceof SPARQLRuleset) {
             qdef.setRulesets(rulesets);
@@ -224,16 +220,15 @@ public class MarkLogicClientImpl {
         }
 
         qdef.setBindings(getSPARQLBindings(bindings));
+        if(notNull(graphPerms)){ qdef.setUpdatePermissions(graphPerms);};
         return sparqlManager.executeAsk(qdef, tx);
     }
 
     // performUpdateQuery
     public void performUpdateQuery(String queryString, SPARQLQueryBindingSet bindings, Transaction tx, boolean includeInferred, String baseURI) {
         sparqlManager = getDatabaseClient().newSPARQLQueryManager();
-        StringBuilder sb = new StringBuilder();
-        if (notNull(baseURI) && baseURI != "") sb.append("BASE <" + baseURI + ">\n");
-        sb.append(queryString);
-        SPARQLQueryDefinition qdef = sparqlManager.newQueryDefinition(sb.toString());
+        SPARQLQueryDefinition qdef = sparqlManager.newQueryDefinition(queryString);
+        if(notNull(baseURI) && baseURI != ""){ qdef.setBaseUri(baseURI);}
         if (rulesets instanceof SPARQLRuleset) {
             qdef.setRulesets(rulesets);
         }
@@ -243,12 +238,13 @@ public class MarkLogicClientImpl {
         }
 
         qdef.setIncludeDefaultRulesets(includeInferred);
+        if(notNull(graphPerms)){ qdef.setUpdatePermissions(graphPerms);};
         qdef.setBindings(getSPARQLBindings(bindings));
         sparqlManager.executeUpdate(qdef, tx);
     }
 
     // performAdd
-    // TBD- need to wire in baseURI when method is exposed to java api client
+    // as we use mergeGraphs, baseURI is always file.toURI
     public void performAdd(File file, String baseURI, RDFFormat dataFormat, Transaction tx, Resource... contexts) throws RDFParseException {
         try {
             graphManager = getDatabaseClient().newGraphManager();
@@ -276,7 +272,6 @@ public class MarkLogicClientImpl {
         }
     }
 
-    // TBD- need to wire in baseURI when method is exposed to java api client
     public void performAdd(InputStream in, String baseURI, RDFFormat dataFormat, Transaction tx, Resource... contexts) {
         graphManager = getDatabaseClient().newGraphManager();
         graphManager.setDefaultMimetype(dataFormat.getDefaultMIMEType());
@@ -302,7 +297,6 @@ public class MarkLogicClientImpl {
     public void performAdd(String baseURI, Resource subject, URI predicate, Value object, Transaction tx, Resource... contexts) {
         sparqlManager = getDatabaseClient().newSPARQLQueryManager();
         StringBuilder sb = new StringBuilder();
-        if (notNull(baseURI) && baseURI != "") sb.append("BASE <" + baseURI + ">\n");
         if(notNull(contexts) && contexts.length>0) {
             sb.append("INSERT DATA { ");
             for (int i = 0; i < contexts.length; i++) {
@@ -317,6 +311,7 @@ public class MarkLogicClientImpl {
             sb.append("INSERT DATA { GRAPH <" + DEFAULT_GRAPH_URI + "> {?s ?p ?o .}}");
         }
         SPARQLQueryDefinition qdef = sparqlManager.newQueryDefinition(sb.toString());
+        if(notNull(baseURI) && baseURI != ""){ qdef.setBaseUri(baseURI);}
         if(notNull(subject)) qdef.withBinding("s", subject.stringValue());
         if(notNull(predicate)) qdef.withBinding("p", predicate.stringValue());
         if(notNull(object)) bindObject(qdef, "o", object);
@@ -326,7 +321,6 @@ public class MarkLogicClientImpl {
     // performRemove
     public void performRemove(String baseURI, Resource subject, URI predicate, Value object, Transaction tx, Resource... contexts) {
         StringBuilder sb = new StringBuilder();
-        if (notNull(baseURI) && baseURI != "") sb.append("BASE <" + baseURI + ">\n");
         if(notNull(contexts) && contexts.length>0) {
             sb.append("DELETE WHERE { ");
             for (int i = 0; i < contexts.length; i++) {
@@ -341,6 +335,7 @@ public class MarkLogicClientImpl {
             sb.append("DELETE WHERE { GRAPH ?ctx{ ?s ?p ?o .}}");
         }
         SPARQLQueryDefinition qdef = sparqlManager.newQueryDefinition(sb.toString());
+        if(notNull(baseURI) && baseURI != ""){ qdef.setBaseUri(baseURI);}
         if(notNull(subject)) qdef.withBinding("s", subject.stringValue());
         if(notNull(predicate)) qdef.withBinding("p", predicate.stringValue());
         if(notNull(object)) bindObject(qdef, "o", object);
