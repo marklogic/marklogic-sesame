@@ -344,7 +344,7 @@ public class MarkLogicClient {
 	 *
 	 * @param rulesets
 	 */
-	public void setRulesets(Object rulesets){
+	public void setRulesets(Object ... rulesets){
 		getClient().setRulesets(rulesets);
 	}
 
@@ -352,7 +352,7 @@ public class MarkLogicClient {
 	 *
 	 * @return
 	 */
-	public Object getRulesets(){
+	public Object[] getRulesets(){
 		return getClient().getRulesets();
 	}
 

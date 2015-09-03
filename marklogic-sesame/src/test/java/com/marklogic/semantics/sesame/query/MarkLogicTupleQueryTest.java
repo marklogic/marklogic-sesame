@@ -15,14 +15,14 @@
  */
 package com.marklogic.semantics.sesame.query;
 
+import com.marklogic.client.io.FileHandle;
+import com.marklogic.client.semantics.GraphManager;
+import com.marklogic.client.semantics.RDFMimeTypes;
+import com.marklogic.client.semantics.SPARQLRuleset;
+import com.marklogic.semantics.sesame.MarkLogicRepositoryConnection;
+import com.marklogic.semantics.sesame.SesameTestBase;
 import info.aduna.iteration.ConvertingIteration;
 import info.aduna.iteration.ExceptionConvertingIteration;
-
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.List;
-
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -31,27 +31,17 @@ import org.openrdf.model.Resource;
 import org.openrdf.model.Value;
 import org.openrdf.model.ValueFactory;
 import org.openrdf.model.impl.ValueFactoryImpl;
-import org.openrdf.query.BindingSet;
-import org.openrdf.query.MalformedQueryException;
-import org.openrdf.query.Query;
-import org.openrdf.query.QueryEvaluationException;
-import org.openrdf.query.QueryLanguage;
-import org.openrdf.query.QueryResultHandlerException;
-import org.openrdf.query.TupleQuery;
-import org.openrdf.query.TupleQueryResult;
-import org.openrdf.query.TupleQueryResultHandler;
+import org.openrdf.query.*;
 import org.openrdf.query.resultio.sparqlxml.SPARQLResultsXMLWriter;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.RepositoryResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.marklogic.client.io.FileHandle;
-import com.marklogic.client.semantics.GraphManager;
-import com.marklogic.client.semantics.RDFMimeTypes;
-import com.marklogic.client.semantics.SPARQLRuleset;
-import com.marklogic.semantics.sesame.MarkLogicRepositoryConnection;
-import com.marklogic.semantics.sesame.SesameTestBase;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.List;
 
 /**
  * Created by jfuller on 8/11/15.
@@ -270,6 +260,31 @@ public class MarkLogicTupleQueryTest extends SesameTestBase {
 
     }
 
+    // https://github.com/marklogic/marklogic-sesame/issues/111
+    @Test
+    public void testSPARQLQueryWithMultipleRulesets()
+            throws Exception {
+        String queryString = "select ?s ?p ?o { ?s ?p ?o } limit 100 ";
+        MarkLogicTupleQuery tupleQuery = conn.prepareTupleQuery(QueryLanguage.SPARQL, queryString);
+
+        tupleQuery.setRulesets(SPARQLRuleset.RDFS_FULL,SPARQLRuleset.DOMAIN);
+        TupleQueryResult results = tupleQuery.evaluate();
+
+        Assert.assertEquals(results.getBindingNames().get(0), "s");
+        Assert.assertEquals(results.getBindingNames().get(1), "p");
+        Assert.assertEquals(results.getBindingNames().get(2), "o");
+
+        BindingSet bindingSet = results.next();
+
+        Value sV = bindingSet.getValue("s");
+        Value pV = bindingSet.getValue("p");
+        Value oV = bindingSet.getValue("o");
+
+        Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#AttaliaGeodata", sV.stringValue());
+        Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#altitude", pV.stringValue());
+        Assert.assertEquals("0", oV.stringValue());
+
+    }
     @Test
     public void testSPARQLQueryWithResultsHandler()
             throws Exception {

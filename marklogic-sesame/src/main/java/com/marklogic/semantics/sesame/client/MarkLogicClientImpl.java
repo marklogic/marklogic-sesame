@@ -43,6 +43,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.InputStream;
 import java.net.URISyntaxException;
+import java.util.Arrays;
 import java.util.Locale;
 
 /**
@@ -70,7 +71,7 @@ public class MarkLogicClientImpl {
             "DIGEST"
     );
 
-    private SPARQLRuleset rulesets;
+    private SPARQLRuleset[] ruleset;
     private QueryDefinition constrainingQueryDef;
     private GraphPermissions graphPerms;
 
@@ -165,8 +166,8 @@ public class MarkLogicClientImpl {
         sparqlManager = getDatabaseClient().newSPARQLQueryManager();
         SPARQLQueryDefinition qdef = sparqlManager.newQueryDefinition(queryString);
         if(notNull(baseURI) && baseURI != ""){ qdef.setBaseUri(baseURI);}
-        if (rulesets instanceof SPARQLRuleset) {
-            qdef.setRulesets(rulesets);
+        if (notNull(ruleset)){
+            qdef.setRulesets(ruleset);
         }
 
         if (getConstrainingQueryDefinition() instanceof QueryDefinition) {
@@ -190,8 +191,8 @@ public class MarkLogicClientImpl {
         sparqlManager = getDatabaseClient().newSPARQLQueryManager();
         SPARQLQueryDefinition qdef = sparqlManager.newQueryDefinition(queryString);
         if(notNull(baseURI) && baseURI != ""){ qdef.setBaseUri(baseURI);}
-        if (rulesets instanceof SPARQLRuleset) {
-            qdef.setRulesets(rulesets);
+        if (notNull(ruleset)) {
+            qdef.setRulesets(ruleset);
         }
 
         if (getConstrainingQueryDefinition() instanceof QueryDefinition) {
@@ -211,8 +212,8 @@ public class MarkLogicClientImpl {
         SPARQLQueryDefinition qdef = sparqlManager.newQueryDefinition(queryString);
         if(notNull(baseURI) && baseURI != ""){ qdef.setBaseUri(baseURI);}
         qdef.setIncludeDefaultRulesets(includeInferred);
-        if (rulesets instanceof SPARQLRuleset) {
-            qdef.setRulesets(rulesets);
+        if (notNull(ruleset)) {
+            qdef.setRulesets(ruleset);
         }
 
         if (getConstrainingQueryDefinition() instanceof QueryDefinition) {
@@ -229,8 +230,8 @@ public class MarkLogicClientImpl {
         sparqlManager = getDatabaseClient().newSPARQLQueryManager();
         SPARQLQueryDefinition qdef = sparqlManager.newQueryDefinition(queryString);
         if(notNull(baseURI) && baseURI != ""){ qdef.setBaseUri(baseURI);}
-        if (rulesets instanceof SPARQLRuleset) {
-            qdef.setRulesets(rulesets);
+        if (notNull(ruleset) ) {
+            qdef.setRulesets(ruleset);
         }
 
         if (getConstrainingQueryDefinition() instanceof QueryDefinition) {
@@ -365,12 +366,12 @@ public class MarkLogicClientImpl {
     }
 
     // rulesets
-    public SPARQLRuleset getRulesets() {
-        return this.rulesets;
+    public SPARQLRuleset[] getRulesets() {
+        return this.ruleset;
     }
 
-    public void setRulesets(Object rulesets) {
-        this.rulesets = (SPARQLRuleset) rulesets;
+    public void setRulesets(Object ... rulesets) {
+        this.ruleset = Arrays.copyOf(rulesets, rulesets.length, SPARQLRuleset[].class);;
     }
 
     // graph perms
