@@ -114,6 +114,28 @@ public class MarkLogicGraphPermsTest extends SesameTestBase {
         conn.clear(context);
     }
 
+    // https://github.com/marklogic/marklogic-sesame/issues/122
+    @Test
+    public void testUpdateQueryWithPermsFromConnectionDefaults()
+            throws Exception {
+
+        GraphManager gmgr = adminClient.newGraphManager();
+        conn.setGraphPerms(gmgr.permission("app-user", Capability.READ));
+
+        Resource context = conn.getValueFactory().createURI("http://marklogic.com/test/graph/permstest");
+
+        String defGraphQuery = "INSERT DATA { GRAPH <http://marklogic.com/test/graph/permstest> { <http://marklogic.com/test> <pp1> <oo1> } }";
+        String checkQuery = "ASK WHERE {  GRAPH <http://marklogic.com/test/graph/permstest> {<http://marklogic.com/test> <pp1> <oo1> }}";
+        MarkLogicUpdateQuery updateQuery = conn.prepareUpdate(QueryLanguage.SPARQL, defGraphQuery);
+        updateQuery.execute();
+
+        BooleanQuery booleanQuery = conn.prepareBooleanQuery(QueryLanguage.SPARQL, checkQuery);
+        boolean results = booleanQuery.evaluate();
+        Assert.assertEquals(true, results);
+
+        conn.clear(context);
+    }
+
     @Ignore
     public void testGetGraphPermsofResult(){
 

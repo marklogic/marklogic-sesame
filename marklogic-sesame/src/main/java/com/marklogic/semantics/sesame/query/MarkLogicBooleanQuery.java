@@ -48,8 +48,8 @@ public class MarkLogicBooleanQuery extends MarkLogicQuery implements BooleanQuer
      * @param baseUri
      * @param queryString
      */
-    public MarkLogicBooleanQuery(MarkLogicClient client, SPARQLQueryBindingSet bindingSet, String baseUri, String queryString) {
-        super(client, bindingSet, baseUri, queryString);
+    public MarkLogicBooleanQuery(MarkLogicClient client, SPARQLQueryBindingSet bindingSet, String baseUri, String queryString, Object graphPerms) {
+        super(client, bindingSet, baseUri, queryString, graphPerms);
     }
 
     /**
