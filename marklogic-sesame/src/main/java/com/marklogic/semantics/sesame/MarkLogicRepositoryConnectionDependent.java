@@ -48,4 +48,8 @@ interface MarkLogicRepositoryConnectionDependent {
 
     void remove(Iterable<? extends Statement> statements) throws RepositoryException;
     <E extends Exception> void remove(Iteration<? extends Statement, E> statements) throws RepositoryException, E;
+
+    void setGraphPerms(Object graphPerms);
+    Object getGraphPerms();
+
 }

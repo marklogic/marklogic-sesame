@@ -59,13 +59,14 @@ public class MarkLogicQuery extends AbstractQuery implements Query,MarkLogicClie
      * @param baseUri
      * @param queryString
      */
-    public MarkLogicQuery(MarkLogicClient client, SPARQLQueryBindingSet bindingSet, String baseUri, String queryString) {
+    public MarkLogicQuery(MarkLogicClient client, SPARQLQueryBindingSet bindingSet, String baseUri, String queryString, Object graphPerms) {
         super();
         setBaseURI(baseUri);
         setQueryString(queryString);
         setMarkLogicClient(client);
         setBindings(bindingSet);
         setIncludeInferred(true); // is default set true
+        setGraphPerms(graphPerms);
     }
 
     /**
