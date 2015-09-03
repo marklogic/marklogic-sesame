@@ -1015,6 +1015,26 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
         conn.clear();
     }
 
+    // https://github.com/marklogic/marklogic-sesame/issues/120
+    @Test
+    public void testSizeAWithNullContext() throws Exception {
+        Resource context5 = conn.getValueFactory().createURI("http://marklogic.com/test/context5");
+        Resource nonexistent = conn.getValueFactory().createURI("http://marklogic.com/test/nonexistent");
+
+        File inputFile1 = new File("src/test/resources/testdata/default-graph-1.ttl");
+        conn.add(inputFile1, "http://example.org/example1/", RDFFormat.TURTLE, (Resource) null);
+
+        File inputFile2 = new File("src/test/resources/testdata/default-graph-2.ttl");
+        conn.add(inputFile2, "http://example.org/example1/", RDFFormat.TURTLE, context5);
+
+        Assert.assertEquals(8, conn.size());
+        Assert.assertEquals(4, conn.size(context5));
+        Assert.assertEquals(4, conn.size((Resource) null));
+        Assert.assertEquals(8, conn.size(context5,null));
+        Assert.assertEquals(8, conn.size(null,context5));
+        Assert.assertEquals(0, conn.size(nonexistent));
+        conn.clear();
+    }
 
     // https://github.com/marklogic/marklogic-sesame/issues/118
     @Test
