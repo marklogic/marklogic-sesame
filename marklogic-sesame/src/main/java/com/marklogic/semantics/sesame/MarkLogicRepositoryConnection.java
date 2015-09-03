@@ -824,8 +824,11 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
                     }
                 }
                 sb.append(") )");
+            }else{
+                sb.append("filter (?g = (IRI(\""+DEFAULT_GRAPH_URI+"\")))");
             }
             sb.append("}");
+            logger.info(sb.toString());
             TupleQuery tupleQuery = prepareTupleQuery(sb.toString());
             tupleQuery.setIncludeInferred(false);
             TupleQueryResult qRes = tupleQuery.evaluate();

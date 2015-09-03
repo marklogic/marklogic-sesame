@@ -624,7 +624,7 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
         Literal alicesName = f.createLiteral("Alice");
 
         Statement st1 = f.createStatement(alice, name, alicesName);
-        conn.add(st1,context1);
+        conn.add(st1, context1);
 
         Assert.assertTrue(conn.hasStatement(st1, false, context1));
         Assert.assertTrue(conn.hasStatement(st1, false, context1, null));
@@ -895,8 +895,17 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
     @Test
     public void testSizeWithNull() throws Exception {
         File inputFile = new File(TESTFILE_OWL);
-        conn.add(inputFile,null,RDFFormat.RDFXML);
+        conn.add(inputFile, null, RDFFormat.RDFXML);
         Assert.assertEquals(449, conn.size((Resource) null));
+        conn.clear(conn.getValueFactory().createURI("http://marklogic.com/semantics#default-graph"));
+    }
+
+    // https://github.com/marklogic/marklogic-sesame/issues/120
+    @Test
+    public void testSizeWithUncastedNull() throws Exception {
+        File inputFile = new File(TESTFILE_OWL);
+        conn.add(inputFile,null,RDFFormat.RDFXML);
+        Assert.assertEquals(449, conn.size(null));
         conn.clear(conn.getValueFactory().createURI("http://marklogic.com/semantics#default-graph"));
     }
 
@@ -1027,6 +1036,7 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
         File inputFile2 = new File("src/test/resources/testdata/default-graph-2.ttl");
         conn.add(inputFile2, "http://example.org/example1/", RDFFormat.TURTLE, context5);
 
+        Assert.assertEquals(4, conn.size(null));
         Assert.assertEquals(8, conn.size());
         Assert.assertEquals(4, conn.size(context5));
         Assert.assertEquals(4, conn.size((Resource) null));
