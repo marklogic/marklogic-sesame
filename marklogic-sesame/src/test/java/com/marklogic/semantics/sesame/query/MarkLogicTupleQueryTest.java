@@ -260,6 +260,31 @@ public class MarkLogicTupleQueryTest extends SesameTestBase {
 
     }
 
+    // https://github.com/marklogic/marklogic-sesame/issues/111
+    @Test
+    public void testSPARQLQueryWithMultipleRulesets()
+            throws Exception {
+        String queryString = "select ?s ?p ?o { ?s ?p ?o } limit 100 ";
+        MarkLogicTupleQuery tupleQuery = conn.prepareTupleQuery(QueryLanguage.SPARQL, queryString);
+
+        tupleQuery.setRulesets(SPARQLRuleset.RDFS_FULL,SPARQLRuleset.DOMAIN);
+        TupleQueryResult results = tupleQuery.evaluate();
+
+        Assert.assertEquals(results.getBindingNames().get(0), "s");
+        Assert.assertEquals(results.getBindingNames().get(1), "p");
+        Assert.assertEquals(results.getBindingNames().get(2), "o");
+
+        BindingSet bindingSet = results.next();
+
+        Value sV = bindingSet.getValue("s");
+        Value pV = bindingSet.getValue("p");
+        Value oV = bindingSet.getValue("o");
+
+        Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#AttaliaGeodata", sV.stringValue());
+        Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#altitude", pV.stringValue());
+        Assert.assertEquals("0", oV.stringValue());
+
+    }
     @Test
     public void testSPARQLQueryWithResultsHandler()
             throws Exception {

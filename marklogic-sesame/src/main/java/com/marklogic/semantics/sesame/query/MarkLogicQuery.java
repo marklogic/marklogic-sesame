@@ -262,17 +262,17 @@ public class MarkLogicQuery extends AbstractQuery implements Query,MarkLogicClie
     /**
      * sets the inference rulesets to be used by query
      *
-     * @param rulesets
+     * @param ruleset
      */
-    public void setRulesets(Object rulesets){
-        getMarkLogicClient().setRulesets(rulesets);
+    public void setRulesets(Object ... ruleset){
+        getMarkLogicClient().setRulesets(ruleset);
     }
 
     /**
      *
      * @return
      */
-    public Object getRulesets(){
+    public Object[] getRulesets(){
         return getMarkLogicClient().getRulesets();
     }
 

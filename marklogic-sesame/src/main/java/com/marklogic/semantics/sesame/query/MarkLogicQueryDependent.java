@@ -34,9 +34,9 @@ interface MarkLogicQueryDependent {
 
     /**
      * sets query inference ruleset to be used when query executes
-     * @param rulesets
+     * @param ruleset
      */
-    void setRulesets(Object rulesets);
+    void setRulesets(Object ... ruleset);
 
     /**
      * gets base uri to be used by query
