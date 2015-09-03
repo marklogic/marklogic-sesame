@@ -26,7 +26,7 @@ import java.io.InputStream;
  * wrapper on Sesame BackgroundTupleResult
  *
  */
-public class MarkLogicBackgroundTupleResult extends BackgroundTupleResult {
+class MarkLogicBackgroundTupleResult extends BackgroundTupleResult {
 
 	public MarkLogicBackgroundTupleResult(TupleQueryResultParser parser, InputStream in) {
 		super(parser, in);

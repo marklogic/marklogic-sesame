@@ -30,7 +30,7 @@ import java.nio.charset.Charset;
  *
  */
 
-public class MarkLogicBackgroundGraphResult extends BackgroundGraphResult
+class MarkLogicBackgroundGraphResult extends BackgroundGraphResult
 {
 
 	public MarkLogicBackgroundGraphResult(RDFParser parser, InputStream in, Charset charset, String baseURI) {

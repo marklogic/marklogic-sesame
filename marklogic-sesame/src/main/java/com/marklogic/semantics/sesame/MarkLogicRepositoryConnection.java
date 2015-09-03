@@ -782,8 +782,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
             TupleQueryResult qRes = tupleQuery.evaluate();
             // just one answer
             BindingSet result = qRes.next();
-            long resultValue = ((Literal) result.getBinding("ct").getValue()).longValue();
-            return resultValue;
+            return ((Literal) result.getBinding("ct").getValue()).longValue();
         } catch (RepositoryException | MalformedQueryException e) {
             e.printStackTrace();
         } catch (QueryEvaluationException e) {
@@ -834,9 +833,8 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
             TupleQueryResult qRes = tupleQuery.evaluate();
             // just one answer
             BindingSet result = qRes.next();
-            long resultValue = ((Literal) result.getBinding("ct").getValue()).longValue();
             // if 'null' was one or more of the arguments, then totalSize will be non-zero.
-            return resultValue;
+            return ((Literal) result.getBinding("ct").getValue()).longValue();
         } catch (RepositoryException | MalformedQueryException e) {
             e.printStackTrace();
         } catch (QueryEvaluationException e) {

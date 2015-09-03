@@ -27,7 +27,7 @@ import org.openrdf.repository.RepositoryException;
 /**
  * interface which defines MarkLogic specific overrides
  */
-public interface MarkLogicRepositoryConnectionDependent {
+interface MarkLogicRepositoryConnectionDependent {
     Query prepareQuery(String queryString) throws RepositoryException, MalformedQueryException;
     Query prepareQuery(String queryString, String baseURI) throws RepositoryException, MalformedQueryException;
 

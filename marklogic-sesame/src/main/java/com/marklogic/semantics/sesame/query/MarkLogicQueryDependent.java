@@ -24,7 +24,7 @@ package com.marklogic.semantics.sesame.query;
  *
  * @author James Fuller
  */
-public interface MarkLogicQueryDependent {
+interface MarkLogicQueryDependent {
 
     /**
      * gets query inference ruleset
