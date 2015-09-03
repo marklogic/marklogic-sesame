@@ -62,7 +62,7 @@ public class MarkLogicClient {
 	protected static final RDFFormat rdfFormat = RDFFormat.NTRIPLES;
 	private final MarkLogicClientImpl _client;
 
-	private static Executor executor = Executors.newCachedThreadPool();
+	private static final Executor executor = Executors.newCachedThreadPool();
 
 	private ValueFactory f;
 
