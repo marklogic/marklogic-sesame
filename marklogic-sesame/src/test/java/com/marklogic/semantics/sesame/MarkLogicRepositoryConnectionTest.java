@@ -614,6 +614,7 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
         conn.clear(context1);
     }
 
+    // https://github.com/marklogic/marklogic-sesame/issues/138
     @Test
     public void testHasStatement() throws Exception
     {
@@ -628,6 +629,7 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
 
         Assert.assertTrue(conn.hasStatement(st1, false, context1));
         Assert.assertTrue(conn.hasStatement(st1, false, context1, null));
+        Assert.assertTrue(conn.hasStatement(st1, false,null));
         Assert.assertFalse(conn.hasStatement(st1, false, (Resource) null));
         Assert.assertTrue(conn.hasStatement(st1, false));
         Assert.assertTrue(conn.hasStatement(null, null, null, false));

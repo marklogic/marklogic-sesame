@@ -641,7 +641,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     @Override
     public boolean hasStatement(Resource subject, URI predicate, Value object, boolean includeInferred, Resource... contexts) throws RepositoryException {
         String queryString = null;
-        if (contexts.length == 0) {
+        if (contexts == null || contexts.length == 0) {
             queryString = SOMETHING;
         }
         else {
