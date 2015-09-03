@@ -246,7 +246,6 @@ public class MarkLogicQuery extends AbstractQuery implements Query,MarkLogicClie
      */
     @Override
     public void setConstrainingQueryDefinition(Object constrainingQueryDefinition) {
-        logger.debug("setting constraining query: {}",constrainingQueryDefinition.toString());
         getMarkLogicClient().setConstrainingQueryDefinition(constrainingQueryDefinition);
     }
 
