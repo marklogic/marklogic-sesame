@@ -161,4 +161,18 @@ public class MarkLogicCombinationQueryTest extends SesameTestBase {
         Assert.assertEquals(false, askQuery.evaluate());
 
     }
+
+    // https://github.com/marklogic/marklogic-sesame/issues/124
+    @Test
+    public void testStringCombinationQueryUnsetSet() throws QueryEvaluationException, MalformedQueryException, RepositoryException {
+
+        StringQueryDefinition stringDef = qmgr.newStringDefinition().withCriteria("First");
+        String posQuery = "ASK WHERE {<http://example.org/r9928> ?p ?o .}";
+        String negQuery = "ASK WHERE {<http://example.org/r9929> ?p ?o .}";
+
+        MarkLogicBooleanQuery askQuery = conn.prepareBooleanQuery(QueryLanguage.SPARQL,posQuery);
+        askQuery.setConstrainingQueryDefinition(null);
+        Assert.assertEquals(true, askQuery.evaluate());
+
+    }
 }
