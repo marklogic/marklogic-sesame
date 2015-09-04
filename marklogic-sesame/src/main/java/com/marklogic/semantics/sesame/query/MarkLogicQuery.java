@@ -19,6 +19,7 @@
  */
 package com.marklogic.semantics.sesame.query;
 
+import com.marklogic.client.query.QueryDefinition;
 import org.openrdf.model.Value;
 import org.openrdf.model.impl.ValueFactoryImpl;
 import org.openrdf.query.Dataset;
@@ -59,7 +60,7 @@ public class MarkLogicQuery extends AbstractQuery implements Query,MarkLogicClie
      * @param baseUri
      * @param queryString
      */
-    public MarkLogicQuery(MarkLogicClient client, SPARQLQueryBindingSet bindingSet, String baseUri, String queryString, Object graphPerms) {
+    public MarkLogicQuery(MarkLogicClient client, SPARQLQueryBindingSet bindingSet, String baseUri, String queryString, Object graphPerms, QueryDefinition defaultQueryDef) {
         super();
         setBaseURI(baseUri);
         setQueryString(queryString);
@@ -67,6 +68,7 @@ public class MarkLogicQuery extends AbstractQuery implements Query,MarkLogicClie
         setBindings(bindingSet);
         setIncludeInferred(true); // is default set true
         setGraphPerms(graphPerms);
+        setConstrainingQueryDefinition(defaultQueryDef);
     }
 
     /**
