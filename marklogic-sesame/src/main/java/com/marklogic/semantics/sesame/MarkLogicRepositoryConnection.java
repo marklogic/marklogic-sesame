@@ -20,6 +20,7 @@
 package com.marklogic.semantics.sesame;
 
 import com.marklogic.client.semantics.GraphPermissions;
+import com.marklogic.client.query.QueryDefinition;
 import com.marklogic.semantics.sesame.client.MarkLogicClient;
 import com.marklogic.semantics.sesame.query.*;
 import info.aduna.iteration.*;
@@ -75,6 +76,8 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     private MarkLogicClient client;
 
     private GraphPermissions defaultGraphPerms;
+
+    private QueryDefinition defaultQueryDef;
 
     /**
      * constructor
@@ -253,7 +256,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     @Override
     public MarkLogicTupleQuery prepareTupleQuery(QueryLanguage queryLanguage, String queryString, String baseURI) throws RepositoryException, MalformedQueryException {
         if (QueryLanguage.SPARQL.equals(queryLanguage)) {
-            return new MarkLogicTupleQuery(this.client, new SPARQLQueryBindingSet(), baseURI, queryString, defaultGraphPerms);
+            return new MarkLogicTupleQuery(this.client, new SPARQLQueryBindingSet(), baseURI, queryString, defaultGraphPerms, defaultQueryDef);
         }
         throw new UnsupportedQueryLanguageException("Unsupported query language " + queryLanguage.getName());
     }
@@ -314,7 +317,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
             throws RepositoryException, MalformedQueryException
     {
         if (QueryLanguage.SPARQL.equals(queryLanguage)) {
-            return new MarkLogicGraphQuery(this.client, new SPARQLQueryBindingSet(), baseURI, queryString, defaultGraphPerms);
+            return new MarkLogicGraphQuery(this.client, new SPARQLQueryBindingSet(), baseURI, queryString, defaultGraphPerms, defaultQueryDef);
         }
         throw new UnsupportedQueryLanguageException("Unsupported query language " + queryLanguage.getName());
     }
@@ -373,7 +376,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     @Override
     public MarkLogicBooleanQuery prepareBooleanQuery(QueryLanguage queryLanguage, String queryString, String baseURI) throws RepositoryException, MalformedQueryException {
         if (QueryLanguage.SPARQL.equals(queryLanguage)) {
-            return new MarkLogicBooleanQuery(this.client, new SPARQLQueryBindingSet(), baseURI, queryString, defaultGraphPerms);
+            return new MarkLogicBooleanQuery(this.client, new SPARQLQueryBindingSet(), baseURI, queryString, defaultGraphPerms, defaultQueryDef);
         }
         throw new UnsupportedQueryLanguageException("Unsupported query language " + queryLanguage.getName());
     }
@@ -432,7 +435,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     @Override
     public MarkLogicUpdateQuery prepareUpdate(QueryLanguage queryLanguage, String queryString, String baseURI) throws RepositoryException, MalformedQueryException {
         if (QueryLanguage.SPARQL.equals(queryLanguage)) {
-            return new MarkLogicUpdateQuery(this.client, new SPARQLQueryBindingSet(), baseURI, queryString, defaultGraphPerms);
+            return new MarkLogicUpdateQuery(this.client, new SPARQLQueryBindingSet(), baseURI, queryString, defaultGraphPerms, defaultQueryDef);
         }
         throw new UnsupportedQueryLanguageException("Unsupported query language " + queryLanguage.getName());
     }
@@ -1310,6 +1313,27 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     @Override
     public GraphPermissions getDefaultGraphPerms() {
         return this.defaultGraphPerms;
+    }
+
+
+    /**
+     * sets default QueryDefinition to be used by all queries
+     *
+     * @param queryDef
+     */
+    @Override
+    public void setDefaultQueryDef(QueryDefinition queryDef) {
+        this.defaultQueryDef = queryDef;
+    }
+
+    /**
+     * returns default QueryDefinition to be used by all queries
+     *
+     * @return QueryDefinition
+     */
+    @Override
+    public QueryDefinition getDefaultQueryDef() {
+        return this.defaultQueryDef;
     }
 
 
