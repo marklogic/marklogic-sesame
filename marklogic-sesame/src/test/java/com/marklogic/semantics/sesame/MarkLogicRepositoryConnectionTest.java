@@ -629,7 +629,7 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
 
         Assert.assertTrue(conn.hasStatement(st1, false, context1));
         Assert.assertTrue(conn.hasStatement(st1, false, context1, null));
-        Assert.assertFalse(conn.hasStatement(st1, false, null));
+        Assert.assertTrue(conn.hasStatement(st1, false, null));
         Assert.assertFalse(conn.hasStatement(st1, false, (Resource) null));
         Assert.assertTrue(conn.hasStatement(st1, false));
         Assert.assertTrue(conn.hasStatement(null, null, null, false));
@@ -683,6 +683,38 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
                 "</rdf:RDF>";
 
         conn.exportStatements(alice, null, alicesName, true, rdfWriter, context1);
+        Assert.assertEquals(expected, out.toString());
+        conn.clear(context1);
+    }
+
+    // https://github.com/marklogic/marklogic-sesame/issues/108
+    @Test
+    public void testExportStatementsAllNull()
+            throws Exception {
+        Resource context1 = conn.getValueFactory().createURI("http://marklogic.com/test/context1");
+        ValueFactory f= conn.getValueFactory();
+        final URI alice = f.createURI("http://example.org/people/alice");
+        URI name = f.createURI("http://example.org/ontology/name");
+        Literal alicesName = f.createLiteral("Alice");
+
+        Statement st1 = f.createStatement(alice, name, alicesName);
+        conn.add(st1, context1);
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+        RDFXMLWriter rdfWriter = new RDFXMLWriter(out);
+
+        String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+                "<rdf:RDF\n" +
+                "\txmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\">\n" +
+                "\n" +
+                "<rdf:Description rdf:about=\"http://example.org/people/alice\">\n" +
+                "\t<name xmlns=\"http://example.org/ontology/\" rdf:datatype=\"http://www.w3.org/2001/XMLSchema#string\">Alice</name>\n" +
+                "</rdf:Description>\n" +
+                "\n" +
+                "</rdf:RDF>";
+
+        conn.exportStatements(null, null, null, false, rdfWriter, context1);
         Assert.assertEquals(expected, out.toString());
         conn.clear(context1);
     }
@@ -766,7 +798,7 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
 
         Statement st1 = f.createStatement(alice, name, alicesName);
         Statement st2 = f.createStatement(alice, age, alicesAge);
-        
+
         conn.begin();
         conn.add(st1, context1);
         conn.add(st2, context2);

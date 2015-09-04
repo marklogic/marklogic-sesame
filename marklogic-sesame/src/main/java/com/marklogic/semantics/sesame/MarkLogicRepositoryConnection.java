@@ -703,7 +703,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
             StringBuilder ob = new StringBuilder();
             StringBuilder sb = new StringBuilder();
 
-            if(object != null && object instanceof Literal) {
+            if(notNull(object) && object instanceof Literal) {
                 if (object instanceof Literal) {
                     Literal lit = (Literal) object;
                     ob.append("\"");
@@ -718,7 +718,11 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
                 if(notNull(contexts) && contexts.length>0) {
                     for (int i = 0; i < contexts.length; i++) {
                         if(notNull(contexts[i])) {
-                            sb.append("GRAPH <" + contexts[i].stringValue() + "> {?s ?p "+ob.toString()+" .} ");
+                            if(ob.toString() != ""){
+                                sb.append("GRAPH <" + contexts[i].stringValue() + "> {?s ?p " + ob.toString() + " .} ");
+                            }else{
+                                sb.append("GRAPH <" + contexts[i].stringValue() + "> {?s ?p ?o } ");
+                            }
                         }else{
                             sb.append("GRAPH <"+DEFAULT_GRAPH_URI+"> {?s ?p "+ob.toString()+" .}");
                         }
@@ -732,9 +736,9 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
                 if(notNull(contexts) && contexts.length>0) {
                     for (int i = 0; i < contexts.length; i++) {
                         if(contexts[i] != null) {
-                            sb.append("GRAPH <" + contexts[i].stringValue() + "> {?s ?p "+ob.toString()+" .} ");
+                            sb.append("GRAPH <" + contexts[i].stringValue() + "> {?s ?p ?o .} ");
                         }else{
-                            sb.append("GRAPH <"+DEFAULT_GRAPH_URI+"> {?s ?p "+ob.toString()+" .}");
+                            sb.append("GRAPH <"+DEFAULT_GRAPH_URI+"> {?s ?p ?o .}");
                         }                    }
                     sb.append("}");
                 }else{
