@@ -19,6 +19,7 @@
  */
 package com.marklogic.semantics.sesame;
 
+import com.marklogic.client.DatabaseClient;
 import com.marklogic.semantics.sesame.client.MarkLogicClient;
 import com.marklogic.semantics.sesame.client.MarkLogicClientDependent;
 import org.openrdf.model.ValueFactory;
@@ -86,7 +87,7 @@ public class MarkLogicRepository extends RepositoryBase implements Repository,Ma
      *
      * @param databaseClient
      */
-    public MarkLogicRepository(Object databaseClient) {
+    public MarkLogicRepository(DatabaseClient databaseClient) {
         super();
         this.f = new ValueFactoryImpl();
         this.quadMode = true;

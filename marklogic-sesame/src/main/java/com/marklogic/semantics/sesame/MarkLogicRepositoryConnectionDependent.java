@@ -19,6 +19,7 @@
  */
 package com.marklogic.semantics.sesame;
 
+import com.marklogic.client.semantics.GraphPermissions;
 import info.aduna.iteration.Iteration;
 import org.openrdf.model.Statement;
 import org.openrdf.query.*;
@@ -49,7 +50,11 @@ interface MarkLogicRepositoryConnectionDependent {
     void remove(Iterable<? extends Statement> statements) throws RepositoryException;
     <E extends Exception> void remove(Iteration<? extends Statement, E> statements) throws RepositoryException, E;
 
-    void setGraphPerms(Object graphPerms);
-    Object getGraphPerms();
+    void setDefaultGraphPerms(GraphPermissions graphPerms);
+    GraphPermissions getDefaultGraphPerms();
+
+    //default rulesets
+    //default constrainingquery
+    //default contexts
 
 }

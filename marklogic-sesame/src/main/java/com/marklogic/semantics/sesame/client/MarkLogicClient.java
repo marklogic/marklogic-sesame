@@ -19,7 +19,11 @@
  */
 package com.marklogic.semantics.sesame.client;
 
+import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.Transaction;
+import com.marklogic.client.query.QueryDefinition;
+import com.marklogic.client.semantics.GraphPermissions;
+import com.marklogic.client.semantics.SPARQLRuleset;
 import com.marklogic.semantics.sesame.MarkLogicTransactionException;
 import org.apache.commons.io.input.ReaderInputStream;
 import org.openrdf.http.protocol.UnauthorizedException;
@@ -86,7 +90,7 @@ public class MarkLogicClient {
 	 *
 	 * @param databaseClient
 	 */
-	public MarkLogicClient(Object databaseClient) {
+	public MarkLogicClient(DatabaseClient databaseClient) {
 		this._client = new MarkLogicClientImpl(databaseClient);
 	}
 
@@ -344,7 +348,7 @@ public class MarkLogicClient {
 	 *
 	 * @param rulesets
 	 */
-	public void setRulesets(Object ... rulesets){
+	public void setRulesets(SPARQLRuleset... rulesets){
 		getClient().setRulesets(rulesets);
 	}
 
@@ -352,7 +356,7 @@ public class MarkLogicClient {
 	 *
 	 * @return
 	 */
-	public Object[] getRulesets(){
+	public SPARQLRuleset[] getRulesets(){
 		return getClient().getRulesets();
 	}
 
@@ -360,7 +364,7 @@ public class MarkLogicClient {
 	 *
 	 * @param constrainingQueryDefinition
 	 */
-    public void setConstrainingQueryDefinition(Object constrainingQueryDefinition){
+    public void setConstrainingQueryDefinition(QueryDefinition constrainingQueryDefinition){
 		getClient().setConstrainingQueryDefinition(constrainingQueryDefinition);
     }
 
@@ -368,7 +372,7 @@ public class MarkLogicClient {
 	 *
 	 * @return
 	 */
-	public Object getConstrainingQueryDefinition(){
+	public QueryDefinition getConstrainingQueryDefinition(){
         return getClient().getConstrainingQueryDefinition();
     }
 
@@ -376,7 +380,7 @@ public class MarkLogicClient {
 	 *
 	 * @param graphPerms
 	 */
-    public void setGraphPerms(Object graphPerms){
+    public void setGraphPerms(GraphPermissions graphPerms){
         getClient().setGraphPerms(graphPerms);
     }
 
@@ -384,7 +388,7 @@ public class MarkLogicClient {
 	 *
 	 * @return
 	 */
-	public Object getGraphPerms(){
+	public GraphPermissions getGraphPerms(){
         return getClient().getGraphPerms();
     }
 

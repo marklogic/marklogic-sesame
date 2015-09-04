@@ -19,6 +19,7 @@
  */
 package com.marklogic.semantics.sesame;
 
+import com.marklogic.client.semantics.GraphPermissions;
 import com.marklogic.semantics.sesame.client.MarkLogicClient;
 import com.marklogic.semantics.sesame.query.*;
 import info.aduna.iteration.*;
@@ -73,7 +74,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
 
     private MarkLogicClient client;
 
-    private Object graphPerms;
+    private GraphPermissions graphPerms;
 
     /**
      * constructor
@@ -1295,7 +1296,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
      * @param graphPerms
      */
     @Override
-    public void setGraphPerms(Object graphPerms) {
+    public void setDefaultGraphPerms(GraphPermissions graphPerms) {
         this.graphPerms = graphPerms;
     }
 
@@ -1305,7 +1306,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
      * @return GraphPermissions
      */
     @Override
-    public Object getGraphPerms() {
+    public GraphPermissions getDefaultGraphPerms() {
         return this.graphPerms;
     }
 
