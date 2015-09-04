@@ -85,10 +85,8 @@ class MarkLogicClientImpl {
         setDatabaseClient(DatabaseClientFactory.newClient(host, port, user, password, DatabaseClientFactory.Authentication.valueOf(auth)));
     }
 
-    public MarkLogicClientImpl(Object databaseClient) {
-        if (databaseClient instanceof DatabaseClient) {
-            setDatabaseClient((DatabaseClient) databaseClient);
-        }
+    public MarkLogicClientImpl(DatabaseClient databaseClient) {
+        setDatabaseClient(databaseClient);
     }
 
     private void setDatabaseClient(DatabaseClient databaseClient) {
@@ -375,7 +373,7 @@ class MarkLogicClientImpl {
     }
 
     // graph perms
-    public void setGraphPerms(Object graphPerms) {
+    public void setGraphPerms(GraphPermissions graphPerms) {
         this.graphPerms = (GraphPermissions) graphPerms;
     }
 
