@@ -421,8 +421,10 @@ public class MarkLogicTupleQueryTest extends SesameTestBase {
         String queryString = "select ?s ?p ?o { ?s ?p ?o } limit 100 ";
         MarkLogicTupleQuery tupleQuery = conn.prepareTupleQuery(QueryLanguage.SPARQL, queryString);
 
-        tupleQuery.setRulesets(null);
         tupleQuery.setRulesets(SPARQLRuleset.RDFS_FULL,null);
+        tupleQuery.setRulesets(null);
+        Assert.assertTrue(tupleQuery.getRulesets() == null);
+        
         TupleQueryResult results = tupleQuery.evaluate();
 
         Assert.assertEquals(results.getBindingNames().get(0), "s");

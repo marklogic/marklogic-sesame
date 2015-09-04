@@ -380,6 +380,8 @@ class MarkLogicClientImpl {
                 }
             }
             this.ruleset = list.toArray(new SPARQLRuleset[list.size()]);;
+        }else{
+            this.ruleset = null;
         }
     }
 
