@@ -43,7 +43,8 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.InputStream;
 import java.net.URISyntaxException;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -377,7 +378,15 @@ class MarkLogicClientImpl {
     }
 
     public void setRulesets(Object ... rulesets) {
-        this.ruleset = Arrays.copyOf(rulesets, rulesets.length, SPARQLRuleset[].class);;
+        if(notNull(rulesets)) {
+            List<SPARQLRuleset> list = new ArrayList<>();
+            for(Object r : rulesets) {
+                if(r != null && rulesets.length > 0) {
+                    list.add((SPARQLRuleset)r);
+                }
+            }
+            this.ruleset = list.toArray(new SPARQLRuleset[list.size()]);;
+        }
     }
 
     // graph perms
