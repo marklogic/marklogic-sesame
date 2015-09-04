@@ -219,7 +219,7 @@ public class MarkLogicClient {
 	 * @param dataFormat
 	 * @param contexts
 	 */
-	public void sendAdd(InputStream in, String baseURI, RDFFormat dataFormat, Resource... contexts){
+	public void sendAdd(InputStream in, String baseURI, RDFFormat dataFormat, Resource... contexts) throws RDFParseException{
 		getClient().performAdd(in, baseURI, dataFormat, this.tx, contexts);
 	}
 
@@ -230,7 +230,7 @@ public class MarkLogicClient {
 	 * @param dataFormat
 	 * @param contexts
 	 */
-	public void sendAdd(Reader in, String baseURI, RDFFormat dataFormat, Resource... contexts){
+	public void sendAdd(Reader in, String baseURI, RDFFormat dataFormat, Resource... contexts) throws RDFParseException{
 		//TBD- must deal with char encoding
 		getClient().performAdd(new ReaderInputStream(in), baseURI, dataFormat, this.tx, contexts);
 	}

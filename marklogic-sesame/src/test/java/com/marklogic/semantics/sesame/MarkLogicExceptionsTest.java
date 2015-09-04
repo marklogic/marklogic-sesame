@@ -20,11 +20,7 @@
 package com.marklogic.semantics.sesame;
 
 import com.marklogic.client.ResourceNotFoundException;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.rules.ExpectedException;
 import org.openrdf.IsolationLevels;
 import org.openrdf.model.Resource;
@@ -105,6 +101,16 @@ public class MarkLogicExceptionsTest extends SesameTestBase {
         Resource context1 = conn.getValueFactory().createURI("http://marklogic.com/test/context1");
         exception.expect(RDFParseException.class);
         conn.add(inputFile, baseURI, RDFFormat.TURTLE, context1);
+        conn.clear(context1);
+    }
+    @Test
+    public void testAddMalformedWithInputStream() throws Exception {
+        File inputFile = new File("src/test/resources/testdata/malformed-literals.ttl");
+        FileInputStream is = new FileInputStream(inputFile);
+        String baseURI = "http://example.org/example1/";
+        exception.expect(RDFParseException.class);
+        Resource context1 = conn.getValueFactory().createURI("http://marklogic.com/test/context3");
+        conn.add(is, baseURI, RDFFormat.TURTLE, context1);
         conn.clear(context1);
     }
 

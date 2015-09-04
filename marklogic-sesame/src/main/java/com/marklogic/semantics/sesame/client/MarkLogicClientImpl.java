@@ -271,25 +271,30 @@ class MarkLogicClientImpl {
         }
     }
 
-    public void performAdd(InputStream in, String baseURI, RDFFormat dataFormat, Transaction tx, Resource... contexts) {
-        graphManager = getDatabaseClient().newGraphManager();
-        graphManager.setDefaultMimetype(dataFormat.getDefaultMIMEType());
-        if (dataFormat.equals(RDFFormat.NQUADS) || dataFormat.equals(RDFFormat.TRIG)) {
-            //TBD- tx ?
-            graphManager.mergeGraphs(new InputStreamHandle(in));
-        } else {
-            //TBD- must be more efficient
-            if (notNull(contexts) && contexts.length>0) {
-                for (int i = 0; i < contexts.length; i++) {
-                    if(notNull(contexts[i])){
-                        graphManager.merge(contexts[i].toString(),  new InputStreamHandle(in), tx);
-                    }else{
-                        graphManager.merge(DEFAULT_GRAPH_URI,  new InputStreamHandle(in), tx);
-                    }
-                }
+    public void performAdd(InputStream in, String baseURI, RDFFormat dataFormat, Transaction tx, Resource... contexts) throws RDFParseException {
+        try {
+            graphManager = getDatabaseClient().newGraphManager();
+
+            graphManager.setDefaultMimetype(dataFormat.getDefaultMIMEType());
+            if (dataFormat.equals(RDFFormat.NQUADS) || dataFormat.equals(RDFFormat.TRIG)) {
+                //TBD- tx ?
+                graphManager.mergeGraphs(new InputStreamHandle(in));
             } else {
-                graphManager.merge(DEFAULT_GRAPH_URI, new InputStreamHandle(in), tx);
+                //TBD- must be more efficient
+                if (notNull(contexts) && contexts.length > 0) {
+                    for (int i = 0; i < contexts.length; i++) {
+                        if (notNull(contexts[i])) {
+                            graphManager.merge(contexts[i].toString(), new InputStreamHandle(in), tx);
+                        } else {
+                            graphManager.merge(DEFAULT_GRAPH_URI, new InputStreamHandle(in), tx);
+                        }
+                    }
+                } else {
+                    graphManager.merge(DEFAULT_GRAPH_URI, new InputStreamHandle(in), tx);
+                }
             }
+        } catch (FailedRequestException e) {
+            throw new RDFParseException("Request to MarkLogic server failed, check input is valid.");
         }
     }
 
