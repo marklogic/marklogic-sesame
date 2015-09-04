@@ -79,7 +79,7 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
     public void tearDown()
             throws Exception {
         logger.debug("tearing down...");
-        conn.clear();
+        if(conn.isOpen()){conn.clear();}
         conn.close();
         conn = null;
         rep.shutDown();

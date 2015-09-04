@@ -157,4 +157,15 @@ public class MarkLogicExceptionsTest extends SesameTestBase {
         exception.expect(MarkLogicTransactionException.class);
         conn.rollback();
     }
+
+    // https://github.com/marklogic/marklogic-sesame/issues/110
+    @Test
+    public void testAddingIfClosed() throws Exception {
+        File inputFile = new File("src/test/resources/testdata/default-graph-1.ttl");
+        String baseURI = "http://example.org/example1/";
+        Resource context1 = conn.getValueFactory().createURI("http://marklogic.com/test/context1");
+        exception.expect(RepositoryException.class);
+        conn.close();
+        conn.add(inputFile, baseURI, RDFFormat.TURTLE, context1);
+    }
 }

@@ -853,7 +853,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
      */
     @Override
     public void clear() throws RepositoryException{
-        this.client.sendClearAll();
+        getClient().sendClearAll();
     }
 
     /**
@@ -864,7 +864,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
      */
     @Override
     public void clear(Resource... contexts) throws RepositoryException {
-            this.client.sendClear(contexts);
+            getClient().sendClear(contexts);
     }
 
     /**
@@ -887,7 +887,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
      */
     @Override
     public boolean isActive() throws UnknownTransactionStateException, RepositoryException {
-        return this.client.isActiveTransaction();
+        return getClient().isActiveTransaction();
     }
 
     /**
@@ -920,7 +920,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
      */
     @Override
     public void begin() throws RepositoryException {
-        this.client.openTransaction();
+        getClient().openTransaction();
     }
 
     /**
@@ -942,7 +942,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
      */
     @Override
     public void commit() throws RepositoryException {
-        this.client.commitTransaction();
+        getClient().commitTransaction();
     }
 
     /**
@@ -952,7 +952,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
      */
     @Override
     public void rollback() throws RepositoryException {
-        this.client.rollbackTransaction();
+        getClient().rollbackTransaction();
     }
 
     /**
@@ -968,7 +968,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
      */
     @Override
     public void add(InputStream in, String baseURI, RDFFormat dataFormat, Resource... contexts) throws IOException, RDFParseException, RepositoryException {
-        this.client.sendAdd(in, baseURI, dataFormat, contexts);
+        getClient().sendAdd(in, baseURI, dataFormat, contexts);
     }
 
     /**
@@ -987,9 +987,9 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     @Override
     public void add(File file, String baseURI, RDFFormat dataFormat, Resource... contexts) throws IOException, RDFParseException, RepositoryException {
         if(notNull(baseURI)) {
-            this.client.sendAdd(file, baseURI, dataFormat, contexts);
+            getClient().sendAdd(file, baseURI, dataFormat, contexts);
         }else{
-            this.client.sendAdd(file, file.toURI().toString(), dataFormat, contexts);
+            getClient().sendAdd(file, file.toURI().toString(), dataFormat, contexts);
         }
     }
 
@@ -1006,7 +1006,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
      */
     @Override
     public void add(Reader reader, String baseURI, RDFFormat dataFormat, Resource... contexts) throws IOException, RDFParseException, RepositoryException {
-        this.client.sendAdd(reader,baseURI,dataFormat,contexts);
+        getClient().sendAdd(reader, baseURI, dataFormat, contexts);
     }
 
     /**
@@ -1026,9 +1026,9 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     public void add(URL url, String baseURI, RDFFormat dataFormat, Resource... contexts) throws IOException, RDFParseException, RepositoryException {
         InputStream in = new URL(url.toString()).openStream(); //TBD- naive impl, will need refactoring
         if(notNull(baseURI)) {
-            this.client.sendAdd(in, baseURI, dataFormat, contexts);
+            getClient().sendAdd(in, baseURI, dataFormat, contexts);
         }else{
-            this.client.sendAdd(in, url.toString(), dataFormat, contexts);
+            getClient().sendAdd(in, url.toString(), dataFormat, contexts);
         }
     }
 
@@ -1043,7 +1043,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
      */
     @Override
     public void add(Resource subject, URI predicate, Value object, Resource... contexts) throws RepositoryException {
-        this.client.sendAdd(null, subject, predicate, object, contexts);
+        getClient().sendAdd(null, subject, predicate, object, contexts);
     }
 
     /**
@@ -1107,7 +1107,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
      */
     @Override
     public void remove(Resource subject, URI predicate, Value object, Resource... contexts) throws RepositoryException {
-        this.client.sendRemove(null, subject, predicate, object, contexts);
+        getClient().sendRemove(null, subject, predicate, object, contexts);
     }
 
     /**
@@ -1119,7 +1119,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
      */
     @Override
     public void remove(Statement st, Resource... contexts) throws RepositoryException {
-        this.client.sendRemove(null,st.getSubject(),st.getPredicate(),st.getObject(),mergeResource(st.getContext(),contexts));
+        getClient().sendRemove(null, st.getSubject(), st.getPredicate(), st.getObject(), mergeResource(st.getContext(), contexts));
     }
 
     /**
@@ -1135,7 +1135,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
         Iterator <? extends Statement> iter = statements.iterator();
         while(iter.hasNext()){
             Statement st = iter.next();
-            this.client.sendRemove(null, st.getSubject(), st.getPredicate(), st.getObject());
+            getClient().sendRemove(null, st.getSubject(), st.getPredicate(), st.getObject());
         }
     }
 
@@ -1153,7 +1153,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
         Iterator <? extends Statement> iter = statements.iterator();
         while(iter.hasNext()){
             Statement st = iter.next();
-            this.client.sendRemove(null, st.getSubject(), st.getPredicate(), st.getObject(), mergeResource(st.getContext(),contexts));
+            getClient().sendRemove(null, st.getSubject(), st.getPredicate(), st.getObject(), mergeResource(st.getContext(), contexts));
         }
     }
 
@@ -1171,7 +1171,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     public <E extends Exception> void remove(Iteration<? extends Statement, E> statements) throws RepositoryException, E {
         while(statements.hasNext()){
             Statement st = statements.next();
-            this.client.sendRemove(null, st.getSubject(), st.getPredicate(), st.getObject());
+            getClient().sendRemove(null, st.getSubject(), st.getPredicate(), st.getObject());
         }
     }
 
@@ -1190,7 +1190,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     public <E extends Exception> void remove(Iteration<? extends Statement, E> statements, Resource... contexts) throws RepositoryException, E {
         while(statements.hasNext()){
             Statement st = statements.next();
-            this.client.sendRemove(null, st.getSubject(), st.getPredicate(), st.getObject(), mergeResource(st.getContext(),contexts));
+            getClient().sendRemove(null, st.getSubject(), st.getPredicate(), st.getObject(), mergeResource(st.getContext(), contexts));
         }
     }
 
@@ -1315,6 +1315,19 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     // private ////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * get client and check if repositoryconnection is open
+     *
+     * @throws RepositoryException
+     */
+    private MarkLogicClient getClient() throws RepositoryException{
+        if(isOpen()){
+            return this.client;
+        }else{
+            throw new RepositoryException("connection is closed1.");
+        }
+    }
+    
     /**
      * set bindings ?s, ?p and special handling of Value ?o (and ?ctx)
      *
