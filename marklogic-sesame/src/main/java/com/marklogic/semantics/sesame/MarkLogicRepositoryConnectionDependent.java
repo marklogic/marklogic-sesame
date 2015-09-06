@@ -19,7 +19,6 @@
  */
 package com.marklogic.semantics.sesame;
 
-import com.marklogic.client.query.QueryDefinition;
 import info.aduna.iteration.Iteration;
 import org.openrdf.model.Statement;
 import org.openrdf.query.*;
@@ -52,8 +51,5 @@ interface MarkLogicRepositoryConnectionDependent {
 
     void setGraphPerms(Object graphPerms);
     Object getGraphPerms();
-
-    void setDefaultQueryDef(QueryDefinition defaultQueryDef);
-    QueryDefinition getDefaultQueryDef();
 
 }
