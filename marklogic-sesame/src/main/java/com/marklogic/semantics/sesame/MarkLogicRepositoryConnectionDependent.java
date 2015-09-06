@@ -19,6 +19,7 @@
  */
 package com.marklogic.semantics.sesame;
 
+import com.marklogic.client.semantics.SPARQLRuleset;
 import info.aduna.iteration.Iteration;
 import org.openrdf.model.Statement;
 import org.openrdf.query.*;
@@ -52,4 +53,6 @@ interface MarkLogicRepositoryConnectionDependent {
     void setGraphPerms(Object graphPerms);
     Object getGraphPerms();
 
+    void setDefaultRulesets(SPARQLRuleset... ruleset);
+    SPARQLRuleset[] getDefaultRulesets();
 }
