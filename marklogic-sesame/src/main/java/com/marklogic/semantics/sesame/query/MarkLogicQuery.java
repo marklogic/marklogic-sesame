@@ -22,6 +22,8 @@ package com.marklogic.semantics.sesame.query;
 import com.marklogic.client.query.QueryDefinition;
 import com.marklogic.client.semantics.GraphPermissions;
 import com.marklogic.client.semantics.SPARQLRuleset;
+import com.marklogic.semantics.sesame.client.MarkLogicClient;
+import com.marklogic.semantics.sesame.client.MarkLogicClientDependent;
 import org.openrdf.model.Value;
 import org.openrdf.model.impl.ValueFactoryImpl;
 import org.openrdf.query.Dataset;
@@ -31,9 +33,6 @@ import org.openrdf.repository.sparql.query.QueryStringUtil;
 import org.openrdf.repository.sparql.query.SPARQLQueryBindingSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.marklogic.semantics.sesame.client.MarkLogicClient;
-import com.marklogic.semantics.sesame.client.MarkLogicClientDependent;
 
 /**
  * base query class
@@ -62,7 +61,7 @@ public class MarkLogicQuery extends AbstractQuery implements Query,MarkLogicClie
      * @param baseUri
      * @param queryString
      */
-    public MarkLogicQuery(MarkLogicClient client, SPARQLQueryBindingSet bindingSet, String baseUri, String queryString, GraphPermissions graphPerms, QueryDefinition defaultQueryDef) {
+    public MarkLogicQuery(MarkLogicClient client, SPARQLQueryBindingSet bindingSet, String baseUri, String queryString, GraphPermissions graphPerms, QueryDefinition defaultQueryDef, SPARQLRuleset[] rulesets) {
         super();
         setBaseURI(baseUri);
         setQueryString(queryString);
@@ -71,6 +70,7 @@ public class MarkLogicQuery extends AbstractQuery implements Query,MarkLogicClie
         setIncludeInferred(true); // is default set true
         setGraphPerms(graphPerms);
         setConstrainingQueryDefinition(defaultQueryDef);
+        setRulesets(rulesets);
     }
 
     /**

@@ -22,6 +22,7 @@ package com.marklogic.semantics.sesame.query;
 import com.marklogic.client.FailedRequestException;
 import com.marklogic.client.semantics.GraphPermissions;
 import com.marklogic.client.query.QueryDefinition;
+import com.marklogic.client.semantics.SPARQLRuleset;
 import com.marklogic.semantics.sesame.client.MarkLogicClient;
 import org.openrdf.query.*;
 import org.openrdf.repository.RepositoryException;
@@ -51,8 +52,8 @@ public class MarkLogicTupleQuery extends MarkLogicQuery implements TupleQuery,Ma
      * @param baseUri
      * @param queryString
      */
-    public MarkLogicTupleQuery(MarkLogicClient client, SPARQLQueryBindingSet bindingSet, String baseUri, String queryString, GraphPermissions graphPerms, QueryDefinition queryDef) {
-        super(client, bindingSet, baseUri, queryString, graphPerms, queryDef);
+    public MarkLogicTupleQuery(MarkLogicClient client, SPARQLQueryBindingSet bindingSet, String baseUri, String queryString, GraphPermissions graphPerms, QueryDefinition queryDef, SPARQLRuleset[] rulesets) {
+        super(client, bindingSet, baseUri, queryString, graphPerms, queryDef, rulesets);
     }
 
     /**

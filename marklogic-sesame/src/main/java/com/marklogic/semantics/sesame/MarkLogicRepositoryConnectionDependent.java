@@ -21,6 +21,7 @@ package com.marklogic.semantics.sesame;
 
 import com.marklogic.client.semantics.GraphPermissions;
 import com.marklogic.client.query.QueryDefinition;
+import com.marklogic.client.semantics.SPARQLRuleset;
 import info.aduna.iteration.Iteration;
 import org.openrdf.model.Statement;
 import org.openrdf.query.*;
@@ -54,11 +55,9 @@ interface MarkLogicRepositoryConnectionDependent {
     void setDefaultGraphPerms(GraphPermissions graphPerms);
     GraphPermissions getDefaultGraphPerms();
 
-    //default rulesets
-    //default constrainingquery
-    //default contexts
-
     void setDefaultQueryDef(QueryDefinition defaultQueryDef);
     QueryDefinition getDefaultQueryDef();
 
+    void setDefaultRulesets(SPARQLRuleset... ruleset);
+    SPARQLRuleset[] getDefaultRulesets();
 }
