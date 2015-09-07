@@ -24,6 +24,7 @@ import com.marklogic.client.Transaction;
 import com.marklogic.client.query.QueryDefinition;
 import com.marklogic.client.semantics.GraphPermissions;
 import com.marklogic.client.semantics.SPARQLRuleset;
+import com.marklogic.semantics.sesame.MarkLogicSesameException;
 import com.marklogic.semantics.sesame.MarkLogicTransactionException;
 import org.apache.commons.io.input.ReaderInputStream;
 import org.openrdf.http.protocol.UnauthorizedException;
@@ -243,7 +244,7 @@ public class MarkLogicClient {
 	 * @param object
 	 * @param contexts
 	 */
-	public void sendAdd(String baseURI, Resource subject, URI predicate, Value object, Resource... contexts){
+	public void sendAdd(String baseURI, Resource subject, URI predicate, Value object, Resource... contexts) throws MarkLogicSesameException {
 		getClient().performAdd(baseURI, (Resource) skolemize(subject), (URI) skolemize(predicate), skolemize(object), this.tx, contexts);
 	}
 
@@ -255,7 +256,7 @@ public class MarkLogicClient {
 	 * @param object
 	 * @param contexts
 	 */
-	public void sendRemove(String baseURI, Resource subject,URI predicate, Value object, Resource... contexts){
+	public void sendRemove(String baseURI, Resource subject,URI predicate, Value object, Resource... contexts) throws MarkLogicSesameException {
 		getClient().performRemove(baseURI, (Resource) skolemize(subject), (URI) skolemize(predicate), skolemize(object), this.tx, contexts);
 	}
 

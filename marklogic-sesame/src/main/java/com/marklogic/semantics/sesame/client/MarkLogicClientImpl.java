@@ -29,6 +29,7 @@ import com.marklogic.client.io.FileHandle;
 import com.marklogic.client.io.InputStreamHandle;
 import com.marklogic.client.query.QueryDefinition;
 import com.marklogic.client.semantics.*;
+import com.marklogic.semantics.sesame.MarkLogicSesameException;
 import org.openrdf.model.Literal;
 import org.openrdf.model.Resource;
 import org.openrdf.model.URI;
@@ -299,7 +300,7 @@ class MarkLogicClientImpl {
         }
     }
 
-    public void performAdd(String baseURI, Resource subject, URI predicate, Value object, Transaction tx, Resource... contexts) {
+    public void performAdd(String baseURI, Resource subject, URI predicate, Value object, Transaction tx, Resource... contexts) throws MarkLogicSesameException {
         sparqlManager = getDatabaseClient().newSPARQLQueryManager();
         StringBuilder sb = new StringBuilder();
 
@@ -326,7 +327,7 @@ class MarkLogicClientImpl {
     }
 
     // performRemove
-    public void performRemove(String baseURI, Resource subject, URI predicate, Value object, Transaction tx, Resource... contexts) {
+    public void performRemove(String baseURI, Resource subject, URI predicate, Value object, Transaction tx, Resource... contexts) throws MarkLogicSesameException {
         StringBuilder sb = new StringBuilder();
         if(notNull(contexts) && contexts.length>0) {
             if (notNull(baseURI))sb.append("BASE <" + baseURI + ">\n");
@@ -409,35 +410,39 @@ class MarkLogicClientImpl {
         return this.constrainingQueryDef;
     }
 
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+
     // getSPARQLBindings
     protected SPARQLBindings getSPARQLBindings(SPARQLQueryBindingSet bindings) {
         SPARQLBindings sps = new SPARQLBindingsImpl();
         for (Binding binding : bindings) {
             sps.bind(binding.getName(), binding.getValue().stringValue());
-            logger.debug("binding:" + binding.getName() + "=" + binding.getValue());
         }
         return sps;
     }
 
-    private static SPARQLQueryDefinition bindObject(SPARQLQueryDefinition qdef, String variableName, Value object){
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+
+    private static SPARQLQueryDefinition bindObject(SPARQLQueryDefinition qdef, String variableName, Value object) throws MarkLogicSesameException{
         SPARQLBindings bindings = qdef.getBindings();
         if(object != null){
             if (object instanceof URI) {
                 bindings.bind(variableName, object.stringValue());
             } else if (object instanceof Literal) {
                 Literal lit = (Literal) object;
-                if (((Literal) object).getDatatype() != null) {
+                if (lit.getLanguage() != null) {
+                    String languageTag = lit.getLanguage();
+                    bindings.bind(variableName, lit.getLabel(), Locale.forLanguageTag(languageTag));
+                }else if (((Literal) object).getDatatype() != null) {
                     try {
                         String xsdType = lit.getDatatype().toString();
                         String fragment = new java.net.URI(xsdType).getFragment();
                         bindings.bind(variableName, lit.getLabel(), fragment);
                     } catch (URISyntaxException e) {
-                        //throw new MarkLogicSesameException("Problem with object.");
+                        throw new MarkLogicSesameException("Problem with object datatype.");
                     }
-                } else if (!lit.getLanguage().equals("")) {
-                    String languageTag = lit.getLanguage();
-                    bindings.bind(variableName, lit.getLabel(), Locale.forLanguageTag(languageTag));
-                } else {
+                }else {
+                    // assume we have a string value
                     bindings.bind(variableName, lit.getLabel(), "string");
                 }
             }
@@ -446,7 +451,7 @@ class MarkLogicClientImpl {
         return qdef;
     }
 
-    private Boolean notNull(Object item) {
+    private static Boolean notNull(Object item) {
         if (item!=null)
             return true;
         else

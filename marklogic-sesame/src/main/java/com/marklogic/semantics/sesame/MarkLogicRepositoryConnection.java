@@ -1428,7 +1428,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
      * @param item
      * @return boolean
      */
-    private Boolean notNull(Object item) {
+    private static Boolean notNull(Object item) {
         if (item!=null)
             return true;
         else

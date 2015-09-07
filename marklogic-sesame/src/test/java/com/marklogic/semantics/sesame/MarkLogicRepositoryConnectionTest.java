@@ -28,6 +28,7 @@ import org.openrdf.OpenRDFException;
 import org.openrdf.model.*;
 import org.openrdf.model.impl.LinkedHashModel;
 import org.openrdf.model.vocabulary.RDF;
+import org.openrdf.model.vocabulary.XMLSchema;
 import org.openrdf.query.*;
 import org.openrdf.repository.Repository;
 import org.openrdf.repository.RepositoryConnection;
@@ -629,7 +630,7 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
 
         Assert.assertTrue(conn.hasStatement(st1, false, context1));
         Assert.assertTrue(conn.hasStatement(st1, false, context1, null));
-        Assert.assertTrue(conn.hasStatement(st1, false, null));
+        Assert.assertFalse(conn.hasStatement(st1, false, null));
         Assert.assertFalse(conn.hasStatement(st1, false, (Resource) null));
         Assert.assertTrue(conn.hasStatement(st1, false));
         Assert.assertTrue(conn.hasStatement(null, null, null, false));
@@ -1125,4 +1126,30 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
         Assert.assertTrue("The value of email should be updated", conn.hasStatement(vf.createStatement(fei, email, vf.createLiteral("fling@marklogic.com")), false));
         Assert.assertFalse(conn.isEmpty());
     }
+
+    // https://github.com/marklogic/marklogic-sesame/issues/131
+    @Test
+    public void testLiterals()
+            throws OpenRDFException
+    {
+        ValueFactory vf= conn.getValueFactory();
+        URI fei = vf.createURI("http://marklogicsparql.com/id#3333");
+        URI lname = vf.createURI("http://marklogicsparql.com/addressbook#lastName");
+        URI age = vf.createURI("http://marklogicsparql.com/addressbook#age");
+
+        Literal feilname = vf.createLiteral("Ling", "zh");
+        //Literal shouldfail = vf.createLiteral(1, "zh");
+        Literal invalidIntegerLiteral = vf.createLiteral("four", XMLSchema.INTEGER);
+        Literal feiage = vf.createLiteral(25);
+
+        conn.add(fei, lname, feilname);
+        conn.add(fei, age, feiage);
+        //conn.add(fei, age, invalidIntegerLiteral);
+
+        logger.info("lang:{}", conn.hasStatement(vf.createStatement(fei, lname, vf.createLiteral("Ling", "en")), false));
+        Assert.assertFalse("The lang tag of lname is not en", conn.hasStatement(vf.createStatement(fei, lname, vf.createLiteral("Ling", "en")), false));
+        Assert.assertTrue("The lang tag of lname is zh", conn.hasStatement(vf.createStatement(fei, lname, vf.createLiteral("Ling", "zh")), false));
+        Assert.assertFalse(conn.isEmpty());
+    }
+
 }
