@@ -72,6 +72,8 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
 
     private static final String COUNT_EVERYTHING = "SELECT (count(?s) as ?ct) where { GRAPH ?g { ?s ?p ?o } }";
 
+    private static final String ALL_GRAPH_URIS = "SELECT ?g { GRAPH ?g {} filter (?g != IRI(\"http://marklogic.com/semantics#graphs\"))}";
+
     private final boolean quadMode;
 
     private MarkLogicClient client;
@@ -451,8 +453,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     public RepositoryResult<Resource> getContextIDs() throws RepositoryException {
 
         try{
-            String queryString = "SELECT DISTINCT ?_ WHERE { GRAPH ?ctx { ?s ?p ?o } }";
-            TupleQuery tupleQuery = prepareTupleQuery(QueryLanguage.SPARQL, queryString);
+            TupleQuery tupleQuery = prepareTupleQuery(QueryLanguage.SPARQL, ALL_GRAPH_URIS);
             TupleQueryResult result = tupleQuery.evaluate();
             return
                     new RepositoryResult<Resource>(
@@ -462,7 +463,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
                                         @Override
                                         protected Resource convert(BindingSet bindings)
                                                 throws QueryEvaluationException {
-                                            return (Resource) bindings.getValue("_");
+                                            return (Resource) bindings.getValue("g");
                                         }
                                     }) {
 

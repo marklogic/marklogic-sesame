@@ -348,7 +348,6 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
     }
 
     @Test
-    @Ignore
     public void testContextIDs()
             throws Exception {
         Resource context5 = conn.getValueFactory().createURI("http://marklogic.com/test/context7");
@@ -370,16 +369,16 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
         RepositoryResult<Resource> result = conn.getContextIDs();
         try {
             Assert.assertTrue("result should not be empty", result.hasNext());
-            logger.debug("ContextIDs");
             Resource result1 = result.next();
-            logger.debug(result1.stringValue());
+            Assert.assertEquals("http://marklogic.com/semantics#default-graph", result1.stringValue());
+            result1 = result.next();
             Assert.assertEquals("http://marklogic.com/test/context7", result1.stringValue());
+            result1 = result.next();
+            Assert.assertEquals("http://marklogic.com/test/context8", result1.stringValue());
         } finally {
             result.close();
         }
-
         conn.clear(context5, context6);
-
     }
 
     @Test
