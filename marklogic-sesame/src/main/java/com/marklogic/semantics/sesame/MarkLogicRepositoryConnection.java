@@ -19,11 +19,10 @@
  */
 package com.marklogic.semantics.sesame;
 
+import com.marklogic.client.semantics.GraphPermissions;
 import com.marklogic.semantics.sesame.client.MarkLogicClient;
 import com.marklogic.semantics.sesame.query.*;
-
 import info.aduna.iteration.*;
-
 import org.openrdf.IsolationLevel;
 import org.openrdf.IsolationLevels;
 import org.openrdf.model.*;
@@ -75,7 +74,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
 
     private MarkLogicClient client;
 
-    private Object graphPerms;
+    private GraphPermissions defaultGraphPerms;
 
     /**
      * constructor
@@ -254,7 +253,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     @Override
     public MarkLogicTupleQuery prepareTupleQuery(QueryLanguage queryLanguage, String queryString, String baseURI) throws RepositoryException, MalformedQueryException {
         if (QueryLanguage.SPARQL.equals(queryLanguage)) {
-            return new MarkLogicTupleQuery(this.client, new SPARQLQueryBindingSet(), baseURI, queryString, graphPerms);
+            return new MarkLogicTupleQuery(this.client, new SPARQLQueryBindingSet(), baseURI, queryString, defaultGraphPerms);
         }
         throw new UnsupportedQueryLanguageException("Unsupported query language " + queryLanguage.getName());
     }
@@ -315,7 +314,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
             throws RepositoryException, MalformedQueryException
     {
         if (QueryLanguage.SPARQL.equals(queryLanguage)) {
-            return new MarkLogicGraphQuery(this.client, new SPARQLQueryBindingSet(), baseURI, queryString, graphPerms);
+            return new MarkLogicGraphQuery(this.client, new SPARQLQueryBindingSet(), baseURI, queryString, defaultGraphPerms);
         }
         throw new UnsupportedQueryLanguageException("Unsupported query language " + queryLanguage.getName());
     }
@@ -374,7 +373,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     @Override
     public MarkLogicBooleanQuery prepareBooleanQuery(QueryLanguage queryLanguage, String queryString, String baseURI) throws RepositoryException, MalformedQueryException {
         if (QueryLanguage.SPARQL.equals(queryLanguage)) {
-            return new MarkLogicBooleanQuery(this.client, new SPARQLQueryBindingSet(), baseURI, queryString, graphPerms);
+            return new MarkLogicBooleanQuery(this.client, new SPARQLQueryBindingSet(), baseURI, queryString, defaultGraphPerms);
         }
         throw new UnsupportedQueryLanguageException("Unsupported query language " + queryLanguage.getName());
     }
@@ -433,7 +432,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     @Override
     public MarkLogicUpdateQuery prepareUpdate(QueryLanguage queryLanguage, String queryString, String baseURI) throws RepositoryException, MalformedQueryException {
         if (QueryLanguage.SPARQL.equals(queryLanguage)) {
-            return new MarkLogicUpdateQuery(this.client, new SPARQLQueryBindingSet(), baseURI, queryString, graphPerms);
+            return new MarkLogicUpdateQuery(this.client, new SPARQLQueryBindingSet(), baseURI, queryString, defaultGraphPerms);
         }
         throw new UnsupportedQueryLanguageException("Unsupported query language " + queryLanguage.getName());
     }
@@ -1295,8 +1294,8 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
      * @param graphPerms
      */
     @Override
-    public void setGraphPerms(Object graphPerms) {
-        this.graphPerms = graphPerms;
+    public void setDefaultGraphPerms(GraphPermissions graphPerms) {
+        this.defaultGraphPerms = graphPerms;
     }
 
     /**
@@ -1305,8 +1304,8 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
      * @return GraphPermissions
      */
     @Override
-    public Object getGraphPerms() {
-        return this.graphPerms;
+    public GraphPermissions getDefaultGraphPerms() {
+        return this.defaultGraphPerms;
     }
 
 
