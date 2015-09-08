@@ -21,9 +21,7 @@ package com.marklogic.semantics.sesame;
 
 import com.marklogic.semantics.sesame.client.MarkLogicClient;
 import com.marklogic.semantics.sesame.query.*;
-
 import info.aduna.iteration.*;
-
 import org.openrdf.IsolationLevel;
 import org.openrdf.IsolationLevels;
 import org.openrdf.model.*;
@@ -643,7 +641,9 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     @Override
     public boolean hasStatement(Resource subject, URI predicate, Value object, boolean includeInferred, Resource... contexts) throws RepositoryException {
         String queryString = null;
-        if (contexts == null || contexts.length == 0) {
+        if(contexts == null) {
+            queryString="ASK { GRAPH ?ctx { ?s ?p ?o } filter (?ctx = (IRI(\""+DEFAULT_GRAPH_URI+"\")))}";
+        }else if (contexts.length == 0) {
             queryString = SOMETHING;
         }
         else {
@@ -660,7 +660,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
                         sb.append(",");
                     }
                     if (context == null) {
-                        sb.append("IRI(\"http://marklogic.com/semantics#default-graph\")");
+                        sb.append("IRI(\""+DEFAULT_GRAPH_URI+"\")");
                     } else {
                         sb.append("IRI(\"" + context.toString() + "\")");
                     }
