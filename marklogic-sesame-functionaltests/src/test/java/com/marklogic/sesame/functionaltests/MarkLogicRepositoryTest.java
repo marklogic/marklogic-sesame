@@ -39,7 +39,7 @@ public class MarkLogicRepositoryTest extends  ConnectedRESTQA{
 	private static MarkLogicRepository testRepository;
 	private static ValueFactory vf ;
 	private static MarkLogicRepositoryConnection testConn;
-	private static int restPort = 8011;
+	private static int restPort = 8024;
 	private static String dbName = "MLSesame";
 	private static String [] fNames = {"MLSesame-1"};
 	private static String restServer = "REST-MLSesame-API-Server";
@@ -97,8 +97,6 @@ public class MarkLogicRepositoryTest extends  ConnectedRESTQA{
 		testRepository.shutDown();
 		testRepository = null;
 		testConn = null;
-
-        Thread.currentThread().sleep(1000);
 	}
 	@Test
 	public void testShutdownFollowedByInit()
