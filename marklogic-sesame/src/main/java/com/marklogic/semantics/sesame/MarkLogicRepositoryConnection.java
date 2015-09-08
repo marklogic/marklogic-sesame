@@ -94,6 +94,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
         this.client = client;
         this.quadMode = true;
         client.setValueFactory(repository.getValueFactory());
+        client.initTimer();
     }
 
     /**
@@ -115,6 +116,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
         client.setValueFactory(f);
     }
 
+
     @Override
     /**
      * Releases the connection to the database.  Ensures that open transactions
@@ -124,7 +126,6 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
         throws RepositoryException
     {
         super.close();
-        client.sync();
         client.stopTimer();
         try {
             if (this.isActive()) {

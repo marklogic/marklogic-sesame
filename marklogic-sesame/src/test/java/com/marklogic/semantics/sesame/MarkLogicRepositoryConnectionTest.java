@@ -471,7 +471,7 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
        // RepositoryResult<Statement> statements = conn.getStatements(alice, null, null, true,context5);
 
         //Model aboutAlice = Iterations.addAll(statements, new LinkedHashModel());
-
+conn.sync();
         String checkAliceQuery = "ASK { GRAPH <http://marklogic.com/test/context5> {<http://example.org/people/alice> <http://example.org/ontology/name> 'Alice' .}}";
         BooleanQuery booleanAliceQuery = conn.prepareBooleanQuery(QueryLanguage.SPARQL, checkAliceQuery);
         Assert.assertTrue(booleanAliceQuery.evaluate());
@@ -931,9 +931,10 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
 
         conn.add(st1, (Resource) null);
         conn.add(st2, (Resource) null);
-
+        conn.sync();
         conn.remove(william, age, williamName, (Resource) null);
         conn.remove(william, name, williamAge, (Resource) null);
+        conn.sync();
     }
 
     //https://github.com/marklogic/marklogic-sesame/issues/139
@@ -1153,7 +1154,7 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
 
 
     // https://github.com/marklogic/marklogic-sesame/issues/140
-    @Test
+    @Ignore
     public void testStatementWithWriteCache() throws Exception{
         Resource context1 = conn.getValueFactory().createURI("http://marklogic.com/test/context1");
         Resource context2 = conn.getValueFactory().createURI("http://marklogic.com/test/context2");

@@ -3,7 +3,8 @@ package com.marklogic.semantics.sesame.client;
 import com.marklogic.semantics.sesame.MarkLogicSesameException;
 import org.openrdf.model.Model;
 import org.openrdf.model.Resource;
-import org.openrdf.model.Statement;
+import org.openrdf.model.URI;
+import org.openrdf.model.Value;
 import org.openrdf.model.impl.LinkedHashModel;
 import org.openrdf.query.resultio.sparqlxml.SPARQLResultsXMLWriter;
 import org.openrdf.rio.RDFFormat;
@@ -58,36 +59,34 @@ public class WriteCacheTimerTask extends TimerTask {
     }
     
     private synchronized void flush() throws MarkLogicSesameException {
-        log.debug("flushing write cache");
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        SPARQLResultsXMLWriter sparqlWriter = new SPARQLResultsXMLWriter(out);
-        RDFFormat format = RDFFormat.NTRIPLES;
-
-        try {
-            Rio.write(cache, out, format);
-            InputStream in = new ByteArrayInputStream(out.toByteArray());
-            Resource[] contexts = new Resource[cache.contexts().size()];
-            int i =0;
-            for(Resource ctx:cache.contexts()){
-                contexts[i]= ctx;
-                i++;
+            log.info("flushing write cache");
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            SPARQLResultsXMLWriter sparqlWriter = new SPARQLResultsXMLWriter(out);
+            RDFFormat format = RDFFormat.NQUADS;
+            try {
+                Rio.write(cache, out, format);
+                InputStream in = new ByteArrayInputStream(out.toByteArray());
+                Resource[] contexts = new Resource[cache.contexts().size()];
+                int i =0;
+                for(Resource ctx:cache.contexts()){
+                    contexts[i]= ctx;
+                    i++;
+                }
+                client.sendAdd(in, null, format, contexts);
+            } catch (RDFHandlerException e) {
+                e.printStackTrace();
+            } catch (RDFParseException e) {
+                e.printStackTrace();
             }
-            client.sendAdd(in, null, format, contexts);
-        } catch (RDFHandlerException e) {
-            e.printStackTrace();
-        } catch (RDFParseException e) {
-            e.printStackTrace();
-        }
-        lastCacheAccess = new Date();
-        cache.clear();
+            lastCacheAccess = new Date();
+            cache.clear();
     }
     
     public void forceRun() throws MarkLogicSesameException {
-        flush();
+        if(cache.size()>0) flush();
     }
 
-    public synchronized void add(Statement st) {
-        log.debug("add statement to write cache ubbfer");
-        cache.add(st);
+    public synchronized void add(Resource subject, URI predicate, Value object, Resource... contexts) {
+        cache.add(subject,predicate,object,contexts);
     }
 }

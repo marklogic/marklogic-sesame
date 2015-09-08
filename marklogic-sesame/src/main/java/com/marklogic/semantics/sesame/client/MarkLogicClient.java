@@ -28,8 +28,10 @@ import com.marklogic.semantics.sesame.MarkLogicSesameException;
 import com.marklogic.semantics.sesame.MarkLogicTransactionException;
 import org.apache.commons.io.input.ReaderInputStream;
 import org.openrdf.http.protocol.UnauthorizedException;
-import org.openrdf.model.*;
-import org.openrdf.model.impl.ContextStatementImpl;
+import org.openrdf.model.Resource;
+import org.openrdf.model.URI;
+import org.openrdf.model.Value;
+import org.openrdf.model.ValueFactory;
 import org.openrdf.query.*;
 import org.openrdf.query.resultio.QueryResultIO;
 import org.openrdf.query.resultio.TupleQueryResultFormat;
@@ -77,6 +79,8 @@ public class MarkLogicClient {
 	private WriteCacheTimerTask cache;
 	private Timer timer;
 
+    private static boolean WRITE_CACHE_ENABLED = false;
+
 	/**
 	 *
  	 * @param host
@@ -87,7 +91,6 @@ public class MarkLogicClient {
 	 */
 	public MarkLogicClient(String host, int port, String user, String password,String auth) {
 		this._client = new MarkLogicClientImpl(host,port,user,password,auth);
-        initTimer();
 	}
 
 	/**
@@ -96,26 +99,25 @@ public class MarkLogicClient {
 	 */
 	public MarkLogicClient(DatabaseClient databaseClient) {
 		this._client = new MarkLogicClientImpl(databaseClient);
-        initTimer();
 	}
 
-	public synchronized void initTimer(){
-        this.cache = new WriteCacheTimerTask(this);
-        this.timer = new Timer();
-        timer.scheduleAtFixedRate(cache, 10, 1000);
-	}
+	public void initTimer(){
+        if(this.WRITE_CACHE_ENABLED) {
+            this.cache = new WriteCacheTimerTask(this);
+            this.timer = new Timer();
+            timer.scheduleAtFixedRate(cache, 10, 1000);
+        }
+    }
 
 	public void stopTimer() {
-		cache.cancel();
-		timer.cancel();
-	}
-
-	public void sinkQuad(Statement st) {
-		cache.add(st);
-	}
+        if(this.WRITE_CACHE_ENABLED) {
+            cache.cancel();
+            timer.cancel();
+        }
+    }
 
     public void sync() throws MarkLogicSesameException {
-        cache.forceRun();
+        if(WRITE_CACHE_ENABLED) cache.forceRun();
     }
 
 	/**
@@ -151,6 +153,7 @@ public class MarkLogicClient {
 	 */
 	public TupleQueryResult sendTupleQuery(String queryString,SPARQLQueryBindingSet bindings, long start, long pageLength, boolean includeInferred, String baseURI) throws IOException, RepositoryException, MalformedQueryException, UnauthorizedException,
     QueryInterruptedException {
+		sync();
 		InputStream stream = getClient().performSPARQLQuery(queryString, bindings, start, pageLength, this.tx, includeInferred, baseURI);
 		TupleQueryResultParser parser = QueryResultIO.createParser(format, getValueFactory());
 		MarkLogicBackgroundTupleResult tRes = new MarkLogicBackgroundTupleResult(parser,stream);
@@ -168,7 +171,12 @@ public class MarkLogicClient {
 	 * @throws IOException
 	 */
 	public GraphQueryResult sendGraphQuery(String queryString, SPARQLQueryBindingSet bindings, boolean includeInferred, String baseURI) throws IOException {
-		InputStream stream = getClient().performGraphQuery(queryString, bindings, this.tx, includeInferred, baseURI);
+        try {
+            sync();
+        } catch (MarkLogicSesameException e) {
+            e.printStackTrace();
+        }
+        InputStream stream = getClient().performGraphQuery(queryString, bindings, this.tx, includeInferred, baseURI);
 
 		RDFParser parser = Rio.createParser(rdfFormat, getValueFactory());
 		parser.setParserConfig(getParserConfig());
@@ -222,6 +230,7 @@ public class MarkLogicClient {
 	 */
 	public void sendUpdateQuery(String queryString, SPARQLQueryBindingSet bindings, boolean includeInferred, String baseURI) throws IOException, RepositoryException, MalformedQueryException, UnauthorizedException,
     UpdateExecutionException {
+		sync();
 		getClient().performUpdateQuery(queryString, bindings, this.tx, includeInferred, baseURI);
 	}
 
@@ -234,7 +243,12 @@ public class MarkLogicClient {
 	 * @throws RDFParseException
 	 */
     public void sendAdd(File file, String baseURI, RDFFormat dataFormat, Resource... contexts) throws RDFParseException {
-		getClient().performAdd(file, baseURI, dataFormat, this.tx, contexts);
+        try {
+            sync();
+            getClient().performAdd(file, baseURI, dataFormat, this.tx, contexts);
+        } catch (MarkLogicSesameException e) {
+            e.printStackTrace();
+        }
     }
 
 	/**
@@ -245,7 +259,7 @@ public class MarkLogicClient {
 	 * @param contexts
 	 */
 	public void sendAdd(InputStream in, String baseURI, RDFFormat dataFormat, Resource... contexts) throws RDFParseException{
-		getClient().performAdd(in, baseURI, dataFormat, this.tx, contexts);
+        getClient().performAdd(in, baseURI, dataFormat, this.tx, contexts);
 	}
 
 	/**
@@ -257,7 +271,7 @@ public class MarkLogicClient {
 	 */
 	public void sendAdd(Reader in, String baseURI, RDFFormat dataFormat, Resource... contexts) throws RDFParseException{
 		//TBD- must deal with char encoding
-		getClient().performAdd(new ReaderInputStream(in), baseURI, dataFormat, this.tx, contexts);
+        getClient().performAdd(new ReaderInputStream(in), baseURI, dataFormat, this.tx, contexts);
 	}
 
 	/**
@@ -269,10 +283,15 @@ public class MarkLogicClient {
 	 * @param contexts
 	 */
 	public void sendAdd(String baseURI, Resource subject, URI predicate, Value object, Resource... contexts) throws MarkLogicSesameException {
-        //getClient().performAdd(baseURI, (Resource) skolemize(subject), (URI) skolemize(predicate), skolemize(object), this.tx, contexts);
-        for(Resource ctx:contexts) {
-            sinkQuad(new ContextStatementImpl((Resource) skolemize(subject), (URI) skolemize(predicate), skolemize(object), ctx));
+        if (WRITE_CACHE_ENABLED) {
+            sinkQuad(baseURI, subject, predicate, object, contexts);
+        } else {
+            getClient().performAdd(baseURI, (Resource) skolemize(subject), (URI) skolemize(predicate), skolemize(object), this.tx, contexts);
         }
+    }
+
+    public void sinkQuad(String baseURI, Resource subject, URI predicate, Value object, Resource... contexts) {
+        cache.add(subject, predicate, object, contexts);
     }
 
 	/**
@@ -284,7 +303,8 @@ public class MarkLogicClient {
 	 * @param contexts
 	 */
 	public void sendRemove(String baseURI, Resource subject,URI predicate, Value object, Resource... contexts) throws MarkLogicSesameException {
-		getClient().performRemove(baseURI, (Resource) skolemize(subject), (URI) skolemize(predicate), skolemize(object), this.tx, contexts);
+        //sync();
+        getClient().performRemove(baseURI, (Resource) skolemize(subject), (URI) skolemize(predicate), skolemize(object), this.tx, contexts);
 	}
 
 	/**
@@ -292,10 +312,20 @@ public class MarkLogicClient {
 	 * @param contexts
 	 */
 	public void sendClear(Resource... contexts){
-		getClient().performClear(this.tx, contexts);
+        try {
+            sync();
+            getClient().performClear(this.tx, contexts);
+        } catch (MarkLogicSesameException e) {
+            e.printStackTrace();
+        }
 	}
 	public void sendClearAll(){
-		getClient().performClearAll(this.tx);
+        try {
+            sync();
+            getClient().performClearAll(this.tx);
+        } catch (MarkLogicSesameException e) {
+            e.printStackTrace();
+        }
 	}
 
 	/**
