@@ -298,7 +298,9 @@ class MarkLogicClientImpl {
     public void performAdd(String baseURI, Resource subject, URI predicate, Value object, Transaction tx, Resource... contexts) {
         sparqlManager = getDatabaseClient().newSPARQLQueryManager();
         StringBuilder sb = new StringBuilder();
+
         if(notNull(contexts) && contexts.length>0) {
+            if (notNull(baseURI)) sb.append("BASE <" + baseURI + ">\n");
             sb.append("INSERT DATA { ");
             for (int i = 0; i < contexts.length; i++) {
                 if (notNull(contexts[i])) {
@@ -323,6 +325,7 @@ class MarkLogicClientImpl {
     public void performRemove(String baseURI, Resource subject, URI predicate, Value object, Transaction tx, Resource... contexts) {
         StringBuilder sb = new StringBuilder();
         if(notNull(contexts) && contexts.length>0) {
+            if (notNull(baseURI))sb.append("BASE <" + baseURI + ">\n");
             sb.append("DELETE WHERE { ");
             for (int i = 0; i < contexts.length; i++) {
                 if (notNull(contexts[i])) {

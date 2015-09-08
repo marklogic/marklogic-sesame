@@ -713,7 +713,6 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
                 } else {
                     ob.append("<" + object.stringValue() + "> ");
                 }
-                    //if (baseURI != null) sb.append("BASE <" + baseURI + ">\n");
                 sb.append("CONSTRUCT {?s ?p "+ob.toString()+"} WHERE {");
                 if(notNull(contexts) && contexts.length>0) {
                     for (int i = 0; i < contexts.length; i++) {
@@ -741,7 +740,6 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
                     sb.append("?s ?p "+ob.toString()+" }");
                 }
             }
-
             GraphQuery query = prepareGraphQuery(sb.toString());
             setBindings(query, subject, predicate, object, contexts);
             query.evaluate(handler);
