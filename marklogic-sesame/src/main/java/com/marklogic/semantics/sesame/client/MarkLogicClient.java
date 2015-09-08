@@ -28,10 +28,8 @@ import com.marklogic.semantics.sesame.MarkLogicSesameException;
 import com.marklogic.semantics.sesame.MarkLogicTransactionException;
 import org.apache.commons.io.input.ReaderInputStream;
 import org.openrdf.http.protocol.UnauthorizedException;
-import org.openrdf.model.Resource;
-import org.openrdf.model.URI;
-import org.openrdf.model.Value;
-import org.openrdf.model.ValueFactory;
+import org.openrdf.model.*;
+import org.openrdf.model.impl.ContextStatementImpl;
 import org.openrdf.query.*;
 import org.openrdf.query.resultio.QueryResultIO;
 import org.openrdf.query.resultio.TupleQueryResultFormat;
@@ -48,6 +46,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.nio.charset.Charset;
+import java.util.Timer;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -75,6 +74,9 @@ public class MarkLogicClient {
 
 	private Transaction tx = null;
 
+	private WriteCacheTimerTask cache;
+	private Timer timer;
+
 	/**
 	 *
  	 * @param host
@@ -85,6 +87,7 @@ public class MarkLogicClient {
 	 */
 	public MarkLogicClient(String host, int port, String user, String password,String auth) {
 		this._client = new MarkLogicClientImpl(host,port,user,password,auth);
+        initTimer();
 	}
 
 	/**
@@ -93,7 +96,27 @@ public class MarkLogicClient {
 	 */
 	public MarkLogicClient(DatabaseClient databaseClient) {
 		this._client = new MarkLogicClientImpl(databaseClient);
+        initTimer();
 	}
+
+	public synchronized void initTimer(){
+        this.cache = new WriteCacheTimerTask(this);
+        this.timer = new Timer();
+        timer.scheduleAtFixedRate(cache, 10, 1000);
+	}
+
+	public void stopTimer() {
+		cache.cancel();
+		timer.cancel();
+	}
+
+	public void sinkQuad(Statement st) {
+		cache.add(st);
+	}
+
+    public void sync() throws MarkLogicSesameException {
+        cache.forceRun();
+    }
 
 	/**
 	 *
@@ -181,6 +204,7 @@ public class MarkLogicClient {
 	 */
 	public boolean sendBooleanQuery(String queryString, SPARQLQueryBindingSet bindings, boolean includeInferred, String baseURI) throws IOException, RepositoryException, MalformedQueryException, UnauthorizedException,
     QueryInterruptedException {
+        sync();
 		return getClient().performBooleanQuery(queryString, bindings, this.tx, includeInferred, baseURI);
 	}
 
@@ -245,8 +269,11 @@ public class MarkLogicClient {
 	 * @param contexts
 	 */
 	public void sendAdd(String baseURI, Resource subject, URI predicate, Value object, Resource... contexts) throws MarkLogicSesameException {
-		getClient().performAdd(baseURI, (Resource) skolemize(subject), (URI) skolemize(predicate), skolemize(object), this.tx, contexts);
-	}
+        //getClient().performAdd(baseURI, (Resource) skolemize(subject), (URI) skolemize(predicate), skolemize(object), this.tx, contexts);
+        for(Resource ctx:contexts) {
+            sinkQuad(new ContextStatementImpl((Resource) skolemize(subject), (URI) skolemize(predicate), skolemize(object), ctx));
+        }
+    }
 
 	/**
 	 *

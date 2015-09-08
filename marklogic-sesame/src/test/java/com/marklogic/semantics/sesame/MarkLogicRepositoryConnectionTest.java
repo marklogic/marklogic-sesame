@@ -650,7 +650,7 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
         conn.add(st1, context1);
 
         Assert.assertTrue(conn.hasStatement(st1, false));
-        Assert.assertFalse(conn.hasStatement(st1, false, (Resource)null));
+        Assert.assertFalse(conn.hasStatement(st1, false, (Resource) null));
         Assert.assertFalse(conn.hasStatement(st1, false, null));
 
         conn.clear(context1);
@@ -1094,8 +1094,8 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
         Assert.assertEquals(8, conn.size());
         Assert.assertEquals(4, conn.size(context5));
         Assert.assertEquals(4, conn.size((Resource) null));
-        Assert.assertEquals(8, conn.size(context5,null));
-        Assert.assertEquals(8, conn.size(null,context5));
+        Assert.assertEquals(8, conn.size(context5, null));
+        Assert.assertEquals(8, conn.size(null, context5));
         Assert.assertEquals(0, conn.size(nonexistent));
         conn.clear();
     }
@@ -1149,6 +1149,41 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
         Assert.assertFalse("The lang tag of lname is not en", conn.hasStatement(vf.createStatement(fei, lname, vf.createLiteral("Ling", "en")), false));
         Assert.assertTrue("The lang tag of lname is zh", conn.hasStatement(vf.createStatement(fei, lname, vf.createLiteral("Ling", "zh")), false));
         Assert.assertFalse(conn.isEmpty());
+    }
+
+
+    // https://github.com/marklogic/marklogic-sesame/issues/140
+    @Test
+    public void testStatementWithWriteCache() throws Exception{
+        Resource context1 = conn.getValueFactory().createURI("http://marklogic.com/test/context1");
+        Resource context2 = conn.getValueFactory().createURI("http://marklogic.com/test/context2");
+
+        ValueFactory f= conn.getValueFactory();
+
+        URI alice = f.createURI("http://example.org/people/alice");
+        URI name = f.createURI("http://example.org/ontology/name");
+        Literal alicesName = f.createLiteral("Alice1");
+
+        Statement st1 = f.createStatement(alice, name, alicesName, context1);
+        conn.add(st1);
+
+        int count = 0;
+        for (int i=0 ; i<1000000 ; i++){
+            Literal obj = f.createLiteral("Alice" + count);
+            if ( (i & 1) == 0 ) {
+                Statement st = f.createStatement(alice, name,obj,context1);
+                conn.add(st);
+            }else{
+                Statement st = f.createStatement(alice, name,obj,context2);
+                conn.add(st);
+            }
+            count = count + 1;
+        }
+
+        conn.sync();
+        assertEquals("Statement must inc size of database.", 1000000, conn.size());
+
+        conn.clear(context1);
     }
 
 }

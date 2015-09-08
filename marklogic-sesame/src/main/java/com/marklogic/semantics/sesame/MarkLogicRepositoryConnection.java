@@ -19,8 +19,8 @@
  */
 package com.marklogic.semantics.sesame;
 
-import com.marklogic.client.semantics.GraphPermissions;
 import com.marklogic.client.query.QueryDefinition;
+import com.marklogic.client.semantics.GraphPermissions;
 import com.marklogic.client.semantics.SPARQLRuleset;
 import com.marklogic.semantics.sesame.client.MarkLogicClient;
 import com.marklogic.semantics.sesame.query.*;
@@ -118,12 +118,14 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     @Override
     /**
      * Releases the connection to the database.  Ensures that open transactions
-     * are complete.
+     * are complete. Stops write cache Timer.
      */
     public void close()
         throws RepositoryException
     {
         super.close();
+        client.sync();
+        client.stopTimer();
         try {
             if (this.isActive()) {
                 client.rollbackTransaction();
@@ -949,7 +951,10 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
      */
     @Override
     public void commit() throws RepositoryException {
-        getClient().commitTransaction();
+        if(this.isActive()) {
+            sync();
+            getClient().commitTransaction();
+        }
     }
 
     /**
@@ -1356,6 +1361,10 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     @Override
     public SPARQLRuleset[] getDefaultRulesets() {
         return this.defaultRulesets;
+    }
+
+    public void sync() throws MarkLogicSesameException {
+        client.sync();
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
