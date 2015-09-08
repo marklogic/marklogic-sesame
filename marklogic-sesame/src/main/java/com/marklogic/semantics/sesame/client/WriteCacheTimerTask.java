@@ -21,7 +21,7 @@ import java.util.TimerTask;
 
 /**
  * A timer task that flushes a cache of pending triple add statements
- * periodically.
+ * periodically. The cache is represented as a Model.
  */
 public class WriteCacheTimerTask extends TimerTask {
 

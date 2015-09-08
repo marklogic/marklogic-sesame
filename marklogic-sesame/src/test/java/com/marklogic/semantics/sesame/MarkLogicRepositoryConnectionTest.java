@@ -1166,9 +1166,9 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
 
         Statement st1 = f.createStatement(alice, name, alicesName, context1);
         conn.add(st1);
-
+        conn.begin();
         int count = 0;
-        for (int i=0 ; i<1000000 ; i++){
+        for (int i=0 ; i<10000 ; i++){
             Literal obj = f.createLiteral("Alice" + count);
             if ( (i & 1) == 0 ) {
                 Statement st = f.createStatement(alice, name,obj,context1);
@@ -1179,10 +1179,9 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
             }
             count = count + 1;
         }
+        conn.commit();
 
-        conn.sync();
-        assertEquals("Statement must inc size of database.", 1000000, conn.size());
-
+        assertEquals("Statement must inc size of database.", 10000, conn.size());
         conn.clear(context1);
     }
 
