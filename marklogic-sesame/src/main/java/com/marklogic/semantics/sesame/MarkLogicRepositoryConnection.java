@@ -19,6 +19,7 @@
  */
 package com.marklogic.semantics.sesame;
 
+import com.marklogic.client.semantics.SPARQLRuleset;
 import com.marklogic.semantics.sesame.client.MarkLogicClient;
 import com.marklogic.semantics.sesame.query.*;
 
@@ -74,6 +75,8 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     private final boolean quadMode;
 
     private MarkLogicClient client;
+
+    private SPARQLRuleset[] defaultRulesets;
 
     private Object graphPerms;
 
@@ -254,7 +257,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     @Override
     public MarkLogicTupleQuery prepareTupleQuery(QueryLanguage queryLanguage, String queryString, String baseURI) throws RepositoryException, MalformedQueryException {
         if (QueryLanguage.SPARQL.equals(queryLanguage)) {
-            return new MarkLogicTupleQuery(this.client, new SPARQLQueryBindingSet(), baseURI, queryString, graphPerms);
+            return new MarkLogicTupleQuery(this.client, new SPARQLQueryBindingSet(), baseURI, queryString, graphPerms, defaultRulesets);
         }
         throw new UnsupportedQueryLanguageException("Unsupported query language " + queryLanguage.getName());
     }
@@ -315,7 +318,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
             throws RepositoryException, MalformedQueryException
     {
         if (QueryLanguage.SPARQL.equals(queryLanguage)) {
-            return new MarkLogicGraphQuery(this.client, new SPARQLQueryBindingSet(), baseURI, queryString, graphPerms);
+            return new MarkLogicGraphQuery(this.client, new SPARQLQueryBindingSet(), baseURI, queryString, graphPerms, defaultRulesets);
         }
         throw new UnsupportedQueryLanguageException("Unsupported query language " + queryLanguage.getName());
     }
@@ -374,7 +377,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     @Override
     public MarkLogicBooleanQuery prepareBooleanQuery(QueryLanguage queryLanguage, String queryString, String baseURI) throws RepositoryException, MalformedQueryException {
         if (QueryLanguage.SPARQL.equals(queryLanguage)) {
-            return new MarkLogicBooleanQuery(this.client, new SPARQLQueryBindingSet(), baseURI, queryString, graphPerms);
+            return new MarkLogicBooleanQuery(this.client, new SPARQLQueryBindingSet(), baseURI, queryString, graphPerms, defaultRulesets);
         }
         throw new UnsupportedQueryLanguageException("Unsupported query language " + queryLanguage.getName());
     }
@@ -433,7 +436,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     @Override
     public MarkLogicUpdateQuery prepareUpdate(QueryLanguage queryLanguage, String queryString, String baseURI) throws RepositoryException, MalformedQueryException {
         if (QueryLanguage.SPARQL.equals(queryLanguage)) {
-            return new MarkLogicUpdateQuery(this.client, new SPARQLQueryBindingSet(), baseURI, queryString, graphPerms);
+            return new MarkLogicUpdateQuery(this.client, new SPARQLQueryBindingSet(), baseURI, queryString, graphPerms, defaultRulesets);
         }
         throw new UnsupportedQueryLanguageException("Unsupported query language " + queryLanguage.getName());
     }
@@ -1309,6 +1312,25 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
         return this.graphPerms;
     }
 
+    /**
+     * sets default rulesets to be used by all queries
+     *
+     * @param ruleset
+     */
+    @Override
+    public void setDefaultRulesets(SPARQLRuleset ... ruleset ) {
+        this.defaultRulesets = ruleset;
+    }
+
+    /**
+     * returns default rulesets to be used by all queries
+     *
+     * @return SPARQLRuleset[]
+     */
+    @Override
+    public SPARQLRuleset[] getDefaultRulesets() {
+        return this.defaultRulesets;
+    }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // private ////////////////////////////////////////////////////////////////////////////////////
