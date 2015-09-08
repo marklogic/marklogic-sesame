@@ -177,7 +177,7 @@ public class MarkLogicRepositoryConnectionTest  extends  ConnectedRESTQA{
 	protected static final String OWL = "http://www.w3.org/2002/07/owl#";
 	
 	@BeforeClass
-	public static void initialSetup() throws Exception {/*
+	public static void initialSetup() throws Exception {
 				
 		setupJavaRESTServer(dbName, fNames[0], restServer, restPort);
 		setupAppServicesConstraint(dbName);
@@ -186,15 +186,15 @@ public class MarkLogicRepositoryConnectionTest  extends  ConnectedRESTQA{
 		
 		createRESTUser("reader", "reader", "rest-reader");
 		createRESTUser("writer", "writer", "rest-writer");
-	*/}
+	}
 	
 	@AfterClass
-	public static void tearDownSetup() throws Exception  {/*
+	public static void tearDownSetup() throws Exception  {
 		tearDownJavaRESTServer(dbName, fNames, restServer);
 		deleteUserRole("test-eval");
 		deleteRESTUser("reader");
 		deleteRESTUser("writer");
-	*/
+	
 	}
 	
 	@Before
@@ -525,7 +525,6 @@ public class MarkLogicRepositoryConnectionTest  extends  ConnectedRESTQA{
 		testAdminCon.add(st9, dirgraph);
 		testAdminCon.add(st10, dirgraph);
 		
-		Thread.currentThread().sleep(10000);			
 		Assert.assertEquals(10, testAdminCon.size(dirgraph));	
 		
 		StringBuilder queryBuilder = new StringBuilder();
