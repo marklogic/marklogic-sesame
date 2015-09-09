@@ -1,19 +1,37 @@
 // example marklogic-sesame project.  Uses your local maven repository
-
+buildscript {
+    repositories {
+        mavenCentral()
+        maven {url "http://developer.marklogic.com/maven2/"}
+        maven {url "http://rjrudin.github.io/marklogic-java/releases"}
+    }
+    dependencies {
+        classpath "com.rjrudin:ml-gradle:2.0b5"
+    }
+}
 // this directive should be uncommented for development environments
 // otherwise the examples can run from centrally distributed marklogic-jena
 evaluationDependsOn(":marklogic-sesame")
 
+apply plugin: 'ml-gradle'
+apply plugin: 'eclipse'
 apply plugin: 'java'
 
-repositories {
-  mavenCentral()
-  mavenLocal()
-}
 
 dependencies {
   compile('com.marklogic:marklogic-sesame:1.0.0-SNAPSHOT'){
-    changing=true
+      changing=true
+      exclude(group: 'org.slf4j')
+      exclude(group: 'log4j')
+      exclude(group: 'ch.qos.logback')
+  }
+}
+
+sourceSets {
+  src {
+    java {
+      srcDir 'src/main/java'
+    }
   }
 }
 

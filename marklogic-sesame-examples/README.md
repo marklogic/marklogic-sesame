@@ -1,6 +1,6 @@
 #marklogic-sesame-repository examples
 
-This directory contains a sample project that demonstrates idiomatic usage of marklogic-sesame-repository. 
+This directory contains a sample project that demonstrates usage of marklogic-sesame-repository. 
 
 For development branches, it points to the local user's Maven repository.
 
