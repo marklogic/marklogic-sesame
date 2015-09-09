@@ -18,13 +18,13 @@ question with MarkLogic.
 
 If you find a bug in the source code or a mistake in the
 documentation, you may help us by submitting an issue to our
-[GitHub Issue Tracker][issues]. Even better if you submit a
+[GitHub Issue Tracker](issues). Even better if you submit a
 Pull Request with a fix for the issue filed.
 
 ## <a name="feature"></a> Want a Feature?
 
 You may request a new feature by submitting an issue to our
-[GitHub Issue Tracker][issues]. If you would like to implement
+[GitHub Issue Tracker](issues). If you would like to implement
 a new feature then first create a new issue and discuss it with one of
 our project maintainers.
 
@@ -60,7 +60,7 @@ and clone your copy.
 
 All bug fixes and new features go into the `develop` branch.
 
-We ask that you open an issue in the [issue tracker][issues] and get agreement from
+We ask that you open an issue in the [issue tracker](issues) and get agreement from
 at least one of the project maintainers before you start coding.
 
 Nothing is more frustrating than seeing your hard work go to waste because
