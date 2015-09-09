@@ -84,7 +84,7 @@ The project at [marklogic-sesame-examples](marklogic-sesame-examples) contains a
 
 ### Javadocs
 
-Latest [javadocs](http://marklogic.github.io/marklogic-sesame/marklogic-sesame/build/docs/javadoc/)
+Latest [javadocs](http://marklogic.github.io/marklogic-sesame/marklogic-sesame/build/docs/javadoc/index.html)
 
 You can generate javadocs by running;
 
