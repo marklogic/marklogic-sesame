@@ -1,12 +1,21 @@
 #marklogic-sesame-repository examples
 
-This directory contains a sample project that demonstrates idiomatic usage of marklogic-sesame-repository. 
+This directory contains a sample project that demonstrates usage of marklogic-sesame-repository. 
 
 For development branches, it points to the local user's Maven repository.
 
-## Examples
+##Setup and Running
 
-### query
+This example suite utilises the same marklogic-sesame environment/marklogic setup (referenced in gradle.properties) and it will need to be operational to run these examples. 
+  
+To run performance test 
+
+```
+gradle runSimple
+```
+
+##Examples
+###query
 
 
 using tupleQuery.evalute();

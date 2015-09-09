@@ -1,20 +1,57 @@
 // example marklogic-sesame project.  Uses your local maven repository
-
+buildscript {
+    repositories {
+        mavenCentral()
+        maven {url "http://developer.marklogic.com/maven2/"}
+        maven {url "http://rjrudin.github.io/marklogic-java/releases"}
+    }
+}
 // this directive should be uncommented for development environments
 // otherwise the examples can run from centrally distributed marklogic-jena
 evaluationDependsOn(":marklogic-sesame")
 
+apply plugin: 'eclipse'
 apply plugin: 'java'
 
-repositories {
-  mavenCentral()
-  mavenLocal()
+configure(allprojects){
+    ext.slf4jVersion = '1.7.2'
+    ext.logbackVersion = '1.0.9'
 }
 
 dependencies {
   compile('com.marklogic:marklogic-sesame:1.0.0-SNAPSHOT'){
-    changing=true
+      changing=true
+      exclude(group: 'org.slf4j')
+      exclude(group: 'log4j')
+      exclude(group: 'ch.qos.logback')
+  }
+    compile('org.slf4j:slf4j-api:1.7.10')
+    compile "ch.qos.logback:logback-classic:$logbackVersion"
+    compile "org.slf4j:jcl-over-slf4j:$slf4jVersion"
+
+}
+
+sourceSets {
+  src {
+    java {
+      srcDir 'src/main/java'
+    }
   }
 }
 
+configurations {
+    compile {
+        description = 'compile classpath'
+        transitive = true
+    }
+    runtime {
+        extendsFrom compile
+    }
+}
+
 compileJava.dependsOn ":marklogic-sesame:install"
+
+task runSimple(type: JavaExec, dependsOn: 'classes') {
+    main = 'com.marklogic.semantics.sesame.examples.Simple'
+    classpath = sourceSets.main.runtimeClasspath
+}

@@ -2,9 +2,9 @@
 
 ## Introduction
 
-markLogic-sesame-repository is a [Sesame](http://rdf4j.org/) Repository implementation that exposes MarkLogic semantic capabilities.
+markLogic-sesame-repository is a [Sesame](http://rdf4j.org/) Repository implementation which exposes [MarkLogic](http://developr.marklogic.com) semantic features.
 
-## Quick Start
+## Quick Start / Usage
 
 _IMPORTANT_ - NO RELEASE TO MAVEN YET, YOU MUST BUILD SOFTWARE
 
@@ -65,35 +65,34 @@ gradle :marklogic-sesame:mlDeploy
 3) test MarkLogic Sesame repository
 
 ```
-gradle test
+gradle :marklogic-sesame:test
 
 ```
-loads test data, builds and run unit tests.
-
-(note- gradle requires Curl to be installed and available on your system's PATH)
 
 #### Deployment
 
-Build and deploy a local maven snapshot by running;
+Deploy a local maven marklogic-sesame-repository snapshot by runnning;
 
 ```
-gradle install
+gradle :marklogic-sesame:install
 
 ```
 
-### Links
+### Examples
 
-[marklogic-sesame-repository](https://github.com/marklogic/marklogic-sesame)
+The project at [marklogic-sesame-examples](marklogic-sesame-examples) contains a sample project that demonstrates usage of marklogic-sesame-repository.
 
-[marklogic-sesame-examples](https://github.com/marklogic/marklogic-sesame/tree/develop/marklogic-sesame-examples)
+### Javadocs
 
 [Javadocs](http://marklogic.github.io/marklogic-sesame/marklogic-sesame/build/docs/javadoc/)
 
-[JHM perf results](http://marklogic.github.io/marklogic-sesame/marklogic-sesame/build/reports/jhm/human.txt)
+### Contributing
+
+Learn how to [contribute](CONTRIBUTING.md).
 
 ### Support
 
-TBD
+The marklogic-sesame-repository is maintained by MarkLogic Engineering and distributed under the Apache 2.0 license. Everyone is encouraged to file bug reports, feature requests, and pull requests through GitHub. This input is critical and will be carefully considered, but we can’t promise a specific resolution or timeframe for any request. In addition, MarkLogic provides technical support for release tags of the Java Client API to licensed customers under the terms outlined in the Support Handbook. For more information or to sign up for support, visit [help.marklogic.com](http://help.marklogic.com).
 
 ### License
 
