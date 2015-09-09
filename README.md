@@ -69,9 +69,9 @@ gradle :marklogic-sesame:test
 
 ```
 
-#### Local Deployment
+#### Deployment
 
-To build and deploy a local maven snapshot run;
+Deploy a local maven marklogic-sesame-repository snapshot by runnning;
 
 ```
 gradle :marklogic-sesame:install
@@ -81,14 +81,18 @@ gradle :marklogic-sesame:install
 ### Examples
 
 The project at [marklogic-sesame-examples](marklogic-sesame-examples) contains a sample project that demonstrates usage of marklogic-sesame-repository.
-g
+
 ### Javadocs
 
 [Javadocs](http://marklogic.github.io/marklogic-sesame/marklogic-sesame/build/docs/javadoc/)
 
+### Contributing
+
+Learn how to [contribute](CONTRIBUTING.md).
+
 ### Support
 
-The marklogic-sesame-repository is maintained by MarkLogic Engineering and distributed under the Apache 2.0 license. It is designed for use in production applications with MarkLogic Server. Everyone is encouraged to file bug reports, feature requests, and pull requests through GitHub. This input is critical and will be carefully considered, but we can’t promise a specific resolution or timeframe for any request. In addition, MarkLogic provides technical support for release tags of the Java Client API to licensed customers under the terms outlined in the Support Handbook. For more information or to sign up for support, visit [help.marklogic.com](http://help.marklogic.com).
+The marklogic-sesame-repository is maintained by MarkLogic Engineering and distributed under the Apache 2.0 license. Everyone is encouraged to file bug reports, feature requests, and pull requests through GitHub. This input is critical and will be carefully considered, but we can’t promise a specific resolution or timeframe for any request. In addition, MarkLogic provides technical support for release tags of the Java Client API to licensed customers under the terms outlined in the Support Handbook. For more information or to sign up for support, visit [help.marklogic.com](http://help.marklogic.com).
 
 ### License
 
