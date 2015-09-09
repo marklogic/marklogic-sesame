@@ -84,15 +84,24 @@ The project at [marklogic-sesame-examples](marklogic-sesame-examples) contains a
 
 ### Javadocs
 
-[Javadocs](http://marklogic.github.io/marklogic-sesame/marklogic-sesame/build/docs/javadoc/)
+Latest [javadocs](http://marklogic.github.io/marklogic-sesame/marklogic-sesame/build/docs/javadoc/)
+
+You can generate javadocs by running;
+
+```
+gradle :marklogic-sesame:javadoc
+
+```
 
 ### Contributing
+
+Everyone is encouraged to [file bug reports](https://github.com/marklogic/marklogic-sesame/labels/Bug), [feature requests](https://github.com/marklogic/marklogic-sesame/labels/enhancement), and [pull requests](https://github.com/marklogic/marklogic-sesame/pulls) through GitHub. This input is critical and will be carefully considered, though we cannot promise a specific resolution or timeframe for any request.
 
 Learn how to [contribute](CONTRIBUTING.md).
 
 ### Support
 
-The marklogic-sesame-repository is maintained by MarkLogic Engineering and distributed under the Apache 2.0 license. Everyone is encouraged to file bug reports, feature requests, and pull requests through GitHub. This input is critical and will be carefully considered, but we can’t promise a specific resolution or timeframe for any request. In addition, MarkLogic provides technical support for release tags of the Java Client API to licensed customers under the terms outlined in the Support Handbook. For more information or to sign up for support, visit [help.marklogic.com](http://help.marklogic.com).
+The marklogic-sesame-repository is maintained by MarkLogic Engineering and distributed under the Apache 2.0 license. In addition, MarkLogic provides technical support for release tags of the Java Client API to licensed customers under the terms outlined in the Support Handbook. For more information or to sign up for support, visit [help.marklogic.com](http://help.marklogic.com).
 
 ### License
 
