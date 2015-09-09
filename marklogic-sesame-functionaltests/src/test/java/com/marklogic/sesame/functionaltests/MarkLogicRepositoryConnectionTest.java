@@ -1314,7 +1314,7 @@ public class MarkLogicRepositoryConnectionTest  extends  ConnectedRESTQA{
         GraphManager gmgr = databaseClient.newGraphManager();
         Resource context = testAdminCon.getValueFactory().createURI("http://marklogic.com/test/graph/permstest");
         createUserRolesWithPrevilages("test-role");
-        testAdminCon.setGraphPerms(gmgr.permission("test-role", Capability.READ));
+        testAdminCon.setDefaultGraphPerms(gmgr.permission("test-role", Capability.READ));
         String defGraphQuery = "CREATE GRAPH <http://marklogic.com/test/graph/permstest> ";
         MarkLogicUpdateQuery updateQuery = testAdminCon.prepareUpdate(QueryLanguage.SPARQL, defGraphQuery);
         //updateQuery.setGraphPerms(gmgr.permission("test-role", Capability.READ));
@@ -1329,7 +1329,7 @@ public class MarkLogicRepositoryConnectionTest  extends  ConnectedRESTQA{
         boolean results = booleanQuery.evaluate();
         Assert.assertEquals(false, results);
         
-       GraphPermissions gr = (GraphPermissions) testAdminCon.getGraphPerms();
+       GraphPermissions gr = (GraphPermissions) testAdminCon.getDefaultGraphPerms();
        logger.debug("Size is" + gr.size());
         // add get permissions and verify once those methods are added
     }
