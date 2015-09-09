@@ -120,7 +120,7 @@ public class MarkLogicGraphPermsTest extends SesameTestBase {
             throws Exception {
 
         GraphManager gmgr = adminClient.newGraphManager();
-        conn.setGraphPerms(gmgr.permission("app-user", Capability.READ));
+        conn.setDefaultGraphPerms(gmgr.permission("app-user", Capability.READ));
 
         Resource context = conn.getValueFactory().createURI("http://marklogic.com/test/graph/permstest");
 

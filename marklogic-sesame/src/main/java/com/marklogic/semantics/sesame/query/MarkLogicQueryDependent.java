@@ -19,6 +19,10 @@
  */
 package com.marklogic.semantics.sesame.query;
 
+import com.marklogic.client.query.QueryDefinition;
+import com.marklogic.client.semantics.GraphPermissions;
+import com.marklogic.client.semantics.SPARQLRuleset;
+
 /**
  * interface defining MarkLogic specific query features
  *
@@ -30,13 +34,13 @@ interface MarkLogicQueryDependent {
      * gets query inference ruleset
      * @return java api client Ruleset
      */
-    Object getRulesets();
+    SPARQLRuleset[] getRulesets();
 
     /**
      * sets query inference ruleset to be used when query executes
      * @param ruleset
      */
-    void setRulesets(Object ... ruleset);
+    void setRulesets(SPARQLRuleset ... ruleset);
 
     /**
      * gets base uri to be used by query
@@ -54,24 +58,24 @@ interface MarkLogicQueryDependent {
      * gets constraining query to be used by query
      * @return
      */
-    Object getConstrainingQueryDefinition();
+    QueryDefinition getConstrainingQueryDefinition();
 
     /**
      * sets constraining query to be used by query
      *
      * @param constrainingQueryDefinition
      */
-    void setConstrainingQueryDefinition(Object constrainingQueryDefinition);
+    void setConstrainingQueryDefinition(QueryDefinition constrainingQueryDefinition);
 
     /**
      *  gets graph permissions to be used by query
      */
-    Object getGraphPerms();
+    GraphPermissions getGraphPerms();
 
     /**
      * sets graph permissions to be used by query
      * @param graphPerms
      */
-    void setGraphPerms(Object graphPerms);
+    void setGraphPerms(GraphPermissions graphPerms);
 
 }

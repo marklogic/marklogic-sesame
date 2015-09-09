@@ -29,6 +29,7 @@ import com.marklogic.client.io.FileHandle;
 import com.marklogic.client.io.InputStreamHandle;
 import com.marklogic.client.query.QueryDefinition;
 import com.marklogic.client.semantics.*;
+import com.marklogic.semantics.sesame.MarkLogicSesameException;
 import org.openrdf.model.Literal;
 import org.openrdf.model.Resource;
 import org.openrdf.model.URI;
@@ -43,7 +44,8 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.InputStream;
 import java.net.URISyntaxException;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -85,10 +87,8 @@ class MarkLogicClientImpl {
         setDatabaseClient(DatabaseClientFactory.newClient(host, port, user, password, DatabaseClientFactory.Authentication.valueOf(auth)));
     }
 
-    public MarkLogicClientImpl(Object databaseClient) {
-        if (databaseClient instanceof DatabaseClient) {
-            setDatabaseClient((DatabaseClient) databaseClient);
-        }
+    public MarkLogicClientImpl(DatabaseClient databaseClient) {
+        setDatabaseClient(databaseClient);
     }
 
     private void setDatabaseClient(DatabaseClient databaseClient) {
@@ -273,32 +273,39 @@ class MarkLogicClientImpl {
         }
     }
 
-    public void performAdd(InputStream in, String baseURI, RDFFormat dataFormat, Transaction tx, Resource... contexts) {
-        graphManager = getDatabaseClient().newGraphManager();
-        graphManager.setDefaultMimetype(dataFormat.getDefaultMIMEType());
-        if (dataFormat.equals(RDFFormat.NQUADS) || dataFormat.equals(RDFFormat.TRIG)) {
-            //TBD- tx ?
-            graphManager.mergeGraphs(new InputStreamHandle(in));
-        } else {
-            //TBD- must be more efficient
-            if (notNull(contexts) && contexts.length>0) {
-                for (int i = 0; i < contexts.length; i++) {
-                    if(notNull(contexts[i])){
-                        graphManager.merge(contexts[i].toString(),  new InputStreamHandle(in), tx);
-                    }else{
-                        graphManager.merge(DEFAULT_GRAPH_URI,  new InputStreamHandle(in), tx);
-                    }
-                }
+    public void performAdd(InputStream in, String baseURI, RDFFormat dataFormat, Transaction tx, Resource... contexts) throws RDFParseException {
+        try {
+            graphManager = getDatabaseClient().newGraphManager();
+
+            graphManager.setDefaultMimetype(dataFormat.getDefaultMIMEType());
+            if (dataFormat.equals(RDFFormat.NQUADS) || dataFormat.equals(RDFFormat.TRIG)) {
+                //TBD- tx ?
+                graphManager.mergeGraphs(new InputStreamHandle(in));
             } else {
-                graphManager.merge(DEFAULT_GRAPH_URI, new InputStreamHandle(in), tx);
+                //TBD- must be more efficient
+                if (notNull(contexts) && contexts.length > 0) {
+                    for (int i = 0; i < contexts.length; i++) {
+                        if (notNull(contexts[i])) {
+                            graphManager.merge(contexts[i].toString(), new InputStreamHandle(in), tx);
+                        } else {
+                            graphManager.merge(DEFAULT_GRAPH_URI, new InputStreamHandle(in), tx);
+                        }
+                    }
+                } else {
+                    graphManager.merge(DEFAULT_GRAPH_URI, new InputStreamHandle(in), tx);
+                }
             }
+        } catch (FailedRequestException e) {
+            throw new RDFParseException("Request to MarkLogic server failed, check input is valid.");
         }
     }
 
-    public void performAdd(String baseURI, Resource subject, URI predicate, Value object, Transaction tx, Resource... contexts) {
+    public void performAdd(String baseURI, Resource subject, URI predicate, Value object, Transaction tx, Resource... contexts) throws MarkLogicSesameException {
         sparqlManager = getDatabaseClient().newSPARQLQueryManager();
         StringBuilder sb = new StringBuilder();
+
         if(notNull(contexts) && contexts.length>0) {
+            if (notNull(baseURI)) sb.append("BASE <" + baseURI + ">\n");
             sb.append("INSERT DATA { ");
             for (int i = 0; i < contexts.length; i++) {
                 if (notNull(contexts[i])) {
@@ -320,9 +327,10 @@ class MarkLogicClientImpl {
     }
 
     // performRemove
-    public void performRemove(String baseURI, Resource subject, URI predicate, Value object, Transaction tx, Resource... contexts) {
+    public void performRemove(String baseURI, Resource subject, URI predicate, Value object, Transaction tx, Resource... contexts) throws MarkLogicSesameException {
         StringBuilder sb = new StringBuilder();
         if(notNull(contexts) && contexts.length>0) {
+            if (notNull(baseURI))sb.append("BASE <" + baseURI + ">\n");
             sb.append("DELETE WHERE { ");
             for (int i = 0; i < contexts.length; i++) {
                 if (notNull(contexts[i])) {
@@ -371,11 +379,21 @@ class MarkLogicClientImpl {
     }
 
     public void setRulesets(Object ... rulesets) {
-        this.ruleset = Arrays.copyOf(rulesets, rulesets.length, SPARQLRuleset[].class);;
+        if(notNull(rulesets)) {
+            List<SPARQLRuleset> list = new ArrayList<>();
+            for(Object r : rulesets) {
+                if(r != null && rulesets.length > 0) {
+                    list.add((SPARQLRuleset)r);
+                }
+            }
+            this.ruleset = list.toArray(new SPARQLRuleset[list.size()]);;
+        }else{
+            this.ruleset = null;
+        }
     }
 
     // graph perms
-    public void setGraphPerms(Object graphPerms) {
+    public void setGraphPerms(GraphPermissions graphPerms) {
         this.graphPerms = (GraphPermissions) graphPerms;
     }
 
@@ -392,35 +410,39 @@ class MarkLogicClientImpl {
         return this.constrainingQueryDef;
     }
 
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+
     // getSPARQLBindings
     protected SPARQLBindings getSPARQLBindings(SPARQLQueryBindingSet bindings) {
         SPARQLBindings sps = new SPARQLBindingsImpl();
         for (Binding binding : bindings) {
             sps.bind(binding.getName(), binding.getValue().stringValue());
-            logger.debug("binding:" + binding.getName() + "=" + binding.getValue());
         }
         return sps;
     }
 
-    private static SPARQLQueryDefinition bindObject(SPARQLQueryDefinition qdef, String variableName, Value object){
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+
+    private static SPARQLQueryDefinition bindObject(SPARQLQueryDefinition qdef, String variableName, Value object) throws MarkLogicSesameException{
         SPARQLBindings bindings = qdef.getBindings();
         if(object != null){
             if (object instanceof URI) {
                 bindings.bind(variableName, object.stringValue());
             } else if (object instanceof Literal) {
                 Literal lit = (Literal) object;
-                if (((Literal) object).getDatatype() != null) {
+                if (lit.getLanguage() != null) {
+                    String languageTag = lit.getLanguage();
+                    bindings.bind(variableName, lit.getLabel(), Locale.forLanguageTag(languageTag));
+                }else if (((Literal) object).getDatatype() != null) {
                     try {
                         String xsdType = lit.getDatatype().toString();
                         String fragment = new java.net.URI(xsdType).getFragment();
                         bindings.bind(variableName, lit.getLabel(), fragment);
                     } catch (URISyntaxException e) {
-                        //throw new MarkLogicSesameException("Problem with object.");
+                        throw new MarkLogicSesameException("Problem with object datatype.");
                     }
-                } else if (!lit.getLanguage().equals("")) {
-                    String languageTag = lit.getLanguage();
-                    bindings.bind(variableName, lit.getLabel(), Locale.forLanguageTag(languageTag));
-                } else {
+                }else {
+                    // assume we have a string value
                     bindings.bind(variableName, lit.getLabel(), "string");
                 }
             }
@@ -429,7 +451,7 @@ class MarkLogicClientImpl {
         return qdef;
     }
 
-    private Boolean notNull(Object item) {
+    private static Boolean notNull(Object item) {
         if (item!=null)
             return true;
         else

@@ -19,6 +19,11 @@
  */
 package com.marklogic.semantics.sesame.query;
 
+import com.marklogic.client.query.QueryDefinition;
+import com.marklogic.client.semantics.GraphPermissions;
+import com.marklogic.client.semantics.SPARQLRuleset;
+import com.marklogic.semantics.sesame.client.MarkLogicClient;
+import com.marklogic.semantics.sesame.client.MarkLogicClientDependent;
 import org.openrdf.model.Value;
 import org.openrdf.model.impl.ValueFactoryImpl;
 import org.openrdf.query.Dataset;
@@ -28,9 +33,6 @@ import org.openrdf.repository.sparql.query.QueryStringUtil;
 import org.openrdf.repository.sparql.query.SPARQLQueryBindingSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.marklogic.semantics.sesame.client.MarkLogicClient;
-import com.marklogic.semantics.sesame.client.MarkLogicClientDependent;
 
 /**
  * base query class
@@ -59,7 +61,7 @@ public class MarkLogicQuery extends AbstractQuery implements Query,MarkLogicClie
      * @param baseUri
      * @param queryString
      */
-    public MarkLogicQuery(MarkLogicClient client, SPARQLQueryBindingSet bindingSet, String baseUri, String queryString, Object graphPerms) {
+    public MarkLogicQuery(MarkLogicClient client, SPARQLQueryBindingSet bindingSet, String baseUri, String queryString, GraphPermissions graphPerms, QueryDefinition defaultQueryDef, SPARQLRuleset[] rulesets) {
         super();
         setBaseURI(baseUri);
         setQueryString(queryString);
@@ -67,6 +69,8 @@ public class MarkLogicQuery extends AbstractQuery implements Query,MarkLogicClie
         setBindings(bindingSet);
         setIncludeInferred(true); // is default set true
         setGraphPerms(graphPerms);
+        setConstrainingQueryDefinition(defaultQueryDef);
+        setRulesets(rulesets);
     }
 
     /**
@@ -246,7 +250,7 @@ public class MarkLogicQuery extends AbstractQuery implements Query,MarkLogicClie
      * @param constrainingQueryDefinition
      */
     @Override
-    public void setConstrainingQueryDefinition(Object constrainingQueryDefinition) {
+    public void setConstrainingQueryDefinition(QueryDefinition constrainingQueryDefinition) {
         getMarkLogicClient().setConstrainingQueryDefinition(constrainingQueryDefinition);
     }
 
@@ -255,7 +259,7 @@ public class MarkLogicQuery extends AbstractQuery implements Query,MarkLogicClie
      * @return
      */
     @Override
-    public Object getConstrainingQueryDefinition() {
+    public QueryDefinition getConstrainingQueryDefinition() {
         return getMarkLogicClient().getConstrainingQueryDefinition();
     }
 
@@ -264,7 +268,7 @@ public class MarkLogicQuery extends AbstractQuery implements Query,MarkLogicClie
      *
      * @param ruleset
      */
-    public void setRulesets(Object ... ruleset){
+    public void setRulesets(SPARQLRuleset ... ruleset){
         getMarkLogicClient().setRulesets(ruleset);
     }
 
@@ -272,7 +276,7 @@ public class MarkLogicQuery extends AbstractQuery implements Query,MarkLogicClie
      *
      * @return
      */
-    public Object[] getRulesets(){
+    public SPARQLRuleset[] getRulesets(){
         return getMarkLogicClient().getRulesets();
     }
 
@@ -282,7 +286,7 @@ public class MarkLogicQuery extends AbstractQuery implements Query,MarkLogicClie
      * @param graphPerms
      */
     @Override
-    public void setGraphPerms(Object graphPerms) {
+    public void setGraphPerms(GraphPermissions graphPerms) {
         getMarkLogicClient().setGraphPerms(graphPerms);
     }
 
@@ -291,7 +295,7 @@ public class MarkLogicQuery extends AbstractQuery implements Query,MarkLogicClie
      * @return
      */
     @Override
-    public Object getGraphPerms() {
+    public GraphPermissions getGraphPerms() {
         return getMarkLogicClient().getGraphPerms();
     }
 }

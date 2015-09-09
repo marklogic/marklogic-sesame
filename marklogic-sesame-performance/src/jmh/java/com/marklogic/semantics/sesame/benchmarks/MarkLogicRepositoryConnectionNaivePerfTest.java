@@ -1,10 +1,7 @@
 package com.marklogic.semantics.sesame.benchmarks;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.Properties;
-
+import com.marklogic.semantics.sesame.MarkLogicRepository;
+import com.marklogic.semantics.sesame.MarkLogicRepositoryConnection;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openrdf.model.Resource;
 import org.openrdf.model.Statement;
@@ -17,8 +14,10 @@ import org.openrdf.rio.RDFFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.marklogic.semantics.sesame.MarkLogicRepository;
-import com.marklogic.semantics.sesame.MarkLogicRepositoryConnection;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Properties;
 
 public class MarkLogicRepositoryConnectionNaivePerfTest {
 

@@ -28,6 +28,7 @@ import org.openrdf.OpenRDFException;
 import org.openrdf.model.*;
 import org.openrdf.model.impl.LinkedHashModel;
 import org.openrdf.model.vocabulary.RDF;
+import org.openrdf.model.vocabulary.XMLSchema;
 import org.openrdf.query.*;
 import org.openrdf.repository.Repository;
 import org.openrdf.repository.RepositoryConnection;
@@ -79,7 +80,7 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
     public void tearDown()
             throws Exception {
         logger.debug("tearing down...");
-        conn.clear();
+        if(conn.isOpen()){conn.clear();}
         conn.close();
         conn = null;
         rep.shutDown();
@@ -347,7 +348,6 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
     }
 
     @Test
-    @Ignore
     public void testContextIDs()
             throws Exception {
         Resource context5 = conn.getValueFactory().createURI("http://marklogic.com/test/context7");
@@ -369,16 +369,16 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
         RepositoryResult<Resource> result = conn.getContextIDs();
         try {
             Assert.assertTrue("result should not be empty", result.hasNext());
-            logger.debug("ContextIDs");
             Resource result1 = result.next();
-            logger.debug(result1.stringValue());
+            Assert.assertEquals("http://marklogic.com/semantics#default-graph", result1.stringValue());
+            result1 = result.next();
             Assert.assertEquals("http://marklogic.com/test/context7", result1.stringValue());
+            result1 = result.next();
+            Assert.assertEquals("http://marklogic.com/test/context8", result1.stringValue());
         } finally {
             result.close();
         }
-
         conn.clear(context5, context6);
-
     }
 
     @Test
@@ -471,7 +471,7 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
        // RepositoryResult<Statement> statements = conn.getStatements(alice, null, null, true,context5);
 
         //Model aboutAlice = Iterations.addAll(statements, new LinkedHashModel());
-
+conn.sync();
         String checkAliceQuery = "ASK { GRAPH <http://marklogic.com/test/context5> {<http://example.org/people/alice> <http://example.org/ontology/name> 'Alice' .}}";
         BooleanQuery booleanAliceQuery = conn.prepareBooleanQuery(QueryLanguage.SPARQL, checkAliceQuery);
         Assert.assertTrue(booleanAliceQuery.evaluate());
@@ -629,10 +629,30 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
 
         Assert.assertTrue(conn.hasStatement(st1, false, context1));
         Assert.assertTrue(conn.hasStatement(st1, false, context1, null));
-        Assert.assertTrue(conn.hasStatement(st1, false,null));
+        Assert.assertFalse(conn.hasStatement(st1, false, null));
         Assert.assertFalse(conn.hasStatement(st1, false, (Resource) null));
         Assert.assertTrue(conn.hasStatement(st1, false));
         Assert.assertTrue(conn.hasStatement(null, null, null, false));
+        conn.clear(context1);
+    }
+
+    // https://github.com/marklogic/marklogic-sesame/issues/153
+    @Test
+    public void testHasStatement2() throws Exception
+    {
+        Resource context1 = conn.getValueFactory().createURI("http://marklogic.com/test/context1");
+        ValueFactory f= conn.getValueFactory();
+        URI alice = f.createURI("http://example.org/people/alice");
+        URI name = f.createURI("http://example.org/ontology/name");
+        Literal alicesName = f.createLiteral("Alice");
+
+        Statement st1 = f.createStatement(alice, name, alicesName);
+        conn.add(st1, context1);
+
+        Assert.assertTrue(conn.hasStatement(st1, false));
+        Assert.assertFalse(conn.hasStatement(st1, false, (Resource) null));
+        Assert.assertFalse(conn.hasStatement(st1, false, null));
+
         conn.clear(context1);
     }
 
@@ -663,6 +683,38 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
                 "</rdf:RDF>";
 
         conn.exportStatements(alice, null, alicesName, true, rdfWriter, context1);
+        Assert.assertEquals(expected, out.toString());
+        conn.clear(context1);
+    }
+
+    // https://github.com/marklogic/marklogic-sesame/issues/108
+    @Test
+    public void testExportStatementsAllNull()
+            throws Exception {
+        Resource context1 = conn.getValueFactory().createURI("http://marklogic.com/test/context1");
+        ValueFactory f= conn.getValueFactory();
+        final URI alice = f.createURI("http://example.org/people/alice");
+        URI name = f.createURI("http://example.org/ontology/name");
+        Literal alicesName = f.createLiteral("Alice");
+
+        Statement st1 = f.createStatement(alice, name, alicesName);
+        conn.add(st1, context1);
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+        RDFXMLWriter rdfWriter = new RDFXMLWriter(out);
+
+        String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+                "<rdf:RDF\n" +
+                "\txmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\">\n" +
+                "\n" +
+                "<rdf:Description rdf:about=\"http://example.org/people/alice\">\n" +
+                "\t<name xmlns=\"http://example.org/ontology/\" rdf:datatype=\"http://www.w3.org/2001/XMLSchema#string\">Alice</name>\n" +
+                "</rdf:Description>\n" +
+                "\n" +
+                "</rdf:RDF>";
+
+        conn.exportStatements(null, null, null, false, rdfWriter, context1);
         Assert.assertEquals(expected, out.toString());
         conn.clear(context1);
     }
@@ -746,7 +798,7 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
 
         Statement st1 = f.createStatement(alice, name, alicesName);
         Statement st2 = f.createStatement(alice, age, alicesAge);
-        
+
         conn.begin();
         conn.add(st1, context1);
         conn.add(st2, context2);
@@ -879,9 +931,10 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
 
         conn.add(st1, (Resource) null);
         conn.add(st2, (Resource) null);
-
+        conn.sync();
         conn.remove(william, age, williamName, (Resource) null);
         conn.remove(william, name, williamAge, (Resource) null);
+        conn.sync();
     }
 
     //https://github.com/marklogic/marklogic-sesame/issues/139
@@ -1042,8 +1095,8 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
         Assert.assertEquals(8, conn.size());
         Assert.assertEquals(4, conn.size(context5));
         Assert.assertEquals(4, conn.size((Resource) null));
-        Assert.assertEquals(8, conn.size(context5,null));
-        Assert.assertEquals(8, conn.size(null,context5));
+        Assert.assertEquals(8, conn.size(context5, null));
+        Assert.assertEquals(8, conn.size(null, context5));
         Assert.assertEquals(0, conn.size(nonexistent));
         conn.clear();
     }
@@ -1073,4 +1126,64 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
         Assert.assertTrue("The value of email should be updated", conn.hasStatement(vf.createStatement(fei, email, vf.createLiteral("fling@marklogic.com")), false));
         Assert.assertFalse(conn.isEmpty());
     }
+
+    // https://github.com/marklogic/marklogic-sesame/issues/131
+    @Test
+    public void testLiterals()
+            throws OpenRDFException
+    {
+        ValueFactory vf= conn.getValueFactory();
+        URI fei = vf.createURI("http://marklogicsparql.com/id#3333");
+        URI lname = vf.createURI("http://marklogicsparql.com/addressbook#lastName");
+        URI age = vf.createURI("http://marklogicsparql.com/addressbook#age");
+
+        Literal feilname = vf.createLiteral("Ling", "zh");
+        //Literal shouldfail = vf.createLiteral(1, "zh");
+        Literal invalidIntegerLiteral = vf.createLiteral("four", XMLSchema.INTEGER);
+        Literal feiage = vf.createLiteral(25);
+
+        conn.add(fei, lname, feilname);
+        conn.add(fei, age, feiage);
+        //conn.add(fei, age, invalidIntegerLiteral);
+
+        logger.info("lang:{}", conn.hasStatement(vf.createStatement(fei, lname, vf.createLiteral("Ling", "en")), false));
+        Assert.assertFalse("The lang tag of lname is not en", conn.hasStatement(vf.createStatement(fei, lname, vf.createLiteral("Ling", "en")), false));
+        Assert.assertTrue("The lang tag of lname is zh", conn.hasStatement(vf.createStatement(fei, lname, vf.createLiteral("Ling", "zh")), false));
+        Assert.assertFalse(conn.isEmpty());
+    }
+
+
+    // https://github.com/marklogic/marklogic-sesame/issues/140
+    @Ignore
+    public void testStatementWithWriteCache() throws Exception{
+        Resource context1 = conn.getValueFactory().createURI("http://marklogic.com/test/context1");
+        Resource context2 = conn.getValueFactory().createURI("http://marklogic.com/test/context2");
+
+        ValueFactory f= conn.getValueFactory();
+
+        URI alice = f.createURI("http://example.org/people/alice");
+        URI name = f.createURI("http://example.org/ontology/name");
+        Literal alicesName = f.createLiteral("Alice1");
+
+        Statement st1 = f.createStatement(alice, name, alicesName, context1);
+        conn.add(st1);
+        conn.begin();
+        int count = 0;
+        for (int i=0 ; i<10000 ; i++){
+            Literal obj = f.createLiteral("Alice" + count);
+            if ( (i & 1) == 0 ) {
+                Statement st = f.createStatement(alice, name,obj,context1);
+                conn.add(st);
+            }else{
+                Statement st = f.createStatement(alice, name,obj,context2);
+                conn.add(st);
+            }
+            count = count + 1;
+        }
+        conn.commit();
+
+        assertEquals("Statement must inc size of database.", 10000, conn.size());
+        conn.clear(context1);
+    }
+
 }

@@ -20,11 +20,7 @@
 package com.marklogic.semantics.sesame;
 
 import com.marklogic.client.ResourceNotFoundException;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.rules.ExpectedException;
 import org.openrdf.IsolationLevels;
 import org.openrdf.model.Resource;
@@ -107,6 +103,16 @@ public class MarkLogicExceptionsTest extends SesameTestBase {
         conn.add(inputFile, baseURI, RDFFormat.TURTLE, context1);
         conn.clear(context1);
     }
+    @Test
+    public void testAddMalformedWithInputStream() throws Exception {
+        File inputFile = new File("src/test/resources/testdata/malformed-literals.ttl");
+        FileInputStream is = new FileInputStream(inputFile);
+        String baseURI = "http://example.org/example1/";
+        exception.expect(RDFParseException.class);
+        Resource context1 = conn.getValueFactory().createURI("http://marklogic.com/test/context3");
+        conn.add(is, baseURI, RDFFormat.TURTLE, context1);
+        conn.clear(context1);
+    }
 
     @Test
     public void testIncorrectIsolatedLevel() throws Exception {
@@ -150,5 +156,16 @@ public class MarkLogicExceptionsTest extends SesameTestBase {
     public void testDanglingRollback() throws Exception {
         exception.expect(MarkLogicTransactionException.class);
         conn.rollback();
+    }
+
+    // https://github.com/marklogic/marklogic-sesame/issues/110
+    @Test
+    public void testAddingIfClosed() throws Exception {
+        File inputFile = new File("src/test/resources/testdata/default-graph-1.ttl");
+        String baseURI = "http://example.org/example1/";
+        Resource context1 = conn.getValueFactory().createURI("http://marklogic.com/test/context1");
+        exception.expect(RepositoryException.class);
+        conn.close();
+        conn.add(inputFile, baseURI, RDFFormat.TURTLE, context1);
     }
 }
