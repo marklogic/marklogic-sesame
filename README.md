@@ -2,7 +2,7 @@
 
 ## Introduction
 
-markLogic-sesame-repository is a [Sesame](http://rdf4j.org/) Repository implementation which exposes [MarkLogic](http://developr.marklogic.com) semantic features.
+markLogic-sesame-repository is a [Sesame](http://rdf4j.org/) Repository implementation exposing [MarkLogic](http://www.marklogic.com/what-is-marklogic/features/semantics/) semantic features.
 
 ## Quick Start / Usage
 
