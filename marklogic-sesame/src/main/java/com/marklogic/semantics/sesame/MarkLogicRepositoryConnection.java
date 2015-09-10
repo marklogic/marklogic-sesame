@@ -93,6 +93,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
         super(repository);
         this.client = client;
         this.quadMode = true;
+        setIsolationLevel(IsolationLevels.SNAPSHOT);
         client.setValueFactory(repository.getValueFactory());
         client.initTimer();
     }
@@ -915,7 +916,9 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     @Override
     public void setIsolationLevel(IsolationLevel level) throws IllegalStateException {
         if(level != IsolationLevels.SNAPSHOT){
-         throw new IllegalStateException();
+            throw new IllegalStateException();
+        }else{
+            super.setIsolationLevel(level);
         }
     }
 
