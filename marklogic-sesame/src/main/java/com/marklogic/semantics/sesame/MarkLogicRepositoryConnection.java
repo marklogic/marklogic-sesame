@@ -726,11 +726,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
                 if(notNull(contexts) && contexts.length>0) {
                     for (int i = 0; i < contexts.length; i++) {
                         if(notNull(contexts[i])) {
-                            if(ob.toString() != ""){
-                                sb.append("GRAPH <" + contexts[i].stringValue() + "> {?s ?p " + ob.toString() + " .} ");
-                            }else{
-                                sb.append("GRAPH <" + contexts[i].stringValue() + "> {?s ?p ?o } ");
-                            }
+                            sb.append("GRAPH <" + contexts[i].stringValue() + "> {?s ?p " + ob.toString() + " .} ");
                         }else{
                             sb.append("GRAPH <"+DEFAULT_GRAPH_URI+"> {?s ?p "+ob.toString()+" .}");
                         }
@@ -750,7 +746,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
                         }                    }
                     sb.append("}");
                 }else{
-                    sb.append("?s ?p "+ob.toString()+" }");
+                    sb.append("?s ?p ?o }");
                 }
             }
             GraphQuery query = prepareGraphQuery(sb.toString());
@@ -955,6 +951,8 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
         if(this.isActive()) {
             sync();
             getClient().commitTransaction();
+        }else{
+            throw new MarkLogicTransactionException("No active transaction to commit.");
         }
     }
 
