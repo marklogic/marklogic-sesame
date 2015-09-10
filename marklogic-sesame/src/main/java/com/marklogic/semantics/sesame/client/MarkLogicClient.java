@@ -358,7 +358,7 @@ public class MarkLogicClient {
 	 * @throws MarkLogicTransactionException
 	 */
 	public void rollbackTransaction() throws MarkLogicTransactionException {
-		if(this.tx != null) {
+		if(isActiveTransaction()) {
 			this.tx.rollback();
 			this.tx = null;
 		}else{

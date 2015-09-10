@@ -951,6 +951,8 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
         if(this.isActive()) {
             sync();
             getClient().commitTransaction();
+        }else{
+            throw new MarkLogicTransactionException("No active transaction to commit.");
         }
     }
 

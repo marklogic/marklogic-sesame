@@ -158,6 +158,14 @@ public class MarkLogicExceptionsTest extends SesameTestBase {
         conn.rollback();
     }
 
+    // https://github.com/marklogic/marklogic-sesame/issues/174
+    @Test
+    public void testEmptyCommit() throws Exception {
+        exception.expect(MarkLogicTransactionException.class);
+        logger.info("active:{}",conn.isActive());
+        conn.commit();
+    }
+
     // https://github.com/marklogic/marklogic-sesame/issues/110
     @Test
     public void testAddingIfClosed() throws Exception {
@@ -168,4 +176,6 @@ public class MarkLogicExceptionsTest extends SesameTestBase {
         conn.close();
         conn.add(inputFile, baseURI, RDFFormat.TURTLE, context1);
     }
+
+
 }
