@@ -107,7 +107,7 @@ class MarkLogicClientImpl {
         qdef.setIncludeDefaultRulesets(includeInferred);
         qdef.setBindings(getSPARQLBindings(bindings));
         if(notNull(graphPerms)){ qdef.setUpdatePermissions(graphPerms);}
-        sparqlManager.setPageLength(pageLength);
+        if(pageLength > 0)sparqlManager.setPageLength(pageLength);
         sparqlManager.executeSelect(qdef, handle, start, tx);
         return handle.get();
     }

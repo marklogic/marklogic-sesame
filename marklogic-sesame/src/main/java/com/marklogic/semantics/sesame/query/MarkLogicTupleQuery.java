@@ -42,7 +42,7 @@ public class MarkLogicTupleQuery extends MarkLogicQuery implements TupleQuery,Ma
     protected final Logger logger = LoggerFactory.getLogger(MarkLogicTupleQuery.class);
 
     protected final long start = 1;
-    protected final long pageLength = 1000000;
+    protected final long pageLength=-1; // this value is a flag to not set setPageLength()
 
     /**
      * constructor
