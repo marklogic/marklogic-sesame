@@ -942,7 +942,7 @@ conn.sync();
     @Test
     public void testSizeWithLargerGraph() throws Exception {
         File inputFile = new File(TESTFILE_OWL);
-        conn.add(inputFile,null,RDFFormat.RDFXML);
+        conn.add(inputFile, null, RDFFormat.RDFXML);
         Assert.assertEquals(449, conn.size());
         conn.clear(conn.getValueFactory().createURI("http://marklogic.com/semantics#default-graph"));
     }
@@ -1153,38 +1153,16 @@ conn.sync();
         Assert.assertFalse(conn.isEmpty());
     }
 
-
-    // https://github.com/marklogic/marklogic-sesame/issues/140
-    @Ignore
-    public void testStatementWithWriteCache() throws Exception{
-        Resource context1 = conn.getValueFactory().createURI("http://marklogic.com/test/context1");
-        Resource context2 = conn.getValueFactory().createURI("http://marklogic.com/test/context2");
-
-        ValueFactory f= conn.getValueFactory();
-
-        URI alice = f.createURI("http://example.org/people/alice");
-        URI name = f.createURI("http://example.org/ontology/name");
-        Literal alicesName = f.createLiteral("Alice1");
-
-        Statement st1 = f.createStatement(alice, name, alicesName, context1);
-        conn.add(st1);
-        conn.begin();
-        int count = 0;
-        for (int i=0 ; i<10000 ; i++){
-            Literal obj = f.createLiteral("Alice" + count);
-            if ( (i & 1) == 0 ) {
-                Statement st = f.createStatement(alice, name,obj,context1);
-                conn.add(st);
-            }else{
-                Statement st = f.createStatement(alice, name,obj,context2);
-                conn.add(st);
-            }
-            count = count + 1;
-        }
-        conn.commit();
-
-        assertEquals("Statement must inc size of database.", 10000, conn.size());
-        conn.clear(context1);
+    @Test
+    public void testLiteralsWithNonexistantLangTag()
+            throws OpenRDFException
+    {
+        ValueFactory vf= conn.getValueFactory();
+        URI fei = vf.createURI("http://marklogicsparql.com/id#3333");
+        URI lname = vf.createURI("http://marklogicsparql.com/addressbook#lastName");
+        URI age = vf.createURI("http://marklogicsparql.com/addressbook#age");
+        Literal feilname = vf.createLiteral("Ling", "nonexistentlangtag");
+        conn.add(fei, lname, feilname);
     }
 
 }
