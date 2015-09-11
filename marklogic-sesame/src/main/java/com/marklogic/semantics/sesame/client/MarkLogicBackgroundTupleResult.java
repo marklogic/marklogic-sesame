@@ -28,10 +28,23 @@ import java.io.InputStream;
  */
 class MarkLogicBackgroundTupleResult extends BackgroundTupleResult {
 
+	/**
+	 *  constructor
+	 *
+	 * @param parser
+	 * @param in
+	 */
 	public MarkLogicBackgroundTupleResult(TupleQueryResultParser parser, InputStream in) {
 		super(parser, in);
 	}
 
+	/**
+	 * constructor
+	 *
+	 * @param queue
+	 * @param parser
+	 * @param in
+	 */
 	public MarkLogicBackgroundTupleResult(QueueCursor<BindingSet> queue, TupleQueryResultParser parser, InputStream in) {
 		super(queue, parser, in);
 	}

@@ -68,31 +68,78 @@ class MarkLogicClientImpl {
 
     private DatabaseClient databaseClient;
 
-    // constructor
+    /**
+     * constructor
+     *
+     * @param host
+     * @param port
+     * @param user
+     * @param password
+     * @param auth
+     */
     public MarkLogicClientImpl(String host, int port, String user, String password, String auth) {
         setDatabaseClient(DatabaseClientFactory.newClient(host, port, user, password, DatabaseClientFactory.Authentication.valueOf(auth)));
     }
 
+    /**
+     *  set databaseclient
+     *
+     * @param databaseClient
+     */
     public MarkLogicClientImpl(DatabaseClient databaseClient) {
         setDatabaseClient(databaseClient);
     }
 
+    /**
+     *
+     * @param databaseClient
+     */
     private void setDatabaseClient(DatabaseClient databaseClient) {
         this.databaseClient = databaseClient;
         this.sparqlManager = getDatabaseClient().newSPARQLQueryManager();
         this.graphManager = getDatabaseClient().newGraphManager();
     }
 
-    //
+    /**
+     * gets database client
+     *
+     * @return DatabaseClient
+     */
     public DatabaseClient getDatabaseClient() {
         return this.databaseClient;
     }
 
-    // performSPARQLQuery
+    /**
+     * executes SPARQLQuery
+     *
+     * @param queryString
+     * @param bindings
+     * @param start
+     * @param pageLength
+     * @param tx
+     * @param includeInferred
+     * @param baseURI
+     * @return
+     * @throws JsonProcessingException
+     */
     public InputStream performSPARQLQuery(String queryString, SPARQLQueryBindingSet bindings, long start, long pageLength, Transaction tx, boolean includeInferred, String baseURI) throws JsonProcessingException {
         return performSPARQLQuery(queryString, bindings, new InputStreamHandle(), start, pageLength, tx, includeInferred, baseURI);
     }
 
+    /**
+     * executes SPARQLQuery
+     *
+     * @param queryString
+     * @param bindings
+     * @param handle
+     * @param start
+     * @param pageLength
+     * @param tx
+     * @param includeInferred
+     * @param baseURI
+     * @return
+     * @throws JsonProcessingException
+     */
     public InputStream performSPARQLQuery(String queryString, SPARQLQueryBindingSet bindings, InputStreamHandle handle, long start, long pageLength, Transaction tx, boolean includeInferred, String baseURI) throws JsonProcessingException {
         SPARQLQueryDefinition qdef = sparqlManager.newQueryDefinition(queryString);
         if(notNull(baseURI) && baseURI != ""){ qdef.setBaseUri(baseURI);}
@@ -112,11 +159,32 @@ class MarkLogicClientImpl {
         return handle.get();
     }
 
-    // performGraphQuery
+    /**
+     * executes GraphQuery
+     * @param queryString
+     * @param bindings
+     * @param tx
+     * @param includeInferred
+     * @param baseURI
+     * @return
+     * @throws JsonProcessingException
+     */
     public InputStream performGraphQuery(String queryString, SPARQLQueryBindingSet bindings, Transaction tx, boolean includeInferred, String baseURI) throws JsonProcessingException {
         return performGraphQuery(queryString, bindings, new InputStreamHandle(), tx, includeInferred, baseURI);
     }
 
+    /**
+     * executes GraphQuery
+     *
+     * @param queryString
+     * @param bindings
+     * @param handle
+     * @param tx
+     * @param includeInferred
+     * @param baseURI
+     * @return
+     * @throws JsonProcessingException
+     */
     public InputStream performGraphQuery(String queryString, SPARQLQueryBindingSet bindings, InputStreamHandle handle, Transaction tx, boolean includeInferred, String baseURI) throws JsonProcessingException {
         SPARQLQueryDefinition qdef = sparqlManager.newQueryDefinition(queryString);
         if(notNull(baseURI) && baseURI != ""){ qdef.setBaseUri(baseURI);}
@@ -135,7 +203,16 @@ class MarkLogicClientImpl {
         return handle.get();
     }
 
-    // performBooleanQuery
+    /**
+     * executes BooleanQuery
+     *
+     * @param queryString
+     * @param bindings
+     * @param tx
+     * @param includeInferred
+     * @param baseURI
+     * @return
+     */
     public boolean performBooleanQuery(String queryString, SPARQLQueryBindingSet bindings, Transaction tx, boolean includeInferred, String baseURI) {
         SPARQLQueryDefinition qdef = sparqlManager.newQueryDefinition(queryString);
         if(notNull(baseURI) && baseURI != ""){ qdef.setBaseUri(baseURI);}
@@ -153,7 +230,15 @@ class MarkLogicClientImpl {
         return sparqlManager.executeAsk(qdef, tx);
     }
 
-    // performUpdateQuery
+    /**
+     * executes UpdateQuery
+     *
+     * @param queryString
+     * @param bindings
+     * @param tx
+     * @param includeInferred
+     * @param baseURI
+     */
     public void performUpdateQuery(String queryString, SPARQLQueryBindingSet bindings, Transaction tx, boolean includeInferred, String baseURI) {
         SPARQLQueryDefinition qdef = sparqlManager.newQueryDefinition(queryString);
         if(notNull(baseURI) && baseURI != ""){ qdef.setBaseUri(baseURI);}
@@ -171,6 +256,16 @@ class MarkLogicClientImpl {
         sparqlManager.executeUpdate(qdef, tx);
     }
 
+    /**
+     * executes merge of triples from File
+     *
+     * @param file
+     * @param baseURI
+     * @param dataFormat
+     * @param tx
+     * @param contexts
+     * @throws RDFParseException
+     */
     // performAdd
     // as we use mergeGraphs, baseURI is always file.toURI
     public void performAdd(File file, String baseURI, RDFFormat dataFormat, Transaction tx, Resource... contexts) throws RDFParseException {
@@ -198,6 +293,16 @@ class MarkLogicClientImpl {
         }
     }
 
+    /**
+     * executes merge of triples from InputStream
+     *
+     * @param in
+     * @param baseURI
+     * @param dataFormat
+     * @param tx
+     * @param contexts
+     * @throws RDFParseException
+     */
     public void performAdd(InputStream in, String baseURI, RDFFormat dataFormat, Transaction tx, Resource... contexts) throws RDFParseException {
         try {
             graphManager.setDefaultMimetype(dataFormat.getDefaultMIMEType());
@@ -223,6 +328,17 @@ class MarkLogicClientImpl {
         }
     }
 
+    /**
+     * executes INSERT of single triple
+     *
+     * @param baseURI
+     * @param subject
+     * @param predicate
+     * @param object
+     * @param tx
+     * @param contexts
+     * @throws MarkLogicSesameException
+     */
     public void performAdd(String baseURI, Resource subject, URI predicate, Value object, Transaction tx, Resource... contexts) throws MarkLogicSesameException {
         StringBuilder sb = new StringBuilder();
 
@@ -248,7 +364,17 @@ class MarkLogicClientImpl {
         sparqlManager.executeUpdate(qdef, tx);
     }
 
-    // performRemove
+    /**
+     * executes DELETE of single triple
+     *
+     * @param baseURI
+     * @param subject
+     * @param predicate
+     * @param object
+     * @param tx
+     * @param contexts
+     * @throws MarkLogicSesameException
+     */
     public void performRemove(String baseURI, Resource subject, URI predicate, Value object, Transaction tx, Resource... contexts) throws MarkLogicSesameException {
         StringBuilder sb = new StringBuilder();
         if(notNull(contexts) && contexts.length>0) {
@@ -275,7 +401,12 @@ class MarkLogicClientImpl {
         sparqlManager.executeUpdate(qdef, tx);
     }
 
-    // performClear
+    /**
+     * clears triples from named graph
+     *
+     * @param tx
+     * @param contexts
+     */
     public void performClear(Transaction tx, Resource... contexts) {
         if(notNull(contexts)) {
             for (int i = 0; i < contexts.length; i++) {
@@ -290,15 +421,29 @@ class MarkLogicClientImpl {
         }
     }
 
+    /**
+     * clears all triples
+     *
+     * @param tx
+     */
     public void performClearAll(Transaction tx) {
         graphManager.deleteGraphs();
     }
 
-    // rulesets
+    /**
+     * getter rulesets
+     *
+     * @return
+     */
     public SPARQLRuleset[] getRulesets() {
         return this.ruleset;
     }
 
+    /**
+     * setter for rulesets, filters out nulls
+     *
+     * @param rulesets
+     */
     public void setRulesets(Object ... rulesets) {
         if(notNull(rulesets)) {
             List<SPARQLRuleset> list = new ArrayList<>();
@@ -313,27 +458,50 @@ class MarkLogicClientImpl {
         }
     }
 
-    // graph perms
+    /**
+     * setter for graph permissions
+     *
+     * @param graphPerms
+     */
     public void setGraphPerms(GraphPermissions graphPerms) {
         this.graphPerms = (GraphPermissions) graphPerms;
     }
 
+    /**
+     * getter for graph permissions
+     *
+     * @return
+     */
     public GraphPermissions getGraphPerms() {
         return this.graphPerms;
     }
 
-    // constraining query
+    /**
+     * setter for ConstrainingQueryDefinition
+     *
+     * @param constrainingQueryDefinition
+     */
     public void setConstrainingQueryDefinition(Object constrainingQueryDefinition) {
         this.constrainingQueryDef = (QueryDefinition) constrainingQueryDefinition;
     }
 
+    /**
+     * getter for ConstrainingQueryDefinition
+     *
+     * @return
+     */
     public QueryDefinition getConstrainingQueryDefinition() {
         return this.constrainingQueryDef;
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    // getSPARQLBindings
+    /**
+     * converts Sesame BindingSet to java api client SPARQLBindings
+     *
+     * @param bindings
+     * @return
+     */
     protected SPARQLBindings getSPARQLBindings(SPARQLQueryBindingSet bindings) {
         SPARQLBindings sps = new SPARQLBindingsImpl();
         for (Binding binding : bindings) {
@@ -344,6 +512,15 @@ class MarkLogicClientImpl {
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * binds object
+     *
+     * @param qdef
+     * @param variableName
+     * @param object
+     * @return
+     * @throws MarkLogicSesameException
+     */
     private static SPARQLQueryDefinition bindObject(SPARQLQueryDefinition qdef, String variableName, Value object) throws MarkLogicSesameException{
         SPARQLBindings bindings = qdef.getBindings();
         if(object != null){
@@ -372,6 +549,12 @@ class MarkLogicClientImpl {
         return qdef;
     }
 
+    /**
+     * tedious utility for checking if object is null or not
+     *
+     * @param item
+     * @return
+     */
     private static Boolean notNull(Object item) {
         if (item!=null)
             return true;

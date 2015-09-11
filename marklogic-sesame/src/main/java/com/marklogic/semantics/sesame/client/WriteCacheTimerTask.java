@@ -38,28 +38,57 @@ public class WriteCacheTimerTask extends TimerTask {
     private long cacheMillis = DEFAULT_CACHE_MILLIS;
     private Date lastCacheAccess = new Date();
 
+    /**
+     * constructor
+     *
+     * @param client
+     */
     public WriteCacheTimerTask(MarkLogicClient client) {
         super();
         this.client = client;
         this.cache = new LinkedHashModel();
     }
 
+    /**
+     * return current cache size
+     *
+     * @return
+     */
     public long getCacheSize() {
         return this.cacheSize;
     }
 
+    /**
+     *  sets cache size
+     *
+     * @param cacheSize
+     */
     public void setCacheSize(long cacheSize) {
         this.cacheSize = cacheSize;
     }
 
+    /**
+     * getter cacheMillis
+     *
+     * @return
+     */
     public long getCacheMillis() {
         return cacheMillis;
     }
 
+    /**
+     * setter cacheMillis
+     *
+     * @param cacheMillis
+     */
     public void setCacheMillis(long cacheMillis) {
         this.cacheMillis = cacheMillis;
     }
 
+    /**
+     * tests to see if we should flush clash
+     *
+     */
     @Override
     public void run() {
         Date now = new Date();
@@ -74,7 +103,12 @@ public class WriteCacheTimerTask extends TimerTask {
             return;
         }
     }
-    
+
+    /**
+     * flushes the cache, writing triples as graph
+     *
+     * @throws MarkLogicSesameException
+     */
     private synchronized void flush() throws MarkLogicSesameException {
             log.debug("flushing write cache");
             ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -97,11 +131,24 @@ public class WriteCacheTimerTask extends TimerTask {
             lastCacheAccess = new Date();
             cache.clear();
     }
-    
+
+    /**
+     * forces the cache to flush if there is anything in it
+     *
+     * @throws MarkLogicSesameException
+     */
     public void forceRun() throws MarkLogicSesameException {
         if(cache.size()>0) flush();
     }
 
+    /**
+     * add triple to cache Model
+     *
+     * @param subject
+     * @param predicate
+     * @param object
+     * @param contexts
+     */
     public synchronized void add(Resource subject, URI predicate, Value object, Resource... contexts) {
         cache.add(subject,predicate,object,contexts);
     }

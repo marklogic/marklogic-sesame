@@ -39,16 +39,25 @@ public class MarkLogicRepositoryFactory implements RepositoryFactory {
 	public static final String REPOSITORY_TYPE = "marklogic:MarkLogicRepository";
 
     @Override
-	public String getRepositoryType() {
+    /**
+     *
+     */
+    public String getRepositoryType() {
 		return REPOSITORY_TYPE;
 	}
 
     @Override
-	public RepositoryImplConfig getConfig() {
+    /**
+     *
+     */
+    public RepositoryImplConfig getConfig() {
         return new MarkLogicRepositoryConfig();
 	}
 
     @Override
+    /**
+     *
+     */
     public Repository getRepository(RepositoryImplConfig config) throws RepositoryConfigException {
         MarkLogicRepositoryConfig mlconfig = (MarkLogicRepositoryConfig) config;
         return new MarkLogicRepository(

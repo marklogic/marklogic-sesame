@@ -33,15 +33,37 @@ import java.nio.charset.Charset;
 class MarkLogicBackgroundGraphResult extends BackgroundGraphResult
 {
 
+	/**
+	 *  constructor
+	 *
+	 * @param parser
+	 * @param in
+	 * @param charset
+	 * @param baseURI
+	 */
 	public MarkLogicBackgroundGraphResult(RDFParser parser, InputStream in, Charset charset, String baseURI) {
 		super(parser, in, charset, baseURI);
 	}
 
+	/**
+	 * constructor
+	 *
+	 * @param queue
+	 * @param parser
+	 * @param in
+	 * @param charset
+	 * @param baseURI
+	 */
 	public MarkLogicBackgroundGraphResult(QueueCursor<Statement> queue, RDFParser parser, InputStream in, Charset charset, String baseURI) {
 		super(queue, parser, in, charset, baseURI);
 	}
 
+
 	@Override
+	/**
+	 * wrap exception to return false instead of throwing error
+	 *
+	 */
 	public boolean hasNext()
 		throws QueryEvaluationException
 	{

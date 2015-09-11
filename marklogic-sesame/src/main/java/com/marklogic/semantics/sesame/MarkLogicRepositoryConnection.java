@@ -1382,10 +1382,12 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
         return this.defaultRulesets;
     }
 
+
     /**
      * forces write cache to sync
      *
      */
+    @Override
     public void sync() throws MarkLogicSesameException {
         client.sync();
     }
