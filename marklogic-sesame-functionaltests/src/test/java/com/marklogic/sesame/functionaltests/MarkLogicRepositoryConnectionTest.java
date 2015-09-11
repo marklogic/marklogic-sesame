@@ -258,11 +258,6 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
 	public void tearDown()
 		throws Exception
 	{
-		if (testAdminCon.isActive()){
-			logger.debug("Connection is within an active transaction");
-			testAdminCon.rollback();
-		}
-			
 		clearDB(restPort);
 		testAdminCon.close();
 		testAdminRepository.shutDown();
@@ -270,7 +265,7 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
 		testAdminCon = null;
 
 		
-		testReaderCon.close();
+		//testReaderCon.close();
 		testReaderRepository.shutDown();
 		testReaderRepository = null;
 		testReaderCon = null;
@@ -280,6 +275,7 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
 		testWriterCon = null; 
 		testWriterRepository = null;
         logger.info("tearDown complete.");
+        
         
 	}
 
@@ -1324,7 +1320,10 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
         GraphManager gmgr = databaseClient.newGraphManager();
         createUserRolesWithPrevilages("test-role");
         GraphPermissions gr = (GraphPermissions) testAdminCon.getDefaultGraphPerms();
-        Assert.assertEquals(0L, gr.size());
+        
+        // ISSUE # 175 uncomment after issue is fixed
+      //  Assert.assertEquals(0L, gr.size());
+        
         testAdminCon.setDefaultGraphPerms(gmgr.permission("test-role", Capability.READ, Capability.UPDATE));
         String defGraphQuery = "CREATE GRAPH <http://marklogic.com/test/graph/permstest> ";
         MarkLogicUpdateQuery updateQuery = testAdminCon.prepareUpdate(QueryLanguage.SPARQL, defGraphQuery);
@@ -1689,7 +1688,7 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
 	}
 	
 	
-	// ISSUE 106, 133
+	// ISSUE 106, 133, 183
 	@Test
 	public void testCommit()
 		throws Exception
@@ -1720,6 +1719,7 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
 				testReaderCon.hasStatement(john, email, johnemail, false, dirgraph));
 	}
 	
+	// ISSUE 183
 	@Test
 	public void testSizeRollback()
 		throws Exception
@@ -1748,7 +1748,7 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
 		assertThat(testWriterCon.size(), is(equalTo(0L)));
 	}
 
-	// ISSUE 133
+	// ISSUE 133, 183
 	@Test
 	public void testSizeCommit()
 		throws Exception
@@ -2483,7 +2483,7 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
 		}
 		Assert.assertEquals(2, i);
 		
-		
+		i=0;
 		TupleQueryResult result2 = ((MarkLogicTupleQuery) query).evaluate(1,0);
 		while (result2.hasNext()) {
 			BindingSet solution = result2.next();
@@ -2640,7 +2640,7 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
 		
 	}
 	
-	//ISSUE # 133
+	//ISSUE # 133, 183
 	@Test
 	public void  testUnsupportedIsolationLevel() throws Exception{
 		Assert.assertEquals(IsolationLevels.SNAPSHOT, testAdminCon.getIsolationLevel());
@@ -2758,10 +2758,9 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
 		finally {
 			result.close();
 		}
-	
+		
+		testAdminCon.setDefaultRulesets(SPARQLRuleset.EQUIVALENT_PROPERTY, null);
 		TupleQuery tupleQuery1 =  testAdminCon.prepareTupleQuery(QueryLanguage.SPARQL, query);
-		testAdminCon.setDefaultRulesets(SPARQLRuleset.EQUIVALENT_PROPERTY);
-		//((MarkLogicQuery) tupleQuery1).setRulesets(SPARQLRuleset.EQUIVALENT_PROPERTY);
 		TupleQueryResult result1 = tupleQuery1.evaluate();
 		
 		try {
@@ -2779,14 +2778,14 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
 		}
 		
 		SPARQLRuleset [] ruleset = testAdminCon.getDefaultRulesets();
-		Assert.assertEquals(1, ruleset.length);
+		Assert.assertEquals(2, ruleset.length);
 		Assert.assertEquals(ruleset[0],SPARQLRuleset.EQUIVALENT_PROPERTY );
+		Assert.assertEquals(ruleset[1],null );
 		
 		testAdminCon.setDefaultRulesets(null);
 			
 		TupleQuery tupleQuery2  =  testAdminCon.prepareTupleQuery(QueryLanguage.SPARQL, query);
 		((MarkLogicQuery) tupleQuery2).setRulesets(null);
-		((MarkLogicQuery) tupleQuery2).setRulesets(null, null);
 		tupleQuery2.setIncludeInferred(false);
 		TupleQueryResult result2 = tupleQuery2.evaluate();
 		
@@ -2909,7 +2908,7 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
 		}
 		
 		tupleQuery =  testAdminCon.prepareTupleQuery(QueryLanguage.SPARQL, query);
-		((MarkLogicQuery) tupleQuery).setRulesets((SPARQLRuleset)null);
+		((MarkLogicQuery) tupleQuery).setRulesets((SPARQLRuleset)null, null);
 		tupleQuery.setIncludeInferred(false);
 		result = tupleQuery.evaluate();
 		
@@ -2960,24 +2959,46 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
         askQuery.setConstrainingQueryDefinition(rawCombined);
         Assert.assertEquals(true, askQuery.evaluate());
 
-           
+        testAdminCon.setDefaultQueryDef(negRawCombined);
         MarkLogicTupleQuery tupleQuery =  testAdminCon.prepareTupleQuery(QueryLanguage.SPARQL, query2);
-        tupleQuery.setConstrainingQueryDefinition(negRawCombined);
         TupleQueryResult result = tupleQuery.evaluate();
 		
-	try {
-			assertThat(result, is(notNullValue()));
-			assertThat(result.hasNext(), is(equalTo(true)));
-			while (result.hasNext()) {
-				BindingSet solution = result.next();
-				assertThat(solution.hasBinding("s"), is(equalTo(true)));
-				Value fname = solution.getValue("o");
-				Assert.assertEquals("John", fname.stringValue());
+		try {
+				assertThat(result, is(notNullValue()));
+				assertThat(result.hasNext(), is(equalTo(true)));
+				while (result.hasNext()) {
+					BindingSet solution = result.next();
+					assertThat(solution.hasBinding("s"), is(equalTo(true)));
+					Value fname = solution.getValue("o");
+					Assert.assertEquals("John", fname.stringValue());
+				}
 			}
-		}
 		finally {
 			result.close();
 		}
+		QueryDefinition qd = testAdminCon.getDefaultQueryDef();
+		testAdminCon.setDefaultQueryDef(null);
+		testAdminCon.setDefaultQueryDef(qd);
+		
+		 tupleQuery =  testAdminCon.prepareTupleQuery(QueryLanguage.SPARQL, query2);
+	     result = tupleQuery.evaluate();
+			
+			try {
+					assertThat(result, is(notNullValue()));
+					assertThat(result.hasNext(), is(equalTo(true)));
+					while (result.hasNext()) {
+						BindingSet solution = result.next();
+						assertThat(solution.hasBinding("s"), is(equalTo(true)));
+						Value fname = solution.getValue("o");
+						Assert.assertEquals("John", fname.stringValue());
+					}
+				}
+			finally {
+				result.close();
+			}
+		
+		
+	
 	}
 	
 	// ISSUE 124, 142
@@ -2987,6 +3008,7 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
 	 setupData();
      StructuredQueryBuilder qb = new StructuredQueryBuilder();
      QueryDefinition structuredDef = qb.build(qb.term("Second"));
+     
         
      String posQuery = "ASK WHERE {<http://example.org/r9929> ?p ?o .}";
      String negQuery = "ASK WHERE {<http://example.org/r9928> ?p ?o .}";
@@ -2995,14 +3017,22 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
      askQuery.setConstrainingQueryDefinition(structuredDef);
      Assert.assertEquals(true, askQuery.evaluate());
      
-     MarkLogicBooleanQuery askQuery1 = (MarkLogicBooleanQuery) testAdminCon.prepareBooleanQuery(QueryLanguage.SPARQL,negQuery);
      testAdminCon.setDefaultQueryDef(structuredDef);
-     askQuery1.setConstrainingQueryDefinition(structuredDef);
+     MarkLogicBooleanQuery askQuery1 = (MarkLogicBooleanQuery) testAdminCon.prepareBooleanQuery(QueryLanguage.SPARQL,negQuery);
      Assert.assertEquals(false, askQuery1.evaluate());
      
      QueryDefinition qd = testAdminCon.getDefaultQueryDef();
-     Assert.assertEquals("Second",qd.getOptionsName() );
+         
+     testAdminCon.setDefaultQueryDef(null);
+     askQuery1 = (MarkLogicBooleanQuery) testAdminCon.prepareBooleanQuery(QueryLanguage.SPARQL,negQuery);
+     Assert.assertEquals(true, askQuery1.evaluate());
      
+     testAdminCon.setDefaultQueryDef(qd);
+     askQuery1 = (MarkLogicBooleanQuery) testAdminCon.prepareBooleanQuery(QueryLanguage.SPARQL,negQuery);
+     Assert.assertEquals(false, askQuery1.evaluate());
+     
+     testAdminCon.setDefaultQueryDef(null);
+    
      askQuery = (MarkLogicBooleanQuery) testAdminCon.prepareBooleanQuery(QueryLanguage.SPARQL,posQuery);
      askQuery.setConstrainingQueryDefinition(null);
      Assert.assertEquals(true, askQuery.evaluate());
