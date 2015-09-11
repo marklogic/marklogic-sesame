@@ -81,7 +81,7 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
             throws Exception {
         logger.debug("tearing down...");
         if(conn.isOpen()){conn.clear();}
-        if(conn.isActive() && conn.isOpen()){conn.rollback();}
+        if( conn.isOpen() && conn.isActive()){conn.rollback();}
         conn.close();
         conn = null;
         rep.shutDown();
