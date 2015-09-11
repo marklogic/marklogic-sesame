@@ -135,6 +135,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     public void close()
         throws RepositoryException
     {
+        sync();
         super.close();
         client.stopTimer();
         try {
@@ -1382,10 +1383,12 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
         return this.defaultRulesets;
     }
 
+
     /**
      * forces write cache to sync
      *
      */
+    @Override
     public void sync() throws MarkLogicSesameException {
         client.sync();
     }

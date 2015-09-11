@@ -55,10 +55,22 @@ public class MarkLogicRepositoryConfig extends RepositoryImplConfigBase {
 	private String password;
 	private String auth;
 
+	/**
+	 *
+	 */
 	public MarkLogicRepositoryConfig() {
 		super(MarkLogicRepositoryFactory.REPOSITORY_TYPE);
 	}
-    public MarkLogicRepositoryConfig(String host, int port, String user, String password, String auth) {
+
+	/**
+	 *
+	 * @param host
+	 * @param port
+	 * @param user
+	 * @param password
+	 * @param auth
+	 */
+	public MarkLogicRepositoryConfig(String host, int port, String user, String password, String auth) {
         this();
         this.host = host;
         this.port = port;
@@ -66,71 +78,106 @@ public class MarkLogicRepositoryConfig extends RepositoryImplConfigBase {
         this.password = password;
         this.auth = auth;
     }
+
+	/**
+	 *
+	 * @param queryEndpointUrl
+	 */
 	public MarkLogicRepositoryConfig(String queryEndpointUrl) {
         setQueryEndpointUrl(queryEndpointUrl);
 	}
+
+	/**
+	 *
+	 * @param queryEndpointUrl
+	 * @param updateEndpointUrl
+	 */
 	public MarkLogicRepositoryConfig(String queryEndpointUrl, String updateEndpointUrl) {
 		this(queryEndpointUrl);
 		setUpdateEndpointUrl(updateEndpointUrl);
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	public String getHost() {
 		return host;
 	}
-
 	public void setHost(String host) {
 		this.host = host;
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	public int getPort() {
 		return port;
 	}
-
 	public void setPort(int port) {
 		this.port = port;
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	public String getUser() {
 		return user;
 	}
-
 	public void setUser(String user) {
 		this.user = user;
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	public String getPassword() {
 		return password;
 	}
-
 	public void setPassword(String password) {
 		this.password = password;
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	public String getAuth() {
 		return auth;
 	}
-
 	public void setAuth(String auth) {
 		this.auth = auth;
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	public String getQueryEndpointUrl() {
 		return queryEndpointUrl;
 	}
-
 	public void setQueryEndpointUrl(String url) {
 		this.queryEndpointUrl = url;
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	public String getUpdateEndpointUrl() {
 		return updateEndpointUrl;
 	}
-
 	public void setUpdateEndpointUrl(String url) {
 		this.updateEndpointUrl = url;
 	}
 	
 	@Override
+	/**
+	 *
+	 */
 	public void validate() throws RepositoryConfigException {
 		super.validate();
 		if (getQueryEndpointUrl() == null) {
@@ -140,6 +187,9 @@ public class MarkLogicRepositoryConfig extends RepositoryImplConfigBase {
 	}
 
 	@Override
+	/**
+	 *
+	 */
 	public Resource export(Graph graph) {
 		Resource implNode = super.export(graph);
 
@@ -155,6 +205,9 @@ public class MarkLogicRepositoryConfig extends RepositoryImplConfigBase {
 	}
 
 	@Override
+	/**
+	 *
+	 */
 	public void parse(Graph graph, Resource implNode)
 			throws RepositoryConfigException {
 		super.parse(graph, implNode);

@@ -31,6 +31,7 @@ import org.openrdf.repository.RepositoryException;
  * interface which defines MarkLogic specific overrides
  */
 interface MarkLogicRepositoryConnectionDependent {
+
     Query prepareQuery(String queryString) throws RepositoryException, MalformedQueryException;
     Query prepareQuery(String queryString, String baseURI) throws RepositoryException, MalformedQueryException;
 
@@ -60,4 +61,6 @@ interface MarkLogicRepositoryConnectionDependent {
 
     void setDefaultRulesets(SPARQLRuleset... ruleset);
     SPARQLRuleset[] getDefaultRulesets();
+
+    void sync() throws MarkLogicSesameException;
 }

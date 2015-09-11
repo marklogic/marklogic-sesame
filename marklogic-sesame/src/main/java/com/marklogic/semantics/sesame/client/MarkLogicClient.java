@@ -123,14 +123,16 @@ public class MarkLogicClient {
     }
 
 	/**
+	 * get value factory
 	 *
-	 * @return
+	 * @return ValueFactory
 	 */
 	public ValueFactory getValueFactory() {
 		return this.f;
 	}
 
 	/**
+	 * sets the value factory
 	 *
 	 * @param f
 	 */
@@ -139,6 +141,7 @@ public class MarkLogicClient {
 	}
 
 	/**
+	 * TupleQuery
 	 *
 	 * @param queryString
 	 * @param bindings
@@ -164,6 +167,7 @@ public class MarkLogicClient {
 	}
 
 	/**
+	 * GraphQuery
 	 *
 	 * @param queryString
 	 * @param bindings
@@ -201,6 +205,7 @@ public class MarkLogicClient {
     }
 
 	/**
+	 * BooleanQuery
 	 *
 	 * @param queryString
 	 * @param bindings
@@ -220,6 +225,7 @@ public class MarkLogicClient {
 	}
 
 	/**
+	 * UpdateQuery
 	 *
 	 * @param queryString
 	 * @param bindings
@@ -238,6 +244,7 @@ public class MarkLogicClient {
 	}
 
 	/**
+	 * add triples from file
 	 *
 	 * @param file
 	 * @param baseURI
@@ -250,6 +257,7 @@ public class MarkLogicClient {
     }
 
 	/**
+	 * add triples from InputStream
 	 *
 	 * @param in
 	 * @param baseURI
@@ -261,6 +269,7 @@ public class MarkLogicClient {
 	}
 
 	/**
+	 * add triples from Reader
 	 *
 	 * @param in
 	 * @param baseURI
@@ -273,6 +282,7 @@ public class MarkLogicClient {
 	}
 
 	/**
+	 * add single triple, if cache is enabled will add triple to cache model
 	 *
 	 * @param baseURI
 	 * @param subject
@@ -282,17 +292,14 @@ public class MarkLogicClient {
 	 */
 	public void sendAdd(String baseURI, Resource subject, URI predicate, Value object, Resource... contexts) throws MarkLogicSesameException {
         if (WRITE_CACHE_ENABLED) {
-            sinkQuad(baseURI, subject, predicate, object, contexts);
+			cache.add(subject, predicate, object, contexts);
         } else {
             getClient().performAdd(baseURI, (Resource) skolemize(subject), (URI) skolemize(predicate), skolemize(object), this.tx, contexts);
         }
     }
 
-    public void sinkQuad(String baseURI, Resource subject, URI predicate, Value object, Resource... contexts) {
-        cache.add(subject, predicate, object, contexts);
-    }
-
 	/**
+	 * remove single triple
 	 *
 	 * @param baseURI
 	 * @param subject
@@ -306,6 +313,7 @@ public class MarkLogicClient {
     }
 
 	/**
+	 * clears all triples from context
 	 *
 	 * @param contexts
 	 */
@@ -317,6 +325,11 @@ public class MarkLogicClient {
 			e.printStackTrace();
 		}
 	}
+
+	/**
+	 * clear all triples
+	 *
+	 */
 	public void sendClearAll(){
 		try {
 			sync();
@@ -327,6 +340,7 @@ public class MarkLogicClient {
 	}
 
 	/**
+	 * opens a transaction
 	 *
 	 * @throws MarkLogicTransactionException
 	 */
@@ -339,6 +353,7 @@ public class MarkLogicClient {
 	}
 
 	/**
+	 * commits a transaction
 	 *
 	 * @throws MarkLogicTransactionException
 	 */
@@ -352,6 +367,7 @@ public class MarkLogicClient {
 	}
 
 	/**
+	 * rollback transaction
 	 *
 	 * @throws MarkLogicTransactionException
 	 */
@@ -365,6 +381,7 @@ public class MarkLogicClient {
 	}
 
 	/**
+	 * checks if a transaction currently exists
 	 *
 	 * @return
 	 */
@@ -373,6 +390,7 @@ public class MarkLogicClient {
 	}
 
 	/**
+	 * sets tx to null
 	 *
 	 * @throws MarkLogicTransactionException
 	 */
@@ -385,6 +403,7 @@ public class MarkLogicClient {
 	}
 
 	/**
+	 * getter for ParserConfig
 	 *
 	 * @return
 	 */
@@ -393,6 +412,7 @@ public class MarkLogicClient {
 	}
 
 	/**
+	 * setter for ParserConfig
 	 *
 	 * @param parserConfig
 	 */
@@ -401,6 +421,7 @@ public class MarkLogicClient {
 	}
 
 	/**
+	 * setter for Rulesets
 	 *
 	 * @param rulesets
 	 */
@@ -409,6 +430,7 @@ public class MarkLogicClient {
 	}
 
 	/**
+	 * getter for Rulesets
 	 *
 	 * @return
 	 */
@@ -417,6 +439,7 @@ public class MarkLogicClient {
 	}
 
 	/**
+	 * setter for QueryDefinition
 	 *
 	 * @param constrainingQueryDefinition
 	 */
@@ -425,6 +448,7 @@ public class MarkLogicClient {
     }
 
 	/**
+	 * getter for QueryDefinition
 	 *
 	 * @return
 	 */
@@ -433,6 +457,7 @@ public class MarkLogicClient {
     }
 
 	/**
+	 * setter for GraphPermissions
 	 *
 	 * @param graphPerms
 	 */
@@ -441,6 +466,7 @@ public class MarkLogicClient {
     }
 
 	/**
+	 * getter for GraphPermissions
 	 *
 	 * @return
 	 */
@@ -450,7 +476,7 @@ public class MarkLogicClient {
 
 
 	/**
-	 *
+	 *exec
 	 * @param command
 	 */
 	protected void execute(Runnable command) {
