@@ -98,6 +98,15 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
         client.initTimer();
     }
 
+    @Override
+    public boolean isOpen(){
+        try {
+            return super.isOpen();
+        } catch (RepositoryException e) {
+            return false;
+        }
+    }
+
     /**
      * gets the current value factory
      *
@@ -917,8 +926,6 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     public void setIsolationLevel(IsolationLevel level) throws IllegalStateException {
         if(level != IsolationLevels.SNAPSHOT){
             throw new IllegalStateException();
-        }else{
-            super.setIsolationLevel(level);
         }
     }
 
@@ -1121,6 +1128,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
      */
     @Override
     public void remove(Resource subject, URI predicate, Value object, Resource... contexts) throws RepositoryException {
+        sync();
         getClient().sendRemove(null, subject, predicate, object, contexts);
     }
 
@@ -1133,6 +1141,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
      */
     @Override
     public void remove(Statement st, Resource... contexts) throws RepositoryException {
+        sync();
         getClient().sendRemove(null, st.getSubject(), st.getPredicate(), st.getObject(), mergeResource(st.getContext(), contexts));
     }
 
@@ -1146,6 +1155,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
      */
     @Override
     public void remove(Iterable<? extends Statement> statements) throws RepositoryException {
+        sync();
         Iterator <? extends Statement> iter = statements.iterator();
         while(iter.hasNext()){
             Statement st = iter.next();
@@ -1385,7 +1395,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
             throw new RepositoryException("connection is closed1.");
         }
     }
-    
+
     /**
      * set bindings ?s, ?p and special handling of Value ?o (and ?ctx)
      *
