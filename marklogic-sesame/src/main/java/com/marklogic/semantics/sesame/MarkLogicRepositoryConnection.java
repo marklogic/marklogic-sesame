@@ -925,7 +925,9 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     @Override
     public void setIsolationLevel(IsolationLevel level) throws IllegalStateException {
         if(level != IsolationLevels.SNAPSHOT){
-            throw new IllegalStateException();
+            throw new IllegalStateException("Only IsolationLevels.SNAPSHOT level supported.");
+        }else{
+            super.setIsolationLevel(level);
         }
     }
 
@@ -973,6 +975,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
      */
     @Override
     public void rollback() throws RepositoryException {
+        sync();
         getClient().rollbackTransaction();
     }
 
@@ -1027,6 +1030,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
      */
     @Override
     public void add(Reader reader, String baseURI, RDFFormat dataFormat, Resource... contexts) throws IOException, RDFParseException, RepositoryException {
+        sync();
         getClient().sendAdd(reader, baseURI, dataFormat, contexts);
     }
 
@@ -1174,6 +1178,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
      */
     @Override
     public void remove(Iterable<? extends Statement> statements, Resource... contexts) throws RepositoryException {
+        sync();
         Iterator <? extends Statement> iter = statements.iterator();
         while(iter.hasNext()){
             Statement st = iter.next();
@@ -1193,6 +1198,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
      */
     @Override
     public <E extends Exception> void remove(Iteration<? extends Statement, E> statements) throws RepositoryException, E {
+        sync();
         while(statements.hasNext()){
             Statement st = statements.next();
             getClient().sendRemove(null, st.getSubject(), st.getPredicate(), st.getObject());
@@ -1212,6 +1218,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
      */
     @Override
     public <E extends Exception> void remove(Iteration<? extends Statement, E> statements, Resource... contexts) throws RepositoryException, E {
+        sync();
         while(statements.hasNext()){
             Statement st = statements.next();
             getClient().sendRemove(null, st.getSubject(), st.getPredicate(), st.getObject(), mergeResource(st.getContext(), contexts));
@@ -1375,6 +1382,10 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
         return this.defaultRulesets;
     }
 
+    /**
+     * forces write cache to sync
+     *
+     */
     public void sync() throws MarkLogicSesameException {
         client.sync();
     }
