@@ -135,6 +135,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     public void close()
         throws RepositoryException
     {
+        sync();
         super.close();
         client.stopTimer();
         try {
