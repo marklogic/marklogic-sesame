@@ -79,10 +79,11 @@ public class MarkLogicClient {
 	private WriteCacheTimerTask cache;
 	private Timer timer;
 
-    private static boolean WRITE_CACHE_ENABLED = false;
+    private static boolean WRITE_CACHE_ENABLED = true;
 
 	/**
-	 *
+	 * constructor initing with connection params
+     *
  	 * @param host
 	 * @param port
 	 * @param user
@@ -94,7 +95,8 @@ public class MarkLogicClient {
 	}
 
 	/**
-	 *
+	 * constructor initing with DatabaseClient
+     *
 	 * @param databaseClient
 	 */
 	public MarkLogicClient(DatabaseClient databaseClient) {
@@ -105,7 +107,7 @@ public class MarkLogicClient {
         if(this.WRITE_CACHE_ENABLED) {
             this.cache = new WriteCacheTimerTask(this);
             this.timer = new Timer();
-            timer.scheduleAtFixedRate(cache, 10, 1000);
+            this.timer.scheduleAtFixedRate(cache, WriteCacheTimerTask.DEFAULT_INITIAL_DELAY, WriteCacheTimerTask.DEFAULT_CACHE_MILLIS);
         }
     }
 
@@ -173,29 +175,30 @@ public class MarkLogicClient {
 	public GraphQueryResult sendGraphQuery(String queryString, SPARQLQueryBindingSet bindings, boolean includeInferred, String baseURI) throws IOException {
         try {
             sync();
+            InputStream stream = getClient().performGraphQuery(queryString, bindings, this.tx, includeInferred, baseURI);
+
+            RDFParser parser = Rio.createParser(rdfFormat, getValueFactory());
+            parser.setParserConfig(getParserConfig());
+            parser.setParseErrorListener(new ParseErrorLogger());
+            parser.setPreserveBNodeIDs(true);
+
+            MarkLogicBackgroundGraphResult gRes;
+
+            // fixup - baseURI cannot be null
+            if(baseURI != null){
+                gRes= new MarkLogicBackgroundGraphResult(parser,stream,charset,baseURI);
+            }else{
+                gRes= new MarkLogicBackgroundGraphResult(parser,stream,charset,"");
+            }
+
+            execute(gRes);
+            return gRes;
+
         } catch (MarkLogicSesameException e) {
             e.printStackTrace();
         }
-        InputStream stream = getClient().performGraphQuery(queryString, bindings, this.tx, includeInferred, baseURI);
-
-		RDFParser parser = Rio.createParser(rdfFormat, getValueFactory());
-		parser.setParserConfig(getParserConfig());
-		parser.setParseErrorListener(new ParseErrorLogger());
-		parser.setPreserveBNodeIDs(true);
-
-		MarkLogicBackgroundGraphResult gRes;
-
-		// fixup - baseURI cannot be null
-		if(baseURI != null){
-			gRes= new MarkLogicBackgroundGraphResult(parser,stream,charset,baseURI);
-		}else{
-			gRes= new MarkLogicBackgroundGraphResult(parser,stream,charset,"");
-		}
-
-		execute(gRes);
-		return gRes;
-
-	}
+        return null;
+    }
 
 	/**
 	 *
@@ -243,12 +246,7 @@ public class MarkLogicClient {
 	 * @throws RDFParseException
 	 */
     public void sendAdd(File file, String baseURI, RDFFormat dataFormat, Resource... contexts) throws RDFParseException {
-        try {
-            sync();
-            getClient().performAdd(file, baseURI, dataFormat, this.tx, contexts);
-        } catch (MarkLogicSesameException e) {
-            e.printStackTrace();
-        }
+        getClient().performAdd(file, baseURI, dataFormat, this.tx, contexts);
     }
 
 	/**
@@ -303,29 +301,28 @@ public class MarkLogicClient {
 	 * @param contexts
 	 */
 	public void sendRemove(String baseURI, Resource subject,URI predicate, Value object, Resource... contexts) throws MarkLogicSesameException {
-        //sync();
         getClient().performRemove(baseURI, (Resource) skolemize(subject), (URI) skolemize(predicate), skolemize(object), this.tx, contexts);
-	}
+    }
 
 	/**
 	 *
 	 * @param contexts
 	 */
 	public void sendClear(Resource... contexts){
-        try {
-            sync();
-            getClient().performClear(this.tx, contexts);
-        } catch (MarkLogicSesameException e) {
-            e.printStackTrace();
-        }
+		try {
+			sync();
+			getClient().performClear(this.tx, contexts);
+		} catch (MarkLogicSesameException e) {
+			e.printStackTrace();
+		}
 	}
 	public void sendClearAll(){
-        try {
-            sync();
-            getClient().performClearAll(this.tx);
-        } catch (MarkLogicSesameException e) {
-            e.printStackTrace();
-        }
+		try {
+			sync();
+			getClient().performClearAll(this.tx);
+		} catch (MarkLogicSesameException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**

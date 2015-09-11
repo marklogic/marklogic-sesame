@@ -59,20 +59,6 @@ class MarkLogicClientImpl {
 
     private static final String DEFAULT_GRAPH_URI = "http://marklogic.com/semantics#default-graph";
 
-    private String host;
-
-    private int port;
-
-    private String user;
-
-    private String password;
-
-    private String auth;
-
-    protected DatabaseClientFactory.Authentication authType = DatabaseClientFactory.Authentication.valueOf(
-            "DIGEST"
-    );
-
     private SPARQLRuleset[] ruleset;
     private QueryDefinition constrainingQueryDef;
     private GraphPermissions graphPerms;
@@ -93,63 +79,8 @@ class MarkLogicClientImpl {
 
     private void setDatabaseClient(DatabaseClient databaseClient) {
         this.databaseClient = databaseClient;
-    }
-
-    // host
-    public String getHost() {
-        return this.host;
-    }
-
-    public void setHost(String host) {
-        this.host = host;
-    }
-
-    // port
-    public int getPort() {
-        return this.port;
-    }
-
-    public void setPort(int port) {
-        this.port = port;
-    }
-
-    // user
-    public String getUser() {
-        return this.user;
-    }
-
-    public void setUser(String user) {
-        this.user = user;
-    }
-
-    // password
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    // auth
-    public String getAuth() {
-        return auth;
-    }
-
-    public void setAuth(String auth) {
-        this.auth = auth;
-        this.authType = DatabaseClientFactory.Authentication.valueOf(
-                auth
-        );
-    }
-
-    // auth type
-    public void setAuthType(DatabaseClientFactory.Authentication authType) {
-        this.authType = authType;
-    }
-
-    public DatabaseClientFactory.Authentication getAuthType() {
-        return authType;
+        this.sparqlManager = getDatabaseClient().newSPARQLQueryManager();
+        this.graphManager = getDatabaseClient().newGraphManager();
     }
 
     //
@@ -163,7 +94,6 @@ class MarkLogicClientImpl {
     }
 
     public InputStream performSPARQLQuery(String queryString, SPARQLQueryBindingSet bindings, InputStreamHandle handle, long start, long pageLength, Transaction tx, boolean includeInferred, String baseURI) throws JsonProcessingException {
-        sparqlManager = getDatabaseClient().newSPARQLQueryManager();
         SPARQLQueryDefinition qdef = sparqlManager.newQueryDefinition(queryString);
         if(notNull(baseURI) && baseURI != ""){ qdef.setBaseUri(baseURI);}
         if (notNull(ruleset)){
@@ -188,7 +118,6 @@ class MarkLogicClientImpl {
     }
 
     public InputStream performGraphQuery(String queryString, SPARQLQueryBindingSet bindings, InputStreamHandle handle, Transaction tx, boolean includeInferred, String baseURI) throws JsonProcessingException {
-        sparqlManager = getDatabaseClient().newSPARQLQueryManager();
         SPARQLQueryDefinition qdef = sparqlManager.newQueryDefinition(queryString);
         if(notNull(baseURI) && baseURI != ""){ qdef.setBaseUri(baseURI);}
         if (notNull(ruleset)) {
@@ -208,7 +137,6 @@ class MarkLogicClientImpl {
 
     // performBooleanQuery
     public boolean performBooleanQuery(String queryString, SPARQLQueryBindingSet bindings, Transaction tx, boolean includeInferred, String baseURI) {
-        sparqlManager = getDatabaseClient().newSPARQLQueryManager();
         SPARQLQueryDefinition qdef = sparqlManager.newQueryDefinition(queryString);
         if(notNull(baseURI) && baseURI != ""){ qdef.setBaseUri(baseURI);}
         qdef.setIncludeDefaultRulesets(includeInferred);
@@ -227,7 +155,6 @@ class MarkLogicClientImpl {
 
     // performUpdateQuery
     public void performUpdateQuery(String queryString, SPARQLQueryBindingSet bindings, Transaction tx, boolean includeInferred, String baseURI) {
-        sparqlManager = getDatabaseClient().newSPARQLQueryManager();
         SPARQLQueryDefinition qdef = sparqlManager.newQueryDefinition(queryString);
         if(notNull(baseURI) && baseURI != ""){ qdef.setBaseUri(baseURI);}
         if (notNull(ruleset) ) {
@@ -248,8 +175,6 @@ class MarkLogicClientImpl {
     // as we use mergeGraphs, baseURI is always file.toURI
     public void performAdd(File file, String baseURI, RDFFormat dataFormat, Transaction tx, Resource... contexts) throws RDFParseException {
         try {
-            graphManager = getDatabaseClient().newGraphManager();
-
             graphManager.setDefaultMimetype(dataFormat.getDefaultMIMEType());
             if (dataFormat.equals(RDFFormat.NQUADS) || dataFormat.equals(RDFFormat.TRIG)) {
                 //TBD- tx ?
@@ -259,13 +184,13 @@ class MarkLogicClientImpl {
                 if (notNull(contexts) && contexts.length>0) {
                     for (int i = 0; i < contexts.length; i++) {
                         if(notNull(contexts[i])){
-                            graphManager.merge(contexts[i].toString(), new FileHandle(file), tx);
+                            graphManager.mergeAs(contexts[i].toString(), new FileHandle(file), tx);
                         }else{
-                            graphManager.merge(DEFAULT_GRAPH_URI, new FileHandle(file), tx);
+                            graphManager.mergeAs(DEFAULT_GRAPH_URI, new FileHandle(file), tx);
                         }
                     }
                 } else {
-                    graphManager.merge(DEFAULT_GRAPH_URI, new FileHandle(file), tx);
+                    graphManager.mergeAs(DEFAULT_GRAPH_URI, new FileHandle(file), tx);
                 }
             }
         } catch (FailedRequestException e) {
@@ -275,8 +200,6 @@ class MarkLogicClientImpl {
 
     public void performAdd(InputStream in, String baseURI, RDFFormat dataFormat, Transaction tx, Resource... contexts) throws RDFParseException {
         try {
-            graphManager = getDatabaseClient().newGraphManager();
-
             graphManager.setDefaultMimetype(dataFormat.getDefaultMIMEType());
             if (dataFormat.equals(RDFFormat.NQUADS) || dataFormat.equals(RDFFormat.TRIG)) {
                 //TBD- tx ?
@@ -301,7 +224,6 @@ class MarkLogicClientImpl {
     }
 
     public void performAdd(String baseURI, Resource subject, URI predicate, Value object, Transaction tx, Resource... contexts) throws MarkLogicSesameException {
-        sparqlManager = getDatabaseClient().newSPARQLQueryManager();
         StringBuilder sb = new StringBuilder();
 
         if(notNull(contexts) && contexts.length>0) {
@@ -341,8 +263,9 @@ class MarkLogicClientImpl {
             }
             sb.append("}");
         }else{
-            sb.append("DELETE WHERE { GRAPH ?ctx{ ?s ?p ?o .}}");
+            sb.append("DELETE WHERE { GRAPH ?ctx { ?s ?p ?o .}}");
         }
+
         SPARQLQueryDefinition qdef = sparqlManager.newQueryDefinition(sb.toString());
         if(notNull(baseURI) && baseURI != ""){ qdef.setBaseUri(baseURI);}
         if(notNull(subject)) qdef.withBinding("s", subject.stringValue());
@@ -354,7 +277,6 @@ class MarkLogicClientImpl {
 
     // performClear
     public void performClear(Transaction tx, Resource... contexts) {
-        graphManager = getDatabaseClient().newGraphManager();
         if(notNull(contexts)) {
             for (int i = 0; i < contexts.length; i++) {
                 if (notNull(contexts[i])) {
@@ -369,7 +291,6 @@ class MarkLogicClientImpl {
     }
 
     public void performClearAll(Transaction tx) {
-        graphManager = getDatabaseClient().newGraphManager();
         graphManager.deleteGraphs();
     }
 

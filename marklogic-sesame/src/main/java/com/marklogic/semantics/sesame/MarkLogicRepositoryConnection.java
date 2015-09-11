@@ -93,8 +93,18 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
         super(repository);
         this.client = client;
         this.quadMode = true;
+        setIsolationLevel(IsolationLevels.SNAPSHOT);
         client.setValueFactory(repository.getValueFactory());
         client.initTimer();
+    }
+
+    @Override
+    public boolean isOpen(){
+        try {
+            return super.isOpen();
+        } catch (RepositoryException e) {
+            return false;
+        }
     }
 
     /**
@@ -915,7 +925,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     @Override
     public void setIsolationLevel(IsolationLevel level) throws IllegalStateException {
         if(level != IsolationLevels.SNAPSHOT){
-         throw new IllegalStateException();
+            throw new IllegalStateException();
         }
     }
 
@@ -1118,6 +1128,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
      */
     @Override
     public void remove(Resource subject, URI predicate, Value object, Resource... contexts) throws RepositoryException {
+        sync();
         getClient().sendRemove(null, subject, predicate, object, contexts);
     }
 
@@ -1130,6 +1141,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
      */
     @Override
     public void remove(Statement st, Resource... contexts) throws RepositoryException {
+        sync();
         getClient().sendRemove(null, st.getSubject(), st.getPredicate(), st.getObject(), mergeResource(st.getContext(), contexts));
     }
 
@@ -1143,6 +1155,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
      */
     @Override
     public void remove(Iterable<? extends Statement> statements) throws RepositoryException {
+        sync();
         Iterator <? extends Statement> iter = statements.iterator();
         while(iter.hasNext()){
             Statement st = iter.next();
@@ -1382,7 +1395,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
             throw new RepositoryException("connection is closed1.");
         }
     }
-    
+
     /**
      * set bindings ?s, ?p and special handling of Value ?o (and ?ctx)
      *
