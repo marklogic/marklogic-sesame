@@ -476,7 +476,7 @@ public class MarkLogicClient {
 	 *
 	 * @param graphPerms
 	 */
-    public void setGraphPerms(GraphPermissions graphPerms){
+    public void setGraphPerms(GraphPermissions ... graphPerms){
         getClient().setGraphPerms(graphPerms);
     }
 
@@ -485,7 +485,7 @@ public class MarkLogicClient {
 	 *
 	 * @return
 	 */
-	public GraphPermissions getGraphPerms(){
+	public GraphPermissions[] getGraphPerms(){
         return getClient().getGraphPerms();
     }
 

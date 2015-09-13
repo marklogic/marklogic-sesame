@@ -52,7 +52,7 @@ public class MarkLogicGraphQuery extends MarkLogicQuery implements GraphQuery,Ma
      * @param baseUri
      * @param queryString
      */
-    public MarkLogicGraphQuery(MarkLogicClient client, SPARQLQueryBindingSet bindingSet, String baseUri, String queryString, GraphPermissions graphPerms, QueryDefinition queryDef, SPARQLRuleset[] rulesets) {
+    public MarkLogicGraphQuery(MarkLogicClient client, SPARQLQueryBindingSet bindingSet, String baseUri, String queryString, GraphPermissions[] graphPerms, QueryDefinition queryDef, SPARQLRuleset[] rulesets) {
         super(client, bindingSet, baseUri, queryString, graphPerms, queryDef, rulesets);
     }
 

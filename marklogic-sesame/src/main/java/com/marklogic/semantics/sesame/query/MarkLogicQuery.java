@@ -61,7 +61,7 @@ public class MarkLogicQuery extends AbstractQuery implements Query,MarkLogicClie
      * @param baseUri
      * @param queryString
      */
-    public MarkLogicQuery(MarkLogicClient client, SPARQLQueryBindingSet bindingSet, String baseUri, String queryString, GraphPermissions graphPerms, QueryDefinition defaultQueryDef, SPARQLRuleset[] rulesets) {
+    public MarkLogicQuery(MarkLogicClient client, SPARQLQueryBindingSet bindingSet, String baseUri, String queryString, GraphPermissions[] graphPerms, QueryDefinition defaultQueryDef, SPARQLRuleset[] rulesets) {
         super();
         setBaseURI(baseUri);
         setQueryString(queryString);
@@ -286,7 +286,7 @@ public class MarkLogicQuery extends AbstractQuery implements Query,MarkLogicClie
      * @param graphPerms
      */
     @Override
-    public void setGraphPerms(GraphPermissions graphPerms) {
+    public void setGraphPerms(GraphPermissions ... graphPerms) {
         getMarkLogicClient().setGraphPerms(graphPerms);
     }
 
@@ -295,7 +295,7 @@ public class MarkLogicQuery extends AbstractQuery implements Query,MarkLogicClie
      * @return
      */
     @Override
-    public GraphPermissions getGraphPerms() {
+    public GraphPermissions[] getGraphPerms() {
         return getMarkLogicClient().getGraphPerms();
     }
 }
