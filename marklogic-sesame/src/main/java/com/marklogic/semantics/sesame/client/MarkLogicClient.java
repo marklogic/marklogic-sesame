@@ -79,7 +79,7 @@ public class MarkLogicClient {
 	private WriteCacheTimerTask cache;
 	private Timer timer;
 
-    private static boolean WRITE_CACHE_ENABLED = true;
+    private static boolean WRITE_CACHE_ENABLED = false;
 
 	/**
 	 * constructor initing with connection params
@@ -103,6 +103,9 @@ public class MarkLogicClient {
 		this._client = new MarkLogicClientImpl(databaseClient);
 	}
 
+    /**
+     *
+     */
 	public void initTimer(){
         if(this.WRITE_CACHE_ENABLED) {
             this.cache = new WriteCacheTimerTask(this);
@@ -111,6 +114,9 @@ public class MarkLogicClient {
         }
     }
 
+    /**
+     *
+     */
 	public void stopTimer() {
         if(this.WRITE_CACHE_ENABLED) {
             cache.cancel();
@@ -308,7 +314,6 @@ public class MarkLogicClient {
 	 * @param contexts
 	 */
 	public void sendRemove(String baseURI, Resource subject,URI predicate, Value object, Resource... contexts) throws MarkLogicSesameException {
-		sync();
         getClient().performRemove(baseURI, (Resource) skolemize(subject), (URI) skolemize(predicate), skolemize(object), this.tx, contexts);
     }
 
@@ -318,12 +323,12 @@ public class MarkLogicClient {
 	 * @param contexts
 	 */
 	public void sendClear(Resource... contexts){
-		try {
-			sync();
-			getClient().performClear(this.tx, contexts);
-		} catch (MarkLogicSesameException e) {
-			e.printStackTrace();
-		}
+        try {
+            sync();
+        } catch (MarkLogicSesameException e) {
+            e.printStackTrace();
+        }
+        getClient().performClear(this.tx, contexts);
 	}
 
 	/**
@@ -331,12 +336,12 @@ public class MarkLogicClient {
 	 *
 	 */
 	public void sendClearAll(){
-		try {
-			sync();
-			getClient().performClearAll(this.tx);
-		} catch (MarkLogicSesameException e) {
-			e.printStackTrace();
-		}
+        try {
+            sync();
+        } catch (MarkLogicSesameException e) {
+            e.printStackTrace();
+        }
+        getClient().performClearAll(this.tx);
 	}
 
 	/**
@@ -358,12 +363,17 @@ public class MarkLogicClient {
 	 * @throws MarkLogicTransactionException
 	 */
 	public void commitTransaction() throws MarkLogicTransactionException {
-        if (isActiveTransaction()) {
-            this.tx.commit();
-            this.tx=null;
-        }else{
-            throw new MarkLogicTransactionException("No active transaction to commit.");
-        }
+		if (isActiveTransaction()) {
+			try {
+				sync();
+			} catch (MarkLogicSesameException e) {
+				e.printStackTrace();
+			}
+			this.tx.commit();
+			this.tx=null;
+		}else{
+			throw new MarkLogicTransactionException("No active transaction to commit.");
+		}
 	}
 
 	/**
@@ -373,6 +383,11 @@ public class MarkLogicClient {
 	 */
 	public void rollbackTransaction() throws MarkLogicTransactionException {
 		if(isActiveTransaction()) {
+			try {
+				sync();
+			} catch (MarkLogicSesameException e) {
+				e.printStackTrace();
+			}
 			this.tx.rollback();
 			this.tx = null;
 		}else{

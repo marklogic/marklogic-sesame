@@ -27,7 +27,7 @@ import java.nio.charset.Charset;
 /**
  * wrapper on Sesame BackgroundGraphResult so we can handle errors
  *
- *
+ * @author James Fuller
  */
 
 class MarkLogicBackgroundGraphResult extends BackgroundGraphResult
@@ -59,11 +59,11 @@ class MarkLogicBackgroundGraphResult extends BackgroundGraphResult
 	}
 
 
-	@Override
 	/**
 	 * wrap exception to return false instead of throwing error
 	 *
 	 */
+	@Override
 	public boolean hasNext()
 		throws QueryEvaluationException
 	{

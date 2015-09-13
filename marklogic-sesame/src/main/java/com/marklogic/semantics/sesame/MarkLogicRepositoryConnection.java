@@ -74,6 +74,8 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
 
     private static final String ALL_GRAPH_URIS = "SELECT ?g { GRAPH ?g {} filter (?g != IRI(\"http://marklogic.com/semantics#graphs\"))}";
 
+    private static final String GET_STATEMENTS = "SELECT * {GRAPH ?ctx { ?s ?p ?o . }}";
+
     private final boolean quadMode;
 
     private MarkLogicClient client;
@@ -135,16 +137,17 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     public void close()
         throws RepositoryException
     {
-        sync();
-        super.close();
-        client.stopTimer();
         try {
+            sync();
             if (this.isActive()) {
+                logger.debug("rollback open transaction on closing connection.");
                 client.rollbackTransaction();
             }
         } catch (Exception e) {
             
         }
+        client.stopTimer();
+        super.close();
     }
     
     /**
@@ -232,6 +235,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     public MarkLogicTupleQuery prepareTupleQuery(String queryString) throws RepositoryException, MalformedQueryException {
         return prepareTupleQuery(QueryLanguage.SPARQL, queryString);
     }
+
     /**
      * overload for prepareTupleQuery
      *
@@ -445,7 +449,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
      * @param queryLanguage
      * @param queryString
      * @param baseURI
-     * @return
+     * @return MarkLogicUpdateQuery
      * @throws RepositoryException
      * @throws MalformedQueryException
      */
@@ -507,9 +511,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     public RepositoryResult<Statement> getStatements(Resource subj, URI pred, Value obj, boolean includeInferred) throws RepositoryException {
         try {
             if (isQuadMode()) {
-                StringBuilder sb= new StringBuilder();
-                sb.append("SELECT * {GRAPH ?ctx { ?s ?p ?o . }}");
-                TupleQuery tupleQuery = prepareTupleQuery(sb.toString());
+                TupleQuery tupleQuery = prepareTupleQuery(GET_STATEMENTS);
                 setBindings(tupleQuery, subj, pred, obj);
                 tupleQuery.setIncludeInferred(includeInferred);
                 TupleQueryResult qRes = tupleQuery.evaluate();
@@ -531,13 +533,11 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
                     return new RepositoryResult<Statement>(new EmptyIteration<Statement, RepositoryException>());
                 }
             }
-
             GraphQuery query = prepareGraphQuery(EVERYTHING);
             setBindings(query, subj, pred, obj);
             GraphQueryResult result = query.evaluate();
             return new RepositoryResult<Statement>(
                     new ExceptionConvertingIteration<Statement, RepositoryException>(result) {
-
                         @Override
                         protected RepositoryException convert(Exception e) {
                             return new RepositoryException(e);
@@ -580,10 +580,10 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
                     else {
                         sb.append(",");
                     }
-                    if (context == null) {
-                        sb.append("IRI(\"http://marklogic.com/semantics#default-graph\")");
-                    } else {
+                    if (notNull(context)) {
                         sb.append("IRI(\"" + context.toString() + "\")");
+                    } else {
+                        sb.append("IRI(\""+DEFAULT_GRAPH_URI+"\")");
                     }
                 }
                 sb.append(") ) }");
@@ -615,7 +615,6 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
                 GraphQueryResult result = query.evaluate();
                 return new RepositoryResult<Statement>(
                         new ExceptionConvertingIteration<Statement, RepositoryException>(result) {
-    
                             @Override
                             protected RepositoryException convert(Exception e) {
                                 return new RepositoryException(e);
@@ -669,7 +668,6 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
         else {
             
             StringBuilder sb= new StringBuilder();
-            //if (baseURI != null) sb.append("BASE <" + baseURI + ">\n");
             sb.append("ASK { GRAPH ?ctx { ?s ?p ?o } filter (?ctx = (");
                 boolean first = true;
                 for (Resource context : contexts) {
@@ -700,6 +698,21 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
         catch (QueryEvaluationException e) {
             throw new RepositoryException(e);
         }
+    }
+
+    /**
+     * exports statements via RDFHandler
+     *
+     * TBD- should refactor
+     *
+     * @param handler
+     * @param contexts
+     * @throws RepositoryException
+     * @throws RDFHandlerException
+     */
+    @Override
+    public void export(RDFHandler handler, Resource... contexts) throws RepositoryException, RDFHandlerException {
+        exportStatements(null, null, null, true, handler);
     }
 
     /**
@@ -773,24 +786,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     }
 
     /**
-     * exports statements via RDFHandler
-     *
-     * TBD- should refactor
-     *
-     * @param handler
-     * @param contexts
-     * @throws RepositoryException
-     * @throws RDFHandlerException
-     */
-    @Override
-    public void export(RDFHandler handler, Resource... contexts) throws RepositoryException, RDFHandlerException {
-        exportStatements(null, null, null, true, handler);
-    }
-
-
-    /**
      * returns number of triples in the entire triple store
-     *
      *
      * @return long
      */
@@ -813,7 +809,6 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     
     /**
      * returns number of triples in supplied context
-     *
      *
      * @param contexts
      * @return long
@@ -874,14 +869,14 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     }
 
     /**
-     * clears triples in repository context
+     * clears triples in supplied context
      *
      * @param contexts
      * @throws RepositoryException
      */
     @Override
     public void clear(Resource... contexts) throws RepositoryException {
-            getClient().sendClear(contexts);
+        getClient().sendClear(contexts);
     }
 
     /**
@@ -896,7 +891,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     }
 
     /**
-     * returns true if a transaction is open and active
+     * returns true if a transaction is active on connection
      *
      * @return boolean
      * @throws UnknownTransactionStateException
@@ -908,7 +903,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     }
 
     /**
-     * sets transaction isolationlevel
+     * gets transaction isolationlevel (only IsolationLevels.SNAPSHOT supported)
      *
      * @return level
      */
@@ -918,7 +913,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     }
 
     /**
-     * sets transaction isolationlevel
+     * sets transaction isolationlevel (only IsolationLevels.SNAPSHOT supported)
      *
      * @param level
      * @throws IllegalStateException
@@ -955,33 +950,27 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     }
 
     /**
-     * commits a transaction
+     * commits transaction
      *
      * @throws RepositoryException
      */
     @Override
     public void commit() throws RepositoryException {
-        if(this.isActive()) {
-            sync();
             getClient().commitTransaction();
-        }else{
-            throw new MarkLogicTransactionException("No active transaction to commit.");
-        }
     }
 
     /**
-     * rollbacks an open transaction
+     * rollbacks open transaction
      *
      * @throws RepositoryException
      */
     @Override
     public void rollback() throws RepositoryException {
-        sync();
         getClient().rollbackTransaction();
     }
 
     /**
-     * add triples
+     * add triples via inputstream
      *
      * @param in
      * @param baseURI
@@ -997,7 +986,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     }
 
     /**
-     * add triples
+     * add triples via File
      *
      * will use file uri as base URI if none supplied
      *
@@ -1019,7 +1008,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     }
 
     /**
-     * add triples
+     * add triples via Reader
      *
      * @param reader
      * @param baseURI
@@ -1031,12 +1020,11 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
      */
     @Override
     public void add(Reader reader, String baseURI, RDFFormat dataFormat, Resource... contexts) throws IOException, RDFParseException, RepositoryException {
-        sync();
         getClient().sendAdd(reader, baseURI, dataFormat, contexts);
     }
 
     /**
-     * add triples
+     * add triples via URL
      *
      * sets base URI to url if none is supplied
      *
@@ -1059,7 +1047,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     }
 
     /**
-     * add single statement of triples
+     * add single triple statement with supplied context
      *
      * @param subject
      * @param predicate
@@ -1073,7 +1061,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     }
 
     /**
-     * add triples
+     * add single triple statement with supplied context
      *
      * @param st
      * @param contexts
@@ -1085,9 +1073,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     }
 
     /**
-     * add triples
-     *
-     * TBD - will use write cache
+     * add triple statements
      *
      * @param statements
      * @param contexts
@@ -1103,9 +1089,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     }
 
     /**
-     * add triples
-     *
-     * TBD- will use write cache
+     * add triple statements
      *
      * @param statements
      * @param contexts
@@ -1123,7 +1107,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
 
 
     /**
-     * remove triples
+     * remove triple statement
      *
      * @param subject
      * @param predicate
@@ -1133,12 +1117,11 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
      */
     @Override
     public void remove(Resource subject, URI predicate, Value object, Resource... contexts) throws RepositoryException {
-        sync();
         getClient().sendRemove(null, subject, predicate, object, contexts);
     }
 
     /**
-     * remove triples
+     * remove triple statement
      *
      * @param st
      * @param contexts
@@ -1146,14 +1129,11 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
      */
     @Override
     public void remove(Statement st, Resource... contexts) throws RepositoryException {
-        sync();
         getClient().sendRemove(null, st.getSubject(), st.getPredicate(), st.getObject(), mergeResource(st.getContext(), contexts));
     }
 
     /**
-     * remove triples
-     *
-     * TBD- will use write cache
+     * remove triple statements
      *
      * @param statements
      * @throws RepositoryException
@@ -1169,9 +1149,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     }
 
     /**
-     * remove triples
-     *
-     * TBD -will use write cache
+     * remove triple statements
      *
      * @param statements
      * @param contexts
@@ -1188,9 +1166,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     }
 
     /**
-     * remove triples
-     *
-     * TBD - will use write cache
+     * remove triple statements
      *
      * @param statements
      * @param <E>
@@ -1207,9 +1183,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     }
 
     /**
-     * remove triples
-     *
-     * TBD -will use write cache
+     * remove triple statements
      *
      * @param statements
      * @param contexts
@@ -1229,7 +1203,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     /**
      * add without commit
      *
-     * supplied to honor interface
+     * note- supplied to honor interface
      *
      * @param subject
      * @param predicate
@@ -1245,7 +1219,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     /**
      * remove without commit
      *
-     * supplied to honor interface
+     *  supplied to honor interface
      *
      * @param subject
      * @param predicate
@@ -1330,6 +1304,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     @Override
     public void setDefaultGraphPerms(GraphPermissions graphPerms) {
         this.defaultGraphPerms = graphPerms;
+        this.client.setGraphPerms(graphPerms);
     }
 
     /**
@@ -1351,6 +1326,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     @Override
     public void setDefaultQueryDef(QueryDefinition queryDef) {
         this.defaultQueryDef = queryDef;
+        this.client.setConstrainingQueryDefinition(queryDef);
     }
 
     /**
@@ -1371,6 +1347,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     @Override
     public void setDefaultRulesets(SPARQLRuleset ... ruleset ) {
         this.defaultRulesets = ruleset;
+        this.client.setRulesets(ruleset);
     }
 
     /**
@@ -1406,7 +1383,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
         if(isOpen()){
             return this.client;
         }else{
-            throw new RepositoryException("connection is closed1.");
+            throw new RepositoryException("connection is closed.");
         }
     }
 

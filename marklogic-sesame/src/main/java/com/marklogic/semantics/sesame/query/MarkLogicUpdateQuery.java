@@ -57,8 +57,9 @@ public class MarkLogicUpdateQuery extends MarkLogicQuery implements Update,MarkL
     }
 
     /**
+     * execute update query
      *
-      * @throws UpdateExecutionException
+     * @throws UpdateExecutionException
      */
     @Override
     public void execute() throws UpdateExecutionException {
