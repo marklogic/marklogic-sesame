@@ -120,29 +120,58 @@ public class Example1_Simple {
 }
 </pre>
 
-
 </p>
-<h2>Graph operations</h2>
+<h2>Add and remove triples operations</h2>
 <p>Use Sesame's CRUD operations to store, retrieve, merge or delete Graphs on the
     MarkLogicDatasetGraph.
 <pre>
+Resource context1 = conn.getValueFactory().createURI("http://marklogic.com/examples/context1");
+Resource context2 = conn.getValueFactory().createURI("http://marklogic.com/examples/context2");
+ValueFactory f= conn.getValueFactory();
+String namespace = "http://example.org/";
+URI john = f.createURI(namespace, "john");
+conn.add(john, RDF.TYPE, FOAF.PERSON,context1);
+conn.add(john, RDFS.LABEL, f.createLiteral("John", XMLSchema.STRING),context2);
+logger.info("statement exist:{}",,conn.hasStatement(john,RDF.TYPE,null,context1));
+logger.info("total triples:{}",conn.size());
+conn.remove(john,RDF.TYPE,null,context1);
+conn.remove(john,null,null,context1);
+conn.clear();
+logger.info("total triples:{} should be zero",conn.size());
 </pre>
 </p>
 <pre>
 </pre>
 <h2>SPARQL Queries</h2>
+<p>Perform SPARQL query with pagination</p>
 <p>
 <pre>
-// perform SPARQL query with pagination
 String queryString = "select * { ?s ?p ?o }";
 MarkLogicTupleQuery tupleQuery = conn.prepareTupleQuery(QueryLanguage.SPARQL, queryString);
 tupleQuery.setIncludeInferred(true);
 TupleQueryResult results = tupleQuery.evaluate(1,10);
+try {
+while(results.hasNext()){
+BindingSet bindingSet = results.next();
+Value sV = bindingSet.getValue("s");
+Value pV = bindingSet.getValue("p");
+Value oV = bindingSet.getValue("o");
+}
+finally {
+results.close();
+}
+con.close();
 </pre>
 </p>
 <h2>SPARQL Update</h2>
 <p>
 <pre>
+String defGraphQuery = "INSERT DATA { GRAPH <http://marklogic.com/example/context1> {  <http://marklogic.com/test/subject> <relative1> <relative2> } }";
+String checkQuery = "ASK WHERE { <http://marklogic.com/test/subject> <relative1> <relative2> }";
+Update updateQuery = conn.prepareUpdate(QueryLanguage.SPARQL, defGraphQuery,"http://marklogic.com/test/baseuri");
+updateQuery.execute();
+BooleanQuery booleanQuery = conn.prepareBooleanQuery(QueryLanguage.SPARQL, checkQuery,"http://marklogic.com/test/baseuri");
+boolean results = booleanQuery.evaluate();
 </pre>
 </p>
 </body>

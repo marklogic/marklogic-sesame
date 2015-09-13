@@ -15,9 +15,11 @@
  */
 package com.marklogic.semantics.sesame.query;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-
+import com.marklogic.client.io.FileHandle;
+import com.marklogic.client.semantics.GraphManager;
+import com.marklogic.client.semantics.RDFMimeTypes;
+import com.marklogic.semantics.sesame.MarkLogicRepositoryConnection;
+import com.marklogic.semantics.sesame.SesameTestBase;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -30,11 +32,8 @@ import org.openrdf.repository.RepositoryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.marklogic.client.io.FileHandle;
-import com.marklogic.client.semantics.GraphManager;
-import com.marklogic.client.semantics.RDFMimeTypes;
-import com.marklogic.semantics.sesame.MarkLogicRepositoryConnection;
-import com.marklogic.semantics.sesame.SesameTestBase;
+import java.io.File;
+import java.io.FileNotFoundException;
 
 /**
  * Created by jfuller on 8/11/15.
@@ -88,6 +87,19 @@ public class MarkLogicUpdateQueryTest extends SesameTestBase {
 
     @Test
     public void testUpdateQueryWithBaseURI()
+            throws Exception {
+        String defGraphQuery = "INSERT DATA { GRAPH <http://marklogic.com/example/context1> {  <http://marklogic.com/test/subject> <relative1> <relative2> } }";
+        String checkQuery = "ASK WHERE { <http://marklogic.com/test/subject> <relative1> <relative2> }";
+        Update updateQuery = conn.prepareUpdate(QueryLanguage.SPARQL, defGraphQuery,"http://marklogic.com/test/baseuri");
+        updateQuery.execute();
+        BooleanQuery booleanQuery = conn.prepareBooleanQuery(QueryLanguage.SPARQL, checkQuery,"http://marklogic.com/test/baseuri");
+        boolean results = booleanQuery.evaluate();
+        Assert.assertEquals(true, results);
+        conn.clear(conn.getValueFactory().createURI("http://marklogic.com/example/context1"));
+    }
+
+    @Test
+    public void testUpdateQueryWithExistingBaseURI()
             throws Exception {
         String defGraphQuery = "BASE <http://marklogic.com/test/baseuri> INSERT DATA { GRAPH <http://marklogic.com/test/context10> {  <http://marklogic.com/test/subject> <pp1> <oo1> } }";
         String checkQuery = "BASE <http://marklogic.com/test/baseuri> ASK WHERE { <http://marklogic.com/test/subject> <pp1> <oo1> }";
