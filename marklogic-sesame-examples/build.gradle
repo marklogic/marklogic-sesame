@@ -51,7 +51,17 @@ configurations {
 
 compileJava.dependsOn ":marklogic-sesame:install"
 
-task runSimple(type: JavaExec, dependsOn: 'classes') {
-    main = 'com.marklogic.semantics.sesame.examples.Simple'
+task runExample1(type: JavaExec, dependsOn: 'classes') {
+    main = 'com.marklogic.semantics.sesame.examples.Example1_Simple'
+    classpath = sourceSets.main.runtimeClasspath
+}
+
+task runExample2(type: JavaExec, dependsOn: 'classes') {
+    main = 'com.marklogic.semantics.sesame.examples.Example2_Advanced'
+    classpath = sourceSets.main.runtimeClasspath
+}
+
+task runExample3(type: JavaExec, dependsOn: 'classes') {
+    main = 'com.marklogic.semantics.sesame.examples.Example3_Other'
     classpath = sourceSets.main.runtimeClasspath
 }

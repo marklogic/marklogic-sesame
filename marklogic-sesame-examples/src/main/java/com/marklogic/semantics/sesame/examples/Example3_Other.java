@@ -22,14 +22,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public class Simple {
+public class Example3_Other {
 
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected static final Logger logger = LoggerFactory.getLogger(Example3_Other.class);
 
     MarkLogicRepository repo;
     MarkLogicRepositoryConnection conn;
 
-    public Simple() throws RepositoryException {
+    public Example3_Other() throws RepositoryException {
         System.out.println("setup");
         this.repo = Setup.loadPropsAndInit(); // invoke new MarkLogicRepository(host,port,user,pass,"DIGEST");
         this.repo.initialize(); // initialise repository
@@ -49,11 +49,11 @@ public class Simple {
 
     public static void main(String... args) throws RepositoryException {
         System.out.println("instantiate Simple class");
-        Simple simple = new Simple(); // we instantiate so we can call non static methods
+        Example3_Other simple = new Example3_Other(); // we instantiate so we can call non static methods
         try {
-            System.out.println("start examples");
+            logger.info("start examples");
             simple.tripleCount(); // return number of triples in repo
-            System.out.println("finished examples");
+            logger.info("finished examples");
         }finally {
             simple.teardown();
         }

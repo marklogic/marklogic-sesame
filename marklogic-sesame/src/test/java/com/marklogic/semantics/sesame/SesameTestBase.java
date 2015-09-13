@@ -79,9 +79,9 @@ public class SesameTestBase {
         writerClient = DatabaseClientFactory.newClient(host, port, writerUser, writerPassword, DatabaseClientFactory.Authentication.DIGEST);
         readerClient = DatabaseClientFactory.newClient(host, port, writerUser, writerPassword, DatabaseClientFactory.Authentication.DIGEST);
 
-        rep = new MarkLogicRepository(host,port,validUser,validPassword, "DIGEST");
-        writerRep = new MarkLogicRepository(host,port,writerUser,writerPassword, "DIGEST");
-        readerRep = new MarkLogicRepository(host,port,readerUser,readerPassword, "DIGEST");
+        rep = new MarkLogicRepository(adminClient);
+        writerRep = new MarkLogicRepository(writerClient);
+        readerRep = new MarkLogicRepository(readerClient);
     }
 }
 
