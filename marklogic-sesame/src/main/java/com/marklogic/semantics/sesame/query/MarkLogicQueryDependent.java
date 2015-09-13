@@ -24,58 +24,22 @@ import com.marklogic.client.semantics.GraphPermissions;
 import com.marklogic.client.semantics.SPARQLRuleset;
 
 /**
- * interface defining MarkLogic specific query features
+ * interface defining MarkLogic semantic features
  *
  * @author James Fuller
  */
 interface MarkLogicQueryDependent {
 
-    /**
-     * gets query inference ruleset
-     * @return java api client Ruleset
-     */
     SPARQLRuleset[] getRulesets();
-
-    /**
-     * sets query inference ruleset to be used when query executes
-     * @param ruleset
-     */
     void setRulesets(SPARQLRuleset ... ruleset);
 
-    /**
-     * gets base uri to be used by query
-     * @return string
-     */
     String getBaseURI();
-
-    /**
-     * sets base uri to be used by query
-     * @param baseURI
-     */
     void setBaseURI(String baseURI);
 
-    /**
-     * gets constraining query to be used by query
-     * @return
-     */
     QueryDefinition getConstrainingQueryDefinition();
-
-    /**
-     * sets constraining query to be used by query
-     *
-     * @param constrainingQueryDefinition
-     */
     void setConstrainingQueryDefinition(QueryDefinition constrainingQueryDefinition);
 
-    /**
-     *  gets graph permissions to be used by query
-     */
     GraphPermissions getGraphPerms();
-
-    /**
-     * sets graph permissions to be used by query
-     * @param graphPerms
-     */
     void setGraphPerms(GraphPermissions graphPerms);
 
 }

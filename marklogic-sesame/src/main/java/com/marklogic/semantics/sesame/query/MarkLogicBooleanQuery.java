@@ -56,8 +56,9 @@ public class MarkLogicBooleanQuery extends MarkLogicQuery implements BooleanQuer
     }
 
     /**
+     * evaluate boolean query
      *
-     * @return
+     * @return boolean
      * @throws QueryEvaluationException
      */
     @Override

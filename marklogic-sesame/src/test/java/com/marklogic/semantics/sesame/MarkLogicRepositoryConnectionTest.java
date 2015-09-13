@@ -80,8 +80,8 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
     public void tearDown()
             throws Exception {
         logger.debug("tearing down...");
+        //if( conn.isOpen() && conn.isActive()){conn.rollback();}
         if(conn.isOpen()){conn.clear();}
-        if( conn.isOpen() && conn.isActive()){conn.rollback();}
         conn.close();
         conn = null;
         rep.shutDown();
@@ -1164,5 +1164,6 @@ conn.sync();
         Literal feilname = vf.createLiteral("Ling", "nonexistentlangtag");
         conn.add(fei, lname, feilname);
     }
+
 
 }

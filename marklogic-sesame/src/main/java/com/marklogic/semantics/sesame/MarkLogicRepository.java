@@ -37,12 +37,16 @@ import java.io.File;
  * Sesame repository representing a MarkLogic's triple store,
  * exposing MarkLogic specific features;
  *
- *  * permissions
+ *  * SPARQL and Graph queries all SPARQL forms
+ *  * rulesets for inferencing
+ *  * efficient size queries
  *  * combination queries
  *  * base uri
- *  * rulesets for inferencing
+ *  * permissions
  *
  * @author James Fuller
+ * @version 1.0.0
+ *
  */
 public class MarkLogicRepository extends RepositoryBase implements Repository,MarkLogicClientDependent {
 
@@ -113,7 +117,7 @@ public class MarkLogicRepository extends RepositoryBase implements Repository,Ma
     }
 
     /**
-     * deprecated
+     * @deprecated
      * implemented to honor Repository interface
      *
      * @throws RepositoryException
@@ -123,7 +127,7 @@ public class MarkLogicRepository extends RepositoryBase implements Repository,Ma
     }
 
     /**
-     * deprecated
+     * @deprecated
      * implemented to honor Repository interface
      *
      * @throws RepositoryException
@@ -136,7 +140,7 @@ public class MarkLogicRepository extends RepositoryBase implements Repository,Ma
      * MarkLogic has no concept of data directory, so this returns null
      * implemented to honor Repository interface
      *
-     * @return
+     * @return always returns null
      */
     @Override
     public File getDataDir() {
@@ -154,7 +158,7 @@ public class MarkLogicRepository extends RepositoryBase implements Repository,Ma
     }
 
     /**
-     * MarkLogic, with the correct perms,is always writeable so this returns true
+     * MarkLogic, with the correct perms is always writeable
      * implemented to honor Repository interface
      *
      * @return boolean
@@ -203,7 +207,6 @@ public class MarkLogicRepository extends RepositoryBase implements Repository,Ma
     public synchronized void setMarkLogicClient(MarkLogicClient client) {
         this.client = client;
     }
-
 
     /**
      * returns if repository is in quadmode or not

@@ -57,8 +57,9 @@ public class MarkLogicGraphQuery extends MarkLogicQuery implements GraphQuery,Ma
     }
 
     /**
+     * evaluate graph query
      *
-     * @return
+     * @return GraphQueryResult
      * @throws QueryEvaluationException
      */
     @Override
@@ -72,6 +73,7 @@ public class MarkLogicGraphQuery extends MarkLogicQuery implements GraphQuery,Ma
     }
 
     /**
+     * evaluate graph query w/ RDFHandler
      *
      * @param resultHandler
      * @throws QueryEvaluationException

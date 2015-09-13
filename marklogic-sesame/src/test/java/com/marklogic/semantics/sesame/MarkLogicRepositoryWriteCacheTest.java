@@ -19,10 +19,7 @@
  */
 package com.marklogic.semantics.sesame;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.rules.ExpectedException;
 import org.openrdf.model.*;
 import org.slf4j.Logger;
@@ -69,7 +66,9 @@ public class MarkLogicRepositoryWriteCacheTest extends SesameTestBase {
     }
 
     // https://github.com/marklogic/marklogic-sesame/issues/140
-    @Test
+    // https://github.com/marklogic/marklogic-sesame/issues/140
+    // waiting on resolution of 183 and mergeGraphs with txid
+    @Test @Ignore
     public void testStatementWithWriteCache() throws Exception {
         Resource context1 = conn.getValueFactory().createURI("http://marklogic.com/test/context1");
         Resource context2 = conn.getValueFactory().createURI("http://marklogic.com/test/context2");

@@ -1,3 +1,22 @@
+/*
+ * Copyright 2015 MarkLogic Corporation
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/**
+ * A timer that flushes a cache of triple add statements
+ * periodically. The cache is represented as a Model.
+ */
 package com.marklogic.semantics.sesame.client;
 
 import com.marklogic.semantics.sesame.MarkLogicSesameException;
@@ -20,8 +39,9 @@ import java.util.Date;
 import java.util.TimerTask;
 
 /**
- * A timer task that flushes a cache of pending triple add statements
- * periodically. The cache is represented as a Model.
+ * Timer implements write cache for efficient adding of triples
+ *
+ * @author James Fuller
  */
 public class WriteCacheTimerTask extends TimerTask {
 
@@ -31,7 +51,7 @@ public class WriteCacheTimerTask extends TimerTask {
     private MarkLogicClient client;
 
     public static long DEFAULT_CACHE_MILLIS = 750;
-    public static long DEFAULT_INITIAL_DELAY = 0;
+    public static long DEFAULT_INITIAL_DELAY = 10;
     private static long DEFAULT_CACHE_SIZE = 750;
 
     private long cacheSize = DEFAULT_CACHE_SIZE;
@@ -86,7 +106,7 @@ public class WriteCacheTimerTask extends TimerTask {
     }
 
     /**
-     * tests to see if we should flush clash
+     * tests to see if we should flush cache
      *
      */
     @Override
@@ -149,7 +169,7 @@ public class WriteCacheTimerTask extends TimerTask {
      * @param object
      * @param contexts
      */
-    public synchronized void add(Resource subject, URI predicate, Value object, Resource... contexts) {
+    public void add(Resource subject, URI predicate, Value object, Resource... contexts) {
         cache.add(subject,predicate,object,contexts);
     }
 }

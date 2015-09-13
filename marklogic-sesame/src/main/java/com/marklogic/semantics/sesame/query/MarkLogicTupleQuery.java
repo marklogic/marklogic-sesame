@@ -57,8 +57,9 @@ public class MarkLogicTupleQuery extends MarkLogicQuery implements TupleQuery,Ma
     }
 
     /**
+     * evaluate tuple query
      *
-     * @return
+     * @return TupleQueryResult
      * @throws QueryEvaluationException
      */
     @Override
@@ -67,10 +68,11 @@ public class MarkLogicTupleQuery extends MarkLogicQuery implements TupleQuery,Ma
     }
 
     /**
+     * evaluate tuple query with pagination
      *
      * @param start
      * @param pageLength
-     * @return
+     * @return TupleQueryResult
      * @throws QueryEvaluationException
      */
     public TupleQueryResult evaluate(long start, long pageLength)
@@ -89,6 +91,7 @@ public class MarkLogicTupleQuery extends MarkLogicQuery implements TupleQuery,Ma
     }
 
     /**
+     * evaluate tuple query w/ TupleQueryResulthandler
      *
      * @param resultHandler
      * @throws QueryEvaluationException
@@ -97,6 +100,18 @@ public class MarkLogicTupleQuery extends MarkLogicQuery implements TupleQuery,Ma
     @Override
     public void evaluate(TupleQueryResultHandler resultHandler) throws QueryEvaluationException, TupleQueryResultHandlerException {
         TupleQueryResult queryResult = evaluate();
+        QueryResults.report(queryResult, resultHandler);
+    }
+
+    /**
+     * evaluate tuple query w/ TupleQueryResulthandler with pagination
+     *
+     * @param resultHandler
+     * @throws QueryEvaluationException
+     * @throws TupleQueryResultHandlerException
+     */
+    public void evaluate(TupleQueryResultHandler resultHandler,long start, long pageLength) throws QueryEvaluationException, TupleQueryResultHandlerException {
+        TupleQueryResult queryResult = evaluate(start,pageLength);
         QueryResults.report(queryResult, resultHandler);
     }
 }

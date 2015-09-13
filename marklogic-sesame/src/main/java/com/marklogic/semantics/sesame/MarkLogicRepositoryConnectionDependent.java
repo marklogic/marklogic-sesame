@@ -28,7 +28,9 @@ import org.openrdf.query.*;
 import org.openrdf.repository.RepositoryException;
 
 /**
- * interface which defines MarkLogic specific overrides
+ * interface defining MarkLogic semantic features
+ *
+ * @author James Fuller
  */
 interface MarkLogicRepositoryConnectionDependent {
 
