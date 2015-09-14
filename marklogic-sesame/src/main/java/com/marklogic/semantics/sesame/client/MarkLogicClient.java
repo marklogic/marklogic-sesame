@@ -82,7 +82,7 @@ public class MarkLogicClient {
     private static boolean WRITE_CACHE_ENABLED = false;
 
 	/**
-	 * constructor initing with connection params
+	 * constructor init with connection params
      *
  	 * @param host
 	 * @param port
@@ -95,7 +95,7 @@ public class MarkLogicClient {
 	}
 
 	/**
-	 * constructor initing with DatabaseClient
+	 * constructor init with DatabaseClient
      *
 	 * @param databaseClient
 	 */
@@ -104,7 +104,7 @@ public class MarkLogicClient {
 	}
 
     /**
-     *
+     * start Timer task (write cache)
      */
 	public void initTimer(){
         if(this.WRITE_CACHE_ENABLED) {
@@ -115,7 +115,7 @@ public class MarkLogicClient {
     }
 
     /**
-     *
+     * stop Timer task (write cache)
      */
 	public void stopTimer() {
         if(this.WRITE_CACHE_ENABLED) {
@@ -124,6 +124,11 @@ public class MarkLogicClient {
         }
     }
 
+    /**
+     *  forces write cache to flush triples
+     *
+     * @throws MarkLogicSesameException
+     */
     public void sync() throws MarkLogicSesameException {
         if(WRITE_CACHE_ENABLED) cache.forceRun();
     }

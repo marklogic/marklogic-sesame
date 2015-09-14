@@ -81,8 +81,8 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     private MarkLogicClient client;
 
     private GraphPermissions[] defaultGraphPerms;
-    private QueryDefinition defaultQueryDef;
     private SPARQLRuleset[] defaultRulesets;
+    private QueryDefinition defaultQueryDef;
 
     /**
      * constructor
@@ -105,7 +105,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
         try {
             return super.isOpen();
         } catch (RepositoryException e) {
-            return false;
+            return false; // it seems draconian to throw an error when checking isOpen status
         }
     }
 

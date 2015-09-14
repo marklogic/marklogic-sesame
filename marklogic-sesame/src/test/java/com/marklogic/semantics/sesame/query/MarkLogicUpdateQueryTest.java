@@ -36,7 +36,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 
 /**
- * Created by jfuller on 8/11/15.
+ * test UpdateQuery
+ *
+ * @author James Fuller
  */
 public class MarkLogicUpdateQueryTest extends SesameTestBase {
 

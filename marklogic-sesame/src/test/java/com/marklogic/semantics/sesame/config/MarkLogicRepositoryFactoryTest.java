@@ -31,6 +31,7 @@ import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.config.RepositoryFactory;
 
 /**
+ * test factory
  *
  * @author James Fuller
  */

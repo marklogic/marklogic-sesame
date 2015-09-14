@@ -37,6 +37,7 @@ import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
 
 /**
+ * test transactions
  *
  * @author James Fuller
  */
@@ -115,8 +116,6 @@ public class MarkLogicRepositoryTransactionTest extends SesameTestBase {
         assertThat(conn.size(), is(equalTo(2L)));
         assertThat(other.size(), is(equalTo(2L)));
     }
-
-
 
     @Test
     public void testSizeSimpleCommit()

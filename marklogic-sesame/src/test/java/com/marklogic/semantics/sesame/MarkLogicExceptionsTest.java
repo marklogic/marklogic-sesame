@@ -39,6 +39,7 @@ import java.io.File;
 import java.io.FileInputStream;
 
 /**
+ * tests that the correct exceptions are thrown
  *
  * @author James Fuller
  */

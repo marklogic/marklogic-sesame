@@ -34,6 +34,11 @@ import com.marklogic.client.semantics.Capability;
 import com.marklogic.client.semantics.GraphManager;
 import com.marklogic.semantics.sesame.query.MarkLogicUpdateQuery;
 
+/**
+ * tests MarkLogic graph permissions
+ *
+ * @author James Fuller
+ */
 public class MarkLogicGraphPermsTest extends SesameTestBase {
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -104,7 +109,7 @@ public class MarkLogicGraphPermsTest extends SesameTestBase {
         String defGraphQuery = "INSERT DATA { GRAPH <http://marklogic.com/test/graph/permstest> { <http://marklogic.com/test> <pp1> <oo1> } }";
         String checkQuery = "ASK WHERE {  GRAPH <http://marklogic.com/test/graph/permstest> {<http://marklogic.com/test> <pp1> <oo1> }}";
         MarkLogicUpdateQuery updateQuery = conn.prepareUpdate(QueryLanguage.SPARQL, defGraphQuery);
-        updateQuery.setGraphPerms(gmgr.permission("admin", Capability.READ),gmgr.permission("admin", Capability.READ));
+        updateQuery.setGraphPerms(gmgr.permission("admin", Capability.READ),gmgr.permission("admin", Capability.EXECUTE));
 
         updateQuery.execute();
 
