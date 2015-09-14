@@ -52,7 +52,7 @@ public class MarkLogicUpdateQuery extends MarkLogicQuery implements Update,MarkL
      * @param baseUri
      * @param queryString
      */
-    public MarkLogicUpdateQuery(MarkLogicClient client, SPARQLQueryBindingSet bindingSet, String baseUri, String queryString, GraphPermissions[] graphPerms, QueryDefinition queryDef, SPARQLRuleset[] rulesets) {
+    public MarkLogicUpdateQuery(MarkLogicClient client, SPARQLQueryBindingSet bindingSet, String baseUri, String queryString, GraphPermissions graphPerms, QueryDefinition queryDef, SPARQLRuleset[] rulesets) {
         super(client, bindingSet, baseUri, queryString,graphPerms,queryDef,rulesets);
     }
 

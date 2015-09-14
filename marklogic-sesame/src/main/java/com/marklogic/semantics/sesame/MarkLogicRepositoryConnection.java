@@ -80,7 +80,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
 
     private MarkLogicClient client;
 
-    private GraphPermissions[] defaultGraphPerms;
+    private GraphPermissions defaultGraphPerms;
     private SPARQLRuleset[] defaultRulesets;
     private QueryDefinition defaultQueryDef;
 
@@ -1309,9 +1309,9 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
      * @param graphPerms
      */
     @Override
-    public void setDefaultGraphPerms(GraphPermissions ... graphPerms) {
+    public void setDefaultGraphPerms(GraphPermissions graphPerms) {
         this.defaultGraphPerms = graphPerms;
-        this.client.setGraphPerms(graphPerms);
+        //this.client.setGraphPerms(graphPerms);
     }
 
     /**
@@ -1320,7 +1320,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
      * @return GraphPermissions
      */
     @Override
-    public GraphPermissions[] getDefaultGraphPerms() {
+    public GraphPermissions getDefaultGraphPerms() {
         return this.defaultGraphPerms;
     }
 

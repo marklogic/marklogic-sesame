@@ -39,7 +39,7 @@ interface MarkLogicQueryDependent {
     QueryDefinition getConstrainingQueryDefinition();
     void setConstrainingQueryDefinition(QueryDefinition constrainingQueryDefinition);
 
-    GraphPermissions[] getGraphPerms();
-    void setGraphPerms(GraphPermissions ... graphPerms);
+    GraphPermissions getGraphPerms();
+    void setGraphPerms(GraphPermissions graphPerms);
 
 }

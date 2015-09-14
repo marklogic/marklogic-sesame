@@ -99,6 +99,7 @@ public class MarkLogicGraphPermsTest extends SesameTestBase {
         docMgr.delete("/directory2/doc2.xml");
     }
 
+    // https://github.com/marklogic/marklogic-sesame/issues/192
     @Test
     public void testUpdateQueryWithPerms()
             throws Exception {
@@ -109,8 +110,7 @@ public class MarkLogicGraphPermsTest extends SesameTestBase {
         String defGraphQuery = "INSERT DATA { GRAPH <http://marklogic.com/test/graph/permstest> { <http://marklogic.com/test> <pp1> <oo1> } }";
         String checkQuery = "ASK WHERE {  GRAPH <http://marklogic.com/test/graph/permstest> {<http://marklogic.com/test> <pp1> <oo1> }}";
         MarkLogicUpdateQuery updateQuery = conn.prepareUpdate(QueryLanguage.SPARQL, defGraphQuery);
-        updateQuery.setGraphPerms(gmgr.permission("admin", Capability.READ),gmgr.permission("admin", Capability.EXECUTE));
-
+        updateQuery.setGraphPerms(gmgr.permission("view-admin", Capability.READ).permission("cpf-restart",Capability.EXECUTE));
         updateQuery.execute();
 
         BooleanQuery booleanQuery = conn.prepareBooleanQuery(QueryLanguage.SPARQL, checkQuery);

@@ -55,8 +55,8 @@ interface MarkLogicRepositoryConnectionDependent {
     void remove(Iterable<? extends Statement> statements) throws RepositoryException;
     <E extends Exception> void remove(Iteration<? extends Statement, E> statements) throws RepositoryException, E;
 
-    void setDefaultGraphPerms(GraphPermissions ... graphPerms);
-    GraphPermissions[] getDefaultGraphPerms();
+    void setDefaultGraphPerms(GraphPermissions graphPerms);
+    GraphPermissions getDefaultGraphPerms();
 
     void setDefaultConstrainingQueryDefinition(QueryDefinition defaultQueryDef);
     QueryDefinition getDefaultConstrainingQueryDefinition();
