@@ -66,7 +66,7 @@ public class Example2_Advanced {
         conn.setDefaultRulesets(SPARQLRuleset.ALL_VALUES_FROM);
 
         // set default perms
-        conn.setDefaultGraphPerms(gmgr.permission("admin", Capability.READ),gmgr.permission("admin", Capability.EXECUTE));
+        conn.setDefaultGraphPerms(gmgr.permission("admin", Capability.READ).permission("admin", Capability.EXECUTE));
 
         // set a default Constraining Query
         StringQueryDefinition stringDef = qmgr.newStringDefinition().withCriteria("First");
@@ -127,7 +127,7 @@ public class Example2_Advanced {
         MarkLogicUpdateQuery updateQuery = conn.prepareUpdate(QueryLanguage.SPARQL, updatequery,"http://marklogic.com/test/baseuri");
 
         // set perms to be applied to data
-        updateQuery.setGraphPerms(gmgr.permission("admin", Capability.READ),gmgr.permission("admin", Capability.EXECUTE));
+        updateQuery.setGraphPerms(gmgr.permission("admin", Capability.READ).permission("admin", Capability.EXECUTE));
 
         try {
             updateQuery.execute();
