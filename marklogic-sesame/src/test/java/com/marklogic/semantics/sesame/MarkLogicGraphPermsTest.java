@@ -15,11 +15,13 @@
  */
 package com.marklogic.semantics.sesame;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import com.marklogic.client.document.XMLDocumentManager;
+import com.marklogic.client.io.StringHandle;
+import com.marklogic.client.semantics.Capability;
+import com.marklogic.client.semantics.GraphManager;
+import com.marklogic.client.semantics.GraphPermissions;
+import com.marklogic.semantics.sesame.query.MarkLogicUpdateQuery;
+import org.junit.*;
 import org.openrdf.model.Resource;
 import org.openrdf.model.ValueFactory;
 import org.openrdf.query.BooleanQuery;
@@ -27,12 +29,6 @@ import org.openrdf.query.QueryLanguage;
 import org.openrdf.repository.RepositoryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.marklogic.client.document.XMLDocumentManager;
-import com.marklogic.client.io.StringHandle;
-import com.marklogic.client.semantics.Capability;
-import com.marklogic.client.semantics.GraphManager;
-import com.marklogic.semantics.sesame.query.MarkLogicUpdateQuery;
 
 /**
  * tests MarkLogic graph permissions
@@ -110,7 +106,9 @@ public class MarkLogicGraphPermsTest extends SesameTestBase {
         String defGraphQuery = "INSERT DATA { GRAPH <http://marklogic.com/test/graph/permstest> { <http://marklogic.com/test> <pp1> <oo1> } }";
         String checkQuery = "ASK WHERE {  GRAPH <http://marklogic.com/test/graph/permstest> {<http://marklogic.com/test> <pp1> <oo1> }}";
         MarkLogicUpdateQuery updateQuery = conn.prepareUpdate(QueryLanguage.SPARQL, defGraphQuery);
-        updateQuery.setGraphPerms(gmgr.permission("view-admin", Capability.READ).permission("cpf-restart",Capability.EXECUTE));
+        GraphPermissions gp = gmgr.permission("view-admin", Capability.READ).permission("cpf-restart", Capability.EXECUTE);
+        Assert.assertEquals("should have 2 perms defined",2,gp.size());
+        updateQuery.setGraphPerms(gp);
         updateQuery.execute();
 
         BooleanQuery booleanQuery = conn.prepareBooleanQuery(QueryLanguage.SPARQL, checkQuery);
