@@ -188,7 +188,7 @@ String updatequery = "INSERT DATA { GRAPH <http://marklogic.com/test/context10> 
 MarkLogicUpdateQuery updateQuery = conn.prepareUpdate(QueryLanguage.SPARQL, updatequery,"http://marklogic.com/test/baseuri");
 
 // set perms to be applied to data
-updateQuery.setGraphPerms(gmgr.permission("admin", Capability.READ),gmgr.permission("admin", Capability.EXECUTE));
+updateQuery.setGraphPerms(gmgr.permission("admin", Capability.READ).permission("admin", Capability.EXECUTE));
 
 try {
 updateQuery.execute();

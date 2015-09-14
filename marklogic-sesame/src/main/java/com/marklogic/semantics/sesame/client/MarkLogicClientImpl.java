@@ -61,7 +61,7 @@ class MarkLogicClientImpl {
 
     private SPARQLRuleset[] ruleset;
     private QueryDefinition constrainingQueryDef;
-    private GraphPermissions[] graphPerms;
+    private GraphPermissions graphPerms;
 
     private SPARQLQueryManager sparqlManager;
     private GraphManager graphManager;
@@ -147,7 +147,7 @@ class MarkLogicClientImpl {
         if (notNull(ruleset)){qdef.setRulesets(ruleset);}
         if (notNull(getConstrainingQueryDefinition())) {qdef.setConstrainingQueryDefinition(getConstrainingQueryDefinition());}
         qdef.setIncludeDefaultRulesets(includeInferred);
-        if(notNull(graphPerms)){ setUpdatePermissions(qdef, graphPerms);}
+        if(notNull(graphPerms)){ qdef.setUpdatePermissions(graphPerms);}
         qdef.setBindings(getSPARQLBindings(bindings));
         if(pageLength > 0){
             sparqlManager.setPageLength(pageLength);
@@ -189,7 +189,7 @@ class MarkLogicClientImpl {
         if(notNull(baseURI) && baseURI != ""){ qdef.setBaseUri(baseURI);}
         if (notNull(ruleset)) {qdef.setRulesets(ruleset);}
         if (notNull(getConstrainingQueryDefinition())){qdef.setConstrainingQueryDefinition(getConstrainingQueryDefinition());}
-        if(notNull(graphPerms)){ setUpdatePermissions(qdef, graphPerms);}
+        if(notNull(graphPerms)){ qdef.setUpdatePermissions(graphPerms);}
         qdef.setIncludeDefaultRulesets(includeInferred);
         qdef.setBindings(getSPARQLBindings(bindings));
         sparqlManager.executeDescribe(qdef, handle, tx);
@@ -212,7 +212,7 @@ class MarkLogicClientImpl {
         qdef.setIncludeDefaultRulesets(includeInferred);
         if (notNull(ruleset)) {qdef.setRulesets(ruleset);}
         if (notNull(getConstrainingQueryDefinition())){qdef.setConstrainingQueryDefinition(getConstrainingQueryDefinition());}
-        if(notNull(graphPerms)){ setUpdatePermissions(qdef, graphPerms);}
+        if(notNull(graphPerms)){ qdef.setUpdatePermissions(graphPerms);}
         qdef.setBindings(getSPARQLBindings(bindings));
         return sparqlManager.executeAsk(qdef,tx);
     }
@@ -232,7 +232,7 @@ class MarkLogicClientImpl {
         if (notNull(ruleset) ) {qdef.setRulesets(ruleset);}
         // constraining query unused when adding triple
         //if (notNull(getConstrainingQueryDefinition())){qdef.setConstrainingQueryDefinition(getConstrainingQueryDefinition());}
-        if(notNull(graphPerms)){ setUpdatePermissions(qdef, graphPerms);}
+        if(notNull(graphPerms)){ qdef.setUpdatePermissions(graphPerms);}
         qdef.setIncludeDefaultRulesets(includeInferred);
         qdef.setBindings(getSPARQLBindings(bindings));
         sparqlManager.clearPageLength();
@@ -342,7 +342,7 @@ class MarkLogicClientImpl {
         if (notNull(ruleset) ) {qdef.setRulesets(ruleset);}
         // constraining query unused when adding triple
         //if (notNull(getConstrainingQueryDefinition())){qdef.setConstrainingQueryDefinition(getConstrainingQueryDefinition());}
-        if(notNull(graphPerms)){ setUpdatePermissions(qdef,graphPerms);}
+        if(notNull(graphPerms)){ qdef.setUpdatePermissions(graphPerms);}
         if(notNull(baseURI) && baseURI != ""){ qdef.setBaseUri(baseURI);}
 
         if(notNull(subject)) qdef.withBinding("s", subject.stringValue());
@@ -449,7 +449,7 @@ class MarkLogicClientImpl {
      *
      * @param graphPerms
      */
-    public void setGraphPerms(GraphPermissions ... graphPerms) {
+    public void setGraphPerms(GraphPermissions graphPerms) {
         this.graphPerms = graphPerms;
     }
 
@@ -458,7 +458,7 @@ class MarkLogicClientImpl {
      *
      * @return
      */
-    public GraphPermissions[] getGraphPerms() {
+    public GraphPermissions getGraphPerms() {
         return this.graphPerms;
     }
 
@@ -497,17 +497,6 @@ class MarkLogicClientImpl {
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-
-    /**
-     *
-     * @param qdef
-     * @param graphPerms
-     */
-    private static void setUpdatePermissions(SPARQLQueryDefinition qdef, GraphPermissions ... graphPerms){
-        for(GraphPermissions gp:graphPerms){
-            qdef.setUpdatePermissions(gp);
-        }
-    }
 
     /**
      * bind object

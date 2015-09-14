@@ -52,7 +52,7 @@ public class MarkLogicTupleQuery extends MarkLogicQuery implements TupleQuery,Ma
      * @param baseUri
      * @param queryString
      */
-    public MarkLogicTupleQuery(MarkLogicClient client, SPARQLQueryBindingSet bindingSet, String baseUri, String queryString, GraphPermissions[] graphPerms, QueryDefinition queryDef, SPARQLRuleset[] rulesets) {
+    public MarkLogicTupleQuery(MarkLogicClient client, SPARQLQueryBindingSet bindingSet, String baseUri, String queryString, GraphPermissions graphPerms, QueryDefinition queryDef, SPARQLRuleset[] rulesets) {
         super(client, bindingSet, baseUri, queryString, graphPerms, queryDef, rulesets);
     }
 
