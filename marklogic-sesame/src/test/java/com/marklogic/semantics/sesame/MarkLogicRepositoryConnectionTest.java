@@ -228,7 +228,7 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
     }
 
     // https://github.com/marklogic/marklogic-sesame/issues/64
-    @Test
+    // not implemented just yet
     @Ignore
     public void testAddGZippedRDF() throws Exception {
         File inputFile = new File("src/test/resources/testdata/databases.rdf.gz");

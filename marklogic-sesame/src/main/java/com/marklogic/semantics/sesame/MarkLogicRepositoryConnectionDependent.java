@@ -58,8 +58,8 @@ interface MarkLogicRepositoryConnectionDependent {
     void setDefaultGraphPerms(GraphPermissions ... graphPerms);
     GraphPermissions[] getDefaultGraphPerms();
 
-    void setDefaultQueryDef(QueryDefinition defaultQueryDef);
-    QueryDefinition getDefaultQueryDef();
+    void setDefaultConstrainingQueryDefinition(QueryDefinition defaultQueryDef);
+    QueryDefinition getDefaultConstrainingQueryDefinition();
 
     void setDefaultRulesets(SPARQLRuleset... ruleset);
     SPARQLRuleset[] getDefaultRulesets();

@@ -587,6 +587,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
                     }
                 }
                 sb.append(") ) }");
+                logger.debug(sb.toString());
                 TupleQuery tupleQuery = prepareTupleQuery(sb.toString());
                 tupleQuery.setIncludeInferred(includeInferred);
                 setBindings(tupleQuery, subj, pred, obj, (Resource) null);
@@ -687,6 +688,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
             queryString = sb.toString();
         }
         try {
+            logger.debug(queryString);
             BooleanQuery query = prepareBooleanQuery(queryString); // baseuri ?
 
             setBindings(query, subject, predicate, object, contexts);
@@ -773,6 +775,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
                     sb.append("?s ?p ?o }");
                 }
             }
+            logger.debug(sb.toString());
             GraphQuery query = prepareGraphQuery(sb.toString());
             setBindings(query, subject, predicate, object, contexts);
             query.evaluate(handler);
@@ -793,8 +796,10 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     @Override
     public long size(){
         try {
-            TupleQuery tupleQuery = prepareTupleQuery(COUNT_EVERYTHING);
+            MarkLogicTupleQuery tupleQuery = prepareTupleQuery(COUNT_EVERYTHING);
             tupleQuery.setIncludeInferred(false);
+            tupleQuery.setRulesets(null);
+            tupleQuery.setConstrainingQueryDefinition(null);
             TupleQueryResult qRes = tupleQuery.evaluate();
             // just one answer
             BindingSet result = qRes.next();
@@ -842,9 +847,11 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
                 sb.append("filter (?g = (IRI(\""+DEFAULT_GRAPH_URI+"\")))");
             }
             sb.append("}");
-            logger.info(sb.toString());
-            TupleQuery tupleQuery = prepareTupleQuery(sb.toString());
+            logger.debug(sb.toString());
+            MarkLogicTupleQuery tupleQuery = prepareTupleQuery(sb.toString());
             tupleQuery.setIncludeInferred(false);
+            tupleQuery.setRulesets(null);
+            tupleQuery.setConstrainingQueryDefinition(null);
             TupleQueryResult qRes = tupleQuery.evaluate();
             // just one answer
             BindingSet result = qRes.next();
@@ -1324,9 +1331,9 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
      * @param queryDef
      */
     @Override
-    public void setDefaultQueryDef(QueryDefinition queryDef) {
+    public void setDefaultConstrainingQueryDefinition(QueryDefinition queryDef) {
         this.defaultQueryDef = queryDef;
-        this.client.setConstrainingQueryDefinition(queryDef);
+        //this.client.setConstrainingQueryDefinition(queryDef);
     }
 
     /**
@@ -1335,7 +1342,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
      * @return QueryDefinition
      */
     @Override
-    public QueryDefinition getDefaultQueryDef() {
+    public QueryDefinition getDefaultConstrainingQueryDefinition() {
         return this.defaultQueryDef;
     }
 
@@ -1347,7 +1354,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     @Override
     public void setDefaultRulesets(SPARQLRuleset ... ruleset ) {
         this.defaultRulesets = ruleset;
-        this.client.setRulesets(ruleset);
+        //this.client.setRulesets(ruleset);
     }
 
     /**
