@@ -17,9 +17,18 @@ package com.marklogic.semantics.sesame.examples;
 
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
+import com.marklogic.client.io.Format;
+import com.marklogic.client.io.StringHandle;
+import com.marklogic.client.query.QueryManager;
+import com.marklogic.client.query.RawCombinedQueryDefinition;
+import com.marklogic.client.query.StringQueryDefinition;
+import com.marklogic.client.semantics.Capability;
+import com.marklogic.client.semantics.GraphManager;
+import com.marklogic.client.semantics.SPARQLRuleset;
 import com.marklogic.semantics.sesame.MarkLogicRepository;
 import com.marklogic.semantics.sesame.MarkLogicRepositoryConnection;
 import com.marklogic.semantics.sesame.query.MarkLogicTupleQuery;
+import com.marklogic.semantics.sesame.query.MarkLogicUpdateQuery;
 import org.openrdf.model.Resource;
 import org.openrdf.model.URI;
 import org.openrdf.model.ValueFactory;
@@ -43,6 +52,10 @@ public class Example2_Advanced {
 
         // instantiate MarkLogicRepository with Java api client DatabaseClient
         DatabaseClient adminClient = DatabaseClientFactory.newClient("localhost", 8200, "admin","admin", DatabaseClientFactory.Authentication.DIGEST);
+        GraphManager gmgr = adminClient.newGraphManager();
+        QueryManager qmgr = adminClient.newQueryManager();
+
+        // create repo and init
         MarkLogicRepository repo = new MarkLogicRepository(adminClient);
         repo.initialize();
 
@@ -50,16 +63,17 @@ public class Example2_Advanced {
         MarkLogicRepositoryConnection conn = repo.getConnection();
 
         // set default rulesets
-        //conn.setDefaultRulesets();
+        //conn.setDefaultRulesets(SPARQLRuleset.ALL_VALUES_FROM);
 
         // set default perms
-        //conn.setDefaultGraphPerms();
+        conn.setDefaultGraphPerms(gmgr.permission("admin", Capability.READ),gmgr.permission("admin", Capability.EXECUTE));
 
-        // set default Constraining Query
-        //conn.setDefaultQueryDef();
+        // set a default Constraining Query
+        StringQueryDefinition stringDef = qmgr.newStringDefinition().withCriteria("First");
+        //conn.setDefaultConstrainingQueryDefinition(stringDef);
 
         // return number of triples contained in repository
-        logger.info("number of triples: {}", conn.size());
+        logger.info("1. number of triples: {}", conn.size());
 
         // add a few constructed triples
         Resource context1 = conn.getValueFactory().createURI("http://marklogic.com/examples/context1");
@@ -68,23 +82,35 @@ public class Example2_Advanced {
         String namespace = "http://example.org/";
         URI john = f.createURI(namespace, "john");
 
+        //use transactions to add triple statements
         conn.begin();
         conn.add(john, RDF.TYPE, FOAF.PERSON, context1);
         conn.add(john, RDFS.LABEL, f.createLiteral("John", XMLSchema.STRING), context2);
-        logger.info("number of uncommited triples: {}", conn.size());
-        conn.rollback();
-        logger.info("number of triples: {}", conn.size());
+        conn.commit();
 
-        // perform SPARQL query with pagination
+        logger.info("2. number of triples: {}", conn.size());
+
+        // perform SPARQL query
         String queryString = "select * { ?s ?p ?o }";
         MarkLogicTupleQuery tupleQuery = conn.prepareTupleQuery(QueryLanguage.SPARQL, queryString);
+
+        // enable rulesets set on MarkLogic database
         tupleQuery.setIncludeInferred(true);
 
-        //tupleQuery.setBaseURI();
-        //tupleQuery.setRulesets();
-        //tupleQuery.setConstrainingQueryDefinition();
-        //tupleQuery.setGraphPerms();
+        // set base uri for resolving relative uris
+        tupleQuery.setBaseURI("http://www.example.org/base/");
 
+        // set rulesets for infererencing
+        tupleQuery.setRulesets(SPARQLRuleset.ALL_VALUES_FROM, SPARQLRuleset.HAS_VALUE);
+
+        // set a combined query
+        String combinedQuery =
+                "{\"search\":" +
+                        "{\"qtext\":\"*\"}}";
+        RawCombinedQueryDefinition rawCombined = qmgr.newRawCombinedQueryDefinition(new StringHandle().with(combinedQuery).withFormat(Format.JSON));
+        tupleQuery.setConstrainingQueryDefinition(rawCombined);
+
+        // evaluate query with pagination
         TupleQueryResult results = tupleQuery.evaluate(1,10);
 
         //iterate through query results
@@ -94,12 +120,26 @@ public class Example2_Advanced {
             logger.info("predicate:{}", bindings.getValue("p"));
             logger.info("object:{}", bindings.getValue("o"));
         }
+        logger.info("3. number of triples: {}", conn.size());
 
         //update query
+        String updatequery = "INSERT DATA { GRAPH <http://marklogic.com/test/context10> {  <http://marklogic.com/test/subject> <pp1> <oo1> } }";
+        MarkLogicUpdateQuery updateQuery = conn.prepareUpdate(QueryLanguage.SPARQL, updatequery,"http://marklogic.com/test/baseuri");
+
+        // set perms to be applied to data
+        updateQuery.setGraphPerms(gmgr.permission("admin", Capability.READ),gmgr.permission("admin", Capability.EXECUTE));
+
+        try {
+            updateQuery.execute();
+        } catch (UpdateExecutionException e) {
+            e.printStackTrace();
+        }
+
+        logger.info("4. number of triples: {}", conn.size());
 
         // clear all triples
         conn.clear();
-        logger.info("number of triples: {}", conn.size());
+        logger.info("5. number of triples: {}", conn.size());
 
         // close connection and shutdown repository
         conn.close();

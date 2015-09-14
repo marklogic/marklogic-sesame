@@ -36,7 +36,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 
 /**
- * Created by jfuller on 8/11/15.
+ * test UpdateQuery
+ *
+ * @author James Fuller
  */
 public class MarkLogicUpdateQueryTest extends SesameTestBase {
 
@@ -103,7 +105,7 @@ public class MarkLogicUpdateQueryTest extends SesameTestBase {
             throws Exception {
         String defGraphQuery = "BASE <http://marklogic.com/test/baseuri> INSERT DATA { GRAPH <http://marklogic.com/test/context10> {  <http://marklogic.com/test/subject> <pp1> <oo1> } }";
         String checkQuery = "BASE <http://marklogic.com/test/baseuri> ASK WHERE { <http://marklogic.com/test/subject> <pp1> <oo1> }";
-        Update updateQuery = conn.prepareUpdate(QueryLanguage.SPARQL, defGraphQuery,"http://marklogic.com/test/baseuri");
+        MarkLogicUpdateQuery updateQuery = conn.prepareUpdate(QueryLanguage.SPARQL, defGraphQuery,"http://marklogic.com/test/baseuri");
         updateQuery.execute();
         BooleanQuery booleanQuery = conn.prepareBooleanQuery(QueryLanguage.SPARQL, checkQuery);
         boolean results = booleanQuery.evaluate();

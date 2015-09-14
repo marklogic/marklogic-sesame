@@ -22,6 +22,10 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
 
+/** utility base class for additional test setup config
+ *
+ * @author James Fuller
+ */
 public class SesameTestBase {
 
     public static String host;
@@ -77,7 +81,7 @@ public class SesameTestBase {
 
         adminClient = DatabaseClientFactory.newClient(host, port, adminUser, adminPassword, DatabaseClientFactory.Authentication.DIGEST);
         writerClient = DatabaseClientFactory.newClient(host, port, writerUser, writerPassword, DatabaseClientFactory.Authentication.DIGEST);
-        readerClient = DatabaseClientFactory.newClient(host, port, writerUser, writerPassword, DatabaseClientFactory.Authentication.DIGEST);
+        readerClient = DatabaseClientFactory.newClient(host, port, readerUser, readerPassword, DatabaseClientFactory.Authentication.DIGEST);
 
         rep = new MarkLogicRepository(adminClient);
         writerRep = new MarkLogicRepository(writerClient);

@@ -25,7 +25,7 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 
 /**
- * wrapper on Sesame BackgroundGraphResult so we can handle errors
+ * wrapper on Sesame BackgroundGraphResult
  *
  * @author James Fuller
  */

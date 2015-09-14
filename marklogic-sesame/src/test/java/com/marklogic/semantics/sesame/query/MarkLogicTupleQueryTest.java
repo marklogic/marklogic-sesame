@@ -44,7 +44,9 @@ import java.io.FileNotFoundException;
 import java.util.List;
 
 /**
- * Created by jfuller on 8/11/15.
+ * test TupleQuery
+ *
+ * @author James Fuller
  */
 public class MarkLogicTupleQueryTest extends SesameTestBase {
 
@@ -401,7 +403,7 @@ public class MarkLogicTupleQueryTest extends SesameTestBase {
 
         tupleQuery.evaluate(sparqlWriter);
 
-        Assert.assertEquals(expected,out.toString());
+        Assert.assertEquals(expected, out.toString());
 
     }
 

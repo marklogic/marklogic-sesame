@@ -52,6 +52,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
+ * tests add, remove, hasSatement, getStatements, export, etc
  *
  * @author James Fuller
  */
@@ -227,7 +228,7 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
     }
 
     // https://github.com/marklogic/marklogic-sesame/issues/64
-    @Test
+    // not implemented just yet
     @Ignore
     public void testAddGZippedRDF() throws Exception {
         File inputFile = new File("src/test/resources/testdata/databases.rdf.gz");

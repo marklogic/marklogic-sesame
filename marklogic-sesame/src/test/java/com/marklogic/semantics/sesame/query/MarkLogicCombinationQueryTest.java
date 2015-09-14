@@ -34,6 +34,11 @@ import org.openrdf.repository.RepositoryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * test MarkLogic combination query
+ *
+ * @author James Fuller
+ */
 public class MarkLogicCombinationQueryTest extends SesameTestBase {
 
     private QueryManager qmgr;
@@ -184,7 +189,7 @@ public class MarkLogicCombinationQueryTest extends SesameTestBase {
         String posQuery = "ASK WHERE {<http://example.org/r9928> ?p ?o .}";
         String negQuery = "ASK WHERE {<http://example.org/r9929> ?p ?o .}";
 
-        conn.setDefaultQueryDef(stringDef);
+        conn.setDefaultConstrainingQueryDefinition(stringDef);
 
         MarkLogicBooleanQuery askQuery = conn.prepareBooleanQuery(QueryLanguage.SPARQL,posQuery);
         Assert.assertEquals(true, askQuery.evaluate());
