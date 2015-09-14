@@ -63,14 +63,14 @@ public class Example2_Advanced {
         MarkLogicRepositoryConnection conn = repo.getConnection();
 
         // set default rulesets
-        //conn.setDefaultRulesets(SPARQLRuleset.ALL_VALUES_FROM);
+        conn.setDefaultRulesets(SPARQLRuleset.ALL_VALUES_FROM);
 
         // set default perms
         conn.setDefaultGraphPerms(gmgr.permission("admin", Capability.READ),gmgr.permission("admin", Capability.EXECUTE));
 
         // set a default Constraining Query
         StringQueryDefinition stringDef = qmgr.newStringDefinition().withCriteria("First");
-        //conn.setDefaultConstrainingQueryDefinition(stringDef);
+        conn.setDefaultConstrainingQueryDefinition(stringDef);
 
         // return number of triples contained in repository
         logger.info("1. number of triples: {}", conn.size());
