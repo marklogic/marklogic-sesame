@@ -67,9 +67,8 @@ public class MarkLogicRepositoryWriteCacheTest extends SesameTestBase {
     }
 
     // https://github.com/marklogic/marklogic-sesame/issues/140
-    // https://github.com/marklogic/marklogic-sesame/issues/140
-    // waiting on resolution of 183 and mergeGraphs with txid
-    @Test @Ignore
+    // https://github.com/marklogic/marklogic-sesame/issues/183
+    @Test
     public void testStatementWithWriteCache() throws Exception {
         Resource context1 = conn.getValueFactory().createURI("http://marklogic.com/test/context1");
         Resource context2 = conn.getValueFactory().createURI("http://marklogic.com/test/context2");

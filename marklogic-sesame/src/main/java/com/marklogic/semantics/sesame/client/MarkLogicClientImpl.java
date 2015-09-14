@@ -255,10 +255,8 @@ class MarkLogicClientImpl {
         try {
             graphManager.setDefaultMimetype(dataFormat.getDefaultMIMEType());
             if (dataFormat.equals(RDFFormat.NQUADS) || dataFormat.equals(RDFFormat.TRIG)) {
-                // waiting on resolution of 183 and mergeGraphs with txid
-                graphManager.mergeGraphs(new FileHandle(file));
+                graphManager.mergeGraphs(new FileHandle(file),tx);
             } else {
-                //TBD- must be more efficient
                 if (notNull(contexts) && contexts.length>0) {
                     for (int i = 0; i < contexts.length; i++) {
                         if(notNull(contexts[i])){
@@ -290,10 +288,8 @@ class MarkLogicClientImpl {
         try {
             graphManager.setDefaultMimetype(dataFormat.getDefaultMIMEType());
             if (dataFormat.equals(RDFFormat.NQUADS) || dataFormat.equals(RDFFormat.TRIG)) {
-                // TBD- waiting on resolution of 183 and mergeGraphs with txid
-                graphManager.mergeGraphs(new InputStreamHandle(in));
+                graphManager.mergeGraphs(new InputStreamHandle(in),tx);
             } else {
-                //TBD- must be more efficient
                 if (notNull(contexts) && contexts.length > 0) {
                     for (int i = 0; i < contexts.length; i++) {
                         if (notNull(contexts[i])) {

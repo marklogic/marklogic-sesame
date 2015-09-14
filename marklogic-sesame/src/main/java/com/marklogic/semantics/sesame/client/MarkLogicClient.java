@@ -79,7 +79,7 @@ public class MarkLogicClient {
 	private WriteCacheTimerTask cache;
 	private Timer timer;
 
-    private static boolean WRITE_CACHE_ENABLED = false;
+    private static boolean WRITE_CACHE_ENABLED = true;
 
 	/**
 	 * constructor init with connection params
