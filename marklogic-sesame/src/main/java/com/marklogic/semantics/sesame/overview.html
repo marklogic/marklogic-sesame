@@ -130,10 +130,12 @@ Resource context2 = conn.getValueFactory().createURI("http://marklogic.com/examp
 ValueFactory f= conn.getValueFactory();
 String namespace = "http://example.org/";
 URI john = f.createURI(namespace, "john");
+conn.begin();
 conn.add(john, RDF.TYPE, FOAF.PERSON,context1);
 conn.add(john, RDFS.LABEL, f.createLiteral("John", XMLSchema.STRING),context2);
 logger.info("statement exist:{}",,conn.hasStatement(john,RDF.TYPE,null,context1));
 logger.info("total triples:{}",conn.size());
+conn.commit();
 conn.remove(john,RDF.TYPE,null,context1);
 conn.remove(john,null,null,context1);
 conn.clear();
@@ -146,32 +148,53 @@ logger.info("total triples:{} should be zero",conn.size());
 <p>Perform SPARQL query with pagination</p>
 <p>
 <pre>
+// perform SPARQL query
 String queryString = "select * { ?s ?p ?o }";
 MarkLogicTupleQuery tupleQuery = conn.prepareTupleQuery(QueryLanguage.SPARQL, queryString);
+
+// enable rulesets set on MarkLogic database
 tupleQuery.setIncludeInferred(true);
+
+// set base uri for resolving relative uris
+tupleQuery.setBaseURI("http://www.example.org/base/");
+
+// set rulesets for infererencing
+tupleQuery.setRulesets(SPARQLRuleset.ALL_VALUES_FROM, SPARQLRuleset.HAS_VALUE);
+
+// set a combined query
+String combinedQuery =
+        "{\"search\":" +
+                "{\"qtext\":\"*\"}}";
+RawCombinedQueryDefinition rawCombined = qmgr.newRawCombinedQueryDefinition(new StringHandle().with(combinedQuery).withFormat(Format.JSON));
+tupleQuery.setConstrainingQueryDefinition(rawCombined);
+
+// evaluate query with pagination
 TupleQueryResult results = tupleQuery.evaluate(1,10);
-try {
+
+//iterate through query results
 while(results.hasNext()){
-BindingSet bindingSet = results.next();
-Value sV = bindingSet.getValue("s");
-Value pV = bindingSet.getValue("p");
-Value oV = bindingSet.getValue("o");
+    BindingSet bindings = results.next();
+    logger.info("subject:{}",bindings.getValue("s"));
+    logger.info("predicate:{}", bindings.getValue("p"));
+    logger.info("object:{}", bindings.getValue("o"));
 }
-finally {
-results.close();
-}
-con.close();
 </pre>
 </p>
 <h2>SPARQL Update</h2>
 <p>
 <pre>
-String defGraphQuery = "INSERT DATA { GRAPH <http://marklogic.com/example/context1> {  <http://marklogic.com/test/subject> <relative1> <relative2> } }";
-String checkQuery = "ASK WHERE { <http://marklogic.com/test/subject> <relative1> <relative2> }";
-Update updateQuery = conn.prepareUpdate(QueryLanguage.SPARQL, defGraphQuery,"http://marklogic.com/test/baseuri");
+//update query
+String updatequery = "INSERT DATA { GRAPH <http://marklogic.com/test/context10> {  <http://marklogic.com/test/subject> <pp1> <oo1> } }";
+MarkLogicUpdateQuery updateQuery = conn.prepareUpdate(QueryLanguage.SPARQL, updatequery,"http://marklogic.com/test/baseuri");
+
+// set perms to be applied to data
+updateQuery.setGraphPerms(gmgr.permission("admin", Capability.READ),gmgr.permission("admin", Capability.EXECUTE));
+
+try {
 updateQuery.execute();
-BooleanQuery booleanQuery = conn.prepareBooleanQuery(QueryLanguage.SPARQL, checkQuery,"http://marklogic.com/test/baseuri");
-boolean results = booleanQuery.evaluate();
+} catch (UpdateExecutionException e) {
+e.printStackTrace();
+}
 </pre>
 </p>
 </body>
