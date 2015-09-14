@@ -262,13 +262,13 @@ class MarkLogicClientImpl {
                 if (notNull(contexts) && contexts.length>0) {
                     for (int i = 0; i < contexts.length; i++) {
                         if(notNull(contexts[i])){
-                            graphManager.mergeAs(contexts[i].toString(), new FileHandle(file), tx);
+                            graphManager.mergeAs(contexts[i].toString(), new FileHandle(file), getGraphPerms(),tx);
                         }else{
-                            graphManager.mergeAs(DEFAULT_GRAPH_URI, new FileHandle(file), tx);
+                            graphManager.mergeAs(DEFAULT_GRAPH_URI, new FileHandle(file),getGraphPerms(), tx);
                         }
                     }
                 } else {
-                    graphManager.mergeAs(DEFAULT_GRAPH_URI, new FileHandle(file), tx);
+                    graphManager.mergeAs(DEFAULT_GRAPH_URI, new FileHandle(file), getGraphPerms(),tx);
                 }
             }
         } catch (FailedRequestException e) {
@@ -297,13 +297,13 @@ class MarkLogicClientImpl {
                 if (notNull(contexts) && contexts.length > 0) {
                     for (int i = 0; i < contexts.length; i++) {
                         if (notNull(contexts[i])) {
-                            graphManager.mergeAs(contexts[i].toString(), new InputStreamHandle(in), tx);
+                            graphManager.mergeAs(contexts[i].toString(), new InputStreamHandle(in), getGraphPerms(), tx);
                         } else {
-                            graphManager.mergeAs(DEFAULT_GRAPH_URI, new InputStreamHandle(in), tx);
+                            graphManager.mergeAs(DEFAULT_GRAPH_URI, new InputStreamHandle(in),getGraphPerms(), tx);
                         }
                     }
                 } else {
-                    graphManager.mergeAs(DEFAULT_GRAPH_URI, new InputStreamHandle(in), tx);
+                    graphManager.mergeAs(DEFAULT_GRAPH_URI, new InputStreamHandle(in),getGraphPerms(), tx);
                 }
             }
         } catch (FailedRequestException e) {
