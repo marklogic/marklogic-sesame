@@ -19,8 +19,12 @@
  */
 package com.marklogic.semantics.sesame;
 
-import org.junit.*;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.openrdf.IsolationLevels;
 import org.openrdf.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -97,6 +101,46 @@ public class MarkLogicRepositoryWriteCacheTest extends SesameTestBase {
         conn.commit();
 
         assertEquals("Incorrect number of triples.", 15001, conn.size());
+        conn.clear();
+    }
+
+    @Test
+    public void testSizeCommitWithWriteCache()
+            throws Exception
+    {
+        conn.setIsolationLevel(IsolationLevels.SNAPSHOT);
+
+        readerRep.initialize();
+        MarkLogicRepositoryConnection rconn = readerRep.getConnection();
+
+        assertEquals(conn.size(),0L);
+        assertEquals(rconn.size(),0L);
+
+        Resource context1 = conn.getValueFactory().createURI("http://marklogic.com/test/context1");
+        ValueFactory f= conn.getValueFactory();
+        URI alice = f.createURI("http://example.org/people/alice");
+        URI name = f.createURI("http://example.org/ontology/name");
+        Literal alicesName = f.createLiteral("Alice1");
+
+        Statement st1 = f.createStatement(alice, name, alicesName, context1);
+
+        try{
+            conn.begin();
+            conn.add(st1);
+            assertEquals(conn.size(),1L);
+            assertEquals(rconn.size(),0L);
+            conn.commit();
+        }
+        catch (Exception e){
+
+        }
+        finally{
+            if (conn.isActive())
+                conn.rollback();
+
+        }
+        assertEquals(conn.size(),1L);
+        assertEquals(rconn.size(),1L);
         conn.clear();
     }
 }
