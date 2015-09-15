@@ -1166,4 +1166,25 @@ conn.sync();
         conn.add(fei, lname, feilname);
     }
 
+    // https://github.com/marklogic/marklogic-sesame/issues/133
+    @Test
+    public void testAddRemoveInsert()
+            throws OpenRDFException {
+        ValueFactory vf = conn.getValueFactory();
+        URI tommy = vf.createURI("http://marklogicsparql.com/id#4444");
+        URI lname = vf.createURI("http://marklogicsparql.com/addressbook#lastName");
+        Literal tommylname = vf.createLiteral("Ramone");
+        Statement stmt = vf.createStatement(tommy, lname, tommylname);
+        conn.add(stmt);
+        try {
+            conn.begin();
+            conn.remove(stmt);
+            Assert.assertEquals("The size of repository must be zero", 0, conn.size());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+            conn.commit();
+        }
+
+    }
 }

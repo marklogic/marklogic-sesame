@@ -319,6 +319,7 @@ public class MarkLogicClient {
 	 * @param contexts
 	 */
 	public void sendRemove(String baseURI, Resource subject,URI predicate, Value object, Resource... contexts) throws MarkLogicSesameException {
+		sync();
         getClient().performRemove(baseURI, (Resource) skolemize(subject), (URI) skolemize(predicate), skolemize(object), this.tx, contexts);
     }
 
