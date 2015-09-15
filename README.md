@@ -44,8 +44,6 @@ marklogic-sesame-repository depends on _develop_ branch version of Java API Clie
 1. Clone or download Java API client _develop_ branch
 
 [https://github.com/marklogic/java-client-api/tree/develop](https://github.com/marklogic/java-client-api/tree/develop)
-
-
 2. Build and deploy Java API client
 
 ```
@@ -62,14 +60,12 @@ marklogic-sesame-repository depends on MarkLogic (v8.0-4) installed and running;
 1. Clone or download marklogic-sesame _develop_ branch
 
 [https://github.com/marklogic/marklogic-sesame/tree/develop](https://github.com/marklogic/marklogic-sesame/tree/develop)
-
 2. Run gradle target that provisions MarkLogic with everything required (database,REST server,etc)
 
 review [marklogic-sesame/gradle.properties](marklogic-sesame/gradle.properties) that define test deployment settings then run target
 ```
 gradle :marklogic-sesame:mlDeploy
 ```
-
 3. Test MarkLogic Sesame repository
 
 ```
