@@ -47,6 +47,7 @@ marklogic-sesame-repository depends on _develop_ branch version of Java API Clie
 ```
 mvn -Dmaven.test.skip=true -Dmaven.javadoc.skip=true deploy```
 Verify that Java API client has been deployed to your local maven repo.
+
 #### Setup and Test MarkLogic Sesame API
 
 marklogic-sesame-repository depends on MarkLogic (v8.0-4) installed and running;
