@@ -60,7 +60,7 @@ review [marklogic-sesame/gradle.properties](marklogic-sesame/gradle.properties) 
 ```
 gradle :marklogic-sesame:mlDeploy
 ```
-3. Test MarkLogic Sesame repository
+You should be able to now test MarkLogic Sesame repository by running;
 ```
 gradle :marklogic-sesame:test
 ```
