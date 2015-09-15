@@ -3,9 +3,7 @@ package com.marklogic.semantics.sesame.benchmarks;
 import com.marklogic.semantics.sesame.MarkLogicRepository;
 import com.marklogic.semantics.sesame.MarkLogicRepositoryConnection;
 import org.openjdk.jmh.annotations.Benchmark;
-import org.openrdf.model.Resource;
-import org.openrdf.model.Statement;
-import org.openrdf.model.Value;
+import org.openrdf.model.*;
 import org.openrdf.query.BindingSet;
 import org.openrdf.query.TupleQuery;
 import org.openrdf.query.TupleQueryResult;
@@ -50,8 +48,31 @@ public class MarkLogicRepositoryConnectionNaivePerfTest {
         File inputFile = new File("src/jmh/resources/testdata/default-graph-1.ttl");
         FileInputStream is = new FileInputStream(inputFile);
         String baseURI = "http://example.org/example1/";
-        Resource context1 = conn.getValueFactory().createURI("http://marklogic.com/test/context3");
-        conn.add(is, baseURI, RDFFormat.TURTLE, context1);
+        Resource context3 = conn.getValueFactory().createURI("http://marklogic.com/test/context3");
+        conn.add(is, baseURI, RDFFormat.TURTLE, context3);
+
+        Resource context1 = conn.getValueFactory().createURI("http://marklogic.com/test/context1");
+        Resource context2 = conn.getValueFactory().createURI("http://marklogic.com/test/context2");
+
+        ValueFactory f= conn.getValueFactory();
+
+        URI alice = f.createURI("http://example.org/people/alice");
+        URI name = f.createURI("http://example.org/ontology/name");
+
+        conn.begin();
+        int count = 0;
+        for (int i=0 ; i<10000 ; i++){
+            Literal obj = f.createLiteral("Alice" + count);
+            if ( (i & 1) == 0 ) {
+                Statement st = f.createStatement(alice, name,obj);
+                conn.add(st,context1,context2);
+            }else{
+                Statement st = f.createStatement(alice, name,obj);
+                conn.add(st);
+            }
+            count = count + 1;
+        }
+        conn.commit();
 
         String queryString = "select ?s ?p ?o { ?s ?p ?o } limit 100 ";
         TupleQuery tupleQuery = conn.prepareTupleQuery(queryString);
@@ -69,12 +90,8 @@ public class MarkLogicRepositoryConnectionNaivePerfTest {
         Resource subject = conn.getValueFactory().createURI("urn:x-local:graph1");
         RepositoryResult<Statement> statements = conn.getStatements(subject, null, null, true, context1);
 
-        if(statements.hasNext()){
-            logger.debug("getStatements worked");
-        }
-
-        logger.debug("size:{}",conn.size(context1));
         conn.clear(context1);
+        conn.clear();
         conn.close();
         rep.shutDown();
     }

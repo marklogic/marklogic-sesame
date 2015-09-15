@@ -390,7 +390,7 @@ class MarkLogicClientImpl {
      * @param contexts
      */
     public void performClear(Transaction tx, Resource... contexts) {
-        if(notNull(contexts)) {g
+        if(notNull(contexts)) {
             for (int i = 0; i < contexts.length; i++) {
                 if (notNull(contexts[i])) {
                     graphManager.delete(contexts[i].stringValue(), tx);
