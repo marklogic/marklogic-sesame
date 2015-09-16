@@ -469,7 +469,6 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
      */
     @Override
     public RepositoryResult<Resource> getContextIDs() throws RepositoryException {
-
         try{
             TupleQuery tupleQuery = prepareTupleQuery(QueryLanguage.SPARQL, ALL_GRAPH_URIS);
             TupleQueryResult result = tupleQuery.evaluate();
@@ -587,7 +586,6 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
                     }
                 }
                 sb.append(") ) }");
-                logger.debug(sb.toString());
                 TupleQuery tupleQuery = prepareTupleQuery(sb.toString());
                 tupleQuery.setIncludeInferred(includeInferred);
                 setBindings(tupleQuery, subj, pred, obj, (Resource) null);
@@ -798,8 +796,8 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
         try {
             MarkLogicTupleQuery tupleQuery = prepareTupleQuery(COUNT_EVERYTHING);
             tupleQuery.setIncludeInferred(false);
-            tupleQuery.setRulesets(null);
-            tupleQuery.setConstrainingQueryDefinition(null);
+            tupleQuery.setRulesets((SPARQLRuleset)null);
+            tupleQuery.setConstrainingQueryDefinition((QueryDefinition)null);
             TupleQueryResult qRes = tupleQuery.evaluate();
             // just one answer
             BindingSet result = qRes.next();
@@ -822,6 +820,9 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
      */
     @Override
     public long size(Resource... contexts)  {
+        if (contexts == null) {
+            contexts = new Resource[] { null };
+        }
         try {
             StringBuffer sb = new StringBuffer();
             sb.append("SELECT (count(?s) as ?ct) where { GRAPH ?g { ?s ?p ?o }");
@@ -850,8 +851,8 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
             logger.debug(sb.toString());
             MarkLogicTupleQuery tupleQuery = prepareTupleQuery(sb.toString());
             tupleQuery.setIncludeInferred(false);
-            tupleQuery.setRulesets(null);
-            tupleQuery.setConstrainingQueryDefinition(null);
+            tupleQuery.setRulesets((SPARQLRuleset) null);
+            tupleQuery.setConstrainingQueryDefinition((QueryDefinition)null);
             TupleQueryResult qRes = tupleQuery.evaluate();
             // just one answer
             BindingSet result = qRes.next();
