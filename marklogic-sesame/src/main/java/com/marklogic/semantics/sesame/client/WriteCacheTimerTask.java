@@ -129,7 +129,7 @@ public class WriteCacheTimerTask extends TimerTask {
      *
      * @throws MarkLogicSesameException
      */
-    private synchronized void flush() throws MarkLogicSesameException {
+    private void flush() throws MarkLogicSesameException {
             log.debug("flushing write cache");
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             RDFFormat format = RDFFormat.NQUADS;
