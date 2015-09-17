@@ -148,7 +148,6 @@ class MarkLogicClientImpl {
         if (notNull(getConstrainingQueryDefinition())) {qdef.setConstrainingQueryDefinition(getConstrainingQueryDefinition());}
         qdef.setIncludeDefaultRulesets(includeInferred);
         if(notNull(graphPerms)){ qdef.setUpdatePermissions(graphPerms);}
-        qdef.setBindings(getSPARQLBindings(bindings));
         if(pageLength > 0){
             sparqlManager.setPageLength(pageLength);
         }else{
@@ -191,7 +190,6 @@ class MarkLogicClientImpl {
         if (notNull(getConstrainingQueryDefinition())){qdef.setConstrainingQueryDefinition(getConstrainingQueryDefinition());}
         if(notNull(graphPerms)){ qdef.setUpdatePermissions(graphPerms);}
         qdef.setIncludeDefaultRulesets(includeInferred);
-        qdef.setBindings(getSPARQLBindings(bindings));
         sparqlManager.executeDescribe(qdef, handle, tx);
         return handle.get();
     }
@@ -213,7 +211,6 @@ class MarkLogicClientImpl {
         if (notNull(ruleset)) {qdef.setRulesets(ruleset);}
         if (notNull(getConstrainingQueryDefinition())){qdef.setConstrainingQueryDefinition(getConstrainingQueryDefinition());}
         if(notNull(graphPerms)){ qdef.setUpdatePermissions(graphPerms);}
-        qdef.setBindings(getSPARQLBindings(bindings));
         return sparqlManager.executeAsk(qdef,tx);
     }
 
@@ -234,7 +231,6 @@ class MarkLogicClientImpl {
         //if (notNull(getConstrainingQueryDefinition())){qdef.setConstrainingQueryDefinition(getConstrainingQueryDefinition());}
         if(notNull(graphPerms)){ qdef.setUpdatePermissions(graphPerms);}
         qdef.setIncludeDefaultRulesets(includeInferred);
-        qdef.setBindings(getSPARQLBindings(bindings));
         sparqlManager.clearPageLength();
         sparqlManager.executeUpdate(qdef, tx);
     }
