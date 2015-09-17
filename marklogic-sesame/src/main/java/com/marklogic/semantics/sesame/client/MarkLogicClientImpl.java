@@ -517,13 +517,13 @@ class MarkLogicClientImpl {
                     try {
                         String xsdType = lit.getDatatype().toString();
                         String fragment = new java.net.URI(xsdType).getFragment();
-                        bindings.bind(variableName, lit.getLabel(), fragment);
+                        bindings.bind(variableName,lit.getLabel(),RDFTypes.valueOf(fragment.toUpperCase()));
                     } catch (URISyntaxException e) {
                         throw new MarkLogicSesameException("Problem with object datatype.");
                     }
                 }else {
                     // assume we have a string value
-                    bindings.bind(variableName, lit.getLabel(), "string");
+                    bindings.bind(variableName, lit.getLabel(), RDFTypes.STRING);
                 }
             }
             qdef.setBindings(bindings);
