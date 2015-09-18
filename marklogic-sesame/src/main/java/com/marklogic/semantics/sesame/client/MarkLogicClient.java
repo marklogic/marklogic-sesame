@@ -495,6 +495,9 @@ public class MarkLogicClient {
         return getClient().getGraphPerms();
     }
 
+	public GraphPermissions emptyGraphPerms(){
+		return _client.getDatabaseClient().newGraphManager().newGraphPermissions();
+	}
 
 	/**
 	 *exec

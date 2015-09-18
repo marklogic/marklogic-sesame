@@ -95,6 +95,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
         super(repository);
         this.client = client;
         this.quadMode = true;
+        this.defaultGraphPerms = client.emptyGraphPerms();
         setIsolationLevel(IsolationLevels.SNAPSHOT);
         client.setValueFactory(repository.getValueFactory());
         client.initTimer();
