@@ -483,7 +483,12 @@ public class MarkLogicClient {
 	 * @param graphPerms
 	 */
     public void setGraphPerms(GraphPermissions graphPerms){
-        getClient().setGraphPerms(graphPerms);
+
+        if (graphPerms != null) {
+            getClient().setGraphPerms(graphPerms);
+        }else {
+            getClient().setGraphPerms(getClient().getDatabaseClient().newGraphManager().newGraphPermissions());
+        }
     }
 
 	/**

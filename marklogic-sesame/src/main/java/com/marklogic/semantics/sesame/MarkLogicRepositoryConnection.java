@@ -1312,8 +1312,11 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
      */
     @Override
     public void setDefaultGraphPerms(GraphPermissions graphPerms) {
-        this.defaultGraphPerms = graphPerms;
-        //this.client.setGraphPerms(graphPerms);
+        if(notNull(graphPerms)) {
+            this.defaultGraphPerms = graphPerms;
+        }else{
+            this.defaultGraphPerms = client.emptyGraphPerms();
+        }
     }
 
     /**
