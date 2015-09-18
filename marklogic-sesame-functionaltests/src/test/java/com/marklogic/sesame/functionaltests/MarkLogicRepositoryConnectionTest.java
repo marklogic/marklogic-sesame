@@ -37,6 +37,7 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openrdf.IsolationLevels;
 import org.openrdf.OpenRDFException;
@@ -1523,9 +1524,7 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
 		}
 		
 	}
-	
-	
-	
+		
 	// ISSUE 123, 122, 175, 185
     @Test
     public void testGraphPerms1()
@@ -1536,7 +1535,7 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
         GraphPermissions gr =  testAdminCon.getDefaultGraphPerms();
         
         // ISSUE # 175 uncomment after issue is fixed
-     //   Assert.assertEquals(0L, gr.size());
+        Assert.assertEquals(0L, gr.size());
         
         testAdminCon.setDefaultGraphPerms(gmgr.permission("test-role", Capability.READ, Capability.UPDATE));
         String defGraphQuery = "CREATE GRAPH <http://marklogic.com/test/graph/permstest> ";
@@ -1568,7 +1567,7 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
        updateQuery = testAdminCon.prepareUpdate(QueryLanguage.SPARQL, defGraphQuery2);
        updateQuery.execute();
        gr =  testAdminCon.getDefaultGraphPerms();
-   //    Assert.assertEquals(0L, gr.size());
+       Assert.assertEquals(0L, gr.size());
        
        
        createUserRolesWithPrevilages("multitest-role");
@@ -1578,8 +1577,12 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
        updateQuery.execute();
        gr = testAdminCon.getDefaultGraphPerms();
        Assert.assertEquals(2L, gr.size());
-       testAdminCon.setDefaultGraphPerms((GraphPermissions)null);
-     //  Assert.assertEquals(0L, gr.size());
+       testAdminCon.setDefaultGraphPerms(null);
+       testAdminCon.setDefaultGraphPerms(null);
+       // ISSUE 180
+       //testAdminCon.setDefaultGraphPerms((GraphPermissions)null);
+       gr =  testAdminCon.getDefaultGraphPerms();
+       Assert.assertEquals(0L, gr.size());
        
       
     }
@@ -1930,7 +1933,7 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
 		assertThat(testAdminCon.hasStatement(null, null, null, false), is(equalTo(false)));
 	}
 
-	@Test
+	@Ignore
 	public void testAddNullStatements() throws Exception{
 		Statement st1 = vf.createStatement(john, fname, null, dirgraph);
 		Statement st2 = vf.createStatement(null, lname, johnlname, dirgraph);
@@ -2060,7 +2063,8 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
 		assertThat(testAdminCon.hasStatement(micah, homeTel, micahhomeTel, false, null), is(equalTo(true)));
 		
 		
-
+		testAdminCon.remove((Resource)null, homeTel,(Value) null);
+		
 
 		testAdminCon.remove(vf.createStatement(null, homeTel, null));
 		
