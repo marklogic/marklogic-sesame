@@ -40,9 +40,9 @@ public class MarkLogicRepositoryTest extends  ConnectedRESTQA{
 	private static ValueFactory vf ;
 	private static MarkLogicRepositoryConnection testConn;
 	private static int restPort = 8024;
-	private static String dbName = "MLSesame";
-	private static String [] fNames = {"MLSesame-1"};
-	private static String restServer = "REST-MLSesame-API-Server";
+	private static String dbName = "MLSesameRep";
+	private static String [] fNames = {"MLSesameRep-1"};
+	private static String restServer = "REST-MLSesame-Rep-API-Server";
 	
 	@BeforeClass
 	public static void initialSetup() throws Exception {
@@ -92,7 +92,7 @@ public class MarkLogicRepositoryTest extends  ConnectedRESTQA{
 	public void tearDown()
 		throws Exception
 	{
-		testConn.clear();
+		clearDB(restPort);
 		testConn.close();
 		testRepository.shutDown();
 		testRepository = null;
@@ -105,7 +105,7 @@ public class MarkLogicRepositoryTest extends  ConnectedRESTQA{
 		testRepository.shutDown();
 		testRepository.initialize();
 
-		
+		testConn = testRepository.getConnection();
 		try {
 			Resource s = vf.createURI("http://a");
 			URI p = vf.createURI("http://b");

@@ -47,6 +47,7 @@ import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
 import org.openrdf.model.Value;
 import org.openrdf.model.ValueFactory;
+import org.openrdf.model.vocabulary.RDFS;
 import org.openrdf.model.vocabulary.XMLSchema;
 import org.openrdf.query.BindingSet;
 import org.openrdf.query.BooleanQuery;
@@ -1316,8 +1317,8 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
 	}
 	
 	//Bug 35241
-	@Test
-	public void testPrepareMultipleBaseURI1() throws Exception{/*
+	@Ignore
+	public void testPrepareMultipleBaseURI1() throws Exception{
 
 		
 		testAdminCon.add(john, fname, johnfname, dirgraph);
@@ -1381,7 +1382,7 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
 		finally {
 			result.close();
 		}
-	*/}
+	}
 	
 	// ISSUE 106, 133, 183
 	@Test
@@ -2066,7 +2067,7 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
 		testAdminCon.remove((Resource)null, homeTel,(Value) null);
 		
 
-		testAdminCon.remove(vf.createStatement(null, homeTel, null));
+		testAdminCon.remove((Resource)null, homeTel, (Value)null);
 		
 		testAdminCon.remove(vf.createStatement(john, lname, johnlname), dirgraph);
 		assertThat(testAdminCon.hasStatement(john, lname, johnlname, false), is(equalTo(false)));
@@ -2079,7 +2080,7 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
 		
 		assertThat(testAdminCon.hasStatement(john, fname, johnfname, false,  dirgraph), is(equalTo(true)));
 
-		testAdminCon.remove(john, null, null);
+		testAdminCon.remove(john, (URI)null, (Value)null);
 		assertThat(testAdminCon.hasStatement(john, fname, johnfname, false,  dirgraph), is(equalTo(false)));
 		assertThat(testAdminCon.isEmpty(), is(equalTo(false)));
 		
