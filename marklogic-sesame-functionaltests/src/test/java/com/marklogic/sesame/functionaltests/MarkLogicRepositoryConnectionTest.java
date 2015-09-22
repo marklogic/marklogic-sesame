@@ -2063,10 +2063,7 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
 		assertThat(testAdminCon.hasStatement(micah, homeTel, micahhomeTel, false, (Resource)null), is(equalTo(true)));
 		assertThat(testAdminCon.hasStatement(micah, homeTel, micahhomeTel, false, null), is(equalTo(true)));
 		
-		
 		testAdminCon.remove((Resource)null, homeTel,(Value) null);
-		
-
 		testAdminCon.remove((Resource)null, homeTel, (Value)null);
 		
 		testAdminCon.remove(vf.createStatement(john, lname, johnlname), dirgraph);

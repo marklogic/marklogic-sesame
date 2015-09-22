@@ -1,6 +1,7 @@
 package com.marklogic.sesame.functionaltests;
 
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -22,6 +23,8 @@ import org.openrdf.repository.Repository;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.config.RepositoryFactory;
+import org.openrdf.rio.RDFFormat;
+import org.openrdf.rio.RDFParseException;
 
 import com.marklogic.semantics.sesame.MarkLogicRepository;
 import com.marklogic.semantics.sesame.MarkLogicRepositoryConnection;
@@ -45,13 +48,11 @@ public class MarkLogicRepositoryTest extends  ConnectedRESTQA{
 	private static String restServer = "REST-MLSesame-Rep-API-Server";
 	
 	@BeforeClass
-	public static void initialSetup() throws Exception {
-			
+	public static void initialSetup() throws Exception {			
 		setupJavaRESTServer(dbName, fNames[0], restServer, restPort);
 		setupAppServicesConstraint(dbName);
 		enableCollectionLexicon(dbName);
-		enableTripleIndex(dbName);
-		
+		enableTripleIndex(dbName);		
 	}
 	
 	@AfterClass
@@ -130,6 +131,15 @@ public class MarkLogicRepositoryTest extends  ConnectedRESTQA{
     	testRepository.initialize();
     	testRepository.shutDown();
     	testRepository.shutDown();
+    	try {
+    		testConn = testRepository.getConnection();
+			fail("Getting connection object should fail if repository is not initialized");
+		}
+		catch (Exception e) {
+			Assert.assertTrue(e instanceof RepositoryException);
+		}
+    	testRepository.initialize();
+    	testConn = testRepository.getConnection();
         Assert.assertTrue(testRepository.getDataDir() == null);
         Assert.assertTrue(testRepository.isWritable());
         Assert.assertTrue(testRepository.getValueFactory() instanceof ValueFactoryImpl);
