@@ -27,6 +27,9 @@ import org.openrdf.repository.config.RepositoryImplConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
 /**
  * factory for generating MarkLogicRepository's
  *
@@ -40,6 +43,7 @@ public class MarkLogicRepositoryFactory implements RepositoryFactory {
 
     @Override
     /**
+     * returns repository type
      *
      */
     public String getRepositoryType() {
@@ -48,6 +52,7 @@ public class MarkLogicRepositoryFactory implements RepositoryFactory {
 
     @Override
     /**
+     * returns config
      *
      */
     public RepositoryImplConfig getConfig() {
@@ -56,15 +61,25 @@ public class MarkLogicRepositoryFactory implements RepositoryFactory {
 
     @Override
     /**
+     * instantiate and return repository
      *
      */
     public Repository getRepository(RepositoryImplConfig config) throws RepositoryConfigException {
-        MarkLogicRepositoryConfig mlconfig = (MarkLogicRepositoryConfig) config;
-        return new MarkLogicRepository(
-                mlconfig.getHost(),
-                mlconfig.getPort(),
-                mlconfig.getUser(),
-                mlconfig.getPassword(),
-                mlconfig.getAuth());
+        MarkLogicRepository repo = null;
+        MarkLogicRepositoryConfig cfg = (MarkLogicRepositoryConfig) config;
+        if (cfg.getHost() != null && cfg.getPort() != 0) {
+            // init with MarkLogicRepositoryConfig
+            repo = new MarkLogicRepository(cfg.getHost(),cfg.getPort(),cfg.getUser(),cfg.getPassword(),cfg.getAuth());
+        } else if (cfg.getHost() == null) {
+            // init with queryEndpoint as connection string
+            try {
+                repo = new MarkLogicRepository(new URL(cfg.getQueryEndpointUrl()));
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+        }else{
+            throw new RepositoryConfigException("Invalid configuration class: " + config.getClass());
+        }
+        return repo;
     }
 }

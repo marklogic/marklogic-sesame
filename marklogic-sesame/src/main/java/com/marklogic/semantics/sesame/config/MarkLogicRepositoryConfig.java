@@ -20,9 +20,10 @@
 package com.marklogic.semantics.sesame.config;
 
 import org.openrdf.model.Graph;
-import org.openrdf.model.URI;
 import org.openrdf.model.Resource;
+import org.openrdf.model.URI;
 import org.openrdf.model.ValueFactory;
+import org.openrdf.model.impl.URIImpl;
 import org.openrdf.model.impl.ValueFactoryImpl;
 import org.openrdf.model.util.GraphUtil;
 import org.openrdf.model.util.GraphUtilException;
@@ -40,11 +41,13 @@ public class MarkLogicRepositoryConfig extends RepositoryImplConfigBase {
 
 	protected final Logger logger = LoggerFactory.getLogger(MarkLogicRepositoryConfig.class);
 
-	public static ValueFactory vf= new ValueFactoryImpl();
+    public static ValueFactory vf= new ValueFactoryImpl();
 
-	public static final URI QUERY_ENDPOINT = vf.createURI("http://www.openrdf.org/config/repository/sparql#query-endpoint");
+    public static final URI QUERY_ENDPOINT = new URIImpl(
+            "http://www.marklogic.com/v1/graphs/sparql");
 
-	public static final URI UPDATE_ENDPOINT = vf.createURI("http://www.openrdf.org/config/repository/sparql#update-endpoint");
+    public static final URI UPDATE_ENDPOINT = new URIImpl(
+            "http://www.marklogic.com/v1/graphs");
 
 	private String queryEndpointUrl;
 	private String updateEndpointUrl;
@@ -55,15 +58,15 @@ public class MarkLogicRepositoryConfig extends RepositoryImplConfigBase {
 	private String password;
 	private String auth;
 
-	/**
-	 *
+    /**
+	 * base constructor
 	 */
 	public MarkLogicRepositoryConfig() {
 		super(MarkLogicRepositoryFactory.REPOSITORY_TYPE);
 	}
 
-	/**
-	 *
+    /**
+	 * constructor initing with all connection details
 	 * @param host
 	 * @param port
 	 * @param user
@@ -72,14 +75,17 @@ public class MarkLogicRepositoryConfig extends RepositoryImplConfigBase {
 	 */
 	public MarkLogicRepositoryConfig(String host, int port, String user, String password, String auth) {
         this();
-        this.host = host;
-        this.port = port;
-        this.user = user;
-        this.password = password;
-        this.auth = auth;
+        setHost(host);
+        setPort(port);
+        setUser(user);
+        setPassword(password);
+        setAuth(auth);
+        setQueryEndpointUrl("http://" + user + ":" + password + "@" + host + ":" + port + "/v1/graphs/sparql");
+        setUpdateEndpointUrl("http://" + user + ":" + password + "@" + host + ":" + port + "/v1/graphs");
     }
 
 	/**
+	 * constructor initing with query endpoint
 	 *
 	 * @param queryEndpointUrl
 	 */
@@ -88,6 +94,7 @@ public class MarkLogicRepositoryConfig extends RepositoryImplConfigBase {
 	}
 
 	/**
+	 * constructor initing with both query and update endpoint
 	 *
 	 * @param queryEndpointUrl
 	 * @param updateEndpointUrl
@@ -98,6 +105,7 @@ public class MarkLogicRepositoryConfig extends RepositoryImplConfigBase {
 	}
 
 	/**
+	 * MarkLogicRepositoryConfig specific getter/setter for host
 	 *
 	 * @return
 	 */
@@ -109,6 +117,7 @@ public class MarkLogicRepositoryConfig extends RepositoryImplConfigBase {
 	}
 
 	/**
+	 * MarkLogicRepositoryConfig specific getter/setter for port
 	 *
 	 * @return
 	 */
@@ -120,8 +129,8 @@ public class MarkLogicRepositoryConfig extends RepositoryImplConfigBase {
 	}
 
 	/**
+	 * MarkLogicRepositoryConfig specific getter/setter for user
 	 *
-	 * @return
 	 */
 	public String getUser() {
 		return user;
@@ -131,8 +140,8 @@ public class MarkLogicRepositoryConfig extends RepositoryImplConfigBase {
 	}
 
 	/**
+	 * MarkLogicRepositoryConfig specific getter/setter for password
 	 *
-	 * @return
 	 */
 	public String getPassword() {
 		return password;
@@ -142,8 +151,8 @@ public class MarkLogicRepositoryConfig extends RepositoryImplConfigBase {
 	}
 
 	/**
+	 * MarkLogicRepositoryConfig specific getter/setter for auth
 	 *
-	 * @return
 	 */
 	public String getAuth() {
 		return auth;
@@ -153,8 +162,8 @@ public class MarkLogicRepositoryConfig extends RepositoryImplConfigBase {
 	}
 
 	/**
+	 * MarkLogicRepositoryConfig specific getter/setter for connection string
 	 *
-	 * @return
 	 */
 	public String getQueryEndpointUrl() {
 		return queryEndpointUrl;
@@ -164,8 +173,8 @@ public class MarkLogicRepositoryConfig extends RepositoryImplConfigBase {
 	}
 
 	/**
+	 * MarkLogicRepositoryConfig specific getter/setter for connection string
 	 *
-	 * @return
 	 */
 	public String getUpdateEndpointUrl() {
 		return updateEndpointUrl;
@@ -176,6 +185,7 @@ public class MarkLogicRepositoryConfig extends RepositoryImplConfigBase {
 	
 	@Override
 	/**
+	 * validate configuration
 	 *
 	 */
 	public void validate() throws RepositoryConfigException {
@@ -188,7 +198,9 @@ public class MarkLogicRepositoryConfig extends RepositoryImplConfigBase {
 
 	@Override
 	/**
-	 *
+	 * export graph representation of config
+     *
+	 * @Note - Graph is deprecating soon (in Sesame) to be replaced by Model
 	 */
 	public Resource export(Graph graph) {
 		Resource implNode = super.export(graph);
@@ -206,7 +218,9 @@ public class MarkLogicRepositoryConfig extends RepositoryImplConfigBase {
 
 	@Override
 	/**
+	 * parse graph representation of config
 	 *
+     * @Note - Graph is deprecating soon (in Sesame) to be replaced by Model
 	 */
 	public void parse(Graph graph, Resource implNode)
 			throws RepositoryConfigException {
@@ -217,7 +231,7 @@ public class MarkLogicRepositoryConfig extends RepositoryImplConfigBase {
 			if (uri != null) {
 				setQueryEndpointUrl(uri.stringValue());
 			}
-			
+
 			uri = GraphUtil.getOptionalObjectURI(graph, implNode, UPDATE_ENDPOINT);
 			if (uri != null) {
 				setUpdateEndpointUrl(uri.stringValue());
