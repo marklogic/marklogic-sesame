@@ -29,6 +29,8 @@ import org.openrdf.repository.Repository;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.config.RepositoryFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * test factory
@@ -36,6 +38,8 @@ import org.openrdf.repository.config.RepositoryFactory;
  * @author James Fuller
  */
 public class MarkLogicRepositoryFactoryTest {
+
+    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Rule
     public ExpectedException exception = ExpectedException.none();
