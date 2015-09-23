@@ -31,6 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.net.URL;
 
 /**
  *
@@ -63,6 +64,25 @@ public class MarkLogicRepository extends RepositoryBase implements Repository,Ma
     private boolean quadMode;
 
     private ValueFactory f;
+
+    /**
+     * constructor inited with connection URL
+     *
+     * @param connectionString
+     */
+    public MarkLogicRepository(URL connectionString){
+        String[] split = connectionString.getAuthority().split("@");
+        String creds = split[0];
+        String cred[] = creds.split(":");
+        this.f = new ValueFactoryImpl();
+        this.quadMode = true;
+        this.host = connectionString.getHost();
+        this.port = connectionString.getPort();
+        this.user = cred[0];
+        this.password = cred[1];
+        this.auth = "DIGEST";
+        this.client = getMarkLogicClient();
+    }
 
     /**
      *
