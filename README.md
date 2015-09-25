@@ -55,8 +55,9 @@ marklogic-sesame-repository depends on MarkLogic (v8.0-4) installed and running;
 
 1. Clone or download marklogic-sesame _develop_ branch
 [https://github.com/marklogic/marklogic-sesame/tree/develop](https://github.com/marklogic/marklogic-sesame/tree/develop).
-2. Run gradle target, that provisions MarkLogic with everything required (database,REST server,etc.)
-review [marklogic-sesame/gradle.properties](marklogic-sesame/gradle.properties) that define test deployment settings then run target.
+2. Review [marklogic-sesame/gradle.properties](marklogic-sesame/gradle.properties) which defines test deployment settings.
+3. Run gradle target that provisions MarkLogic with everything required (database,REST server,etc.).
+
 ```
 gradle :marklogic-sesame:mlDeploy
 ```
