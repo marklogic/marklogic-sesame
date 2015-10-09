@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 /**
- * A library that enables access to a MarkLogic-backed triple-store via the
- * Sesame API.
+ * Classes supporting factory {@link com.marklogic.semantics.sesame.config.MarkLogicRepositoryFactory}
+ * and configuration {@link com.marklogic.semantics.sesame.config.MarkLogicRepositoryConfig}.
  */
 package com.marklogic.semantics.sesame.config;

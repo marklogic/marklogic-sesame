@@ -4,15 +4,15 @@
 <h2>MarkLogic Sesame</h2>
 <p>
     marklogic-sesame enables applications based on Sesame 2.8.6 to use
-    MarkLogic as a persistence layer for triples, and as a source for SPARQL
-    queries.  In addition to basic support for graph CRUD and SPARQL query and update,
+    MarkLogic as a persistence layer for triples, and as a source to query with SPARQL.
+    In addition to basic support for graph CRUD and SPARQL query and update,
     marklogic-sesame also exposes the following MarkLogic capabilities to the Sesame
     framework:
 <ul>
     <li>Transactions</li>
     <li>Variable bindings</li>
     <li>Inference (ruleset configuration)</li>
-    <li>Combination of SPARQL with MarkLogic document query</li>
+    <li>Combined MarkLogic and SPARQL queries</li>
     <li>Optimized pagination of SPARQL result sets</li>
     <li>Permissions</li>
 </ul>
@@ -36,7 +36,7 @@ server for you.
 </p>
 <h2>The API</h2>
 <p>
-    Sesame uses a {@link org.openrdf.repository.Repository} to represent quad store and {@link org.openrdf.repository.RepositoryConnection} to connect to quad store.
+    Sesame uses a {@link org.openrdf.repository.Repository} to represent a quad store and {@link org.openrdf.repository.RepositoryConnection} to connect to a quad store.
 
 <pre>
 import com.marklogic.semantics.sesame.MarkLogicRepository;
@@ -101,7 +101,7 @@ public class Example1_Simple {
         tupleQuery.setIncludeInferred(true);
         TupleQueryResult results = tupleQuery.evaluate(1,10);
 
-        //iterate through query results
+        // iterate through query results
         while(results.hasNext()){
             BindingSet bindings = results.next();
             logger.info("subject:{}",bindings.getValue("s"));
@@ -121,8 +121,8 @@ public class Example1_Simple {
 </pre>
 
 </p>
-<h2>Add and remove triples operations</h2>
-<p>Use Sesame's CRUD operations to store, retrieve, merge or delete Graphs on the
+<h2>Add and Remove Triples Operation</h2>
+<p>Use Sesame's CRUD operations to store, retrieve, merge, or delete Graphs on the
     MarkLogicDatasetGraph.
 <pre>
 Resource context1 = conn.getValueFactory().createURI("http://marklogic.com/examples/context1");
@@ -145,7 +145,7 @@ logger.info("total triples:{} should be zero",conn.size());
 <pre>
 </pre>
 <h2>SPARQL Queries</h2>
-<p>Perform SPARQL query with pagination</p>
+<p>Perform SPARQL query with pagination.</p>
 <p>
 <pre>
 // perform SPARQL query
@@ -183,7 +183,7 @@ while(results.hasNext()){
 <h2>SPARQL Update</h2>
 <p>
 <pre>
-//update query
+// update query
 String updatequery = "INSERT DATA { GRAPH <http://marklogic.com/test/context10> {  <http://marklogic.com/test/subject> <pp1> <oo1> } }";
 MarkLogicUpdateQuery updateQuery = conn.prepareUpdate(QueryLanguage.SPARQL, updatequery,"http://marklogic.com/test/baseuri");
 
