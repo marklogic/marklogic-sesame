@@ -53,7 +53,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 /**
- * internal class which straddles Sesame and MarkLogic java api client
+ * An internal class that straddles Sesame and MarkLogic Java API client.
  *
  * @author James Fuller
  */

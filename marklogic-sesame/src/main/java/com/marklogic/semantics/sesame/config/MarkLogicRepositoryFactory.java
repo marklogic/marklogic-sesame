@@ -31,7 +31,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 /**
- * factory for generating MarkLogicRepository's
+ * A factory for instantiating MarkLogicRepository objects.
  *
  * @author James Fuller
  */

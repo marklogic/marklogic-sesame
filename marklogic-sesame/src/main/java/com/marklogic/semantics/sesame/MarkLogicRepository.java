@@ -35,15 +35,10 @@ import java.net.URL;
 
 /**
  *
- * Sesame repository representing a MarkLogic's triple store,
- * exposing MarkLogic specific features;
- *
- *  * SPARQL and Graph queries all SPARQL forms
- *  * rulesets for inferencing
- *  * efficient size queries
- *  * combination queries
- *  * base uri
- *  * permissions
+ * Sesame repository representing a MarkLogic triple store,
+ * exposing MarkLogic-specific features; SPARQL and Graph queries
+ * in all SPARQL forms, rulesets for inferencing, efficient
+ * size queries, combination queries,  base uri, and permissions.
  *
  * @author James Fuller
  * @version 1.0.0

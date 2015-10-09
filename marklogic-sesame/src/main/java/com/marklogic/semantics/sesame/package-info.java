@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 /**
- * Contains core classes for instantiating a MarkLogic backed Sesame Repository{@link com.marklogic.semantics.sesame.MarkLogicRepository}
- * and connection {@link com.marklogic.semantics.sesame.MarkLogicRepositoryConnection}, including exceptions.
+ * Contains core classes for instantiating a MarkLogic backed Sesame Repository ({@link com.marklogic.semantics.sesame.MarkLogicRepository})
+ * and connection ({@link com.marklogic.semantics.sesame.MarkLogicRepositoryConnection}), including exceptions.
  */
 package com.marklogic.semantics.sesame;
