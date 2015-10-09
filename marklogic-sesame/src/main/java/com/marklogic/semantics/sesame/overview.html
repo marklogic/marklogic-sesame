@@ -122,8 +122,7 @@ public class Example1_Simple {
 
 </p>
 <h2>Add and Remove Triples Operation</h2>
-<p>Use Sesame's CRUD operations to store, retrieve, merge, or delete Graphs on the
-    MarkLogicDatasetGraph.
+<p>Use Sesame's CRUD operations to store, retrieve, merge, or delete triples.
 <pre>
 Resource context1 = conn.getValueFactory().createURI("http://marklogic.com/examples/context1");
 Resource context2 = conn.getValueFactory().createURI("http://marklogic.com/examples/context2");
@@ -171,7 +170,7 @@ tupleQuery.setConstrainingQueryDefinition(rawCombined);
 // evaluate query with pagination
 TupleQueryResult results = tupleQuery.evaluate(1,10);
 
-//iterate through query results
+// iterate through query results
 while(results.hasNext()){
     BindingSet bindings = results.next();
     logger.info("subject:{}",bindings.getValue("s"));
