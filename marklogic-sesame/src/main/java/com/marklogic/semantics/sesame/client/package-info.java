@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 /**
- * A library that enables access to a MarkLogic-backed triple-store via the
- * Sesame API.
+ * Contains classes that abstract the connection to MarkLogic
+ * Java Client API and attendant result and write caches.
  */
 package com.marklogic.semantics.sesame.client;

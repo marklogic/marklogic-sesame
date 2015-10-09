@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 /**
- * A library that enables access to a MarkLogic-backed triple-store via the
- * Sesame API.
+ * Classes implementing all SPARQL query forms.
  */
 package com.marklogic.semantics.sesame.query;
