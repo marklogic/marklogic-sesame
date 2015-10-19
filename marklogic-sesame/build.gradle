@@ -53,6 +53,25 @@ sourceSets {
     }
 }
 
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+
+artifacts {
+    archives  sourcesJar
+    archives  javadocJar
+
+}
+
+
+
 task wrapper(type: Wrapper) {
     gradleVersion = '2.4'
 }
@@ -60,3 +79,44 @@ task wrapper(type: Wrapper) {
 javadoc {
     options.overview = "src/main/java/com/marklogic/semantics/sesame/overview.html"
 }
+
+task createPom << {
+    pom {
+        project {
+                name 'marklogic-sesame'
+               packaging 'jar'
+               description 'Adapter for using MarkLogic with the sesame RDF Framework'
+               url 'https://github.com/marklogic/marklogic-sesame'
+ 			 				
+               scm {
+                   url 'git@github.com:marklogic/marklogic-sesame.git'
+                   connection 'scm:git@github.com:marklogic/marklogic-sesame.git'
+                   developerConnection 'scm:git@github.com:marklogic/marklogic-sesame.git'
+               }
+ 
+               licenses {
+                   license {
+                       name 'The Apache Software License, Version 2.0'
+                       url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                   }
+               }
+ 
+         developers {
+          developer {
+            name 'MarkLogic'
+            email 'java-sig@marklogic.com'
+            organization 'MarkLogic'
+            organizationUrl 'https://www.marklogic.com'
+          	}
+          developer {
+            name 'MarkLogic Github Contributors'
+            email 'general@developer.marklogic.com'
+            organization 'Github Contributors'
+            organizationUrl 'https://github.com/marklogic/marklogic-sesame/graphs/contributors'
+          		}
+          	 }
+        }
+    }.writeTo("pom.xml")
+}
+
+
