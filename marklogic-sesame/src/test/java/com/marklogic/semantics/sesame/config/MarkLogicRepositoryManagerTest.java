@@ -58,7 +58,7 @@ public class MarkLogicRepositoryManagerTest {
     @Test
     public void testLocalManager() throws Exception {
         RepositoryManager manager;
-        manager = new LocalRepositoryManager(new File("/Users/jfuller/localmanager"));
+        manager = new LocalRepositoryManager(new File("/tmp/localmanager"));
         manager.initialize();
         RepositoryConfig mlconf = new RepositoryConfig("jimtest1",new MarkLogicRepositoryConfig("localhost", 8200, "admin", "admin", "DIGEST"));
 
