@@ -1,4 +1,4 @@
-# The MarkLogic Sesame API v1.0.0
+# marklogic-sesame v1.0.0
 
 ## Introduction
 
@@ -11,11 +11,21 @@ The MarkLogic Sesame API is a [Sesame](http://rdf4j.org/) Repository implementat
 * Optimized pagination of SPARQL result sets
 * Permissions
 
-## Quick Start / Usage
+## Before you start
 
-_IMPORTANT_ - NO RELEASE TO MAVEN YET, YOU MUST BUILD SOFTWARE
+### Setup MarkLogic
 
-For gradle projects, include:
+Ensure MarkLogic 8.0-4 is installed and running. To use marklogic-sesame applications you will need access to a running MarkLogic server.
+
+## Usage
+
+### Quick Start
+
+_IMPORTANT_ - NO RELEASE TO MAVEN CENTRAL YET, YOU MUST BUILD SOFTWARE
+
+This API will be distributed on Maven Central.
+
+For gradle projects, include following dependency in `build.gradle`:
 
 ```
 dependencies {
@@ -33,17 +43,16 @@ To use the API in your maven project, include in your pom.xml:
 </dependency>
 ```
 
-### Build and Test
+## Build and Use from develop branch
 
-This section describes how to build and test MarkLogic Sesame API from source.
+This section describes how to build and test MarkLogic Sesame API from _develop_ branch.
 
 #### Setup Java API Client
 
 marklogic-sesame-repository depends on _develop_ branch version of Java API Client:
 
-1. Clone or download Java API client _develop_ branch
-[https://github.com/marklogic/java-client-api/tree/develop](https://github.com/marklogic/java-client-api/tree/develop).
-2. Build and deploy Java API client.
+1. Clone or download [MarkLogic Java API client](https://github.com/marklogic/java-client-api/tree/develop) _develop_ branch.
+2. Build and deploy Java API client to local maven repo.
 ```
 mvn -Dmaven.test.skip=true -Dmaven.javadoc.skip=true deploy
 ```
@@ -51,10 +60,9 @@ Verify that Java API client has been deployed to your local maven repo.
 
 #### Setup and Test MarkLogic Sesame API
 
-marklogic-sesame-repository depends on MarkLogic (v8.0-4) installed and running;
+marklogic-sesame-repository depends on MarkLogic v8.0-4 or greater installed and running;
 
-1. Clone or download marklogic-sesame _develop_ branch
-[https://github.com/marklogic/marklogic-sesame/tree/develop](https://github.com/marklogic/marklogic-sesame/tree/develop).
+1. Clone or download [marklogic-sesame](https://github.com/marklogic/marklogic-sesame/tree/develop) _develop_ branch.
 2. Review [marklogic-sesame/gradle.properties](marklogic-sesame/gradle.properties) which defines test deployment settings.
 3. Run gradle target that provisions MarkLogic with everything required (database,REST server,etc.).
 
