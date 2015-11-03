@@ -21,9 +21,7 @@ Ensure MarkLogic 8.0-4 or greater is installed and running. To use marklogic-ses
 
 ### Quick Start
 
-_IMPORTANT_ - NO RELEASE TO MAVEN CENTRAL YET, YOU MUST BUILD SOFTWARE
-
-This API will be distributed on Maven Central.
+This API is distributed on Maven Central.
 
 For gradle projects, include following dependency in `build.gradle`:
 
