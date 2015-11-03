@@ -47,9 +47,9 @@ To use the API in your maven project, include in your pom.xml:
 
 This section describes how to build and test MarkLogic Sesame API from _develop_ branch.
 
-#### Setup Java API Client
+#### Setup MarkLogic Java API Client
 
-marklogic-sesame-repository depends on _develop_ branch version of Java API Client:
+marklogic-sesame-repository depends on _develop_ branch version of MarkLogic Java API Client:
 
 1. Clone or download [MarkLogic Java API client](https://github.com/marklogic/java-client-api/tree/develop) _develop_ branch.
 2. Build and deploy Java API client to local maven repo.
