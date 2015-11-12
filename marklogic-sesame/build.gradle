@@ -14,6 +14,7 @@ apply plugin: 'ml-gradle'
 apply plugin: 'eclipse'
 //apply plugin: 'idea'
 apply plugin: 'java'
+apply plugin: 'maven-publish'
 apply plugin: 'maven'
 
 configure(allprojects){
@@ -63,15 +64,6 @@ task sourcesJar(type: Jar, dependsOn: classes) {
     from sourceSets.main.allSource
 }
 
-
-artifacts {
-    archives  sourcesJar
-    archives  javadocJar
-
-}
-
-
-
 task wrapper(type: Wrapper) {
     gradleVersion = '2.4'
 }
@@ -80,43 +72,65 @@ javadoc {
     options.overview = "src/main/java/com/marklogic/semantics/sesame/overview.html"
 }
 
-task createPom << {
-    pom {
-        project {
-                name 'marklogic-sesame'
-               packaging 'jar'
-               description 'Adapter for using MarkLogic with the sesame RDF Framework'
-               url 'https://github.com/marklogic/marklogic-sesame'
- 			 				
-               scm {
-                   url 'git@github.com:marklogic/marklogic-sesame.git'
-                   connection 'scm:git@github.com:marklogic/marklogic-sesame.git'
-                   developerConnection 'scm:git@github.com:marklogic/marklogic-sesame.git'
-               }
- 
-               licenses {
-                   license {
-                       name 'The Apache Software License, Version 2.0'
-                       url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                   }
-               }
- 
-         developers {
-          developer {
-            name 'MarkLogic'
-            email 'java-sig@marklogic.com'
-            organization 'MarkLogic'
-            organizationUrl 'https://www.marklogic.com'
-          	}
-          developer {
-            name 'MarkLogic Github Contributors'
-            email 'general@developer.marklogic.com'
-            organization 'Github Contributors'
-            organizationUrl 'https://github.com/marklogic/marklogic-sesame/graphs/contributors'
-          		}
-          	 }
+Node pomCustomizations = new NodeBuilder(). project {
+        name 'marklogic-sesame'
+        packaging 'jar'
+        textdescription 'Adapter for using MarkLogic with the Sesame Framework'
+        url 'https://github.com/marklogic/marklogic-sesame'
+
+        scm {
+            url 'git@github.com:marklogic/marklogic-sesame.git'
+                connection 'scm:git@github.com:marklogic/marklogic-sesame.git'
+                developerConnection 'scm:git@github.com:marklogic/marklogic-sesame.git'
         }
-    }.writeTo("pom.xml")
+
+        licenses {
+            license {
+                name 'The Apache Software License, Version 2.0'
+                    url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+            }
+        }
+
+        developers {
+            developer {
+                name 'MarkLogic'
+                    email 'java-sig@marklogic.com'
+                    organization 'MarkLogic'
+                    organizationUrl 'https://www.marklogic.com'
+            }
+            developer {
+                name 'MarkLogic Github Contributors'
+                    email 'general@developer.marklogic.com'
+                    organization 'Github Contributors'
+                    organizationUrl 'https://github.com/marklogic/marklogic-sesame/graphs/contributors'
+            }
+        }
 }
 
+publishing {
+  publications {
+    mainJava(MavenPublication) {
+      from components.java
 
+      pom.withXml {
+        asNode().append(pomCustomizations.developers)
+        asNode().append(pomCustomizations.name)
+        asNode().append(pomCustomizations.packaging)
+        asNode().append(pomCustomizations.url)
+        asNode().append(pomCustomizations.scm)
+        asNode().append(pomCustomizations.licenses)
+        asNode().appendNode("description", pomCustomizations.textdescription.text)
+      }
+
+      artifact sourcesJar
+
+      artifact javadocJar
+
+    }
+  }
+  repositories {
+    maven {
+      url publishUrl
+    }
+  }
+}
