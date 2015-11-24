@@ -13,6 +13,8 @@ The MarkLogic Sesame API is a [Sesame](http://rdf4j.org/) Repository implementat
 
 ## Before you start
 
+The MarkLogic Sesame API supports [Sesame v2.8.7](http://rdf4j.org/).
+
 ### Setup MarkLogic
 
 Ensure MarkLogic 8.0-4 or greater is installed and running. To use marklogic-sesame applications you will need access to a running MarkLogic server.
