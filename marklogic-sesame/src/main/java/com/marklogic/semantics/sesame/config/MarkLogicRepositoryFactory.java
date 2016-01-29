@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 MarkLogic Corporation
+ * Copyright 2015-2016 MarkLogic Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -75,7 +75,8 @@ public class MarkLogicRepositoryFactory implements RepositoryFactory {
             try {
                 repo = new MarkLogicRepository(new URL(cfg.getQueryEndpointUrl()));
             } catch (MalformedURLException e) {
-                e.printStackTrace();
+                logger.debug(e.getMessage());
+                throw new RepositoryConfigException(e.getMessage());
             }
         }else{
             throw new RepositoryConfigException("Invalid configuration class: " + config.getClass());
