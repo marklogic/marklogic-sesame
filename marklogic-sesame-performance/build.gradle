@@ -3,7 +3,6 @@ buildscript {
         mavenCentral()
         jcenter()
         maven {url "http://developer.marklogic.com/maven2/"}
-        maven {url "http://rjrudin.github.io/marklogic-java/releases"}
     }
     dependencies {
         classpath "me.champeau.gradle:jmh-gradle-plugin:0.1.3"
