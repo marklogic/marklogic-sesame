@@ -26,8 +26,13 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.openrdf.IsolationLevels;
 import org.openrdf.model.*;
+import org.openrdf.model.impl.StatementImpl;
+import org.openrdf.model.impl.URIImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 
@@ -110,11 +115,7 @@ public class MarkLogicRepositoryWriteCacheTest extends SesameTestBase {
     {
         conn.setIsolationLevel(IsolationLevels.SNAPSHOT);
 
-        readerRep.initialize();
-        MarkLogicRepositoryConnection rconn = readerRep.getConnection();
-
         assertEquals(conn.size(),0L);
-        assertEquals(rconn.size(),0L);
 
         Resource context1 = conn.getValueFactory().createURI("http://marklogic.com/test/context1");
         ValueFactory f= conn.getValueFactory();
@@ -128,11 +129,9 @@ public class MarkLogicRepositoryWriteCacheTest extends SesameTestBase {
             conn.begin();
             conn.add(st1);
             assertEquals(conn.size(),1L);
-            assertEquals(rconn.size(),0L);
             conn.commit();
         }
-        catch (Exception e){
-
+        catch (Exception e) {
         }
         finally{
             if (conn.isActive())
@@ -140,7 +139,28 @@ public class MarkLogicRepositoryWriteCacheTest extends SesameTestBase {
 
         }
         assertEquals(conn.size(),1L);
-        assertEquals(rconn.size(),1L);
         conn.clear();
+    }
+
+    @Test
+    public void testLarge()
+            throws Exception {
+
+        URI graph = new URIImpl("urn:test");
+        int docSize = 100000;
+
+        conn.begin();
+        Set<Statement> bulkInsert = new HashSet();
+        for (int term = 0; term < docSize; term++) {
+            bulkInsert.add(new StatementImpl
+                    (new URIImpl("urn:subject:" + term),
+                            new URIImpl("urn:predicate:" + term),
+                            new URIImpl("urn:object:" + term)));
+        }
+        conn.add(bulkInsert, graph);
+        conn.commit();
+
+        assertEquals(100000L, conn.size());
+
     }
 }
