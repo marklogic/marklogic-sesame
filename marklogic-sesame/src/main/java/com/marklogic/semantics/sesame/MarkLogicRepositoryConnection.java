@@ -1095,7 +1095,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
         Iterator <? extends Statement> iter = statements.iterator();
         while(iter.hasNext()){
             Statement st = iter.next();
-            add(st.getSubject(), st.getPredicate(), st.getObject(), mergeResource(st.getContext(), contexts));
+            add(st, mergeResource(st.getContext(), contexts));
         }
     }
 
