@@ -115,11 +115,7 @@ public class MarkLogicRepositoryWriteCacheTest extends SesameTestBase {
     {
         conn.setIsolationLevel(IsolationLevels.SNAPSHOT);
 
-        //readerRep.initialize();
-        //MarkLogicRepositoryConnection rconn = readerRep.getConnection();
-
         assertEquals(conn.size(),0L);
-        //assertEquals(rconn.size(),0L);
 
         Resource context1 = conn.getValueFactory().createURI("http://marklogic.com/test/context1");
         ValueFactory f= conn.getValueFactory();
