@@ -139,16 +139,18 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
         throws RepositoryException
     {
         try {
-            sync();
-            if (this.isActive()) {
-                logger.debug("rollback open transaction on closing connection.");
-                client.rollbackTransaction();
+            if(this.isOpen()){
+                sync();
+                if (this.isActive()) {
+                    logger.debug("rollback open transaction on closing connection.");
+                    client.rollbackTransaction();
+                }
+                super.close();
+                client.stopTimer();
             }
         } catch (Exception e) {
-            
+            throw new RepositoryException("Unable to close connection.");
         }
-        client.stopTimer();
-        super.close();
     }
     
     /**

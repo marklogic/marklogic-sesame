@@ -108,9 +108,9 @@ public class MarkLogicClient {
      */
 	public void initTimer(){
         if(this.WRITE_CACHE_ENABLED) {
-            this.cache = new WriteCacheTimerTask(this);
-            this.timer = new Timer();
-            this.timer.scheduleAtFixedRate(cache, WriteCacheTimerTask.DEFAULT_INITIAL_DELAY, WriteCacheTimerTask.DEFAULT_CACHE_MILLIS);
+            cache = new WriteCacheTimerTask(this);
+            timer = new Timer();
+            timer.scheduleAtFixedRate(cache, WriteCacheTimerTask.DEFAULT_INITIAL_DELAY, WriteCacheTimerTask.DEFAULT_CACHE_MILLIS);
         }
     }
 
@@ -119,8 +119,12 @@ public class MarkLogicClient {
      */
 	public void stopTimer() {
         if(this.WRITE_CACHE_ENABLED) {
-            cache.cancel();
-            timer.cancel();
+			if(cache != null) {
+				cache.cancel();
+			}
+            if(timer != null){
+				timer.cancel();
+			}
         }
     }
 
@@ -130,7 +134,7 @@ public class MarkLogicClient {
      * @throws MarkLogicSesameException
      */
     public void sync() throws MarkLogicSesameException {
-        if(WRITE_CACHE_ENABLED) cache.forceRun();
+        if(WRITE_CACHE_ENABLED && cache != null) cache.forceRun();
     }
 
 	/**
