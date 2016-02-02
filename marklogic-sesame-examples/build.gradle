@@ -64,3 +64,8 @@ task runExample3(type: JavaExec, dependsOn: 'classes') {
     main = 'com.marklogic.semantics.sesame.examples.Example3_Other'
     classpath = sourceSets.main.runtimeClasspath
 }
+
+task runExample4(type: JavaExec, dependsOn: 'classes') {
+    main = 'com.marklogic.semantics.sesame.examples.Example4_Load_Triples'
+    classpath = sourceSets.main.runtimeClasspath
+}

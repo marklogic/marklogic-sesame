@@ -10,14 +10,22 @@ This example suite utilises the same marklogic-sesame environment/marklogic setu
   
 To run examples; 
 
+Simple sesame example.
 ```
 gradle runExample1
 ```
 
+Use MarkLogic specific features (rulesets, perms, constraining query ...).
 ```
 gradle runExample2
 ```
 
+Return number of triples.
 ```
 gradle runExample3
+```
+
+Example of Loading 100,000 triples.
+```
+gradle runExample4
 ```
