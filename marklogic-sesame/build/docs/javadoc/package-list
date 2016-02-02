@@ -2,3 +2,4 @@ com.marklogic.semantics.sesame
 com.marklogic.semantics.sesame.client
 com.marklogic.semantics.sesame.config
 com.marklogic.semantics.sesame.query
+com.marklogic.semantics.sesame.sail
