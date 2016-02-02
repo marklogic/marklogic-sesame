@@ -1386,7 +1386,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     }
 
     /**
-     * forces write cache to sync
+     * customise write cache interval and cache size. 
      *
      * @param initDelay - initial interval before write cache is checked
      * @param delayCache - interval (ms) to check write cache
@@ -1395,7 +1395,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
      */
     @Override
     public void configureWriteCache(long initDelay, long delayCache, long cacheSize){
-        client.initTimer(initDelay,delayCache,cacheSize);
+        client.initTimer(initDelay, delayCache,cacheSize);
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
