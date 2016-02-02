@@ -1,6 +1,6 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head><title>MarkLogic Sesame API Overview</title></head>
-<body>
+<p>
 <h2>MarkLogic Sesame</h2>
 <p>
     marklogic-sesame enables applications based on Sesame 2.8.6 to use
@@ -141,8 +141,24 @@ conn.clear();
 logger.info("total triples:{} should be zero",conn.size());
 </pre>
 </p>
+<h2>Load 100k triples</h2>
+<p>
 <pre>
+URI graph = new URIImpl("urn:test");
+int docSize = 100000;
+//conn.configureWriteCache(750,750,600); optionally customise write cache
+conn.begin();
+Set <Statement> bulkInsert = new HashSet();
+for (int term = 0; term < docSize; term++) {
+bulkInsert.add(new StatementImpl
+(new URIImpl("urn:subject:" + term),
+new URIImpl("urn:predicate:" + term),
+new URIImpl("urn:object:" + term)));
+}
+conn.add(bulkInsert, graph);
+conn.commit();
 </pre>
+</p>
 <h2>SPARQL Queries</h2>
 <p>Perform SPARQL query with pagination.</p>
 <p>

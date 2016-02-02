@@ -57,8 +57,9 @@ public class WriteCacheTimerTask extends TimerTask {
 
     private RDFFormat format = RDFFormat.NQUADS;
 
-    private long cacheSize = DEFAULT_CACHE_SIZE;
-    private long cacheMillis = DEFAULT_CACHE_MILLIS;
+    private long cacheSize;
+    private long cacheMillis;
+
     private Date lastCacheAccess = new Date();
 
     /**
@@ -70,6 +71,15 @@ public class WriteCacheTimerTask extends TimerTask {
         super();
         this.client = client;
         this.cache = new LinkedHashModel();
+        this.cacheSize = DEFAULT_CACHE_SIZE;
+        this.cacheMillis = DEFAULT_CACHE_MILLIS;
+    }
+
+    public WriteCacheTimerTask(MarkLogicClient client, long cacheSize) {
+        super();
+        this.client = client;
+        this.cache = new LinkedHashModel();
+        setCacheSize(cacheSize);
     }
 
     /**
@@ -115,7 +125,7 @@ public class WriteCacheTimerTask extends TimerTask {
     @Override
     public void run() {
         Date now = new Date();
-        if ( cache.size() > cacheSize || (cache.size() > 0 && now.getTime() - lastCacheAccess.getTime() > cacheMillis)) {
+        if ( cache.size() > cacheSize - 1 || (cache.size() > 0 && now.getTime() - lastCacheAccess.getTime() > cacheMillis)) {
             try {
                 flush();
                 lastCacheAccess = new Date();
@@ -173,7 +183,7 @@ public class WriteCacheTimerTask extends TimerTask {
      * @param contexts
      */
     public synchronized void add(Resource subject, URI predicate, Value object, Resource... contexts) throws MarkLogicSesameException {
-        if(cache.size() > DEFAULT_CACHE_SIZE){
+        if(cache.size() > cacheSize - 1){
             forceRun();
         }
         cache.add(subject,predicate,object,contexts);

@@ -53,6 +53,8 @@ public class Example4_Load_Triples {
         URI graph = new URIImpl("urn:test");
         int docSize = 100000;
 
+        conn.configureWriteCache(750,750,600); // customise write cache (initDelay interval, delayCache interval, cache size)
+
         conn.begin();
         Set<Statement> bulkInsert = new HashSet();
         for (int term = 0; term < docSize; term++) {
