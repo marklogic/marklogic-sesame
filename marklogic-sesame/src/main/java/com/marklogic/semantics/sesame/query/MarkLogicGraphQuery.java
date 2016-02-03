@@ -22,6 +22,7 @@ package com.marklogic.semantics.sesame.query;
 import com.marklogic.client.semantics.GraphPermissions;
 import com.marklogic.client.query.QueryDefinition;
 import com.marklogic.client.semantics.SPARQLRuleset;
+import com.marklogic.semantics.sesame.MarkLogicSesameException;
 import com.marklogic.semantics.sesame.client.MarkLogicClient;
 import org.openrdf.query.GraphQuery;
 import org.openrdf.query.GraphQueryResult;
@@ -68,6 +69,8 @@ public class MarkLogicGraphQuery extends MarkLogicQuery implements GraphQuery,Ma
         try {
             return getMarkLogicClient().sendGraphQuery(getQueryString(),getBindings(),getIncludeInferred(),getBaseURI());
         } catch (IOException e) {
+            throw new QueryEvaluationException(e);
+        } catch (MarkLogicSesameException e) {
             throw new QueryEvaluationException(e);
         }
     }

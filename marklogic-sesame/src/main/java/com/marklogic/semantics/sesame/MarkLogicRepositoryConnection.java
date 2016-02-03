@@ -794,10 +794,12 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
      * returns number of triples in the entire triple store
      *
      * @return long
+     * @throws RepositoryException
      */
     @Override
-    public long size(){
+    public long size() throws RepositoryException{
         try {
+            sync();
             MarkLogicTupleQuery tupleQuery = prepareTupleQuery(COUNT_EVERYTHING);
             tupleQuery.setIncludeInferred(false);
             tupleQuery.setRulesets((SPARQLRuleset)null);
@@ -806,12 +808,9 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
             // just one answer
             BindingSet result = qRes.next();
             return ((Literal) result.getBinding("ct").getValue()).longValue();
-        } catch (RepositoryException | MalformedQueryException e) {
-            e.printStackTrace();
-        } catch (QueryEvaluationException e) {
-            e.printStackTrace();
+        } catch (QueryEvaluationException | MalformedQueryException e) {
+            throw new RepositoryException(e);
         }
-        return 0;
     }
     
     /**
@@ -820,10 +819,10 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
      * @param contexts
      * @return long
      * @throws RepositoryException
-     * @throws MalformedQueryException
      */
     @Override
-    public long size(Resource... contexts)  {
+    public long size(Resource... contexts) throws RepositoryException {
+        sync();
         if (contexts == null) {
             contexts = new Resource[] { null };
         }
@@ -862,12 +861,9 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
             BindingSet result = qRes.next();
             // if 'null' was one or more of the arguments, then totalSize will be non-zero.
             return ((Literal) result.getBinding("ct").getValue()).longValue();
-        } catch (RepositoryException | MalformedQueryException e) {
-            e.printStackTrace();
-        } catch (QueryEvaluationException e) {
-            e.printStackTrace();
+        } catch (QueryEvaluationException | MalformedQueryException e) {
+            throw new RepositoryException(e);
         }
-        return 0;
     }
 
     /**

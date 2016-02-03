@@ -50,7 +50,7 @@ interface MarkLogicRepositoryConnectionDependent {
     GraphQuery prepareGraphQuery(String queryString, String baseURI) throws RepositoryException, MalformedQueryException;
 
     void clear() throws RepositoryException;
-    long size();
+    long size() throws RepositoryException;
 
     void remove(Iterable<? extends Statement> statements) throws RepositoryException;
     <E extends Exception> void remove(Iteration<? extends Statement, E> statements) throws RepositoryException, E;

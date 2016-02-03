@@ -83,7 +83,7 @@ public class WriteCacheTimerTask extends TimerTask {
     }
 
     /**
-     * return current cache size
+     * return cacheSize
      *
      * @return
      */
@@ -92,7 +92,7 @@ public class WriteCacheTimerTask extends TimerTask {
     }
 
     /**
-     *  sets cache size
+     *  set cacheSize
      *
      * @param cacheSize
      */
@@ -123,17 +123,15 @@ public class WriteCacheTimerTask extends TimerTask {
      *
      */
     @Override
-    public void run() {
+    public void run(){
         Date now = new Date();
         if ( cache.size() > cacheSize - 1 || (cache.size() > 0 && now.getTime() - lastCacheAccess.getTime() > cacheMillis)) {
             try {
                 flush();
-                lastCacheAccess = new Date();
-                cache.clear();
-            } catch (MarkLogicSesameException e) {
-                e.printStackTrace();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            } catch ( MarkLogicSesameException| InterruptedException e) {
+                // cannot throw exception in runnable run(), best we log it
+                log.warn("Exception thrown in other thread, when running writeCacheTimerTask.");
+                log.warn(e.toString(),e );
             }
         } else {
             return;
@@ -146,16 +144,16 @@ public class WriteCacheTimerTask extends TimerTask {
      * @throws MarkLogicSesameException
      */
     private synchronized void flush() throws MarkLogicSesameException, InterruptedException {
-            log.debug("flushing write cache:"+cache.size());
+        log.debug("flushing write cache:" + cache.size());
             try {
                 ByteArrayOutputStream out = new ByteArrayOutputStream();
                 Rio.write(cache, out, format);
                 InputStream in = new ByteArrayInputStream(out.toByteArray());
                 client.sendAdd(in, null, format);
-            } catch (RDFHandlerException e) {
-                e.printStackTrace();
-            } catch (RDFParseException e) {
-                e.printStackTrace();
+                lastCacheAccess = new Date();
+                cache.clear();
+            } catch (RDFHandlerException | RDFParseException e) {
+                throw new MarkLogicSesameException(e);
             }
     }
 
@@ -165,12 +163,12 @@ public class WriteCacheTimerTask extends TimerTask {
      * @throws MarkLogicSesameException
      */
     public void forceRun() throws MarkLogicSesameException {
-        if(cache.size()>0) try {
-            flush();
-            lastCacheAccess = new Date();
-            cache.clear();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        if( cache.size() > 0) {
+            try {
+                flush();
+            } catch (InterruptedException e) {
+                throw new MarkLogicSesameException(e);
+            }
         }
     }
 

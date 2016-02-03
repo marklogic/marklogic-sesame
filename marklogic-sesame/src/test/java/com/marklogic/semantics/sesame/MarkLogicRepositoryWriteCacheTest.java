@@ -148,7 +148,7 @@ public class MarkLogicRepositoryWriteCacheTest extends SesameTestBase {
 
         URI graph = new URIImpl("urn:test");
         int docSize = 100000;
-        conn.configureWriteCache(750,750,600);
+        conn.configureWriteCache(100,750,500);
         conn.begin();
         Set<Statement> bulkInsert = new HashSet();
         for (int term = 0; term < docSize; term++) {
@@ -159,8 +159,6 @@ public class MarkLogicRepositoryWriteCacheTest extends SesameTestBase {
         }
         conn.add(bulkInsert, graph);
         conn.commit();
-
         assertEquals(100000L, conn.size());
-
     }
 }
