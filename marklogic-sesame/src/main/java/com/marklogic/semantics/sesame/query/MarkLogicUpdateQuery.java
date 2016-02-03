@@ -65,16 +65,14 @@ public class MarkLogicUpdateQuery extends MarkLogicQuery implements Update,MarkL
     public void execute() throws UpdateExecutionException {
         try {
             getMarkLogicClient().sendUpdateQuery(getQueryString(), getBindings(), getIncludeInferred(), getBaseURI());
-        }catch(ForbiddenUserException e){
+        }catch(ForbiddenUserException | FailedRequestException e){
             throw new UpdateExecutionException(e);
         } catch (RepositoryException e) {
-            e.printStackTrace();
+            throw new UpdateExecutionException(e);
         } catch (MalformedQueryException e) {
-            e.printStackTrace();
+            throw new UpdateExecutionException(e);
         } catch (IOException e) {
-            e.printStackTrace();
-        } catch(FailedRequestException e){
-            throw new UpdateExecutionException(e.getMessage(), e);
+            throw new UpdateExecutionException(e);
         }
     }
 
