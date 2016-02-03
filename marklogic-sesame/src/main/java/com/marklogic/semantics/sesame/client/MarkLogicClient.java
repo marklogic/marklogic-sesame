@@ -108,12 +108,22 @@ public class MarkLogicClient {
      */
 	public void initTimer(){
         if(this.WRITE_CACHE_ENABLED) {
+            stopTimer();
             cache = new WriteCacheTimerTask(this);
             timer = new Timer();
             timer.scheduleAtFixedRate(cache, WriteCacheTimerTask.DEFAULT_INITIAL_DELAY, WriteCacheTimerTask.DEFAULT_CACHE_MILLIS);
         }
     }
 
+    public void initTimer(long initDelay, long delayCache, long cacheSize ){
+        if(this.WRITE_CACHE_ENABLED) {
+            logger.info("configuring write cache");
+            stopTimer();
+            cache = new WriteCacheTimerTask(this,cacheSize);
+            timer = new Timer();
+            timer.scheduleAtFixedRate(cache, initDelay, delayCache);
+        }
+    }
     /**
      * stop Timer task (write cache)
      */

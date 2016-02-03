@@ -101,6 +101,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
         client.initTimer();
     }
 
+
     @Override
     public boolean isOpen(){
         try {
@@ -1382,6 +1383,19 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     @Override
     public void sync() throws MarkLogicSesameException {
         client.sync();
+    }
+
+    /**
+     * customise write cache interval and cache size. 
+     *
+     * @param initDelay - initial interval before write cache is checked
+     * @param delayCache - interval (ms) to check write cache
+     * @param cacheSize - size (# triples) of write cache
+     *
+     */
+    @Override
+    public void configureWriteCache(long initDelay, long delayCache, long cacheSize){
+        client.initTimer(initDelay, delayCache,cacheSize);
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////

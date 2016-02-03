@@ -65,4 +65,7 @@ interface MarkLogicRepositoryConnectionDependent {
     SPARQLRuleset[] getDefaultRulesets();
 
     void sync() throws MarkLogicSesameException;
+
+    void configureWriteCache(long initDelay, long delayCache, long cacheSize);
+
 }
