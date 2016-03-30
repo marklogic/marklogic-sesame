@@ -98,7 +98,6 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
         this.defaultGraphPerms = client.emptyGraphPerms();
         setIsolationLevel(IsolationLevels.SNAPSHOT);
         client.setValueFactory(repository.getValueFactory());
-        client.initTimer();
     }
 
 
