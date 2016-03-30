@@ -36,6 +36,8 @@ import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.RepositoryResult;
 import org.openrdf.repository.sparql.SPARQLRepository;
 import org.openrdf.rio.RDFFormat;
+import org.openrdf.rio.RDFHandlerException;
+import org.openrdf.rio.helpers.RDFHandlerBase;
 import org.openrdf.rio.rdfxml.RDFXMLWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,6 +50,8 @@ import java.net.URL;
 import java.util.List;
 import java.util.Properties;
 
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -1187,4 +1191,23 @@ conn.sync();
         }
 
     }
+
+    // https://github.com/marklogic/marklogic-sesame/issues/250
+    @Test
+    public final void exportEmptyStore()
+            throws OpenRDFException
+    {
+        URI dirgraph = conn.getValueFactory().createURI("http://marklogic.com/dirgraph");
+
+        Assert.assertEquals(0L, conn.size());
+        conn.exportStatements(null, null, null, false, new RDFHandlerBase() {
+
+            @Override
+            public void handleStatement(Statement st1)
+                    throws RDFHandlerException {
+                Assert.assertThat(st1, is((equalTo(null))));
+            }
+        }, dirgraph);
+    }
+
 }
