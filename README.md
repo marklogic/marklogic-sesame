@@ -6,14 +6,14 @@ The MarkLogic Sesame API is a [Sesame](http://rdf4j.org/) Repository implementat
 
 * Transactions: Fully compliant ACID transactions.
 * Variable bindings: Set a binding(s) name, language tag, and value.
-* Inference (ruleset configuration): Enable inference rulesets . 
+* Inference (ruleset configuration): Enable inference rulesets .
 * Combination of SPARQL with MarkLogic document query: Constrain SPARQL query with MarkLogic queries.
 * Optimized pagination of SPARQL result sets: Efficient paging of results.
 * Permissions: Manage permissions on triples.
 
 ## Before you start
 
-The MarkLogic Sesame API supports [Sesame v2.8.7](http://rdf4j.org/).
+The MarkLogic Sesame API supports [Sesame v2.8.10](http://rdf4j.org/).
 
 ### Setup MarkLogic
 
@@ -93,10 +93,10 @@ gradle :marklogic-sesame:install
 
 ```
 
-optionally you can build the jar without running tests. 
+optionally you can build the jar without running tests.
 
 ```
-gradle build -x test 
+gradle build -x test
 ```
 
 and copy resultant build/lib/marklogic-sesame-1.0.0-SNAPSHOT.jar.

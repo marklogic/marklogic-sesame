@@ -19,8 +19,8 @@
  */
 package com.marklogic.semantics.sesame.query;
 
-import com.marklogic.client.semantics.GraphPermissions;
 import com.marklogic.client.query.QueryDefinition;
+import com.marklogic.client.semantics.GraphPermissions;
 import com.marklogic.client.semantics.SPARQLRuleset;
 import com.marklogic.semantics.sesame.MarkLogicSesameException;
 import com.marklogic.semantics.sesame.client.MarkLogicClient;
@@ -85,7 +85,10 @@ public class MarkLogicGraphQuery extends MarkLogicQuery implements GraphQuery,Ma
     @Override
     public void evaluate(RDFHandler resultHandler) throws QueryEvaluationException, RDFHandlerException {
         GraphQueryResult queryResult = evaluate();
-        QueryResults.report(queryResult, resultHandler);
+        if(queryResult.hasNext())
+        {
+            QueryResults.report(queryResult, resultHandler);
+        }
     }
 
 }
