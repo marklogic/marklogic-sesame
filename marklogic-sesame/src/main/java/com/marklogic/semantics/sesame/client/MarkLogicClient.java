@@ -92,6 +92,7 @@ public class MarkLogicClient {
 	 */
 	public MarkLogicClient(String host, int port, String user, String password,String auth) {
 		this._client = new MarkLogicClientImpl(host,port,user,password,auth);
+		this.initTimer();
 	}
 
 	/**
@@ -101,6 +102,7 @@ public class MarkLogicClient {
 	 */
 	public MarkLogicClient(DatabaseClient databaseClient) {
 		this._client = new MarkLogicClientImpl(databaseClient);
+		this.initTimer();
 	}
 
     /**
