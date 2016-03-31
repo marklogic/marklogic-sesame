@@ -216,6 +216,7 @@ public class MarkLogicGraphQueryTest extends SesameTestBase {
 
 
     // result.close() throws an NPE
+    // https://github.com/marklogic/marklogic-sesame/issues/257
     @Ignore
     @Test
     public void testPrepareGraphQueryClose() throws Exception
@@ -224,7 +225,7 @@ public class MarkLogicGraphQueryTest extends SesameTestBase {
         String query = "DESCRIBE <http://example.org/ontology/name>";
         GraphQuery queryObj = conn.prepareGraphQuery(query);
         GraphQueryResult result = queryObj.evaluate();
-        result.close();
+        if(result != null) {result.close();}
 
     }
 }
