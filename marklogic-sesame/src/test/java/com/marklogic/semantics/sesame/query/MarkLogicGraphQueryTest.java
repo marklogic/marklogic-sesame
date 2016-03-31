@@ -214,4 +214,17 @@ public class MarkLogicGraphQueryTest extends SesameTestBase {
         conn.prepareUpdate("CREATE GRAPH <http://example1.org>").execute();
     }
 
+
+    // result.close() throws an NPE
+    @Ignore
+    @Test
+    public void testPrepareGraphQueryClose() throws Exception
+    {
+
+        String query = "DESCRIBE <http://example.org/ontology/name>";
+        GraphQuery queryObj = conn.prepareGraphQuery(query);
+        GraphQueryResult result = queryObj.evaluate();
+        result.close();
+
+    }
 }
