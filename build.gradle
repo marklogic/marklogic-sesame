@@ -1,19 +1,11 @@
-subprojects{
+subprojects {
 
     apply plugin: 'java'
-    apply plugin: 'jacoco'	
-    jacoco{toolVersion="0.7.4.201502262128"}
-    
-repositories {
+
+    repositories {
         mavenCentral()
         mavenLocal()
     }
-
-jacocoTestReport {
-                    group = "Reporting"
-                    description = "Generate Jacoco coverage reports after running tests."
-                    additionalSourceDirs = files(sourceSets.main.allJava.srcDirs)
-                }
 
     sourceCompatibility = "1.7"
     targetCompatibility = "1.7"
@@ -22,9 +14,9 @@ jacocoTestReport {
         testCompile group: 'junit', name: 'junit', version: '4.+'
         testCompile 'org.apache.httpcomponents:httpclient:4.1.1'
     }
-    test{
-        testLogging{
-            events 'started','passed', 'skipped'
+    test {
+        testLogging {
+            events 'started', 'passed', 'skipped'
 
         }
     }
