@@ -1213,7 +1213,6 @@ conn.sync();
 
 
     @Test
-    @Ignore
     public void testNestedConnections()
             throws OpenRDFException {
 
@@ -1234,21 +1233,20 @@ conn.sync();
 
         conn.add(stmt);
 
-        //conn.begin();
+        conn.begin();
 
         Repository repo2 = FACTORY.getRepository(config);
         repo2.initialize();
         RepositoryConnection conn2 = repo2.getConnection();
 
         conn2.begin();
-
-        //Assert.assertEquals("The size of repository must be zero", 0, conn.size());
+        Assert.assertEquals("The size of repository must be zero", 1, conn.size());
         conn2.commit();
 
         conn2.close();
         repo2.shutDown();
 
-        //conn.commit();
+        conn.commit();
 
     }
 }

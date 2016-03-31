@@ -96,19 +96,8 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
         this.client = client;
         this.quadMode = true;
         this.defaultGraphPerms = client.emptyGraphPerms();
-        //setIsolationLevel(IsolationLevels.SNAPSHOT);
         client.setValueFactory(repository.getValueFactory());
     }
-
-
-//    @Override
-//    public boolean isOpen(){
-//        try {
-//            return super.isOpen();
-//        } catch (RepositoryException e) {
-//            return false; // it seems draconian to throw an error when checking isOpen status
-//        }
-//    }
 
     /**
      * gets the current value factory
