@@ -66,9 +66,9 @@ public class MarkLogicClient {
 
 	protected static final TupleQueryResultFormat format = TupleQueryResultFormat.JSON;
 	protected static final RDFFormat rdfFormat = RDFFormat.NTRIPLES;
-	private final MarkLogicClientImpl _client;
+	private MarkLogicClientImpl _client;
 
-	private static final Executor executor = Executors.newCachedThreadPool();
+	private final Executor executor = Executors.newCachedThreadPool();
 
 	private ValueFactory f;
 
@@ -76,7 +76,7 @@ public class MarkLogicClient {
 
 	private Transaction tx = null;
 
-	private WriteCacheTimerTask cache;
+	private WriteCacheTimerTask timerCache;
 	private Timer timer;
 
     private static boolean WRITE_CACHE_ENABLED = true;
@@ -111,9 +111,9 @@ public class MarkLogicClient {
 	public void initTimer(){
         if(this.WRITE_CACHE_ENABLED) {
             stopTimer();
-            cache = new WriteCacheTimerTask(this);
+			timerCache = new WriteCacheTimerTask(this);
             timer = new Timer();
-            timer.scheduleAtFixedRate(cache, WriteCacheTimerTask.DEFAULT_INITIAL_DELAY, WriteCacheTimerTask.DEFAULT_CACHE_MILLIS);
+            timer.scheduleAtFixedRate(timerCache, WriteCacheTimerTask.DEFAULT_INITIAL_DELAY, WriteCacheTimerTask.DEFAULT_CACHE_MILLIS);
         }
     }
 
@@ -121,9 +121,9 @@ public class MarkLogicClient {
         if(this.WRITE_CACHE_ENABLED) {
             logger.debug("configuring write cache");
             stopTimer();
-            cache = new WriteCacheTimerTask(this,cacheSize);
+			timerCache = new WriteCacheTimerTask(this,cacheSize);
             timer = new Timer();
-            timer.scheduleAtFixedRate(cache, initDelay, delayCache);
+            timer.scheduleAtFixedRate(timerCache, initDelay, delayCache);
         }
     }
     /**
@@ -131,8 +131,8 @@ public class MarkLogicClient {
      */
 	public void stopTimer() {
         if(this.WRITE_CACHE_ENABLED) {
-			if(cache != null) {
-				cache.cancel();
+			if(timerCache != null) {
+				timerCache.cancel();
 			}
             if(timer != null){
 				timer.cancel();
@@ -146,7 +146,7 @@ public class MarkLogicClient {
      * @throws MarkLogicSesameException
      */
     public void sync() throws MarkLogicSesameException {
-        if(WRITE_CACHE_ENABLED && cache != null) cache.forceRun();
+        if(WRITE_CACHE_ENABLED && timerCache != null) timerCache.forceRun();
     }
 
 	/**
@@ -312,7 +312,7 @@ public class MarkLogicClient {
 	 */
 	public void sendAdd(String baseURI, Resource subject, URI predicate, Value object, Resource... contexts) throws MarkLogicSesameException {
         if (WRITE_CACHE_ENABLED) {
-			cache.add(subject, predicate, object, contexts);
+			timerCache.add(subject, predicate, object, contexts);
         } else {
             getClient().performAdd(baseURI, (Resource) skolemize(subject), (URI) skolemize(predicate), skolemize(object), this.tx, contexts);
         }

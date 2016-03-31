@@ -96,19 +96,19 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
         this.client = client;
         this.quadMode = true;
         this.defaultGraphPerms = client.emptyGraphPerms();
-        setIsolationLevel(IsolationLevels.SNAPSHOT);
+        //setIsolationLevel(IsolationLevels.SNAPSHOT);
         client.setValueFactory(repository.getValueFactory());
     }
 
 
-    @Override
-    public boolean isOpen(){
-        try {
-            return super.isOpen();
-        } catch (RepositoryException e) {
-            return false; // it seems draconian to throw an error when checking isOpen status
-        }
-    }
+//    @Override
+//    public boolean isOpen(){
+//        try {
+//            return super.isOpen();
+//        } catch (RepositoryException e) {
+//            return false; // it seems draconian to throw an error when checking isOpen status
+//        }
+//    }
 
     /**
      * gets the current value factory
@@ -145,8 +145,8 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
                     logger.debug("rollback open transaction on closing connection.");
                     client.rollbackTransaction();
                 }
-                super.close();
                 client.stopTimer();
+                super.close();
             }
         } catch (Exception e) {
             throw new RepositoryException("Unable to close connection.");
@@ -797,8 +797,8 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
      */
     @Override
     public long size() throws RepositoryException{
+        sync();
         try {
-            sync();
             MarkLogicTupleQuery tupleQuery = prepareTupleQuery(COUNT_EVERYTHING);
             tupleQuery.setIncludeInferred(false);
             tupleQuery.setRulesets((SPARQLRuleset)null);

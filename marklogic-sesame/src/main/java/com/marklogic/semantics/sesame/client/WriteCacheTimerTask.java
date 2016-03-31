@@ -125,7 +125,7 @@ public class WriteCacheTimerTask extends TimerTask {
     @Override
     public void run(){
         Date now = new Date();
-        if ( cache.size() > cacheSize - 1 || (cache.size() > 0 && now.getTime() - lastCacheAccess.getTime() > cacheMillis)) {
+        if ( this.cache.size() > this.cacheSize - 1 || (this.cache.size() > 0 && now.getTime() - this.lastCacheAccess.getTime() > this.cacheMillis)) {
             try {
                 flush();
             } catch ( MarkLogicSesameException| InterruptedException e) {
@@ -144,14 +144,14 @@ public class WriteCacheTimerTask extends TimerTask {
      * @throws MarkLogicSesameException
      */
     private synchronized void flush() throws MarkLogicSesameException, InterruptedException {
-        log.debug("flushing write cache:" + cache.size());
+        log.debug("flushing write cache:" + this.cache.size());
             try {
                 ByteArrayOutputStream out = new ByteArrayOutputStream();
-                Rio.write(cache, out, format);
+                Rio.write(this.cache, out, this.format);
                 InputStream in = new ByteArrayInputStream(out.toByteArray());
-                client.sendAdd(in, null, format);
-                lastCacheAccess = new Date();
-                cache.clear();
+                this.client.sendAdd(in, null, this.format);
+                this.lastCacheAccess = new Date();
+                this.cache.clear();
             } catch (RDFHandlerException | RDFParseException e) {
                 throw new MarkLogicSesameException(e);
             }
@@ -162,13 +162,13 @@ public class WriteCacheTimerTask extends TimerTask {
      *
      * @throws MarkLogicSesameException
      */
-    public void forceRun() throws MarkLogicSesameException {
-        if( cache.size() > 0) {
-            try {
+    public  void forceRun() throws MarkLogicSesameException {
+        try {
+            if( this.cache.size() > 0) {
                 flush();
-            } catch (InterruptedException e) {
-                throw new MarkLogicSesameException(e);
             }
+        } catch (InterruptedException e) {
+            throw new MarkLogicSesameException(e);
         }
     }
 
@@ -181,10 +181,10 @@ public class WriteCacheTimerTask extends TimerTask {
      * @param contexts
      */
     public synchronized void add(Resource subject, URI predicate, Value object, Resource... contexts) throws MarkLogicSesameException {
-        if(cache.size() > cacheSize - 1){
+        if(this.cache.size() > this.cacheSize - 1){
             forceRun();
         }
-        cache.add(subject,predicate,object,contexts);
+        this.cache.add(subject,predicate,object,contexts);
     }
 
 }

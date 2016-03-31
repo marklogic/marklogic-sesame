@@ -19,6 +19,8 @@
  */
 package com.marklogic.semantics.sesame;
 
+import com.marklogic.semantics.sesame.config.MarkLogicRepositoryConfig;
+import com.marklogic.semantics.sesame.config.MarkLogicRepositoryFactory;
 import info.aduna.iteration.CloseableIteration;
 import info.aduna.iteration.Iteration;
 import info.aduna.iteration.Iterations;
@@ -50,8 +52,6 @@ import java.net.URL;
 import java.util.List;
 import java.util.Properties;
 
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -85,7 +85,8 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
     public void tearDown()
             throws Exception {
         logger.debug("tearing down...");
-        //if( conn.isOpen() && conn.isActive()){conn.rollback();}
+        if( conn.isOpen() && conn.isActive()){conn.rollback();}
+        //conn.clear();
         if(conn.isOpen()){conn.clear();}
         conn.close();
         conn = null;
@@ -1205,9 +1206,49 @@ conn.sync();
             @Override
             public void handleStatement(Statement st1)
                     throws RDFHandlerException {
-                Assert.assertThat(st1, is((equalTo(null))));
+                Assert.assertNull(st1);
             }
         }, dirgraph);
     }
 
+
+    @Test
+    @Ignore
+    public void testNestedConnections()
+            throws OpenRDFException {
+
+        MarkLogicRepositoryConfig config = new MarkLogicRepositoryConfig();
+        config.setHost("localhost");
+        config.setPort(8200);
+        config.setUser("admin");
+        config.setPassword("admin");
+        config.setAuth("DIGEST");
+
+        MarkLogicRepositoryFactory FACTORY = new MarkLogicRepositoryFactory();
+
+        ValueFactory vf = conn.getValueFactory();
+        URI tommy = vf.createURI("http://marklogicsparql.com/id#4444");
+        URI lname = vf.createURI("http://marklogicsparql.com/addressbook#lastName");
+        Literal tommylname = vf.createLiteral("Ramone");
+        Statement stmt = vf.createStatement(tommy, lname, tommylname);
+
+        conn.add(stmt);
+
+        //conn.begin();
+
+        Repository repo2 = FACTORY.getRepository(config);
+        repo2.initialize();
+        RepositoryConnection conn2 = repo2.getConnection();
+
+        conn2.begin();
+
+        //Assert.assertEquals("The size of repository must be zero", 0, conn.size());
+        conn2.commit();
+
+        conn2.close();
+        repo2.shutDown();
+
+        //conn.commit();
+
+    }
 }
