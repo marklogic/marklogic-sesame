@@ -1019,6 +1019,7 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
 	
 	// ISSUE 44, 53, 138, 153
 	@Test
+	@Ignore
 	public void testPrepareGraphQuery3() throws Exception
 	{
 		Statement st1 = vf.createStatement(john, fname, johnfname, dirgraph);
