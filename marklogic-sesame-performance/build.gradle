@@ -29,8 +29,6 @@ repositories {
 }
 
 dependencies {
-    compile('org.openrdf.sesame:sesame-runtime:2.8.7')
-
     compile('com.marklogic:marklogic-sesame:1.0.0-SNAPSHOT')
 
     compile('org.slf4j:slf4j-api:1.7.10')
