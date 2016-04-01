@@ -1019,7 +1019,6 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
 	
 	// ISSUE 44, 53, 138, 153
 	@Test
-	@Ignore
 	public void testPrepareGraphQuery3() throws Exception
 	{
 		Statement st1 = vf.createStatement(john, fname, johnfname, dirgraph);
@@ -1063,7 +1062,7 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
 			assertThat(result.hasNext(), is(equalTo(false)));
 		}
 		finally {
-			if(result != null) result.close();
+			result.close();
 		}
 	}
 	
