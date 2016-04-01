@@ -23,10 +23,12 @@ import com.marklogic.sesame.functionaltests.util.ConnectedRESTQA;
 import com.marklogic.sesame.functionaltests.util.StatementIterable;
 import com.marklogic.sesame.functionaltests.util.StatementIterator;
 import com.marklogic.sesame.functionaltests.util.StatementList;
+
 import info.aduna.iteration.CloseableIteration;
 import info.aduna.iteration.Iteration;
 import info.aduna.iteration.Iterations;
 import info.aduna.iteration.IteratorIteration;
+
 import org.junit.*;
 import org.openrdf.IsolationLevels;
 import org.openrdf.OpenRDFException;
@@ -39,6 +41,7 @@ import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.RepositoryResult;
 import org.openrdf.repository.config.RepositoryConfigException;
 import org.openrdf.repository.config.RepositoryFactory;
+import org.openrdf.repository.config.RepositoryImplConfig;
 import org.openrdf.rio.RDFFormat;
 import org.openrdf.rio.RDFHandlerException;
 import org.openrdf.rio.RDFParseException;
@@ -862,9 +865,29 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
 		Assert.assertFalse(result.hasNext());
 	}
 	
+	// ISSUE 230
 	@Test
 	public void testPrepareGraphQuery1() throws Exception
 	{
+		
+		StringBuilder queryBuilder = new StringBuilder(128);
+		queryBuilder.append(" PREFIX ad: <http://marklogicsparql.com/addressbook#>");
+		queryBuilder.append(" CONSTRUCT{ ?person ?p ?o .} ");
+		queryBuilder.append(" FROM <http://marklogic.com/dirgraph>");
+		queryBuilder.append(" WHERE ");
+		queryBuilder.append(" { ");
+		queryBuilder.append("   ?person ad:firstName ?firstname ; ");
+		queryBuilder.append("           ad:lastName  ?lastname ;  ");
+		queryBuilder.append("           ?p ?o . ");
+		queryBuilder.append(" } ");
+		queryBuilder.append(" order by $person ?p ?o ");
+		
+		GraphQuery emptyQuery = testAdminCon.prepareGraphQuery(QueryLanguage.SPARQL, queryBuilder.toString());
+		emptyQuery.setBinding("firstname", vf.createLiteral("Micah"));
+		GraphQueryResult emptyResult = emptyQuery.evaluate();
+		assertThat(emptyResult.hasNext(), is(equalTo(false)));
+		
+		
 		Statement st1 = vf.createStatement(john, fname, johnfname, dirgraph);
 		Statement st2 = vf.createStatement(john, lname, johnlname, dirgraph);
 		Statement st3 = vf.createStatement(john, homeTel, johnhomeTel, dirgraph);
@@ -891,17 +914,7 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
 		testAdminCon.add(new StatementIterable(iter), dirgraph);
 		Assert.assertEquals(10, testAdminCon.size(dirgraph));		
 			
-		StringBuilder queryBuilder = new StringBuilder(128);
-		queryBuilder.append(" PREFIX ad: <http://marklogicsparql.com/addressbook#>");
-		queryBuilder.append(" CONSTRUCT{ ?person ?p ?o .} ");
-		queryBuilder.append(" FROM <http://marklogic.com/dirgraph>");
-		queryBuilder.append(" WHERE ");
-		queryBuilder.append(" { ");
-		queryBuilder.append("   ?person ad:firstName ?firstname ; ");
-		queryBuilder.append("           ad:lastName  ?lastname ;  ");
-		queryBuilder.append("           ?p ?o . ");
-		queryBuilder.append(" } ");
-		queryBuilder.append(" order by $person ?p ?o ");
+
 		
 		GraphQuery query = testAdminCon.prepareGraphQuery(QueryLanguage.SPARQL, queryBuilder.toString());
 		query.setBinding("firstname", vf.createLiteral("Micah"));
@@ -1017,7 +1030,7 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
 		
 	}
 	
-	// ISSUE 44, 53, 138, 153
+	// ISSUE 44, 53, 138, 153, 257
 	@Test
 	public void testPrepareGraphQuery3() throws Exception
 	{
@@ -1570,7 +1583,7 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
 		});
 	}
 	
-	//ISSUE 108
+	//ISSUE 108, 250
 	@Test
 	public final void testInsertRemove()
 		throws OpenRDFException
@@ -2739,6 +2752,71 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
 		
 	}
 	
+	//ISSUE # 252
+	@Test
+	public void  testIsolationLevel() throws Exception {
+		RepositoryConnection repConn = null;
+		Repository tempRep1 = null;
+		try{
+			MarkLogicRepositoryConfig tempConfig1 = new MarkLogicRepositoryConfig();
+			tempConfig1.setHost("localhost");
+			tempConfig1.setAuth("DIGEST");
+			tempConfig1.setUser("admin");
+			tempConfig1.setPassword("admin");
+			tempConfig1.setPort(restPort);
+			tempRep1 = new MarkLogicRepositoryFactory().getRepository(tempConfig1);
+			tempRep1.initialize();
+			repConn = tempRep1.getConnection();
+			repConn.begin();
+			repConn.add(john, fname, johnfname);
+			createRepconn();
+			assertThat(repConn.hasStatement(john, fname, johnfname, false), is(equalTo(true)));
+			repConn.commit();
+		}
+		catch (Exception e){
+			logger.debug(e.getMessage());
+		}
+		finally{
+			if(repConn.isActive())
+				repConn.rollback();
+			tempRep1.shutDown();
+			repConn.close();
+			repConn = null;
+			tempRep1 = null;
+		}
+
+	}
+		
+	
+	private void createRepconn() throws Exception {
+		RepositoryConnection repConn1 = null;
+		Repository tempRep2 = null;
+		try{
+			MarkLogicRepositoryConfig tempConfig2 = new MarkLogicRepositoryConfig();
+			tempConfig2.setHost("localhost");
+			tempConfig2.setAuth("DIGEST");
+			tempConfig2.setUser("admin");
+			tempConfig2.setPassword("admin");
+			tempConfig2.setPort(restPort);
+			tempRep2 = new MarkLogicRepositoryFactory().getRepository(tempConfig2);
+			tempRep2.initialize();
+			repConn1 = tempRep2.getConnection();
+			assertThat(repConn1.hasStatement(john, fname, johnfname, false), is(equalTo(false)));
+		}
+		catch (Exception e){
+			logger.debug(e.getMessage());
+		}
+		finally{
+			if(repConn1.isActive())
+				repConn1.rollback();
+			tempRep2.shutDown();
+			repConn1.close();
+			repConn1 = null;
+			tempRep2 = null;
+		}
+		
+	}
+
 	// ISSUE - 84 
 	@Test
 	public void testNoUpdateRole() throws Exception{
