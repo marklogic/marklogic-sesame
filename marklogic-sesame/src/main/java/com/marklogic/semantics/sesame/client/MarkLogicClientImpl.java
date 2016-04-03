@@ -230,8 +230,6 @@ class MarkLogicClientImpl {
         SPARQLQueryDefinition qdef = sparqlManager.newQueryDefinition(queryString);
         if(notNull(baseURI) && baseURI != ""){ qdef.setBaseUri(baseURI);}
         if (notNull(ruleset) ) {qdef.setRulesets(ruleset);}
-        // constraining query unused when adding triple
-        //if (notNull(getConstrainingQueryDefinition())){qdef.setConstrainingQueryDefinition(getConstrainingQueryDefinition());}
         if(notNull(graphPerms)){ qdef.setUpdatePermissions(graphPerms);}
         qdef.setIncludeDefaultRulesets(includeInferred);
         sparqlManager.clearPageLength();
@@ -335,8 +333,6 @@ class MarkLogicClientImpl {
         }
         SPARQLQueryDefinition qdef = sparqlManager.newQueryDefinition(sb.toString());
         if (notNull(ruleset) ) {qdef.setRulesets(ruleset);}
-        // constraining query unused when adding triple
-        //if (notNull(getConstrainingQueryDefinition())){qdef.setConstrainingQueryDefinition(getConstrainingQueryDefinition());}
         if(notNull(graphPerms)){ qdef.setUpdatePermissions(graphPerms);}
         if(notNull(baseURI) && baseURI != ""){ qdef.setBaseUri(baseURI);}
 
@@ -408,7 +404,7 @@ class MarkLogicClientImpl {
      * @param tx
      */
     public void performClearAll(Transaction tx) {
-        graphManager.deleteGraphs();
+        graphManager.deleteGraphs(tx);
     }
 
     /**
