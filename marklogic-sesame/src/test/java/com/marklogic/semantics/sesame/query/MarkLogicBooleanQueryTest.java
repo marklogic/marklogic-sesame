@@ -101,4 +101,12 @@ public class MarkLogicBooleanQueryTest extends SesameTestBase {
         Assert.assertEquals(true, results);
     }
 
+    @Test(expected=org.openrdf.query.QueryEvaluationException.class)
+    public void testBooleanQueryQueryEvaluationException()
+            throws Exception {
+        String queryString = "ASK GRAPH <http://example.org/test/g27> {<http://semanticbible.org/ns/2006/NTNames#Shelah1> ?p ?o}}";
+        BooleanQuery booleanQuery = conn.prepareBooleanQuery(QueryLanguage.SPARQL, queryString);
+        boolean results = booleanQuery.evaluate();
+    }
+
 }

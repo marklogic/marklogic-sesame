@@ -22,6 +22,7 @@ package com.marklogic.semantics.sesame;
 import org.junit.*;
 import org.junit.rules.ExpectedException;
 import org.openrdf.model.ValueFactory;
+import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.sparql.SPARQLConnection;
 import org.openrdf.repository.sparql.SPARQLRepository;
 import org.slf4j.Logger;
@@ -69,11 +70,15 @@ public class SPARQLRepositoryTest extends SesameTestBase {
     }
 
     // https://github.com/marklogic/marklogic-sesame/issues/237
+    // assert ML SPARQL endpoint can be used by sesame SPARQLRepository
     @Test
-    @Ignore
     public void testSPARQLRepositoryWithMarkLogic()
             throws Exception
     {
-        Assert.assertEquals(0, conn.size());
+        SPARQLRepository sparqlRepo = new SPARQLRepository("http://localhost:8200/v1/graphs/sparql");
+        sparqlRepo.initialize();
+        sparqlRepo.setUsernameAndPassword("s-rest-writer","x");
+        RepositoryConnection sparqlConn = sparqlRepo.getConnection();
+        Assert.assertEquals(0, sparqlConn.size());
     }
 }
