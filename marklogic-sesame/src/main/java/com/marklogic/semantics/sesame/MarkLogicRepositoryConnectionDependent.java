@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 MarkLogic Corporation
+ * Copyright 2015-2016 MarkLogic Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,7 +50,7 @@ interface MarkLogicRepositoryConnectionDependent {
     GraphQuery prepareGraphQuery(String queryString, String baseURI) throws RepositoryException, MalformedQueryException;
 
     void clear() throws RepositoryException;
-    long size();
+    long size() throws RepositoryException;
 
     void remove(Iterable<? extends Statement> statements) throws RepositoryException;
     <E extends Exception> void remove(Iteration<? extends Statement, E> statements) throws RepositoryException, E;
@@ -65,4 +65,7 @@ interface MarkLogicRepositoryConnectionDependent {
     SPARQLRuleset[] getDefaultRulesets();
 
     void sync() throws MarkLogicSesameException;
+
+    void configureWriteCache(long initDelay, long delayCache, long cacheSize);
+
 }

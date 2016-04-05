@@ -1,4 +1,4 @@
-subprojects{
+subprojects {
 
     apply plugin: 'java'
 
@@ -14,9 +14,9 @@ subprojects{
         testCompile group: 'junit', name: 'junit', version: '4.+'
         testCompile 'org.apache.httpcomponents:httpclient:4.1.1'
     }
-    test{
-        testLogging{
-            events 'started','passed', 'skipped'
+    test {
+        testLogging {
+            events 'started', 'passed', 'skipped'
 
         }
     }

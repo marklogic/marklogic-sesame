@@ -3,7 +3,6 @@ buildscript {
         mavenCentral()
         jcenter()
         maven {url "http://developer.marklogic.com/maven2/"}
-        maven {url "http://rjrudin.github.io/marklogic-java/releases"}
     }
     dependencies {
         classpath "me.champeau.gradle:jmh-gradle-plugin:0.1.3"
@@ -30,13 +29,7 @@ repositories {
 }
 
 dependencies {
-    compile('org.openrdf.sesame:sesame-runtime:2.8.6')
-
-    compile('com.marklogic:java-client-api:3.0-SNAPSHOT') {
-        exclude(group: 'org.slf4j')
-        exclude(group: 'ch.qos.logback')
-    }
-    compile('com.marklogic:marklogic-sesame:1.0.0-SNAPSHOT')
+    compile('com.marklogic:marklogic-sesame:1.0.1-SNAPSHOT')
 
     compile('org.slf4j:slf4j-api:1.7.10')
     compile "ch.qos.logback:logback-classic:$logbackVersion"

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 MarkLogic Corporation
+ * Copyright 2015-2016 MarkLogic Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,10 @@ package com.marklogic.semantics.sesame.client;
 import org.openrdf.http.client.BackgroundTupleResult;
 import org.openrdf.http.client.QueueCursor;
 import org.openrdf.query.BindingSet;
+import org.openrdf.query.QueryEvaluationException;
 import org.openrdf.query.resultio.TupleQueryResultParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
 
@@ -28,6 +31,8 @@ import java.io.InputStream;
  * @author James Fuller
  */
 class MarkLogicBackgroundTupleResult extends BackgroundTupleResult {
+
+	protected final Logger logger = LoggerFactory.getLogger(MarkLogicBackgroundGraphResult.class);
 
 	/**
 	 *  constructor
@@ -48,5 +53,34 @@ class MarkLogicBackgroundTupleResult extends BackgroundTupleResult {
 	 */
 	public MarkLogicBackgroundTupleResult(QueueCursor<BindingSet> queue, TupleQueryResultParser parser, InputStream in) {
 		super(queue, parser, in);
+	}
+
+    /**
+     * wrap exception to return false instead of throwing error, debug log
+     *
+     */
+    @Override
+    public boolean hasNext()
+            throws QueryEvaluationException
+    {
+        try {
+            return super.hasNext();
+        }catch(Exception e){
+            logger.debug("hasNext() stream closed exception",e);
+            return false;
+        }
+    }
+
+	/**
+	 * wrap exception, debug log
+	 *
+	 */
+	@Override
+	protected void handleClose() throws QueryEvaluationException {
+		try {
+			super.handleClose();
+		}catch(Exception e){
+			logger.debug("handleClose() stream closed exception",e);
+		}
 	}
 }

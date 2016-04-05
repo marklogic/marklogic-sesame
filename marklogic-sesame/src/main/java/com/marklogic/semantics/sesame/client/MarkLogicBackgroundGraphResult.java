@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 MarkLogic Corporation
+ * Copyright 2015-2016 MarkLogic Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,8 @@ import org.openrdf.http.client.QueueCursor;
 import org.openrdf.model.Statement;
 import org.openrdf.query.QueryEvaluationException;
 import org.openrdf.rio.RDFParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
 import java.nio.charset.Charset;
@@ -32,6 +34,7 @@ import java.nio.charset.Charset;
 
 class MarkLogicBackgroundGraphResult extends BackgroundGraphResult
 {
+	protected final Logger logger = LoggerFactory.getLogger(MarkLogicBackgroundGraphResult.class);
 
 	/**
 	 *  constructor
@@ -58,9 +61,8 @@ class MarkLogicBackgroundGraphResult extends BackgroundGraphResult
 		super(queue, parser, in, charset, baseURI);
 	}
 
-
 	/**
-	 * wrap exception to return false instead of throwing error
+	 * wrap exception to return false instead of throwing error, debug log
 	 *
 	 */
 	@Override
@@ -70,8 +72,22 @@ class MarkLogicBackgroundGraphResult extends BackgroundGraphResult
 		try {
 			return super.hasNext();
 		}catch(Exception e){
+			logger.debug("hasNext() stream closed exception",e);
 			return false;
 		}
 	}
-	
+
+	/**
+	 * wrap exception, debug log
+	 *
+	 */
+	@Override
+	protected void handleClose() throws QueryEvaluationException {
+		try {
+			super.handleClose();
+		}catch(Exception e){
+			logger.debug("handleClose() stream closed exception",e);
+		}
+	}
+
 }

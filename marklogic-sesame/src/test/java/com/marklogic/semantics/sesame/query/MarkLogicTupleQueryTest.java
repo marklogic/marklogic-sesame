@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 MarkLogic Corporation
+ * Copyright 2015-2016 MarkLogic Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -442,6 +442,14 @@ public class MarkLogicTupleQueryTest extends SesameTestBase {
         Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#AttaliaGeodata", sV.stringValue());
         Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#altitude", pV.stringValue());
         Assert.assertEquals("0", oV.stringValue());
+    }
 
+    @Test(expected=org.openrdf.query.QueryEvaluationException.class)
+    public void testSPARQLQueryQueryEvaluationException()
+            throws Exception {
+        String queryString = "select *  <http://marklogic.com/nonexistent> ?p ?o } limit 100 ";
+        TupleQuery tupleQuery = conn.prepareTupleQuery(QueryLanguage.SPARQL, queryString);
+        TupleQueryResult results = tupleQuery.evaluate();
+        Assert.assertFalse(results.hasNext());
     }
 }

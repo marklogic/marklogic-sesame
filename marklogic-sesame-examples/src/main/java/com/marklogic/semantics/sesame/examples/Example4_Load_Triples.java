@@ -17,19 +17,26 @@ package com.marklogic.semantics.sesame.examples;
 
 import com.marklogic.semantics.sesame.MarkLogicRepository;
 import com.marklogic.semantics.sesame.MarkLogicRepositoryConnection;
+import org.openrdf.model.Statement;
+import org.openrdf.model.URI;
+import org.openrdf.model.impl.StatementImpl;
+import org.openrdf.model.impl.URIImpl;
 import org.openrdf.repository.RepositoryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashSet;
+import java.util.Set;
 
-public class Example3_Other {
 
-    protected static final Logger logger = LoggerFactory.getLogger(Example3_Other.class);
+public class Example4_Load_Triples {
+
+    protected static final Logger logger = LoggerFactory.getLogger(Example4_Load_Triples.class);
 
     MarkLogicRepository repo;
     MarkLogicRepositoryConnection conn;
 
-    public Example3_Other() throws RepositoryException {
+    public Example4_Load_Triples() throws RepositoryException {
         System.out.println("setup");
         this.repo = Setup.loadPropsAndInit(); // invoke new MarkLogicRepository(host,port,user,pass,"DIGEST");
         this.repo.initialize(); // initialise repository
@@ -42,17 +49,30 @@ public class Example3_Other {
         this.repo.shutDown();
     }
 
-    public void tripleCount() throws RepositoryException {
-            System.out.println("number of triples");
-            System.out.println(this.conn.size());
+    public void loadTriples() throws RepositoryException {
+        URI graph = new URIImpl("urn:test");
+        int docSize = 100000;
+
+        conn.configureWriteCache(750,750,600); // customise write cache (initDelay interval, delayCache interval, cache size)
+
+        conn.begin();
+        Set<Statement> bulkInsert = new HashSet();
+        for (int term = 0; term < docSize; term++) {
+            bulkInsert.add(new StatementImpl
+                    (new URIImpl("urn:subject:" + term),
+                            new URIImpl("urn:predicate:" + term),
+                            new URIImpl("urn:object:" + term)));
+        }
+        conn.add(bulkInsert, graph);
+        conn.commit();
     }
 
     public static void main(String... args) throws RepositoryException {
         System.out.println("instantiate Simple class");
-        Example3_Other simple = new Example3_Other(); // we instantiate so we can call non static methods
+        Example4_Load_Triples simple = new Example4_Load_Triples(); // we instantiate so we can call non static methods
         try {
             logger.info("start examples");
-            simple.tripleCount(); // return number of triples in repo
+            simple.loadTriples(); //load 100,000 triples
             logger.info("finished examples");
         }finally {
             simple.teardown();

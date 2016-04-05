@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 MarkLogic Corporation
+ * Copyright 2015-2016 MarkLogic Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -100,7 +100,9 @@ public class MarkLogicTupleQuery extends MarkLogicQuery implements TupleQuery,Ma
     @Override
     public void evaluate(TupleQueryResultHandler resultHandler) throws QueryEvaluationException, TupleQueryResultHandlerException {
         TupleQueryResult queryResult = evaluate();
-        QueryResults.report(queryResult, resultHandler);
+        if(queryResult.hasNext()) {
+            QueryResults.report(queryResult, resultHandler);
+        }
     }
 
     /**
@@ -112,6 +114,8 @@ public class MarkLogicTupleQuery extends MarkLogicQuery implements TupleQuery,Ma
      */
     public void evaluate(TupleQueryResultHandler resultHandler,long start, long pageLength) throws QueryEvaluationException, TupleQueryResultHandlerException {
         TupleQueryResult queryResult = evaluate(start,pageLength);
-        QueryResults.report(queryResult, resultHandler);
+        if(queryResult.hasNext()){
+            QueryResults.report(queryResult, resultHandler);
+        }
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 MarkLogic Corporation
+ * Copyright 2015-2016 MarkLogic Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,12 +50,16 @@ public class WriteCacheTimerTask extends TimerTask {
     private Model cache;
     private MarkLogicClient client;
 
-    public static long DEFAULT_CACHE_MILLIS = 750;
-    public static long DEFAULT_INITIAL_DELAY = 10;
-    private static long DEFAULT_CACHE_SIZE = 750;
+    public static long DEFAULT_CACHE_SIZE = 500;
 
-    private long cacheSize = DEFAULT_CACHE_SIZE;
-    private long cacheMillis = DEFAULT_CACHE_MILLIS;
+    public static long DEFAULT_CACHE_MILLIS = 750;
+    public static long DEFAULT_INITIAL_DELAY = 100;
+
+    private RDFFormat format = RDFFormat.NQUADS;
+
+    private long cacheSize;
+    private long cacheMillis;
+
     private Date lastCacheAccess = new Date();
 
     /**
@@ -67,10 +71,19 @@ public class WriteCacheTimerTask extends TimerTask {
         super();
         this.client = client;
         this.cache = new LinkedHashModel();
+        this.cacheSize = DEFAULT_CACHE_SIZE;
+        this.cacheMillis = DEFAULT_CACHE_MILLIS;
+    }
+
+    public WriteCacheTimerTask(MarkLogicClient client, long cacheSize) {
+        super();
+        this.client = client;
+        this.cache = new LinkedHashModel();
+        setCacheSize(cacheSize);
     }
 
     /**
-     * return current cache size
+     * return cacheSize
      *
      * @return
      */
@@ -79,7 +92,7 @@ public class WriteCacheTimerTask extends TimerTask {
     }
 
     /**
-     *  sets cache size
+     *  set cacheSize
      *
      * @param cacheSize
      */
@@ -110,14 +123,15 @@ public class WriteCacheTimerTask extends TimerTask {
      *
      */
     @Override
-    public void run() {
+    public void run(){
         Date now = new Date();
-        if ( cache.size() > cacheSize || cache.size() > 0 && now.getTime() - lastCacheAccess.getTime() > cacheMillis) {
-            log.debug("Cache stale, flushing");
+        if ( this.cache.size() > this.cacheSize - 1 || (this.cache.size() > 0 && now.getTime() - this.lastCacheAccess.getTime() > this.cacheMillis)) {
             try {
                 flush();
-            } catch (MarkLogicSesameException e) {
-                e.printStackTrace();
+            } catch ( MarkLogicSesameException| InterruptedException e) {
+                // cannot throw exception in runnable run(), best we log it
+                log.warn("Exception thrown in other thread, when running writeCacheTimerTask.");
+                log.warn(e.toString(),e );
             }
         } else {
             return;
@@ -129,27 +143,18 @@ public class WriteCacheTimerTask extends TimerTask {
      *
      * @throws MarkLogicSesameException
      */
-    private void flush() throws MarkLogicSesameException {
-            log.debug("flushing write cache");
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            RDFFormat format = RDFFormat.NQUADS;
+    private synchronized void flush() throws MarkLogicSesameException, InterruptedException {
+        log.debug("flushing write cache:" + this.cache.size());
             try {
-                Rio.write(cache, out, format);
+                ByteArrayOutputStream out = new ByteArrayOutputStream();
+                Rio.write(this.cache, out, this.format);
                 InputStream in = new ByteArrayInputStream(out.toByteArray());
-                Resource[] contexts = new Resource[cache.contexts().size()];
-                int i =0;
-                for(Resource ctx:cache.contexts()){
-                    contexts[i]= ctx;
-                    i++;
-                }
-                client.sendAdd(in, null, format, contexts);
-            } catch (RDFHandlerException e) {
-                e.printStackTrace();
-            } catch (RDFParseException e) {
-                e.printStackTrace();
+                this.client.sendAdd(in, null, this.format);
+                this.lastCacheAccess = new Date();
+                this.cache.clear();
+            } catch (RDFHandlerException | RDFParseException e) {
+                throw new MarkLogicSesameException(e);
             }
-            lastCacheAccess = new Date();
-            cache.clear();
     }
 
     /**
@@ -157,8 +162,14 @@ public class WriteCacheTimerTask extends TimerTask {
      *
      * @throws MarkLogicSesameException
      */
-    public void forceRun() throws MarkLogicSesameException {
-        if(cache.size()>0) flush();
+    public  void forceRun() throws MarkLogicSesameException {
+        try {
+            if( this.cache.size() > 0) {
+                flush();
+            }
+        } catch (InterruptedException e) {
+            throw new MarkLogicSesameException(e);
+        }
     }
 
     /**
@@ -169,7 +180,11 @@ public class WriteCacheTimerTask extends TimerTask {
      * @param object
      * @param contexts
      */
-    public void add(Resource subject, URI predicate, Value object, Resource... contexts) {
-        cache.add(subject,predicate,object,contexts);
+    public synchronized void add(Resource subject, URI predicate, Value object, Resource... contexts) throws MarkLogicSesameException {
+        if(this.cache.size() > this.cacheSize - 1){
+            forceRun();
+        }
+        this.cache.add(subject,predicate,object,contexts);
     }
+
 }

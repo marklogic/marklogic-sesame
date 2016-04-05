@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 MarkLogic Corporation
+ * Copyright 2015-2016 MarkLogic Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -65,16 +65,14 @@ public class MarkLogicUpdateQuery extends MarkLogicQuery implements Update,MarkL
     public void execute() throws UpdateExecutionException {
         try {
             getMarkLogicClient().sendUpdateQuery(getQueryString(), getBindings(), getIncludeInferred(), getBaseURI());
-        }catch(ForbiddenUserException e){
+        }catch(ForbiddenUserException | FailedRequestException e){
             throw new UpdateExecutionException(e);
         } catch (RepositoryException e) {
-            e.printStackTrace();
+            throw new UpdateExecutionException(e);
         } catch (MalformedQueryException e) {
-            e.printStackTrace();
+            throw new UpdateExecutionException(e);
         } catch (IOException e) {
-            e.printStackTrace();
-        } catch(FailedRequestException e){
-            throw new UpdateExecutionException(e.getMessage(), e);
+            throw new UpdateExecutionException(e);
         }
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 MarkLogic Corporation
+ * Copyright 2015-2016 MarkLogic Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -96,18 +96,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
         this.client = client;
         this.quadMode = true;
         this.defaultGraphPerms = client.emptyGraphPerms();
-        setIsolationLevel(IsolationLevels.SNAPSHOT);
         client.setValueFactory(repository.getValueFactory());
-        client.initTimer();
-    }
-
-    @Override
-    public boolean isOpen(){
-        try {
-            return super.isOpen();
-        } catch (RepositoryException e) {
-            return false; // it seems draconian to throw an error when checking isOpen status
-        }
     }
 
     /**
@@ -139,16 +128,18 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
         throws RepositoryException
     {
         try {
-            sync();
-            if (this.isActive()) {
-                logger.debug("rollback open transaction on closing connection.");
-                client.rollbackTransaction();
+            if(this.isOpen()){
+                sync();
+                if (this.isActive()) {
+                    logger.debug("rollback open transaction on closing connection.");
+                    client.rollbackTransaction();
+                }
+                client.stopTimer();
+                super.close();
             }
         } catch (Exception e) {
-            
+            throw new RepositoryException("Unable to close connection.");
         }
-        client.stopTimer();
-        super.close();
     }
     
     /**
@@ -791,9 +782,11 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
      * returns number of triples in the entire triple store
      *
      * @return long
+     * @throws RepositoryException
      */
     @Override
-    public long size(){
+    public long size() throws RepositoryException{
+        sync();
         try {
             MarkLogicTupleQuery tupleQuery = prepareTupleQuery(COUNT_EVERYTHING);
             tupleQuery.setIncludeInferred(false);
@@ -803,12 +796,9 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
             // just one answer
             BindingSet result = qRes.next();
             return ((Literal) result.getBinding("ct").getValue()).longValue();
-        } catch (RepositoryException | MalformedQueryException e) {
-            e.printStackTrace();
-        } catch (QueryEvaluationException e) {
-            e.printStackTrace();
+        } catch (QueryEvaluationException | MalformedQueryException e) {
+            throw new RepositoryException(e);
         }
-        return 0;
     }
     
     /**
@@ -817,10 +807,10 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
      * @param contexts
      * @return long
      * @throws RepositoryException
-     * @throws MalformedQueryException
      */
     @Override
-    public long size(Resource... contexts)  {
+    public long size(Resource... contexts) throws RepositoryException {
+        sync();
         if (contexts == null) {
             contexts = new Resource[] { null };
         }
@@ -859,12 +849,9 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
             BindingSet result = qRes.next();
             // if 'null' was one or more of the arguments, then totalSize will be non-zero.
             return ((Literal) result.getBinding("ct").getValue()).longValue();
-        } catch (RepositoryException | MalformedQueryException e) {
-            e.printStackTrace();
-        } catch (QueryEvaluationException e) {
-            e.printStackTrace();
+        } catch (QueryEvaluationException | MalformedQueryException e) {
+            throw new RepositoryException(e);
         }
-        return 0;
     }
 
     /**
@@ -1093,7 +1080,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
         Iterator <? extends Statement> iter = statements.iterator();
         while(iter.hasNext()){
             Statement st = iter.next();
-            add(st.getSubject(), st.getPredicate(), st.getObject(), mergeResource(st.getContext(), contexts));
+            add(st, mergeResource(st.getContext(), contexts));
         }
     }
 
@@ -1380,6 +1367,19 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     @Override
     public void sync() throws MarkLogicSesameException {
         client.sync();
+    }
+
+    /**
+     * customise write cache interval and cache size. 
+     *
+     * @param initDelay - initial interval before write cache is checked
+     * @param delayCache - interval (ms) to check write cache
+     * @param cacheSize - size (# triples) of write cache
+     *
+     */
+    @Override
+    public void configureWriteCache(long initDelay, long delayCache, long cacheSize){
+        client.initTimer(initDelay, delayCache,cacheSize);
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////

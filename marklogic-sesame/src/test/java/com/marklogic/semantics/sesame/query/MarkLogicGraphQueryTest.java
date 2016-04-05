@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 MarkLogic Corporation
+ * Copyright 2015-2016 MarkLogic Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -212,6 +212,17 @@ public class MarkLogicGraphQueryTest extends SesameTestBase {
     public void testCreateGraph() throws Exception
     {
         conn.prepareUpdate("CREATE GRAPH <http://example1.org>").execute();
+    }
+
+    // result.close() throws an NPE
+    // https://github.com/marklogic/marklogic-sesame/issues/257
+    @Test
+    public void testPrepareGraphQueryClose() throws Exception
+    {
+        String query = "DESCRIBE <http://example.org/ontology/name>";
+        GraphQuery queryObj = conn.prepareGraphQuery(query);
+        GraphQueryResult result = queryObj.evaluate();
+        result.close();
     }
 
 }

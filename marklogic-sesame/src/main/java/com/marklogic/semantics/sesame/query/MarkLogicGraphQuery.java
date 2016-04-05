@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 MarkLogic Corporation
+ * Copyright 2015-2016 MarkLogic Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,9 +19,10 @@
  */
 package com.marklogic.semantics.sesame.query;
 
-import com.marklogic.client.semantics.GraphPermissions;
 import com.marklogic.client.query.QueryDefinition;
+import com.marklogic.client.semantics.GraphPermissions;
 import com.marklogic.client.semantics.SPARQLRuleset;
+import com.marklogic.semantics.sesame.MarkLogicSesameException;
 import com.marklogic.semantics.sesame.client.MarkLogicClient;
 import org.openrdf.query.GraphQuery;
 import org.openrdf.query.GraphQueryResult;
@@ -69,6 +70,8 @@ public class MarkLogicGraphQuery extends MarkLogicQuery implements GraphQuery,Ma
             return getMarkLogicClient().sendGraphQuery(getQueryString(),getBindings(),getIncludeInferred(),getBaseURI());
         } catch (IOException e) {
             throw new QueryEvaluationException(e);
+        } catch (MarkLogicSesameException e) {
+            throw new QueryEvaluationException(e);
         }
     }
 
@@ -82,7 +85,10 @@ public class MarkLogicGraphQuery extends MarkLogicQuery implements GraphQuery,Ma
     @Override
     public void evaluate(RDFHandler resultHandler) throws QueryEvaluationException, RDFHandlerException {
         GraphQueryResult queryResult = evaluate();
-        QueryResults.report(queryResult, resultHandler);
+        if(queryResult.hasNext())
+        {
+            QueryResults.report(queryResult, resultHandler);
+        }
     }
 
 }

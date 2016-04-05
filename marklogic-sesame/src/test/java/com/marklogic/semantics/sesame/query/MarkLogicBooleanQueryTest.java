@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 MarkLogic Corporation
+ * Copyright 2015-2016 MarkLogic Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -99,6 +99,14 @@ public class MarkLogicBooleanQueryTest extends SesameTestBase {
         booleanQuery = conn.prepareBooleanQuery(QueryLanguage.SPARQL, queryString);
         results = booleanQuery.evaluate();
         Assert.assertEquals(true, results);
+    }
+
+    @Test(expected=org.openrdf.query.QueryEvaluationException.class)
+    public void testBooleanQueryQueryEvaluationException()
+            throws Exception {
+        String queryString = "ASK GRAPH <http://example.org/test/g27> {<http://semanticbible.org/ns/2006/NTNames#Shelah1> ?p ?o}}";
+        BooleanQuery booleanQuery = conn.prepareBooleanQuery(QueryLanguage.SPARQL, queryString);
+        boolean results = booleanQuery.evaluate();
     }
 
 }

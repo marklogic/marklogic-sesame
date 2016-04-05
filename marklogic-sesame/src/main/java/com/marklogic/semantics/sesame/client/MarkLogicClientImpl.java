@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 MarkLogic Corporation
+ * Copyright 2015-2016 MarkLogic Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,6 +41,7 @@ import org.openrdf.rio.RDFParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.net.URISyntaxException;
@@ -154,7 +155,8 @@ class MarkLogicClientImpl {
             //sparqlManager.clearPageLength();
         }
         sparqlManager.executeSelect(qdef, handle, start, tx);
-        return handle.get();
+        InputStream in = new BufferedInputStream(handle.get());
+        return in;
     }
 
     /**
@@ -183,7 +185,7 @@ class MarkLogicClientImpl {
      * @return
      * @throws JsonProcessingException
      */
-    public InputStream performGraphQuery(String queryString, SPARQLQueryBindingSet bindings, InputStreamHandle handle, Transaction tx, boolean includeInferred, String baseURI) throws JsonProcessingException {
+    public InputStream performGraphQuery(String queryString, SPARQLQueryBindingSet bindings, InputStreamHandle handle, Transaction tx, boolean includeInferred, String baseURI) throws JsonProcessingException  {
         SPARQLQueryDefinition qdef = sparqlManager.newQueryDefinition(queryString);
         if(notNull(baseURI) && baseURI != ""){ qdef.setBaseUri(baseURI);}
         if (notNull(ruleset)) {qdef.setRulesets(ruleset);}
@@ -191,7 +193,8 @@ class MarkLogicClientImpl {
         if(notNull(graphPerms)){ qdef.setUpdatePermissions(graphPerms);}
         qdef.setIncludeDefaultRulesets(includeInferred);
         sparqlManager.executeDescribe(qdef, handle, tx);
-        return handle.get();
+        InputStream in = new BufferedInputStream(handle.get());
+        return in;
     }
 
     /**
@@ -227,8 +230,6 @@ class MarkLogicClientImpl {
         SPARQLQueryDefinition qdef = sparqlManager.newQueryDefinition(queryString);
         if(notNull(baseURI) && baseURI != ""){ qdef.setBaseUri(baseURI);}
         if (notNull(ruleset) ) {qdef.setRulesets(ruleset);}
-        // constraining query unused when adding triple
-        //if (notNull(getConstrainingQueryDefinition())){qdef.setConstrainingQueryDefinition(getConstrainingQueryDefinition());}
         if(notNull(graphPerms)){ qdef.setUpdatePermissions(graphPerms);}
         qdef.setIncludeDefaultRulesets(includeInferred);
         sparqlManager.clearPageLength();
@@ -332,8 +333,6 @@ class MarkLogicClientImpl {
         }
         SPARQLQueryDefinition qdef = sparqlManager.newQueryDefinition(sb.toString());
         if (notNull(ruleset) ) {qdef.setRulesets(ruleset);}
-        // constraining query unused when adding triple
-        //if (notNull(getConstrainingQueryDefinition())){qdef.setConstrainingQueryDefinition(getConstrainingQueryDefinition());}
         if(notNull(graphPerms)){ qdef.setUpdatePermissions(graphPerms);}
         if(notNull(baseURI) && baseURI != ""){ qdef.setBaseUri(baseURI);}
 
@@ -405,7 +404,7 @@ class MarkLogicClientImpl {
      * @param tx
      */
     public void performClearAll(Transaction tx) {
-        graphManager.deleteGraphs();
+        graphManager.deleteGraphs(tx);
     }
 
     /**
@@ -430,7 +429,7 @@ class MarkLogicClientImpl {
                     list.add((SPARQLRuleset)r);
                 }
             }
-            this.ruleset = list.toArray(new SPARQLRuleset[list.size()]);;
+            this.ruleset = list.toArray(new SPARQLRuleset[list.size()]);
         }else{
             this.ruleset = null;
         }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 MarkLogic Corporation
+ * Copyright 2015-2016 MarkLogic Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,8 @@
  */
 package com.marklogic.semantics.sesame;
 
+import com.marklogic.semantics.sesame.config.MarkLogicRepositoryConfig;
+import com.marklogic.semantics.sesame.config.MarkLogicRepositoryFactory;
 import info.aduna.iteration.CloseableIteration;
 import info.aduna.iteration.Iteration;
 import info.aduna.iteration.Iterations;
@@ -36,6 +38,8 @@ import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.RepositoryResult;
 import org.openrdf.repository.sparql.SPARQLRepository;
 import org.openrdf.rio.RDFFormat;
+import org.openrdf.rio.RDFHandlerException;
+import org.openrdf.rio.helpers.RDFHandlerBase;
 import org.openrdf.rio.rdfxml.RDFXMLWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,7 +85,8 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
     public void tearDown()
             throws Exception {
         logger.debug("tearing down...");
-        //if( conn.isOpen() && conn.isActive()){conn.rollback();}
+        if( conn.isOpen() && conn.isActive()){conn.rollback();}
+        //conn.clear();
         if(conn.isOpen()){conn.clear();}
         conn.close();
         conn = null;
@@ -1185,6 +1190,63 @@ conn.sync();
         }finally {
             conn.commit();
         }
+
+    }
+
+    // https://github.com/marklogic/marklogic-sesame/issues/250
+    @Test
+    public final void exportEmptyStore()
+            throws OpenRDFException
+    {
+        URI dirgraph = conn.getValueFactory().createURI("http://marklogic.com/dirgraph");
+
+        Assert.assertEquals(0L, conn.size());
+        conn.exportStatements(null, null, null, false, new RDFHandlerBase() {
+
+            @Override
+            public void handleStatement(Statement st1)
+                    throws RDFHandlerException {
+                Assert.assertNull(st1);
+            }
+        }, dirgraph);
+    }
+
+
+    @Test
+    public void testNestedConnections()
+            throws OpenRDFException {
+
+        MarkLogicRepositoryConfig config = new MarkLogicRepositoryConfig();
+        config.setHost("localhost");
+        config.setPort(8200);
+        config.setUser("admin");
+        config.setPassword("admin");
+        config.setAuth("DIGEST");
+
+        MarkLogicRepositoryFactory FACTORY = new MarkLogicRepositoryFactory();
+
+        ValueFactory vf = conn.getValueFactory();
+        URI tommy = vf.createURI("http://marklogicsparql.com/id#4444");
+        URI lname = vf.createURI("http://marklogicsparql.com/addressbook#lastName");
+        Literal tommylname = vf.createLiteral("Ramone");
+        Statement stmt = vf.createStatement(tommy, lname, tommylname);
+
+        conn.add(stmt);
+
+        conn.begin();
+
+        Repository repo2 = FACTORY.getRepository(config);
+        repo2.initialize();
+        RepositoryConnection conn2 = repo2.getConnection();
+
+        conn2.begin();
+        Assert.assertEquals("The size of repository must be zero", 1, conn.size());
+        conn2.commit();
+
+        conn2.close();
+        repo2.shutDown();
+
+        conn.commit();
 
     }
 }

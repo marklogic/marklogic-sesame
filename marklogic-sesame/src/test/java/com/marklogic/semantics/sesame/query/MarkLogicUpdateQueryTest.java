@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 MarkLogic Corporation
+ * Copyright 2015-2016 MarkLogic Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -113,4 +113,11 @@ public class MarkLogicUpdateQueryTest extends SesameTestBase {
         conn.clear(conn.getValueFactory().createURI("http://marklogic.com/test/context10"));
     }
 
+    @Test(expected=org.openrdf.query.UpdateExecutionException.class)
+    public void testUpdateQueryUpdateExecutionException()
+            throws Exception {
+        String defGraphQuery = "INSERT DATA GRAPH <http://marklogic.com/test/g27> { <http://marklogic.com/test> <pp1> <oo1> } }";
+        Update updateQuery = conn.prepareUpdate(QueryLanguage.SPARQL, defGraphQuery);
+        updateQuery.execute();
+    }
 }
