@@ -17,7 +17,7 @@ The MarkLogic Sesame API supports [Sesame v2.8.10](http://rdf4j.org/).
 
 ### Setup MarkLogic
 
-Ensure MarkLogic 8.0-4 or greater is installed and running. To use marklogic-sesame applications you will need access to a running MarkLogic server.
+Ensure MarkLogic 8.0-5 or greater is installed and running. To use marklogic-sesame applications you will need access to a running MarkLogic server.
 
 ## Usage
 
@@ -70,7 +70,7 @@ Verify that Java API client has been deployed to your local maven repo.
 
 #### Setup and Test MarkLogic Sesame API
 
-marklogic-sesame-repository depends on MarkLogic v8.0-4 or greater installed and running;
+marklogic-sesame-repository depends on MarkLogic v8.0-5 or greater installed and running;
 
 1. Clone or download [marklogic-sesame](https://github.com/marklogic/marklogic-sesame/tree/develop) _develop_ branch.
 2. Review [marklogic-sesame/gradle.properties](marklogic-sesame/gradle.properties) which defines test deployment settings.
