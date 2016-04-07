@@ -40,10 +40,6 @@ jacocoTestReport {
     additionalSourceDirs = files(sourceSets.main.allJava.srcDirs)
 }
 
-testLogging{
-    events 'started','passed', 'skipped'
-}
-
 dependencies {
     compile('org.openrdf.sesame:sesame-runtime:2.8.10')
 
