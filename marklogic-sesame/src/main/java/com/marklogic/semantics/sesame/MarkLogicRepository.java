@@ -111,6 +111,11 @@ public class MarkLogicRepository extends RepositoryBase implements Repository,Ma
         super();
         this.f = new ValueFactoryImpl();
         this.quadMode = true;
+        this.host = databaseClient.getHost();
+        this.port = databaseClient.getPort();
+        this.user = databaseClient.getUser();
+        this.password = databaseClient.getPassword();
+        this.auth = databaseClient.getAuthentication().name();
         this.client = new MarkLogicClient(databaseClient);
     }
     
@@ -198,7 +203,7 @@ public class MarkLogicRepository extends RepositoryBase implements Repository,Ma
         if (!isInitialized()) {
             throw new RepositoryException("MarkLogicRepository not initialized.");
         }
-        return new MarkLogicRepositoryConnection(this, client, quadMode);
+        return new MarkLogicRepositoryConnection(this, getMarkLogicClient(), quadMode);
     }
 
     /**
@@ -208,9 +213,7 @@ public class MarkLogicRepository extends RepositoryBase implements Repository,Ma
      */
     @Override
     public synchronized MarkLogicClient getMarkLogicClient() {
-        if (this.client == null) {
-            this.client = new MarkLogicClient(host, port, user, password, auth); // consider factory method ?
-        }
+        this.client = new MarkLogicClient(host, port, user, password, auth); // consider factory method ?
         return this.client;
     }
 

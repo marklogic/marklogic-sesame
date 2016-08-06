@@ -16,6 +16,8 @@ apply plugin: 'eclipse'
 apply plugin: 'java'
 apply plugin: 'maven-publish'
 apply plugin: 'maven'
+apply plugin: 'jacoco'
+jacoco{toolVersion="0.7.4.201502262128"}
 
 compileJava.options.encoding = 'UTF-8'
 
@@ -30,6 +32,12 @@ targetCompatibility = "1.7"
 repositories {
     mavenLocal()
     mavenCentral()
+}
+
+jacocoTestReport {
+    group = "Reporting"
+    description = "Generate Jacoco coverage reports after running tests."
+    additionalSourceDirs = files(sourceSets.main.allJava.srcDirs)
 }
 
 dependencies {
