@@ -39,6 +39,7 @@ import org.openrdf.repository.Repository;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.RepositoryResult;
+import org.openrdf.repository.UnknownTransactionStateException;
 import org.openrdf.repository.config.RepositoryConfigException;
 import org.openrdf.repository.config.RepositoryFactory;
 import org.openrdf.repository.config.RepositoryImplConfig;
@@ -326,6 +327,263 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
 			}
 		}
 		
+	}
+	
+	@Test
+	public void testMultiThreadedAdd() throws Exception{
+		
+		class MyRunnable implements Runnable {
+       	  
+       	  @Override
+       	  public void run(){
+       		  	try {
+					testAdminCon.begin();
+					for (int j =0 ;j < 100; j++){
+	           			URI subject = vf.createURI(NS+ID+"/"+Thread.currentThread().getId()+"/"+j+"#1111");
+	           			URI predicate = 	fname = vf.createURI(NS+ADDRESS+"/"+Thread.currentThread().getId()+"/"+"#firstName");
+	           			Literal object = vf.createLiteral(Thread.currentThread().getId()+ "-" + j +"-" +"John");
+	           			testAdminCon.add(subject, predicate,object, dirgraph);
+					}
+					testAdminCon.commit();
+					
+				} catch (RepositoryException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+       		  	finally{
+	       		  	try {
+						if(testAdminCon.isActive())
+							testAdminCon.rollback();
+					} catch (UnknownTransactionStateException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (RepositoryException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+       		  	}
+       	  	}
+           		
+       	  }  
+           		
+		class MyRunnable1 implements Runnable {
+	       	  
+	       	  @Override
+	       	  public void run(){
+	       		  	try {
+						testWriterCon.begin();
+						for (int j =0 ;j <100; j++){
+		           			URI subject = vf.createURI(NS+ID+"/"+Thread.currentThread().getId()+"/"+j+"#1111");
+		           			URI predicate = 	fname = vf.createURI(NS+ADDRESS+"/"+Thread.currentThread().getId()+"/"+"#firstName");
+		           			Literal object = vf.createLiteral(Thread.currentThread().getId()+ "-" + j +"-" +"John");
+		           			testWriterCon.add(subject, predicate,object, dirgraph);
+						}
+						testWriterCon.commit();
+						
+					} catch (RepositoryException e1) {
+						e1.printStackTrace();
+					}
+	       		  	finally{
+		       		  	try {
+							if(testWriterCon.isActive())
+								testWriterCon.rollback();
+						} catch (UnknownTransactionStateException e) {
+							e.printStackTrace();
+						} catch (RepositoryException e) {
+							e.printStackTrace();
+						}
+	       		  	}
+	       	  	}
+	           		
+	       	  }  
+	           	
+       	Thread t1,t2;
+       	t1 = new Thread(new MyRunnable());
+       	t1.setName("T1");
+       	t2 = new Thread(new MyRunnable1());
+       	t2.setName("T2");
+       	
+      	
+       	t1.start();
+       	t2.start();
+      
+       	
+       	t1.join();
+       	t2.join();
+       
+       	
+       	Assert.assertEquals(200, testAdminCon.size());
+	
+	}
+	
+	@Ignore
+	public void testMultiThreadedAdd1() throws Exception{
+		
+		class MyRunnable implements Runnable {
+       	  private final Object lock = new Object();
+       	  @Override
+       	  public void run(){
+       		  	try {
+       		  		synchronized (lock){
+       		  		if(! testAdminCon.isActive())
+       		  			testAdminCon.begin();
+       		  		}
+       		  		
+					for (int j =0 ;j < 100; j++){
+	           			URI subject = vf.createURI(NS+ID+"/"+Thread.currentThread().getId()+"/"+j+"#1111");
+	           			URI predicate = 	fname = vf.createURI(NS+ADDRESS+"/"+Thread.currentThread().getId()+"/"+"#firstName");
+	           			Literal object = vf.createLiteral(Thread.currentThread().getId()+ "-" + j +"-" +"John");
+	           			testAdminCon.add(subject, predicate,object, dirgraph);
+					}
+					testAdminCon.commit();
+					
+				} catch (RepositoryException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+       		  	finally{
+	       		  	try {
+						if(testAdminCon.isActive())
+							testAdminCon.rollback();
+					} catch (UnknownTransactionStateException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (RepositoryException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+       		  	}
+       	  	}
+           		
+       	  }  
+           		
+		
+       	Thread t1,t2,t3,t4;
+       	t1 = new Thread(new MyRunnable());
+       	t1.setName("T1");
+       	t2 = new Thread(new MyRunnable());
+       	t2.setName("T2");
+    	t3 = new Thread(new MyRunnable());
+       	t3.setName("T2");
+    	t4 = new Thread(new MyRunnable());
+       	t4.setName("T2");
+      	
+       	t1.start();
+       	t2.start();
+       	t3.start();
+       	t4.start();
+      
+       	
+       	t1.join();
+       	t2.join();
+       	t3.join();
+       	t4.join();
+       
+       	
+       	Assert.assertEquals(400, testAdminCon.size());
+	
+	}
+	
+	
+	@Test
+	public void testMultiThreadedAdd2() throws Exception{
+		
+		class MyRunnable implements Runnable {
+       	  private final Object lock = new Object();
+       	  @Override
+       	  public void run(){
+       		  	try {
+       		   		  		
+					for (int j =0 ;j < 100; j++){
+	           			URI subject = vf.createURI(NS+ID+"/"+Thread.currentThread().getId()+"/"+j+"#1111");
+	           			URI predicate = 	fname = vf.createURI(NS+ADDRESS+"/"+Thread.currentThread().getId()+"/"+"#firstName");
+	           			Literal object = vf.createLiteral(Thread.currentThread().getId()+ "-" + j +"-" +"John");
+	           			testAdminCon.add(subject, predicate,object, dirgraph);
+					}
+					
+					
+				} catch (RepositoryException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+       		  	
+       	  	}
+           		
+       	  }  
+           		
+		
+       	Thread t1,t2,t3,t4;
+       	t1 = new Thread(new MyRunnable());
+       	t1.setName("T1");
+       	t2 = new Thread(new MyRunnable());
+       	t2.setName("T2");
+    	t3 = new Thread(new MyRunnable());
+       	t3.setName("T2");
+    	t4 = new Thread(new MyRunnable());
+       	t4.setName("T2");
+      	
+       	t1.start();
+       	t2.start();
+       	t3.start();
+       	t4.start();
+      
+       	
+       	t1.join();
+       	t2.join();
+       	t3.join();
+       	t4.join();
+       
+       	
+       	Assert.assertEquals(400, testAdminCon.size());
+	
+	}
+	
+	@Test
+	public void testMultiThreadedAddDuplicate() throws Exception{
+		
+		class MyRunnable implements Runnable {
+       	  
+       	  @Override
+       	  public void run() {
+         		
+           		for (int j =0 ;j < 100; j++){
+           			URI subject = vf.createURI(NS+ID+"/"+j+"#1111");
+           			URI predicate = 	fname = vf.createURI(NS+ADDRESS+"/"+"#firstName");
+           			Literal object = vf.createLiteral(j +"-" +"John");
+    			
+           			try {
+						testAdminCon.add(subject, predicate,object, dirgraph);
+					} catch (RepositoryException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+    				
+    			}
+           		
+       	  }  
+           		
+       	} 
+       	Thread t1,t2,t3,t4,t5;
+       	t1 = new Thread(new MyRunnable());
+       	t2 = new Thread(new MyRunnable());
+       	t3 = new Thread(new MyRunnable());
+      	t4 = new Thread(new MyRunnable());
+      	t5 = new Thread(new MyRunnable());
+      	
+       	t1.start();
+       	t2.start();
+       	t3.start();
+       	t4.start();
+       	t5.start();
+       	
+       	t1.join();
+       	t2.join();
+       	t3.join();
+       	t4.join();
+       	t5.join();
+       	
+       	Assert.assertEquals(100, testAdminCon.size());
+	
 	}
 	
 	//ISSUE - 19
