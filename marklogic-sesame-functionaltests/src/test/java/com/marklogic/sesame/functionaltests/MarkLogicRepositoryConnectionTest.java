@@ -489,7 +489,6 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
 	public void testMultiThreadedAdd2() throws Exception{
 		
 		class MyRunnable implements Runnable {
-       	  private final Object lock = new Object();
        	  @Override
        	  public void run(){
        		  	try {
