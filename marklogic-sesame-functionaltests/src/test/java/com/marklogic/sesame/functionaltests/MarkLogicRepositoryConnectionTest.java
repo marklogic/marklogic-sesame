@@ -416,26 +416,25 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
 	
 	}
 	
-	@Ignore
+	@Test
 	public void testMultiThreadedAdd1() throws Exception{
 		
 		class MyRunnable implements Runnable {
-       	  private final Object lock = new Object();
-       	  @Override
+		  @Override
        	  public void run(){
+       		MarkLogicRepositoryConnection tempConn = null;
        		  	try {
-       		  		synchronized (lock){
-       		  		if(! testAdminCon.isActive())
-       		  			testAdminCon.begin();
-       		  		}
-       		  		
-					for (int j =0 ;j < 100; j++){
+       		  		if(! testAdminRepository.isInitialized())
+       		  			testAdminRepository.initialize();
+       		  		tempConn= testAdminRepository.getConnection();
+       		  		tempConn.begin();
+       		  		for (int j =0 ;j < 100; j++){
 	           			URI subject = vf.createURI(NS+ID+"/"+Thread.currentThread().getId()+"/"+j+"#1111");
 	           			URI predicate = 	fname = vf.createURI(NS+ADDRESS+"/"+Thread.currentThread().getId()+"/"+"#firstName");
 	           			Literal object = vf.createLiteral(Thread.currentThread().getId()+ "-" + j +"-" +"John");
-	           			testAdminCon.add(subject, predicate,object, dirgraph);
-					}
-					testAdminCon.commit();
+	           			tempConn.add(subject, predicate,object, dirgraph);
+	           		  	}
+       		  	tempConn.commit();
 					
 				} catch (RepositoryException e1) {
 					// TODO Auto-generated catch block
@@ -443,8 +442,8 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
 				}
        		  	finally{
 	       		  	try {
-						if(testAdminCon.isActive())
-							testAdminCon.rollback();
+						if(tempConn.isActive())
+							tempConn.rollback();
 					} catch (UnknownTransactionStateException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -464,9 +463,9 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
        	t2 = new Thread(new MyRunnable());
        	t2.setName("T2");
     	t3 = new Thread(new MyRunnable());
-       	t3.setName("T2");
+       	t3.setName("T3");
     	t4 = new Thread(new MyRunnable());
-       	t4.setName("T2");
+       	t4.setName("T4");
       	
        	t1.start();
        	t2.start();
