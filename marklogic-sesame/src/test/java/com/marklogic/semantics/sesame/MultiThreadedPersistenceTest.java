@@ -3,6 +3,10 @@ package com.marklogic.semantics.sesame;
 // https://github.com/marklogic/marklogic-sesame/issues/282
 //
 
+import com.marklogic.client.document.XMLDocumentManager;
+import com.marklogic.client.io.StringHandle;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.openrdf.model.Resource;
 import org.openrdf.model.Statement;
@@ -18,6 +22,25 @@ import java.util.concurrent.TimeUnit;
 import static java.util.Arrays.asList;
 
 public class MultiThreadedPersistenceTest {
+    
+    @After
+    public void tearDown()
+            throws Exception {
+
+        String host = "localhost";
+        int defaultPort = 8200;
+        String user = "admin";
+        String password = "admin";
+        String auth = "DIGEST";
+
+        MarkLogicRepository rep = new MarkLogicRepository(host, defaultPort, user, password, auth);
+        rep.initialize();
+        MarkLogicRepositoryConnection conn=rep.getConnection();
+        conn.clear();
+        conn.close();
+        conn = null;
+        rep.shutDown();
+    }
 
     @Test
     public void multiThreadedPersist() throws RepositoryException, InterruptedException {
