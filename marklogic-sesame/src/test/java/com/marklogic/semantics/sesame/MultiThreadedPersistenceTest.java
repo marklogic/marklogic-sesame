@@ -3,15 +3,7 @@ package com.marklogic.semantics.sesame;
 // https://github.com/marklogic/marklogic-sesame/issues/282
 //
 
-import com.marklogic.client.document.XMLDocumentManager;
-import com.marklogic.client.io.StringHandle;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.openrdf.model.Resource;
-import org.openrdf.model.Statement;
-import org.openrdf.model.impl.ValueFactoryImpl;
-import org.openrdf.repository.RepositoryException;
+import static java.util.Arrays.asList;
 
 import java.util.Collection;
 import java.util.List;
@@ -19,53 +11,64 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import static java.util.Arrays.asList;
+import org.junit.After;
+import org.junit.Test;
+import org.openrdf.model.Resource;
+import org.openrdf.model.Statement;
+import org.openrdf.model.impl.ValueFactoryImpl;
+import org.openrdf.repository.RepositoryException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class MultiThreadedPersistenceTest {
-    
+import com.marklogic.client.DatabaseClientFactory;
+import com.marklogic.client.semantics.GraphManager;
+
+public class MultiThreadedPersistenceTest extends SesameTestBase {
+
+    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    //create some data
+    List<String> identifiers = asList(
+            "subject1", "subject2", "subject3","subject4","subject5",
+            "subject6","subject7","subject8","subject9","subject10",
+            "subject11","subject12","subject13","subject14","subject15",
+            "subject16", "subject17", "subject18","subject19","subject20",
+            "subject21", "subject22", "subject23","subject24","subject25",
+            "subject26", "subject27", "subject28","subject29","subject30",
+            "subject31", "subject32", "subject33","subject34","subject35",
+            "subject36", "subject37", "subject38","subject39","subject40");
+
     @After
     public void tearDown()
             throws Exception {
-
-        String host = "localhost";
-        int defaultPort = 8200;
-        String user = "admin";
-        String password = "admin";
-        String auth = "DIGEST";
-
-        MarkLogicRepository rep = new MarkLogicRepository(host, defaultPort, user, password, auth);
-        rep.initialize();
-        MarkLogicRepositoryConnection conn=rep.getConnection();
-        conn.clear();
-        conn.close();
-        conn = null;
-        rep.shutDown();
+        logger.debug("tearing down...");
+        GraphManager gmgr = adminClient.newGraphManager();
+        gmgr.delete("http://graph/meta");
+        for (String id : identifiers)
+        {
+            gmgr.delete("http://foo/graph/" + id);
+        }
+        logger.info("tearDown complete.");
     }
 
     @Test
     public void multiThreadedPersist() throws RepositoryException, InterruptedException {
-        final PersistenceService persistenceService = new PersistenceService();
-
-        //create some data
-        List<List<Entity>> entities = asList(
-                entitiesFor("subject1"), entitiesFor("subject2"), entitiesFor("subject3"), entitiesFor("subject4"), entitiesFor("subject5"),
-                entitiesFor("subject6"), entitiesFor("subject7"), entitiesFor("subject8"), entitiesFor("subject9"), entitiesFor("subject10"),
-                entitiesFor("subject11"), entitiesFor("subject12"), entitiesFor("subject13"), entitiesFor("subject14"), entitiesFor("subject15")
-        );
+        final PersistenceService persistenceService = new PersistenceService(SesameTestBase.host, SesameTestBase.port, SesameTestBase.adminUser, SesameTestBase.adminPassword, DatabaseClientFactory.Authentication.DIGEST.toString());
 
         //persist data with multiple threads against the persistence service - simulate multiple concurrent requests against a tomcat deployed ingestion service
         //results in intermittent MarkLogicTransactionExceptions in executor threads
         ExecutorService executorService = Executors.newFixedThreadPool(10);
         try {
-            for(final List<Entity> entity: entities) {
-                executorService.submit(
-                    new Runnable() {
-                        @Override
-                        public void run() {
-                            persistenceService.persist(entity);
-                        }
-                    }
-                );
+            for(final String identifier: identifiers) {
+                for (int i=0; i<20; i++) {
+                    executorService.submit(
+                            new Runnable() {
+                                @Override
+                                public void run() {
+                                    persistenceService.persist(entitiesFor(identifier));
+                                }
+                            }
+                    );
+                }
             }
 
             executorService.shutdown();
@@ -82,14 +85,8 @@ public class MultiThreadedPersistenceTest {
     class PersistenceService {
         private MarkLogicRepository markLogicRepository;
 
-        public PersistenceService() {
-            String host = "localhost";
-            int defaultPort = 8200;
-            String user = "admin";
-            String password = "admin";
-            String auth = "DIGEST";
-
-            markLogicRepository = new MarkLogicRepository(host, defaultPort, user, password, auth);
+        public PersistenceService(String host, int port, String user, String password, String digest) {
+            markLogicRepository = new MarkLogicRepository(host, port, user, password, digest);
             try {
                 markLogicRepository.initialize();
             } catch (RepositoryException e) {

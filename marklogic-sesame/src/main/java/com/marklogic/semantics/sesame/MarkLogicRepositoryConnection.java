@@ -136,6 +136,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
                 }
                 client.stopTimer();
                 super.close();
+                client.close();
             }
         } catch (Exception e) {
             throw new RepositoryException("Unable to close connection.");

@@ -143,7 +143,7 @@ public class WriteCacheTimerTask extends TimerTask {
      *
      * @throws MarkLogicSesameException
      */
-    private synchronized void flush() throws MarkLogicSesameException, InterruptedException {
+    private void flush() throws MarkLogicSesameException, InterruptedException {
         log.debug("flushing write cache:" + this.cache.size());
             try {
                 ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -162,7 +162,7 @@ public class WriteCacheTimerTask extends TimerTask {
      *
      * @throws MarkLogicSesameException
      */
-    public  void forceRun() throws MarkLogicSesameException {
+    public void forceRun() throws MarkLogicSesameException {
         try {
             if( this.cache.size() > 0) {
                 flush();
