@@ -19,17 +19,14 @@
  */
 package com.marklogic.semantics.sesame.client;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.marklogic.client.DatabaseClient;
-import com.marklogic.client.DatabaseClientFactory;
-import com.marklogic.client.FailedRequestException;
-import com.marklogic.client.Transaction;
-import com.marklogic.client.impl.SPARQLBindingsImpl;
-import com.marklogic.client.io.FileHandle;
-import com.marklogic.client.io.InputStreamHandle;
-import com.marklogic.client.query.QueryDefinition;
-import com.marklogic.client.semantics.*;
-import com.marklogic.semantics.sesame.MarkLogicSesameException;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.InputStream;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+
 import org.openrdf.model.Literal;
 import org.openrdf.model.Resource;
 import org.openrdf.model.URI;
@@ -41,13 +38,23 @@ import org.openrdf.rio.RDFParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.InputStream;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.DatabaseClientFactory;
+import com.marklogic.client.FailedRequestException;
+import com.marklogic.client.Transaction;
+import com.marklogic.client.impl.SPARQLBindingsImpl;
+import com.marklogic.client.io.FileHandle;
+import com.marklogic.client.io.InputStreamHandle;
+import com.marklogic.client.query.QueryDefinition;
+import com.marklogic.client.semantics.GraphManager;
+import com.marklogic.client.semantics.GraphPermissions;
+import com.marklogic.client.semantics.RDFTypes;
+import com.marklogic.client.semantics.SPARQLBindings;
+import com.marklogic.client.semantics.SPARQLQueryDefinition;
+import com.marklogic.client.semantics.SPARQLQueryManager;
+import com.marklogic.client.semantics.SPARQLRuleset;
+import com.marklogic.semantics.sesame.MarkLogicSesameException;
 
 /**
  * internal class for interacting with java api client
@@ -471,6 +478,21 @@ class MarkLogicClientImpl {
         return this.constrainingQueryDef;
     }
 
+    /**
+     * close client
+     *
+     * @return
+     */
+    public void close() {
+        if (this.databaseClient != null) {
+            try {
+                this.databaseClient.release();
+            } catch (Exception e) {
+                logger.info("Failed releasing DB client", e);
+            }
+        }
+    }
+
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -538,4 +560,5 @@ class MarkLogicClientImpl {
         else
             return false;
     }
+
 }
