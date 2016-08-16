@@ -52,8 +52,8 @@ public class WriteCacheTimerTask extends TimerTask {
 
     public static long DEFAULT_CACHE_SIZE = 500;
 
-    public static long DEFAULT_CACHE_MILLIS = 750;
-    public static long DEFAULT_INITIAL_DELAY = 750;
+    public static long DEFAULT_CACHE_MILLIS = 500;
+    public static long DEFAULT_INITIAL_DELAY = 300;
 
     private RDFFormat format = RDFFormat.NQUADS;
 
