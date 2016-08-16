@@ -79,12 +79,12 @@ public class MarkLogicClient {
 	private WriteCacheTimerTask timerCache;
 	private Timer timer;
 
-    private static boolean WRITE_CACHE_ENABLED = true;
+	private static boolean WRITE_CACHE_ENABLED = true;
 
 	/**
 	 * constructor init with connection params
-     *
- 	 * @param host
+	 *
+	 * @param host
 	 * @param port
 	 * @param user
 	 * @param password
@@ -97,7 +97,7 @@ public class MarkLogicClient {
 
 	/**
 	 * constructor init with DatabaseClient
-     *
+	 *
 	 * @param databaseClient
 	 */
 	public MarkLogicClient(DatabaseClient databaseClient) {
@@ -105,49 +105,49 @@ public class MarkLogicClient {
 		this.initTimer();
 	}
 
-    /**
-     * start Timer task (write cache)
-     */
+	/**
+	 * start Timer task (write cache)
+	 */
 	public void initTimer(){
-        if(this.WRITE_CACHE_ENABLED) {
-            stopTimer();
+		if(this.WRITE_CACHE_ENABLED) {
+			stopTimer();
 			timerCache = new WriteCacheTimerTask(this);
-            timer = new Timer();
-            timer.scheduleAtFixedRate(timerCache, WriteCacheTimerTask.DEFAULT_INITIAL_DELAY, WriteCacheTimerTask.DEFAULT_CACHE_MILLIS);
-        }
-    }
+			timer = new Timer();
+			timer.scheduleAtFixedRate(timerCache, WriteCacheTimerTask.DEFAULT_INITIAL_DELAY, WriteCacheTimerTask.DEFAULT_CACHE_MILLIS);
+		}
+	}
 
-    public void initTimer(long initDelay, long delayCache, long cacheSize ){
-        if(this.WRITE_CACHE_ENABLED) {
-            logger.debug("configuring write cache");
-            stopTimer();
+	public void initTimer(long initDelay, long delayCache, long cacheSize ){
+		if(this.WRITE_CACHE_ENABLED) {
+			logger.debug("configuring write cache");
+			stopTimer();
 			timerCache = new WriteCacheTimerTask(this,cacheSize);
-            timer = new Timer();
-            timer.scheduleAtFixedRate(timerCache, initDelay, delayCache);
-        }
-    }
-    /**
-     * stop Timer task (write cache)
-     */
+			timer = new Timer();
+			timer.scheduleAtFixedRate(timerCache, initDelay, delayCache);
+		}
+	}
+	/**
+	 * stop Timer task (write cache)
+	 */
 	public void stopTimer() {
-        if(this.WRITE_CACHE_ENABLED) {
+		if(this.WRITE_CACHE_ENABLED) {
 			if(timerCache != null) {
 				timerCache.cancel();
 			}
-            if(timer != null){
+			if(timer != null){
 				timer.cancel();
 			}
-        }
-    }
+		}
+	}
 
-    /**
-     *  forces write cache to flush triples
-     *
-     * @throws MarkLogicSesameException
-     */
-    public void sync() throws MarkLogicSesameException {
-        if(WRITE_CACHE_ENABLED && timerCache != null) timerCache.forceRun();
-    }
+	/**
+	 *  forces write cache to flush triples
+	 *
+	 * @throws MarkLogicSesameException
+	 */
+	public void sync() throws MarkLogicSesameException {
+		if(WRITE_CACHE_ENABLED && timerCache != null) timerCache.forceRun();
+	}
 
 	/**
 	 * get value factory
@@ -184,7 +184,7 @@ public class MarkLogicClient {
 	 * @throws QueryInterruptedException
 	 */
 	public TupleQueryResult sendTupleQuery(String queryString,SPARQLQueryBindingSet bindings, long start, long pageLength, boolean includeInferred, String baseURI) throws IOException, RepositoryException, MalformedQueryException, UnauthorizedException,
-    QueryInterruptedException {
+			QueryInterruptedException {
 		sync();
 		InputStream stream = getClient().performSPARQLQuery(queryString, bindings, start, pageLength, this.tx, includeInferred, baseURI);
 		TupleQueryResultParser parser = QueryResultIO.createParser(format, getValueFactory());
@@ -216,14 +216,14 @@ public class MarkLogicClient {
 
 		// fixup - baseURI cannot be null
 		if(baseURI != null){
-            gRes= new MarkLogicBackgroundGraphResult(parser,stream,charset,baseURI);
-        }else{
-            gRes= new MarkLogicBackgroundGraphResult(parser,stream,charset,"");
-        }
+			gRes= new MarkLogicBackgroundGraphResult(parser,stream,charset,baseURI);
+		}else{
+			gRes= new MarkLogicBackgroundGraphResult(parser,stream,charset,"");
+		}
 
 		execute(gRes);
 		return gRes;
-    }
+	}
 
 	/**
 	 * BooleanQuery
@@ -240,8 +240,8 @@ public class MarkLogicClient {
 	 * @throws QueryInterruptedException
 	 */
 	public boolean sendBooleanQuery(String queryString, SPARQLQueryBindingSet bindings, boolean includeInferred, String baseURI) throws IOException, RepositoryException, MalformedQueryException, UnauthorizedException,
-    QueryInterruptedException {
-        sync();
+			QueryInterruptedException {
+		sync();
 		return getClient().performBooleanQuery(queryString, bindings, this.tx, includeInferred, baseURI);
 	}
 
@@ -272,9 +272,9 @@ public class MarkLogicClient {
 	 * @param contexts
 	 * @throws RDFParseException
 	 */
-    public void sendAdd(File file, String baseURI, RDFFormat dataFormat, Resource... contexts) throws RDFParseException {
-        getClient().performAdd(file, baseURI, dataFormat, this.tx, contexts);
-    }
+	public void sendAdd(File file, String baseURI, RDFFormat dataFormat, Resource... contexts) throws RDFParseException {
+		getClient().performAdd(file, baseURI, dataFormat, this.tx, contexts);
+	}
 
 	/**
 	 * add triples from InputStream
@@ -285,7 +285,7 @@ public class MarkLogicClient {
 	 * @param contexts
 	 */
 	public void sendAdd(InputStream in, String baseURI, RDFFormat dataFormat, Resource... contexts) throws RDFParseException{
-        getClient().performAdd(in, baseURI, dataFormat, this.tx, contexts);
+		getClient().performAdd(in, baseURI, dataFormat, this.tx, contexts);
 	}
 
 	/**
@@ -298,7 +298,7 @@ public class MarkLogicClient {
 	 */
 	public void sendAdd(Reader in, String baseURI, RDFFormat dataFormat, Resource... contexts) throws RDFParseException{
 		//TBD- must deal with char encoding
-        getClient().performAdd(new ReaderInputStream(in), baseURI, dataFormat, this.tx, contexts);
+		getClient().performAdd(new ReaderInputStream(in), baseURI, dataFormat, this.tx, contexts);
 	}
 
 	/**
@@ -311,12 +311,12 @@ public class MarkLogicClient {
 	 * @param contexts
 	 */
 	public void sendAdd(String baseURI, Resource subject, URI predicate, Value object, Resource... contexts) throws MarkLogicSesameException {
-        if (WRITE_CACHE_ENABLED) {
+		if (WRITE_CACHE_ENABLED) {
 			timerCache.add(subject, predicate, object, contexts);
-        } else {
-            getClient().performAdd(baseURI, (Resource) skolemize(subject), (URI) skolemize(predicate), skolemize(object), this.tx, contexts);
-        }
-    }
+		} else {
+			getClient().performAdd(baseURI, (Resource) skolemize(subject), (URI) skolemize(predicate), skolemize(object), this.tx, contexts);
+		}
+	}
 
 	/**
 	 * remove single triple
@@ -329,8 +329,8 @@ public class MarkLogicClient {
 	 */
 	public void sendRemove(String baseURI, Resource subject,URI predicate, Value object, Resource... contexts) throws MarkLogicSesameException {
 		sync();
-        getClient().performRemove(baseURI, (Resource) skolemize(subject), (URI) skolemize(predicate), skolemize(object), this.tx, contexts);
-    }
+		getClient().performRemove(baseURI, (Resource) skolemize(subject), (URI) skolemize(predicate), skolemize(object), this.tx, contexts);
+	}
 
 	/**
 	 * clears all triples from context
@@ -358,10 +358,10 @@ public class MarkLogicClient {
 	 */
 	public void openTransaction() throws MarkLogicTransactionException {
 		if (!isActiveTransaction()) {
-            this.tx = getClient().getDatabaseClient().openTransaction();
-        }else{
-            throw new MarkLogicTransactionException("Only one active transaction allowed.");
-        }
+			this.tx = getClient().getDatabaseClient().openTransaction();
+		}else{
+			throw new MarkLogicTransactionException("Only one active transaction allowed.");
+		}
 	}
 
 	/**
@@ -417,11 +417,11 @@ public class MarkLogicClient {
 	 * @throws MarkLogicTransactionException
 	 */
 	public void setAutoCommit() throws MarkLogicTransactionException {
-        if (isActiveTransaction()) {
-            throw new MarkLogicTransactionException("Active transaction.");
-        }else{
-            this.tx=null;
-        }
+		if (isActiveTransaction()) {
+			throw new MarkLogicTransactionException("Active transaction.");
+		}else{
+			this.tx=null;
+		}
 	}
 
 	/**
@@ -465,9 +465,9 @@ public class MarkLogicClient {
 	 *
 	 * @param constrainingQueryDefinition
 	 */
-    public void setConstrainingQueryDefinition(QueryDefinition constrainingQueryDefinition){
+	public void setConstrainingQueryDefinition(QueryDefinition constrainingQueryDefinition){
 		getClient().setConstrainingQueryDefinition(constrainingQueryDefinition);
-    }
+	}
 
 	/**
 	 * getter for QueryDefinition
@@ -475,22 +475,22 @@ public class MarkLogicClient {
 	 * @return
 	 */
 	public QueryDefinition getConstrainingQueryDefinition(){
-        return getClient().getConstrainingQueryDefinition();
-    }
+		return getClient().getConstrainingQueryDefinition();
+	}
 
 	/**
 	 * setter for GraphPermissions
 	 *
 	 * @param graphPerms
 	 */
-    public void setGraphPerms(GraphPermissions graphPerms){
+	public void setGraphPerms(GraphPermissions graphPerms){
 
-        if (graphPerms != null) {
-            getClient().setGraphPerms(graphPerms);
-        }else {
-            getClient().setGraphPerms(getClient().getDatabaseClient().newGraphManager().newGraphPermissions());
-        }
-    }
+		if (graphPerms != null) {
+			getClient().setGraphPerms(graphPerms);
+		}else {
+			getClient().setGraphPerms(getClient().getDatabaseClient().newGraphManager().newGraphPermissions());
+		}
+	}
 
 	/**
 	 * getter for GraphPermissions
@@ -498,8 +498,8 @@ public class MarkLogicClient {
 	 * @return
 	 */
 	public GraphPermissions getGraphPerms(){
-        return getClient().getGraphPerms();
-    }
+		return getClient().getGraphPerms();
+	}
 
 	public GraphPermissions emptyGraphPerms(){
 		return _client.getDatabaseClient().newGraphManager().newGraphPermissions();
@@ -514,9 +514,9 @@ public class MarkLogicClient {
 	}
 
 
-    ///////////////////////////////////////////////////////////////////////////////////////////////
-    // private ////////////////////////////////////////////////////////////////////////////////////
-    ///////////////////////////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////////////////////////
+	// private ////////////////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////////////////////////
 
 	/**
 	 *
@@ -538,4 +538,12 @@ public class MarkLogicClient {
 			return s;
 		}
 	}
+
+	/**
+	 *
+	 */
+	public void close() {
+		_client.close();
+	}
+
 }
