@@ -15,14 +15,15 @@
  */
 package com.marklogic.semantics.sesame.query;
 
-import com.marklogic.client.io.FileHandle;
-import com.marklogic.client.semantics.GraphManager;
-import com.marklogic.client.semantics.RDFMimeTypes;
-import com.marklogic.client.semantics.SPARQLRuleset;
-import com.marklogic.semantics.sesame.MarkLogicRepositoryConnection;
-import com.marklogic.semantics.sesame.SesameTestBase;
 import info.aduna.iteration.ConvertingIteration;
 import info.aduna.iteration.ExceptionConvertingIteration;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -31,17 +32,28 @@ import org.openrdf.model.Resource;
 import org.openrdf.model.Value;
 import org.openrdf.model.ValueFactory;
 import org.openrdf.model.impl.ValueFactoryImpl;
-import org.openrdf.query.*;
+import org.openrdf.query.BindingSet;
+import org.openrdf.query.MalformedQueryException;
+import org.openrdf.query.Query;
+import org.openrdf.query.QueryEvaluationException;
+import org.openrdf.query.QueryLanguage;
+import org.openrdf.query.QueryResultHandlerException;
+import org.openrdf.query.TupleQuery;
+import org.openrdf.query.TupleQueryResult;
+import org.openrdf.query.TupleQueryResultHandler;
 import org.openrdf.query.resultio.sparqlxml.SPARQLResultsXMLWriter;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.RepositoryResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.List;
+import com.marklogic.client.io.FileHandle;
+import com.marklogic.client.semantics.GraphManager;
+import com.marklogic.client.semantics.RDFMimeTypes;
+import com.marklogic.client.semantics.SPARQLRuleset;
+import com.marklogic.semantics.sesame.MarkLogicRepositoryConnection;
+import com.marklogic.semantics.sesame.SesameTestBase;
+import com.sun.jersey.client.apache4.ApacheHttpClient4;
 
 /**
  * test TupleQuery
@@ -83,52 +95,74 @@ public class MarkLogicTupleQueryTest extends SesameTestBase {
     }
     @Test
     public void testSPARQLQueryWithPrepareQuery()
-            throws Exception {
-
+            throws Exception {      
         String queryString = "select ?s ?p ?o { ?s ?p ?o } limit 1 ";
         Query q = conn.prepareQuery(QueryLanguage.SPARQL, queryString);
-
-        if (q instanceof TupleQuery) {
-            TupleQueryResult result = ((TupleQuery) q).evaluate();
-            while (result.hasNext()) {
-                BindingSet tuple = result.next();
-                Assert.assertEquals("s", tuple.getBinding("s").getName());
-                Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#AttaliaGeodata", tuple.getBinding("s").getValue().stringValue());
+        
+        try {
+            if (q instanceof TupleQuery) {
+                TupleQueryResult result = ((TupleQuery) q).evaluate();
+                while (result.hasNext()) {
+                    BindingSet tuple = result.next();
+                    Assert.assertEquals("s", tuple.getBinding("s").getName());
+                    Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#AttaliaGeodata", tuple.getBinding("s").getValue().stringValue());
+                }
             }
         }
+        catch(Exception ex)
+        {
+            throw ex;
+        }
+        finally {
+            conn.close();
+            Thread.sleep(120000);
+        }
+        
     }
 
     @Test
     public void testSPARQLQuery()
             throws Exception {
-
-        String queryString = "select * { ?s ?p ?o } limit 2 ";
-        TupleQuery tupleQuery = conn.prepareTupleQuery(QueryLanguage.SPARQL, queryString);
-        TupleQueryResult results = tupleQuery.evaluate();
-
-        Assert.assertEquals(results.getBindingNames().get(0), "s");
-        Assert.assertEquals(results.getBindingNames().get(1), "p");
-        Assert.assertEquals(results.getBindingNames().get(2), "o");
-
-        BindingSet bindingSet = results.next();
-
-        Value sV = bindingSet.getValue("s");
-        Value pV = bindingSet.getValue("p");
-        Value oV = bindingSet.getValue("o");
-
-        Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#AttaliaGeodata", sV.stringValue());
-        Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#altitude", pV.stringValue());
-        Assert.assertEquals("0", oV.stringValue());
-
-        BindingSet bindingSet1 = results.next();
-
-        Value sV1 = bindingSet1.getValue("s");
-        Value pV1 = bindingSet1.getValue("p");
-        Value oV1 = bindingSet1.getValue("o");
-
-        Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#BabylonGeodata", sV1.stringValue());
-        Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#altitude", pV1.stringValue());
-        Assert.assertEquals("0", oV1.stringValue());
+        try {
+            for (int i=0; i<100;i++){
+            String queryString = "select * { ?s ?p ?o } limit 2 ";
+            TupleQuery tupleQuery = conn.prepareTupleQuery(QueryLanguage.SPARQL, queryString);
+            TupleQueryResult results = tupleQuery.evaluate();
+    
+            Assert.assertEquals(results.getBindingNames().get(0), "s");
+            Assert.assertEquals(results.getBindingNames().get(1), "p");
+            Assert.assertEquals(results.getBindingNames().get(2), "o");
+    
+            BindingSet bindingSet = results.next();
+    
+            Value sV = bindingSet.getValue("s");
+            Value pV = bindingSet.getValue("p");
+            Value oV = bindingSet.getValue("o");
+    
+            Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#AttaliaGeodata", sV.stringValue());
+            Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#altitude", pV.stringValue());
+            Assert.assertEquals("0", oV.stringValue());
+    
+            BindingSet bindingSet1 = results.next();
+    
+            Value sV1 = bindingSet1.getValue("s");
+            Value pV1 = bindingSet1.getValue("p");
+            Value oV1 = bindingSet1.getValue("o");
+    
+            Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#BabylonGeodata", sV1.stringValue());
+            Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#altitude", pV1.stringValue());
+            Assert.assertEquals("0", oV1.stringValue());
+            }
+        }
+        catch(Exception ex)
+        {
+        throw ex;
+        }
+        finally {
+            conn.close();
+            Thread.sleep(120000);
+        }
+        
     }
 
     @Test
@@ -216,6 +250,8 @@ public class MarkLogicTupleQueryTest extends SesameTestBase {
     @Test
     public void testSPARQLQueryWithPagination()
             throws Exception {
+        try{
+            for(int i=0; i<1000; i++){
         String queryString = "select ?s ?p ?o { ?s ?p ?o } limit 100 ";
         MarkLogicTupleQuery tupleQuery = conn.prepareTupleQuery(QueryLanguage.SPARQL, queryString);
         TupleQueryResult results = tupleQuery.evaluate(3, 1);
@@ -235,6 +271,17 @@ public class MarkLogicTupleQueryTest extends SesameTestBase {
         Assert.assertEquals("0", oV.stringValue());
 
         Assert.assertFalse(results.hasNext());
+        
+            }
+    }
+    catch(Exception ex)
+    {
+    throw ex;
+    }
+    finally {
+        conn.close();
+        Thread.sleep(60000);        
+    }
     }
 
     @Test
