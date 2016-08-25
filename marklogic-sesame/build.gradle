@@ -6,7 +6,7 @@ buildscript {
         maven {url "http://developer.marklogic.com/maven2/"}
     }
     dependencies {
-        classpath "gradle.plugin.com.marklogic:ml-gradle:2.0"
+        classpath "gradle.plugin.com.marklogic:ml-gradle:2.3.3"
     }
 }
 
