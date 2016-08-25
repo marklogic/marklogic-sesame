@@ -53,11 +53,12 @@ public class WriteCacheTimerTask extends TimerTask {
     public static long DEFAULT_CACHE_SIZE = 500;
 
     public static long DEFAULT_CACHE_MILLIS = 500;
-    public static long DEFAULT_INITIAL_DELAY = 300;
+    public static long DEFAULT_INITIAL_DELAY = 10;
 
     private RDFFormat format = RDFFormat.NQUADS;
 
     private long cacheSize;
+
     private long cacheMillis;
 
     private Date lastCacheAccess = new Date();
@@ -148,16 +149,16 @@ public class WriteCacheTimerTask extends TimerTask {
             try {
                 ByteArrayOutputStream out = new ByteArrayOutputStream();
                 Rio.write(this.cache, out, this.format);
-                InputStream in = new ByteArrayInputStream(out.toByteArray());
-                this.client.sendAdd(in, null, this.format);
+                this.client.sendAdd(new ByteArrayInputStream(out.toByteArray()), null, this.format);
                 this.lastCacheAccess = new Date();
                 this.cache.clear();
             } catch (RDFHandlerException | RDFParseException e) {
+                log.info(e.getLocalizedMessage());
                 throw new MarkLogicSesameException(e);
             }
     }
 
-    /**
+    /**min
      * forces the cache to flush if there is anything in it
      *
      * @throws MarkLogicSesameException
