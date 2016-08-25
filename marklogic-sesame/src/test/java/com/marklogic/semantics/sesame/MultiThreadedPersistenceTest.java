@@ -40,15 +40,14 @@ public class MultiThreadedPersistenceTest extends SesameTestBase {
     @After
     public void tearDown()
             throws Exception {
-        logger.debug("tearing down...");
         GraphManager gmgr = adminClient.newGraphManager();
         gmgr.delete("http://graph/meta");
         for (String id : identifiers)
         {
             gmgr.delete("http://foo/graph/" + id);
         }
-        logger.info("tearDown complete.");
     }
+
 
     @Test
     public void multiThreadedPersist() throws RepositoryException, InterruptedException {
