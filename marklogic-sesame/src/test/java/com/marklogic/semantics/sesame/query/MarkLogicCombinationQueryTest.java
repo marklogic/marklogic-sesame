@@ -164,7 +164,6 @@ public class MarkLogicCombinationQueryTest extends SesameTestBase {
         askQuery = conn.prepareBooleanQuery(QueryLanguage.SPARQL,negQuery);
         askQuery.setConstrainingQueryDefinition(stringDef);
         Assert.assertEquals(false, askQuery.evaluate());
-
     }
 
     // https://github.com/marklogic/marklogic-sesame/issues/124
