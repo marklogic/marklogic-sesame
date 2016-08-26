@@ -93,6 +93,7 @@ public class MarkLogicGraphQueryTest extends SesameTestBase {
         Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#Abel", st1.getSubject().stringValue());
         Statement st2 = results.next();
         Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#Cain", st2.getSubject().stringValue());
+        results.close();
     }
 
     @Test
@@ -109,6 +110,7 @@ public class MarkLogicGraphQueryTest extends SesameTestBase {
         Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#Abel", st1.getSubject().stringValue());
         Statement st2 = results.next();
         Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#Cain", st2.getSubject().stringValue());
+        results.close();
     }
 
     // https://github.com/marklogic/marklogic-sesame/issues/45
@@ -125,6 +127,7 @@ public class MarkLogicGraphQueryTest extends SesameTestBase {
         Assert.assertEquals("http://marklogic.com/test/baseuri/relative", st1.getObject().stringValue());
         Statement st2 = results.next();
         Assert.assertEquals("http://marklogic.com/test/baseuri/relative", st2.getObject().stringValue());
+        results.close();
     }
     @Test
     public void testGraphQueryWithBaseURIWithEmptyBaseURI()
@@ -142,6 +145,7 @@ public class MarkLogicGraphQueryTest extends SesameTestBase {
         @SuppressWarnings("unused")
         Statement st2 = results.next();
         Assert.assertEquals("http://relative", st1.getObject().stringValue());
+        results.close();
     }
 
     @Ignore
@@ -169,6 +173,7 @@ public class MarkLogicGraphQueryTest extends SesameTestBase {
         Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#Shelah", st1.getSubject().stringValue());
         Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#childOf", st1.getPredicate().stringValue());
         Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#CainanSonOfArphaxad", st1.getObject().stringValue());
+        results.close();
     }
 
     @Test
@@ -194,6 +199,7 @@ public class MarkLogicGraphQueryTest extends SesameTestBase {
         @SuppressWarnings("unused")
         Statement st = result.next();
         Assert.assertFalse(result.hasNext());
+        result.close();
         conn.clear(context1);
     }
 
@@ -206,6 +212,7 @@ public class MarkLogicGraphQueryTest extends SesameTestBase {
 
         Assert.assertTrue(result != null);
         Assert.assertFalse(result.hasNext());
+        result.close();
     }
 
     @Ignore
