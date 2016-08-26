@@ -18,6 +18,7 @@ package com.marklogic.semantics.sesame;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
 import com.marklogic.client.io.StringHandle;
+
 import org.junit.After;
 import org.junit.AfterClass;
 
@@ -96,6 +97,13 @@ public class SesameTestBase {
         adminClient.release();
         writerClient.release();
         readerClient.release();
+        System.out.println("just waiting now before shutting down JVM");
+        try {
+			Thread.sleep(30000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}        
     }
 }
 
