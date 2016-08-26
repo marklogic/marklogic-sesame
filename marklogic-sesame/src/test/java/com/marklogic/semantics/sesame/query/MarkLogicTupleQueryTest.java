@@ -164,7 +164,6 @@ public class MarkLogicTupleQueryTest extends SesameTestBase {
             conn.close();
             Thread.sleep(1000);
         }
-
     }
 
     @Test
