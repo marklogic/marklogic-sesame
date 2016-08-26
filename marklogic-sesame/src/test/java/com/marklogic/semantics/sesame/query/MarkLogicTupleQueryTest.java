@@ -95,10 +95,10 @@ public class MarkLogicTupleQueryTest extends SesameTestBase {
     }
     @Test
     public void testSPARQLQueryWithPrepareQuery()
-            throws Exception {      
+            throws Exception {
         String queryString = "select ?s ?p ?o { ?s ?p ?o } limit 1 ";
         Query q = conn.prepareQuery(QueryLanguage.SPARQL, queryString);
-        
+
         try {
             if (q instanceof TupleQuery) {
                 TupleQueryResult result = ((TupleQuery) q).evaluate();
@@ -107,6 +107,7 @@ public class MarkLogicTupleQueryTest extends SesameTestBase {
                     Assert.assertEquals("s", tuple.getBinding("s").getName());
                     Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#AttaliaGeodata", tuple.getBinding("s").getValue().stringValue());
                 }
+                result.close();
             }
         }
         catch(Exception ex)
@@ -115,9 +116,9 @@ public class MarkLogicTupleQueryTest extends SesameTestBase {
         }
         finally {
             conn.close();
-            Thread.sleep(120000);
+            Thread.sleep(1000);
         }
-        
+
     }
 
     @Test
@@ -125,44 +126,44 @@ public class MarkLogicTupleQueryTest extends SesameTestBase {
             throws Exception {
         try {
             for (int i=0; i<100;i++){
-            String queryString = "select * { ?s ?p ?o } limit 2 ";
-            TupleQuery tupleQuery = conn.prepareTupleQuery(QueryLanguage.SPARQL, queryString);
-            TupleQueryResult results = tupleQuery.evaluate();
-    
-            Assert.assertEquals(results.getBindingNames().get(0), "s");
-            Assert.assertEquals(results.getBindingNames().get(1), "p");
-            Assert.assertEquals(results.getBindingNames().get(2), "o");
-    
-            BindingSet bindingSet = results.next();
-    
-            Value sV = bindingSet.getValue("s");
-            Value pV = bindingSet.getValue("p");
-            Value oV = bindingSet.getValue("o");
-    
-            Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#AttaliaGeodata", sV.stringValue());
-            Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#altitude", pV.stringValue());
-            Assert.assertEquals("0", oV.stringValue());
-    
-            BindingSet bindingSet1 = results.next();
-    
-            Value sV1 = bindingSet1.getValue("s");
-            Value pV1 = bindingSet1.getValue("p");
-            Value oV1 = bindingSet1.getValue("o");
-    
-            Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#BabylonGeodata", sV1.stringValue());
-            Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#altitude", pV1.stringValue());
-            Assert.assertEquals("0", oV1.stringValue());
+                String queryString = "select * { ?s ?p ?o } limit 2 ";
+                TupleQuery tupleQuery = conn.prepareTupleQuery(QueryLanguage.SPARQL, queryString);
+                TupleQueryResult results = tupleQuery.evaluate();
+
+                Assert.assertEquals(results.getBindingNames().get(0), "s");
+                Assert.assertEquals(results.getBindingNames().get(1), "p");
+                Assert.assertEquals(results.getBindingNames().get(2), "o");
+
+                BindingSet bindingSet = results.next();
+
+                Value sV = bindingSet.getValue("s");
+                Value pV = bindingSet.getValue("p");
+                Value oV = bindingSet.getValue("o");
+
+                Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#AttaliaGeodata", sV.stringValue());
+                Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#altitude", pV.stringValue());
+                Assert.assertEquals("0", oV.stringValue());
+
+                BindingSet bindingSet1 = results.next();
+
+                Value sV1 = bindingSet1.getValue("s");
+                Value pV1 = bindingSet1.getValue("p");
+                Value oV1 = bindingSet1.getValue("o");
+
+                Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#BabylonGeodata", sV1.stringValue());
+                Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#altitude", pV1.stringValue());
+                Assert.assertEquals("0", oV1.stringValue());
+                results.close();
             }
         }
         catch(Exception ex)
         {
-        throw ex;
+            throw ex;
         }
         finally {
             conn.close();
-            Thread.sleep(120000);
+            Thread.sleep(1000);
         }
-        
     }
 
     @Test
@@ -175,6 +176,7 @@ public class MarkLogicTupleQueryTest extends SesameTestBase {
         Assert.assertEquals(results.getBindingNames().get(0), "s");
         Assert.assertEquals(results.getBindingNames().get(1), "p");
         Assert.assertEquals(results.getBindingNames().get(2), "o");
+        results.close();
     }
 
     @Test
@@ -208,6 +210,7 @@ public class MarkLogicTupleQueryTest extends SesameTestBase {
         Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#BabylonGeodata", sV1.stringValue());
         Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#altitude", pV1.stringValue());
         Assert.assertEquals("0", oV1.stringValue());
+        results.close();
     }
 
     @Test
@@ -239,6 +242,7 @@ public class MarkLogicTupleQueryTest extends SesameTestBase {
             Assert.assertTrue(rr.hasNext()); //Resource resource = rr.next();
 
             //logger.debug(resource.stringValue());
+            result.close();
 
         } catch (MalformedQueryException e) {
             throw new RepositoryException(e);
@@ -252,36 +256,62 @@ public class MarkLogicTupleQueryTest extends SesameTestBase {
             throws Exception {
         try{
             for(int i=0; i<1000; i++){
-        String queryString = "select ?s ?p ?o { ?s ?p ?o } limit 100 ";
-        MarkLogicTupleQuery tupleQuery = conn.prepareTupleQuery(QueryLanguage.SPARQL, queryString);
-        TupleQueryResult results = tupleQuery.evaluate(3, 1);
+                String queryString = "select ?s ?p ?o { ?s ?p ?o } limit 100 ";
+                MarkLogicTupleQuery tupleQuery = conn.prepareTupleQuery(QueryLanguage.SPARQL, queryString);
+                TupleQueryResult results = tupleQuery.evaluate(3, 1);
 
-        Assert.assertEquals(results.getBindingNames().get(0), "s");
-        Assert.assertEquals(results.getBindingNames().get(1), "p");
-        Assert.assertEquals(results.getBindingNames().get(2), "o");
+                Assert.assertEquals(results.getBindingNames().get(0), "s");
+                Assert.assertEquals(results.getBindingNames().get(1), "p");
+                Assert.assertEquals(results.getBindingNames().get(2), "o");
 
-        BindingSet bindingSet = results.next();
+                BindingSet bindingSet = results.next();
 
-        Value sV = bindingSet.getValue("s");
-        Value pV = bindingSet.getValue("p");
-        Value oV = bindingSet.getValue("o");
+                Value sV = bindingSet.getValue("s");
+                Value pV = bindingSet.getValue("p");
+                Value oV = bindingSet.getValue("o");
 
-        Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#BethanyBeyondtheJordanGeodata", sV.stringValue());
-        Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#altitude", pV.stringValue());
-        Assert.assertEquals("0", oV.stringValue());
+                Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#BethanyBeyondtheJordanGeodata", sV.stringValue());
+                Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#altitude", pV.stringValue());
+                Assert.assertEquals("0", oV.stringValue());
 
-        Assert.assertFalse(results.hasNext());
-        
+                Assert.assertFalse(results.hasNext());
+                results.close();
             }
+        }
+        catch(Exception ex)
+        {
+            throw ex;
+        }
+        finally {
+            conn.close();
+            Thread.sleep(1000);
+        }
     }
-    catch(Exception ex)
-    {
-    throw ex;
-    }
-    finally {
-        conn.close();
-        Thread.sleep(60000);        
-    }
+
+    //https://bugtrack.marklogic.com/41543
+    @Test
+    public void testSPARQLQueryCloseWait()
+            throws Exception {
+        try{
+            String queryString = "select ?s ?p ?o { ?s ?p ?o } limit 100";
+            MarkLogicTupleQuery tupleQuery = conn.prepareTupleQuery(QueryLanguage.SPARQL, queryString);
+
+            for(int i=0; i<200; i++){
+
+                TupleQueryResult results = tupleQuery.evaluate(3,1);
+                // must close query result
+                results.close();
+            }
+
+        }
+        catch(Exception ex)
+        {
+            throw ex;
+        }
+        finally {
+            conn.close();
+            Thread.sleep(1000);
+        }
     }
 
     @Test
@@ -306,7 +336,7 @@ public class MarkLogicTupleQueryTest extends SesameTestBase {
         Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#AttaliaGeodata", sV.stringValue());
         Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#altitude", pV.stringValue());
         Assert.assertEquals("0", oV.stringValue());
-
+        results.close();
     }
 
     // https://github.com/marklogic/marklogic-sesame/issues/111
@@ -332,7 +362,7 @@ public class MarkLogicTupleQueryTest extends SesameTestBase {
         Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#AttaliaGeodata", sV.stringValue());
         Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#altitude", pV.stringValue());
         Assert.assertEquals("0", oV.stringValue());
-
+        results.close();
     }
 
     @Test
@@ -412,6 +442,7 @@ public class MarkLogicTupleQueryTest extends SesameTestBase {
         Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#Jotham", sV.stringValue());
         Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#parentOf", pV.stringValue());
         Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#Ahaz", oV.stringValue());
+        results.close();
     }
 
 
@@ -461,6 +492,7 @@ public class MarkLogicTupleQueryTest extends SesameTestBase {
         TupleQuery tupleQuery = conn.prepareTupleQuery(QueryLanguage.SPARQL, queryString);
         TupleQueryResult results = tupleQuery.evaluate();
         Assert.assertFalse(results.hasNext());
+        results.close();
     }
 
     // https://github.com/marklogic/marklogic-sesame/issues/163
@@ -473,7 +505,7 @@ public class MarkLogicTupleQueryTest extends SesameTestBase {
         tupleQuery.setRulesets(SPARQLRuleset.RDFS_FULL,null);
         tupleQuery.setRulesets(null);
         Assert.assertTrue(tupleQuery.getRulesets() == null);
-        
+
         TupleQueryResult results = tupleQuery.evaluate();
 
         Assert.assertEquals(results.getBindingNames().get(0), "s");
@@ -489,6 +521,8 @@ public class MarkLogicTupleQueryTest extends SesameTestBase {
         Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#AttaliaGeodata", sV.stringValue());
         Assert.assertEquals("http://semanticbible.org/ns/2006/NTNames#altitude", pV.stringValue());
         Assert.assertEquals("0", oV.stringValue());
+
+        results.close();
     }
 
     @Test(expected=org.openrdf.query.QueryEvaluationException.class)
@@ -498,5 +532,6 @@ public class MarkLogicTupleQueryTest extends SesameTestBase {
         TupleQuery tupleQuery = conn.prepareTupleQuery(QueryLanguage.SPARQL, queryString);
         TupleQueryResult results = tupleQuery.evaluate();
         Assert.assertFalse(results.hasNext());
+        results.close();
     }
 }
