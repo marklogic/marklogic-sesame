@@ -103,6 +103,7 @@ public class MarkLogicTupleQuery extends MarkLogicQuery implements TupleQuery,Ma
         if(queryResult.hasNext()) {
             QueryResults.report(queryResult, resultHandler);
         }
+        queryResult.close();
     }
 
     /**
@@ -117,5 +118,6 @@ public class MarkLogicTupleQuery extends MarkLogicQuery implements TupleQuery,Ma
         if(queryResult.hasNext()){
             QueryResults.report(queryResult, resultHandler);
         }
+        queryResult.close();
     }
 }

@@ -79,6 +79,7 @@ public class MarkLogicExceptionsTest extends SesameTestBase {
         exception.expect(QueryEvaluationException.class);
         @SuppressWarnings("unused")
         TupleQueryResult results = conn.prepareTupleQuery("A malformed query").evaluate();
+        results.close();
     }
 
     @Test

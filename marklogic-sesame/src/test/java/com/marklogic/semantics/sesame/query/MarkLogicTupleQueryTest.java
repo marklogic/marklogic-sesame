@@ -85,14 +85,15 @@ public class MarkLogicTupleQueryTest extends SesameTestBase {
     public void tearDown()
             throws Exception {
         logger.debug("tearing down...");
-        conn.close();
+        if(conn != null){conn.close();}
         conn = null;
-        rep.shutDown();
+        if(rep != null){rep.shutDown();}
         rep = null;
         logger.info("tearDown complete.");
         GraphManager gmgr = writerClient.newGraphManager();
         gmgr.delete("/directory1/test.rdf");
     }
+
     @Test
     public void testSPARQLQueryWithPrepareQuery()
             throws Exception {
@@ -125,7 +126,7 @@ public class MarkLogicTupleQueryTest extends SesameTestBase {
     public void testSPARQLQuery()
             throws Exception {
         try {
-            for (int i=0; i<100;i++){
+            for (int i=0; i<101;i++){
                 String queryString = "select * { ?s ?p ?o } limit 2 ";
                 TupleQuery tupleQuery = conn.prepareTupleQuery(QueryLanguage.SPARQL, queryString);
                 TupleQueryResult results = tupleQuery.evaluate();
@@ -256,7 +257,7 @@ public class MarkLogicTupleQueryTest extends SesameTestBase {
     public void testSPARQLQueryWithPagination()
             throws Exception {
         try{
-            for(int i=0; i<1000; i++){
+            for(int i=0; i<250; i++){
                 String queryString = "select ?s ?p ?o { ?s ?p ?o } limit 100 ";
                 MarkLogicTupleQuery tupleQuery = conn.prepareTupleQuery(QueryLanguage.SPARQL, queryString);
                 TupleQueryResult results = tupleQuery.evaluate(3, 1);

@@ -194,6 +194,9 @@ while(results.hasNext()){
     logger.info("predicate:{}", bindings.getValue("p"));
     logger.info("object:{}", bindings.getValue("o"));
 }
+
+// must explicitly close QueryResult
+results.close();
 </pre>
 </p>
 <h2>SPARQL Update</h2>

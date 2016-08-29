@@ -93,9 +93,16 @@ public class SesameTestBase {
 
     @AfterClass
     public static void afterClass() {
-        adminClient.release();
-        writerClient.release();
+        System.out.println("releasing test repos");
         readerClient.release();
+        writerClient.release();
+        adminClient.release();
+//      System.out.println("just waiting now before shutting down JVM");
+//        try {
+//            Thread.sleep(100);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
     }
 }
 

@@ -89,8 +89,8 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
         //conn.clear();
         if(conn.isOpen()){conn.clear();}
         conn.close();
-        conn = null;
         rep.shutDown();
+        conn=null;
         rep = null;
         logger.info("tearDown complete.");
     }
