@@ -34,6 +34,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
 import java.util.TimerTask;
@@ -124,7 +125,7 @@ public class WriteCacheTimerTask extends TimerTask {
      *
      */
     @Override
-    public void run(){
+    public synchronized void run(){
         Date now = new Date();
         if ( this.cache.size() > this.cacheSize - 1 || (this.cache.size() > 0 && now.getTime() - this.lastCacheAccess.getTime() > this.cacheMillis)) {
             try {
@@ -150,11 +151,14 @@ public class WriteCacheTimerTask extends TimerTask {
                 ByteArrayOutputStream out = new ByteArrayOutputStream();
                 Rio.write(this.cache, out, this.format);
                 this.client.sendAdd(new ByteArrayInputStream(out.toByteArray()), null, this.format);
+                out.close();
                 this.lastCacheAccess = new Date();
                 this.cache.clear();
             } catch (RDFHandlerException | RDFParseException e) {
                 log.info(e.getLocalizedMessage());
                 throw new MarkLogicSesameException(e);
+            } catch (IOException e) {
+                e.printStackTrace();
             }
     }
 
