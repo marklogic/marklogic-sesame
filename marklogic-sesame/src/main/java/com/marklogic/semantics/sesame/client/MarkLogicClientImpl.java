@@ -21,6 +21,7 @@ package com.marklogic.semantics.sesame.client;
 
 import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -162,8 +163,7 @@ class MarkLogicClientImpl {
             //sparqlManager.clearPageLength();
         }
         sparqlManager.executeSelect(qdef, handle, start, tx);
-        InputStream in = new BufferedInputStream(handle.get());
-        return in;
+        return new BufferedInputStream(handle.get());
     }
 
     /**
@@ -200,8 +200,7 @@ class MarkLogicClientImpl {
         if(notNull(graphPerms)){ qdef.setUpdatePermissions(graphPerms);}
         qdef.setIncludeDefaultRulesets(includeInferred);
         sparqlManager.executeDescribe(qdef, handle, tx);
-        InputStream in = new BufferedInputStream(handle.get());
-        return in;
+        return new BufferedInputStream(handle.get());
     }
 
     /**
@@ -306,8 +305,11 @@ class MarkLogicClientImpl {
                     graphManager.mergeAs(DEFAULT_GRAPH_URI, new InputStreamHandle(in),getGraphPerms(), tx);
                 }
             }
+            in.close();
         } catch (FailedRequestException e) {
             throw new RDFParseException("Request to MarkLogic server failed, check input is valid.");
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
