@@ -163,7 +163,7 @@ class MarkLogicClientImpl {
             //sparqlManager.clearPageLength();
         }
         sparqlManager.executeSelect(qdef, handle, start, tx);
-        return new BufferedInputStream(handle.get());
+        return handle.get();
     }
 
     /**
@@ -200,7 +200,7 @@ class MarkLogicClientImpl {
         if(notNull(graphPerms)){ qdef.setUpdatePermissions(graphPerms);}
         qdef.setIncludeDefaultRulesets(includeInferred);
         sparqlManager.executeDescribe(qdef, handle, tx);
-        return new BufferedInputStream(handle.get());
+        return handle.get();
     }
 
     /**
