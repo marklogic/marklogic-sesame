@@ -17,6 +17,7 @@ package com.marklogic.semantics.sesame.query;
 
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
+import com.marklogic.client.impl.DatabaseClientImpl;
 import com.marklogic.client.io.FileHandle;
 import com.marklogic.client.semantics.GraphManager;
 import com.marklogic.client.semantics.RDFMimeTypes;
@@ -37,11 +38,6 @@ public class MarkLogicQueryTest  {
         writerClient = DatabaseClientFactory.newClient("localhost", 8000, "admin", "admin", DatabaseClientFactory.Authentication.DIGEST);
     }
 
-    @After
-    public void afterClass() {
-        writerClient.release();
-    }
-
     @Test
     public void testCloseWait()
             throws Exception {
@@ -55,8 +51,9 @@ public class MarkLogicQueryTest  {
         } catch (Exception ex) {
             throw ex;
         } finally {
+            writerClient.release();
             // increase Thread.sleep or set breakpoints on gmgr.merge and gmgr.delete to observe CLOSE_WAIT
-            Thread.sleep(1000);
+            Thread.sleep(100);
         }
     }
 }
