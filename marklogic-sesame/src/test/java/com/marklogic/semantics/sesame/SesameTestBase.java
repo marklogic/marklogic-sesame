@@ -97,12 +97,12 @@ public class SesameTestBase {
         readerClient.release();
         writerClient.release();
         adminClient.release();
-//      System.out.println("just waiting now before shutting down JVM");
-//        try {
-//            Thread.sleep(100);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
+        System.out.println("just waiting now before shutting down JVM");
+        try {
+            Thread.sleep(10);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }
 
