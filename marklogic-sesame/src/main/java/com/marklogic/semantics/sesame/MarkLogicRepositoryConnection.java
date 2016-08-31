@@ -1037,11 +1037,10 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
      */
     @Override
     public void add(URL url, String baseURI, RDFFormat dataFormat, Resource... contexts) throws IOException, RDFParseException, RepositoryException {
-        InputStream in = new URL(url.toString()).openStream(); //TBD- naive impl, will need refactoring
         if(notNull(baseURI)) {
-            getClient().sendAdd(in, baseURI, dataFormat, contexts);
+            getClient().sendAdd(new URL(url.toString()).openStream(), baseURI, dataFormat, contexts);
         }else{
-            getClient().sendAdd(in, url.toString(), dataFormat, contexts);
+            getClient().sendAdd(new URL(url.toString()).openStream(), url.toString(), dataFormat, contexts);
         }
     }
 
