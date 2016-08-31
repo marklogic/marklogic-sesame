@@ -125,7 +125,7 @@ public class WriteCacheTimerTask extends TimerTask {
      *
      */
     @Override
-    public synchronized void run(){
+    public void run(){
         Date now = new Date();
         if ( this.cache.size() > this.cacheSize - 1 || (this.cache.size() > 0 && now.getTime() - this.lastCacheAccess.getTime() > this.cacheMillis)) {
             try {
@@ -147,19 +147,16 @@ public class WriteCacheTimerTask extends TimerTask {
      */
     private void flush() throws MarkLogicSesameException, InterruptedException {
         log.debug("flushing write cache:" + this.cache.size());
-            try {
-                ByteArrayOutputStream out = new ByteArrayOutputStream();
-                Rio.write(this.cache, out, this.format);
-                this.client.sendAdd(new ByteArrayInputStream(out.toByteArray()), null, this.format);
-                out.close();
-                this.lastCacheAccess = new Date();
-                this.cache.clear();
-            } catch (RDFHandlerException | RDFParseException e) {
-                log.info(e.getLocalizedMessage());
-                throw new MarkLogicSesameException(e);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        try {
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            Rio.write(this.cache, out, this.format);
+            this.client.sendAdd(new ByteArrayInputStream(out.toByteArray()), null, this.format);
+            this.lastCacheAccess = new Date();
+            this.cache.clear();
+        } catch (RDFHandlerException | RDFParseException e) {
+            log.info(e.getLocalizedMessage());
+            throw new MarkLogicSesameException(e);
+        }
     }
 
     /**min
@@ -185,11 +182,11 @@ public class WriteCacheTimerTask extends TimerTask {
      * @param object
      * @param contexts
      */
-    public synchronized void add(Resource subject, URI predicate, Value object, Resource... contexts) throws MarkLogicSesameException {
-        if(this.cache.size() > this.cacheSize - 1){
+    public void add(Resource subject, URI predicate, Value object, Resource... contexts) throws MarkLogicSesameException {
+        this.cache.add(subject,predicate,object,contexts);
+        if(this.cache.size() > this.cacheSize){
             forceRun();
         }
-        this.cache.add(subject,predicate,object,contexts);
     }
 
 }
