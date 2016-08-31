@@ -159,8 +159,6 @@ class MarkLogicClientImpl {
         if(notNull(graphPerms)){ qdef.setUpdatePermissions(graphPerms);}
         if(pageLength > 0){
             sparqlManager.setPageLength(pageLength);
-        }else{
-            //sparqlManager.clearPageLength();
         }
         sparqlManager.executeSelect(qdef, handle, start, tx);
         return handle.get();
@@ -557,10 +555,7 @@ class MarkLogicClientImpl {
      * @return
      */
     private static Boolean notNull(Object item) {
-        if (item!=null)
-            return true;
-        else
-            return false;
+        return item != null;
     }
 
 }
