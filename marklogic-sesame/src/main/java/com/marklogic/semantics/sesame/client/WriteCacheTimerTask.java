@@ -34,8 +34,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+
 import java.util.Date;
 import java.util.TimerTask;
 
@@ -125,7 +124,7 @@ public class WriteCacheTimerTask extends TimerTask {
      *
      */
     @Override
-    public void run(){
+    public synchronized void run(){
         Date now = new Date();
         if ( this.cache.size() > this.cacheSize - 1 || (this.cache.size() > 0 && now.getTime() - this.lastCacheAccess.getTime() > this.cacheMillis)) {
             try {
