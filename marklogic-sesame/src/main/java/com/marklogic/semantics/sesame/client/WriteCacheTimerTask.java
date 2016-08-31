@@ -124,7 +124,7 @@ public class WriteCacheTimerTask extends TimerTask {
      *
      */
     @Override
-    public synchronized void run(){
+    public void run(){
         Date now = new Date();
         if ( this.cache.size() > this.cacheSize - 1 || (this.cache.size() > 0 && now.getTime() - this.lastCacheAccess.getTime() > this.cacheMillis)) {
             try {
