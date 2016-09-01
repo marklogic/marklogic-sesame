@@ -194,6 +194,11 @@ public class MarkLogicRepository extends RepositoryBase implements Repository,Ma
      * returns a MarkLogicConnection object which is the entry point to
      * performing all queries.
      *
+     * It is best practice to reuse a single connection to a
+     * single MarkLogic database to take advantage of connection
+     * pooling capabilities built into java api client (which is a
+     * dependency within marklogic-sesame).
+     *
      * @return MarkLogicRepositoryConnection
      * @throws RepositoryException
      */
