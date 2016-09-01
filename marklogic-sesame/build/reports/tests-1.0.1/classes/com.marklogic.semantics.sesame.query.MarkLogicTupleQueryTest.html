@@ -23,7 +23,7 @@
 <tr>
 <td>
 <div class="infoBox" id="tests">
-<div class="counter">14</div>
+<div class="counter">15</div>
 <p>tests</p>
 </div>
 </td>
@@ -41,7 +41,7 @@
 </td>
 <td>
 <div class="infoBox" id="duration">
-<div class="counter">25.636s</div>
+<div class="counter">24.610s</div>
 <p>duration</p>
 </div>
 </td>
@@ -79,72 +79,77 @@
 </thead>
 <tr>
 <td class="success">testPrepareTupleQueryQueryStringMethod</td>
-<td>1.760s</td>
+<td>0.160s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">testSPARQLQuery</td>
-<td>1.762s</td>
+<td>4.351s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">testSPARQLQueryBindings</td>
-<td>1.764s</td>
+<td>0.151s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">testSPARQLQueryCloseWait</td>
+<td>7.726s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">testSPARQLQueryDistinct</td>
-<td>1.807s</td>
+<td>0.170s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">testSPARQLQueryQueryEvaluationException</td>
-<td>2.143s</td>
+<td>0.135s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">testSPARQLQueryWithDefaultInferred</td>
-<td>1.739s</td>
+<td>0.160s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">testSPARQLQueryWithEmptyResults</td>
-<td>1.745s</td>
+<td>0.150s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">testSPARQLQueryWithMultipleRulesets</td>
-<td>2.067s</td>
+<td>0.541s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">testSPARQLQueryWithNullRulesets</td>
-<td>1.852s</td>
+<td>0.151s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">testSPARQLQueryWithPagination</td>
-<td>1.766s</td>
+<td>8.944s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">testSPARQLQueryWithPrepareQuery</td>
-<td>1.757s</td>
+<td>1.177s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">testSPARQLQueryWithResultsHandler</td>
-<td>1.706s</td>
+<td>0.169s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">testSPARQLQueryWithRuleset</td>
-<td>1.986s</td>
+<td>0.451s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">testSPARQLWithWriter</td>
-<td>1.782s</td>
+<td>0.174s</td>
 <td class="success">passed</td>
 </tr>
 </table>
@@ -152,36 +157,72 @@
 <div id="tab1" class="tab">
 <h2>Standard output</h2>
 <span class="code">
-<pre>22:16:22.675 [Test worker] INFO  c.m.s.s.q.MarkLogicTupleQueryTest - test setup complete.
-22:16:24.655 [Test worker] INFO  c.m.s.s.q.MarkLogicTupleQueryTest - tearDown complete.
-22:16:24.748 [Test worker] INFO  c.m.s.s.q.MarkLogicTupleQueryTest - test setup complete.
-22:16:26.523 [Test worker] INFO  c.m.s.s.q.MarkLogicTupleQueryTest - tearDown complete.
-22:16:26.539 [Finalizer] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
-22:16:26.620 [Test worker] INFO  c.m.s.s.q.MarkLogicTupleQueryTest - test setup complete.
-22:16:28.380 [Test worker] INFO  c.m.s.s.q.MarkLogicTupleQueryTest - tearDown complete.
-22:16:28.473 [Test worker] INFO  c.m.s.s.q.MarkLogicTupleQueryTest - test setup complete.
-22:16:30.531 [Test worker] INFO  c.m.s.s.q.MarkLogicTupleQueryTest - tearDown complete.
-22:16:30.668 [Test worker] INFO  c.m.s.s.q.MarkLogicTupleQueryTest - test setup complete.
-22:16:32.805 [Test worker] INFO  c.m.s.s.q.MarkLogicTupleQueryTest - tearDown complete.
-22:16:32.895 [Test worker] INFO  c.m.s.s.q.MarkLogicTupleQueryTest - test setup complete.
-22:16:34.740 [Test worker] INFO  c.m.s.s.q.MarkLogicTupleQueryTest - tearDown complete.
-22:16:34.830 [Test worker] INFO  c.m.s.s.q.MarkLogicTupleQueryTest - test setup complete.
-22:16:36.569 [Test worker] INFO  c.m.s.s.q.MarkLogicTupleQueryTest - tearDown complete.
-22:16:36.663 [Test worker] INFO  c.m.s.s.q.MarkLogicTupleQueryTest - test setup complete.
-22:16:38.416 [Test worker] INFO  c.m.s.s.q.MarkLogicTupleQueryTest - tearDown complete.
-22:16:38.505 [Test worker] INFO  c.m.s.s.q.MarkLogicTupleQueryTest - test setup complete.
-22:16:40.205 [Test worker] INFO  c.m.s.s.q.MarkLogicTupleQueryTest - tearDown complete.
-22:16:40.295 [Test worker] INFO  c.m.s.s.q.MarkLogicTupleQueryTest - test setup complete.
-22:16:42.046 [Test worker] INFO  c.m.s.s.q.MarkLogicTupleQueryTest - tearDown complete.
-22:16:42.136 [Test worker] INFO  c.m.s.s.q.MarkLogicTupleQueryTest - test setup complete.
-22:16:43.870 [Test worker] INFO  c.m.s.s.q.MarkLogicTupleQueryTest - tearDown complete.
-22:16:43.959 [Test worker] INFO  c.m.s.s.q.MarkLogicTupleQueryTest - test setup complete.
-22:16:45.715 [Test worker] INFO  c.m.s.s.q.MarkLogicTupleQueryTest - tearDown complete.
-22:16:45.806 [Test worker] INFO  c.m.s.s.q.MarkLogicTupleQueryTest - test setup complete.
-22:16:47.607 [Test worker] INFO  c.m.s.s.q.MarkLogicTupleQueryTest - tearDown complete.
-22:16:47.707 [Test worker] INFO  c.m.s.s.q.MarkLogicTupleQueryTest - test setup complete.
-22:16:49.465 [Test worker] INFO  c.m.s.s.q.MarkLogicTupleQueryTest - [s, p, o]
-22:16:49.465 [Test worker] INFO  c.m.s.s.q.MarkLogicTupleQueryTest - tearDown complete.
+<pre>13:49:43.347 [Finalizer] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+13:49:43.347 [Finalizer] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+13:49:43.355 [Test worker] INFO  c.m.s.s.q.MarkLogicTupleQueryTest - test setup complete.
+13:49:43.763 [Test worker] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+13:49:43.764 [Test worker] INFO  c.m.s.s.q.MarkLogicTupleQueryTest - tearDown complete.
+13:49:43.896 [Test worker] INFO  c.m.s.s.q.MarkLogicTupleQueryTest - test setup complete.
+13:49:44.030 [Test worker] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+13:49:44.030 [Test worker] INFO  c.m.s.s.q.MarkLogicTupleQueryTest - tearDown complete.
+13:49:44.159 [Test worker] INFO  c.m.s.s.q.MarkLogicTupleQueryTest - test setup complete.
+13:49:45.331 [Finalizer] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+13:49:45.331 [Finalizer] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+13:49:52.063 [Test worker] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+13:49:53.066 [Test worker] INFO  c.m.s.s.q.MarkLogicTupleQueryTest - tearDown complete.
+13:49:53.197 [Test worker] INFO  c.m.s.s.q.MarkLogicTupleQueryTest - test setup complete.
+13:49:53.701 [Test worker] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+13:49:53.701 [Test worker] INFO  c.m.s.s.q.MarkLogicTupleQueryTest - tearDown complete.
+13:49:53.803 [Finalizer] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+13:49:53.803 [Finalizer] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+13:49:53.833 [Test worker] INFO  c.m.s.s.q.MarkLogicTupleQueryTest - test setup complete.
+13:49:53.926 [Test worker] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+13:49:53.926 [Test worker] INFO  c.m.s.s.q.MarkLogicTupleQueryTest - tearDown complete.
+13:49:54.059 [Test worker] INFO  c.m.s.s.q.MarkLogicTupleQueryTest - test setup complete.
+13:49:54.173 [Test worker] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+13:49:54.173 [Test worker] INFO  c.m.s.s.q.MarkLogicTupleQueryTest - tearDown complete.
+13:49:54.282 [Finalizer] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+13:49:54.282 [Finalizer] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+13:49:54.309 [Test worker] INFO  c.m.s.s.q.MarkLogicTupleQueryTest - test setup complete.
+13:49:54.416 [Test worker] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+13:49:54.416 [Test worker] INFO  c.m.s.s.q.MarkLogicTupleQueryTest - tearDown complete.
+13:49:54.544 [Test worker] INFO  c.m.s.s.q.MarkLogicTupleQueryTest - test setup complete.
+13:49:54.666 [Test worker] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+13:49:54.667 [Test worker] INFO  c.m.s.s.q.MarkLogicTupleQueryTest - tearDown complete.
+13:49:54.774 [Finalizer] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+13:49:54.774 [Finalizer] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+13:49:54.806 [Test worker] INFO  c.m.s.s.q.MarkLogicTupleQueryTest - test setup complete.
+13:49:54.938 [Test worker] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+13:49:54.938 [Test worker] INFO  c.m.s.s.q.MarkLogicTupleQueryTest - tearDown complete.
+13:49:55.072 [Test worker] INFO  c.m.s.s.q.MarkLogicTupleQueryTest - test setup complete.
+13:49:55.206 [Test worker] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+13:49:56.207 [Test worker] INFO  c.m.s.s.q.MarkLogicTupleQueryTest - tearDown complete.
+13:49:56.290 [Finalizer] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+13:49:56.291 [Finalizer] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+13:49:56.338 [Test worker] INFO  c.m.s.s.q.MarkLogicTupleQueryTest - test setup complete.
+13:49:56.460 [Test worker] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+13:49:56.460 [Test worker] INFO  c.m.s.s.q.MarkLogicTupleQueryTest - tearDown complete.
+13:49:56.588 [Test worker] INFO  c.m.s.s.q.MarkLogicTupleQueryTest - test setup complete.
+13:49:59.902 [Test worker] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+13:50:00.902 [Test worker] INFO  c.m.s.s.q.MarkLogicTupleQueryTest - tearDown complete.
+13:50:00.948 [Finalizer] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+13:50:00.949 [Finalizer] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+13:50:01.033 [Test worker] INFO  c.m.s.s.q.MarkLogicTupleQueryTest - test setup complete.
+13:50:01.166 [Test worker] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+13:50:01.166 [Test worker] INFO  c.m.s.s.q.MarkLogicTupleQueryTest - tearDown complete.
+13:50:01.296 [Test worker] INFO  c.m.s.s.q.MarkLogicTupleQueryTest - test setup complete.
+13:50:03.507 [Finalizer] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+13:50:07.973 [Test worker] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+13:50:08.974 [Test worker] INFO  c.m.s.s.q.MarkLogicTupleQueryTest - tearDown complete.
+13:50:09.121 [Test worker] INFO  c.m.s.s.q.MarkLogicTupleQueryTest - test setup complete.
+13:50:09.236 [Test worker] INFO  c.m.s.s.q.MarkLogicTupleQueryTest - [s, p, o]
+13:50:09.236 [Test worker] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+13:50:09.236 [Test worker] INFO  c.m.s.s.q.MarkLogicTupleQueryTest - tearDown complete.
+releasing test repos
+13:50:09.242 [Test worker] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+13:50:09.242 [Test worker] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+13:50:09.243 [Test worker] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+just waiting now before shutting down JVM
 </pre>
 </span>
 </div>
@@ -193,7 +234,7 @@
 <input id="line-wrapping-toggle" type="checkbox" autocomplete="off"/>
 </label>
 </div>Generated by 
-<a href="http://www.gradle.org">Gradle 2.3</a> at Apr 4, 2016 10:16:59 PM</p>
+<a href="http://www.gradle.org">Gradle 2.6</a> at Aug 31, 2016 1:50:10 PM</p>
 </div>
 </div>
 </body>

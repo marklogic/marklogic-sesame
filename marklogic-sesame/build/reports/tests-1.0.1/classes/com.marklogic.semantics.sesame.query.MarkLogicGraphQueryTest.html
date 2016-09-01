@@ -41,7 +41,7 @@
 </td>
 <td>
 <div class="infoBox" id="duration">
-<div class="counter">14.660s</div>
+<div class="counter">1.136s</div>
 <p>duration</p>
 </div>
 </td>
@@ -79,42 +79,42 @@
 </thead>
 <tr>
 <td class="success">testConstructQuery</td>
-<td>1.766s</td>
+<td>0.137s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">testDescribeQuery</td>
-<td>1.775s</td>
+<td>0.140s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">testGraphQueryWithBaseURI</td>
-<td>1.781s</td>
+<td>0.147s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">testGraphQueryWithBaseURIInline</td>
-<td>1.857s</td>
+<td>0.141s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">testGraphQueryWithBaseURIWithEmptyBaseURI</td>
-<td>1.776s</td>
+<td>0.143s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">testPrepareGraphQueryClose</td>
-<td>1.715s</td>
+<td>0.149s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">testPrepareGraphQueryWithNoResult</td>
-<td>1.732s</td>
+<td>0.134s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">testPrepareGraphQueryWithSingleResult</td>
-<td>2.258s</td>
+<td>0.145s</td>
 <td class="success">passed</td>
 </tr>
 </table>
@@ -122,23 +122,43 @@
 <div id="tab1" class="tab">
 <h2>Standard output</h2>
 <span class="code">
-<pre>22:16:07.290 [Test worker] INFO  c.m.s.s.q.MarkLogicGraphQueryTest - test setup complete.
-22:16:08.908 [Test worker] INFO  c.m.s.s.q.MarkLogicGraphQueryTest - tearDown complete.
-22:16:09.640 [Test worker] INFO  c.m.s.s.q.MarkLogicGraphQueryTest - test setup complete.
-22:16:11.407 [Test worker] INFO  c.m.s.s.q.MarkLogicGraphQueryTest - tearDown complete.
-22:16:11.508 [Test worker] INFO  c.m.s.s.q.MarkLogicGraphQueryTest - test setup complete.
-22:16:13.283 [Test worker] INFO  c.m.s.s.q.MarkLogicGraphQueryTest - tearDown complete.
-22:16:13.375 [Test worker] INFO  c.m.s.s.q.MarkLogicGraphQueryTest - test setup complete.
-22:16:15.226 [Test worker] INFO  c.m.s.s.q.MarkLogicGraphQueryTest - tearDown complete.
-22:16:15.327 [Test worker] INFO  c.m.s.s.q.MarkLogicGraphQueryTest - test setup complete.
-22:16:17.086 [Test worker] INFO  c.m.s.s.q.MarkLogicGraphQueryTest - tearDown complete.
-22:16:17.182 [Test worker] INFO  c.m.s.s.q.MarkLogicGraphQueryTest - test setup complete.
-22:16:18.909 [Test worker] INFO  c.m.s.s.q.MarkLogicGraphQueryTest - tearDown complete.
-22:16:19.001 [Test worker] INFO  c.m.s.s.q.MarkLogicGraphQueryTest - test setup complete.
-22:16:20.770 [pool-294-thread-1] ERROR o.o.r.h.ParseErrorLogger - [Rio fatal] Not a valid (absolute) URI: relative (1, -1)
-22:16:20.771 [Test worker] INFO  c.m.s.s.q.MarkLogicGraphQueryTest - tearDown complete.
-22:16:20.864 [Test worker] INFO  c.m.s.s.q.MarkLogicGraphQueryTest - test setup complete.
-22:16:22.573 [Test worker] INFO  c.m.s.s.q.MarkLogicGraphQueryTest - tearDown complete.
+<pre>13:49:40.410 [Test worker] INFO  c.m.s.s.q.MarkLogicGraphQueryTest - test setup complete.
+13:49:40.517 [Test worker] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+13:49:40.517 [Test worker] INFO  c.m.s.s.q.MarkLogicGraphQueryTest - tearDown complete.
+13:49:40.673 [Test worker] INFO  c.m.s.s.q.MarkLogicGraphQueryTest - test setup complete.
+13:49:40.770 [Test worker] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+13:49:40.770 [Test worker] INFO  c.m.s.s.q.MarkLogicGraphQueryTest - tearDown complete.
+13:49:40.807 [Finalizer] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+13:49:40.808 [Finalizer] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+13:49:40.808 [Finalizer] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+13:49:40.901 [Test worker] INFO  c.m.s.s.q.MarkLogicGraphQueryTest - test setup complete.
+13:49:41.010 [Test worker] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+13:49:41.010 [Test worker] INFO  c.m.s.s.q.MarkLogicGraphQueryTest - tearDown complete.
+13:49:41.141 [Test worker] INFO  c.m.s.s.q.MarkLogicGraphQueryTest - test setup complete.
+13:49:41.241 [Test worker] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+13:49:41.241 [Test worker] INFO  c.m.s.s.q.MarkLogicGraphQueryTest - tearDown complete.
+13:49:41.328 [Finalizer] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+13:49:41.328 [Finalizer] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+13:49:41.370 [Test worker] INFO  c.m.s.s.q.MarkLogicGraphQueryTest - test setup complete.
+13:49:41.471 [Test worker] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+13:49:41.472 [Test worker] INFO  c.m.s.s.q.MarkLogicGraphQueryTest - tearDown complete.
+13:49:41.607 [Test worker] INFO  c.m.s.s.q.MarkLogicGraphQueryTest - test setup complete.
+13:49:41.701 [Test worker] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+13:49:41.701 [Test worker] INFO  c.m.s.s.q.MarkLogicGraphQueryTest - tearDown complete.
+13:49:41.829 [Finalizer] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+13:49:41.829 [Finalizer] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+13:49:41.834 [Test worker] INFO  c.m.s.s.q.MarkLogicGraphQueryTest - test setup complete.
+13:49:41.936 [pool-1200-thread-1] ERROR o.o.r.h.ParseErrorLogger - [Rio fatal] Not a valid (absolute) URI: relative (1, -1)
+13:49:41.937 [Test worker] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+13:49:41.938 [Test worker] INFO  c.m.s.s.q.MarkLogicGraphQueryTest - tearDown complete.
+13:49:42.073 [Test worker] INFO  c.m.s.s.q.MarkLogicGraphQueryTest - test setup complete.
+13:49:42.176 [Test worker] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+13:49:42.177 [Test worker] INFO  c.m.s.s.q.MarkLogicGraphQueryTest - tearDown complete.
+releasing test repos
+13:49:42.183 [Test worker] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+13:49:42.183 [Test worker] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+13:49:42.183 [Test worker] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+just waiting now before shutting down JVM
 </pre>
 </span>
 </div>
@@ -150,7 +170,7 @@
 <input id="line-wrapping-toggle" type="checkbox" autocomplete="off"/>
 </label>
 </div>Generated by 
-<a href="http://www.gradle.org">Gradle 2.3</a> at Apr 4, 2016 10:16:59 PM</p>
+<a href="http://www.gradle.org">Gradle 2.6</a> at Aug 31, 2016 1:50:10 PM</p>
 </div>
 </div>
 </body>

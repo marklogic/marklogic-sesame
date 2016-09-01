@@ -41,7 +41,7 @@
 </td>
 <td>
 <div class="infoBox" id="duration">
-<div class="counter">5.132s</div>
+<div class="counter">4.197s</div>
 <p>duration</p>
 </div>
 </td>
@@ -79,62 +79,62 @@
 </thead>
 <tr>
 <td class="success">TestMalformedBooleanQuery</td>
-<td>0.926s</td>
+<td>0.083s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">TestMalformedQuery</td>
-<td>0.032s</td>
+<td>0.092s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">TestMalformedUpdateQUery</td>
-<td>0.020s</td>
+<td>0.096s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">testAddMalformedTurtle</td>
-<td>0.029s</td>
+<td>0.112s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">testAddMalformedWithInputStream</td>
-<td>0.019s</td>
+<td>0.133s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">testAddWithInputStream</td>
-<td>1.229s</td>
+<td>0.143s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">testAddingIfClosed</td>
-<td>0.001s</td>
+<td>0.091s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">testDanglingRollback</td>
-<td>0.001s</td>
+<td>0.074s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">testEmptyCommit</td>
-<td>0s</td>
+<td>0.061s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">testIncorrectIsolatedLevel</td>
-<td>0.001s</td>
+<td>0.071s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">testTransaction3</td>
-<td>1.709s</td>
+<td>2.160s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">updateWithWrongPerms</td>
-<td>1.165s</td>
+<td>1.081s</td>
 <td class="success">passed</td>
 </tr>
 </table>
@@ -142,60 +142,150 @@
 <div id="tab1" class="tab">
 <h2>Standard output</h2>
 <span class="code">
-<pre>22:13:24,103 |-INFO in ch.qos.logback.classic.LoggerContext[default] - Could NOT find resource [logback.groovy]
-22:13:24,103 |-INFO in ch.qos.logback.classic.LoggerContext[default] - Found resource [logback-test.xml] at [file:/Users/jfuller/Source/1_marklogic/projects/marklogic-sesame/marklogic-sesame/build/resources/test/logback-test.xml]
-22:13:24,180 |-INFO in ch.qos.logback.classic.joran.action.ConfigurationAction - debug attribute not set
-22:13:24,185 |-INFO in ch.qos.logback.core.joran.action.AppenderAction - About to instantiate appender of type [ch.qos.logback.core.ConsoleAppender]
-22:13:24,202 |-INFO in ch.qos.logback.core.joran.action.AppenderAction - Naming appender as [STDOUT]
-22:13:24,250 |-INFO in ch.qos.logback.core.joran.action.NestedComplexPropertyIA - Assuming default type [ch.qos.logback.classic.encoder.PatternLayoutEncoder] for [encoder] property
-22:13:24,334 |-INFO in ch.qos.logback.classic.joran.action.LoggerAction - Setting level of logger [com.marklogic.client.*] to INFO
-22:13:24,334 |-INFO in ch.qos.logback.classic.joran.action.LoggerAction - Setting additivity of logger [com.marklogic.client.*] to false
-22:13:24,335 |-ERROR in ch.qos.logback.core.joran.action.AppenderRefAction - Could not find an appender named [BUFFER]. Did you define it below instead of above in the configuration file?
-22:13:24,335 |-ERROR in ch.qos.logback.core.joran.action.AppenderRefAction - See http://logback.qos.ch/codes.html#appender_order for more details.
-22:13:24,335 |-INFO in ch.qos.logback.classic.joran.action.LoggerAction - Setting level of logger [com.marklogic.semantics.sesame.client.*] to DEBUG
-22:13:24,335 |-INFO in ch.qos.logback.classic.joran.action.LoggerAction - Setting additivity of logger [com.marklogic.semantics.sesame.client.*] to false
-22:13:24,335 |-INFO in ch.qos.logback.core.joran.action.AppenderRefAction - Attaching appender named [STDOUT] to Logger[com.marklogic.semantics.sesame.client.*]
-22:13:24,336 |-INFO in ch.qos.logback.classic.joran.action.RootLoggerAction - Setting level of ROOT logger to INFO
-22:13:24,336 |-INFO in ch.qos.logback.core.joran.action.AppenderRefAction - Attaching appender named [STDOUT] to Logger[ROOT]
-22:13:24,336 |-INFO in ch.qos.logback.classic.joran.action.ConfigurationAction - End of configuration.
-22:13:24,338 |-INFO in ch.qos.logback.classic.joran.JoranConfigurator@fc36edb - Registering current configuration as safe fallback point
+<pre>13:48:24,669 |-INFO in ch.qos.logback.classic.LoggerContext[default] - Could NOT find resource [logback.groovy]
+13:48:24,671 |-INFO in ch.qos.logback.classic.LoggerContext[default] - Found resource [logback-test.xml] at [file:/Users/jfuller/Source/1_marklogic/projects/marklogic-sesame/marklogic-sesame/build/resources/test/logback-test.xml]
+13:48:24,941 |-INFO in ch.qos.logback.classic.joran.action.ConfigurationAction - debug attribute not set
+13:48:24,947 |-ERROR in ch.qos.logback.core.util.ContextUtil@3463048e - Failed to get local hostname java.net.UnknownHostException: MacPro-2115: MacPro-2115: nodename nor servname provided, or not known
+	at java.net.UnknownHostException: MacPro-2115: MacPro-2115: nodename nor servname provided, or not known
+	at 	at java.net.InetAddress.getLocalHost(InetAddress.java:1473)
+	at 	at ch.qos.logback.core.util.ContextUtil.getLocalHostName(ContextUtil.java:32)
+	at 	at ch.qos.logback.core.util.ContextUtil.addHostNameAsProperty(ContextUtil.java:41)
+	at 	at ch.qos.logback.classic.joran.action.ConfigurationAction.begin(ConfigurationAction.java:56)
+	at 	at ch.qos.logback.core.joran.spi.Interpreter.callBeginAction(Interpreter.java:276)
+	at 	at ch.qos.logback.core.joran.spi.Interpreter.startElement(Interpreter.java:148)
+	at 	at ch.qos.logback.core.joran.spi.Interpreter.startElement(Interpreter.java:130)
+	at 	at ch.qos.logback.core.joran.spi.EventPlayer.play(EventPlayer.java:50)
+	at 	at ch.qos.logback.core.joran.GenericConfigurator.doConfigure(GenericConfigurator.java:157)
+	at 	at ch.qos.logback.core.joran.GenericConfigurator.doConfigure(GenericConfigurator.java:143)
+	at 	at ch.qos.logback.core.joran.GenericConfigurator.doConfigure(GenericConfigurator.java:106)
+	at 	at ch.qos.logback.core.joran.GenericConfigurator.doConfigure(GenericConfigurator.java:56)
+	at 	at ch.qos.logback.classic.util.ContextInitializer.configureByResource(ContextInitializer.java:75)
+	at 	at ch.qos.logback.classic.util.ContextInitializer.autoConfig(ContextInitializer.java:148)
+	at 	at org.slf4j.impl.StaticLoggerBinder.init(StaticLoggerBinder.java:85)
+	at 	at org.slf4j.impl.StaticLoggerBinder.&lt;clinit&gt;(StaticLoggerBinder.java:55)
+	at 	at org.slf4j.LoggerFactory.bind(LoggerFactory.java:142)
+	at 	at org.slf4j.LoggerFactory.performInitialization(LoggerFactory.java:121)
+	at 	at org.slf4j.LoggerFactory.getILoggerFactory(LoggerFactory.java:332)
+	at 	at org.slf4j.LoggerFactory.getLogger(LoggerFactory.java:284)
+	at 	at org.slf4j.LoggerFactory.getLogger(LoggerFactory.java:305)
+	at 	at com.marklogic.client.DatabaseClientFactory.&lt;clinit&gt;(DatabaseClientFactory.java:39)
+	at 	at com.marklogic.semantics.sesame.SesameTestBase.&lt;init&gt;(SesameTestBase.java:85)
+	at 	at com.marklogic.semantics.sesame.MarkLogicExceptionsTest.&lt;init&gt;(MarkLogicExceptionsTest.java:46)
+	at 	at sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)
+	at 	at sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:57)
+	at 	at sun.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:45)
+	at 	at java.lang.reflect.Constructor.newInstance(Constructor.java:526)
+	at 	at org.junit.runners.BlockJUnit4ClassRunner.createTest(BlockJUnit4ClassRunner.java:217)
+	at 	at org.junit.runners.BlockJUnit4ClassRunner$1.runReflectiveCall(BlockJUnit4ClassRunner.java:266)
+	at 	at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12)
+	at 	at org.junit.runners.BlockJUnit4ClassRunner.methodBlock(BlockJUnit4ClassRunner.java:263)
+	at 	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:78)
+	at 	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:57)
+	at 	at org.junit.runners.ParentRunner$3.run(ParentRunner.java:290)
+	at 	at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71)
+	at 	at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288)
+	at 	at org.junit.runners.ParentRunner.access$000(ParentRunner.java:58)
+	at 	at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268)
+	at 	at org.junit.internal.runners.statements.RunAfters.evaluate(RunAfters.java:27)
+	at 	at org.junit.runners.ParentRunner.run(ParentRunner.java:363)
+	at 	at org.gradle.api.internal.tasks.testing.junit.JUnitTestClassExecuter.runTestClass(JUnitTestClassExecuter.java:105)
+	at 	at org.gradle.api.internal.tasks.testing.junit.JUnitTestClassExecuter.execute(JUnitTestClassExecuter.java:56)
+	at 	at org.gradle.api.internal.tasks.testing.junit.JUnitTestClassProcessor.processTestClass(JUnitTestClassProcessor.java:64)
+	at 	at org.gradle.api.internal.tasks.testing.SuiteTestClassProcessor.processTestClass(SuiteTestClassProcessor.java:50)
+	at 	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at 	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at 	at java.lang.reflect.Method.invoke(Method.java:606)
+	at 	at org.gradle.messaging.dispatch.ReflectionDispatch.dispatch(ReflectionDispatch.java:35)
+	at 	at org.gradle.messaging.dispatch.ReflectionDispatch.dispatch(ReflectionDispatch.java:24)
+	at 	at org.gradle.messaging.dispatch.ContextClassLoaderDispatch.dispatch(ContextClassLoaderDispatch.java:32)
+	at 	at org.gradle.messaging.dispatch.ProxyDispatchAdapter$DispatchingInvocationHandler.invoke(ProxyDispatchAdapter.java:93)
+	at 	at com.sun.proxy.$Proxy2.processTestClass(Unknown Source)
+	at 	at org.gradle.api.internal.tasks.testing.worker.TestWorker.processTestClass(TestWorker.java:106)
+	at 	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at 	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at 	at java.lang.reflect.Method.invoke(Method.java:606)
+	at 	at org.gradle.messaging.dispatch.ReflectionDispatch.dispatch(ReflectionDispatch.java:35)
+	at 	at org.gradle.messaging.dispatch.ReflectionDispatch.dispatch(ReflectionDispatch.java:24)
+	at 	at org.gradle.messaging.remote.internal.hub.MessageHub$Handler.run(MessageHub.java:360)
+	at 	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:54)
+	at 	at org.gradle.internal.concurrent.StoppableExecutorImpl$1.run(StoppableExecutorImpl.java:40)
+	at 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+	at 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:615)
+	at 	at java.lang.Thread.run(Thread.java:745)
+Caused by: java.net.UnknownHostException: MacPro-2115: nodename nor servname provided, or not known
+	at 	at java.net.Inet6AddressImpl.lookupAllHostAddr(Native Method)
+	at 	at java.net.InetAddress$1.lookupAllHostAddr(InetAddress.java:901)
+	at 	at java.net.InetAddress.getAddressesFromNameService(InetAddress.java:1293)
+	at 	at java.net.InetAddress.getLocalHost(InetAddress.java:1469)
+	at 	... 66 common frames omitted
+13:48:24,947 |-INFO in ch.qos.logback.core.joran.action.AppenderAction - About to instantiate appender of type [ch.qos.logback.core.ConsoleAppender]
+13:48:24,999 |-INFO in ch.qos.logback.core.joran.action.AppenderAction - Naming appender as [STDOUT]
+13:48:25,052 |-INFO in ch.qos.logback.core.joran.action.NestedComplexPropertyIA - Assuming default type [ch.qos.logback.classic.encoder.PatternLayoutEncoder] for [encoder] property
+13:48:25,243 |-INFO in ch.qos.logback.classic.joran.action.LoggerAction - Setting level of logger [com.marklogic.client.*] to INFO
+13:48:25,243 |-INFO in ch.qos.logback.classic.joran.action.LoggerAction - Setting additivity of logger [com.marklogic.client.*] to false
+13:48:25,243 |-ERROR in ch.qos.logback.core.joran.action.AppenderRefAction - Could not find an appender named [BUFFER]. Did you define it below instead of above in the configuration file?
+13:48:25,243 |-ERROR in ch.qos.logback.core.joran.action.AppenderRefAction - See http://logback.qos.ch/codes.html#appender_order for more details.
+13:48:25,244 |-INFO in ch.qos.logback.classic.joran.action.LoggerAction - Setting level of logger [com.marklogic.semantics.sesame.client.*] to DEBUG
+13:48:25,244 |-INFO in ch.qos.logback.classic.joran.action.LoggerAction - Setting additivity of logger [com.marklogic.semantics.sesame.client.*] to false
+13:48:25,244 |-INFO in ch.qos.logback.core.joran.action.AppenderRefAction - Attaching appender named [STDOUT] to Logger[com.marklogic.semantics.sesame.client.*]
+13:48:25,248 |-INFO in ch.qos.logback.classic.joran.action.RootLoggerAction - Setting level of ROOT logger to INFO
+13:48:25,248 |-INFO in ch.qos.logback.core.joran.action.AppenderRefAction - Attaching appender named [STDOUT] to Logger[ROOT]
+13:48:25,248 |-INFO in ch.qos.logback.classic.joran.action.ConfigurationAction - End of configuration.
+13:48:25,255 |-INFO in ch.qos.logback.classic.joran.JoranConfigurator@2301799f - Registering current configuration as safe fallback point
 
-22:13:25.216 [Test worker] INFO  c.m.s.s.MarkLogicExceptionsTest - test setup complete.
-22:13:26.908 [Test worker] INFO  c.m.s.s.MarkLogicExceptionsTest - tearDown complete.
-22:13:27.123 [Finalizer] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
-22:13:27.150 [Test worker] INFO  c.m.s.s.MarkLogicExceptionsTest - test setup complete.
-22:13:27.179 [Test worker] INFO  c.m.s.s.MarkLogicExceptionsTest - tearDown complete.
-22:13:27.424 [Test worker] INFO  c.m.s.s.MarkLogicExceptionsTest - test setup complete.
-22:13:27.425 [Test worker] INFO  c.m.s.s.MarkLogicExceptionsTest - tearDown complete.
-22:13:27.618 [Finalizer] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
-22:13:27.623 [Finalizer] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
-22:13:27.647 [Test worker] INFO  c.m.s.s.MarkLogicExceptionsTest - test setup complete.
-22:13:27.647 [Test worker] INFO  c.m.s.s.MarkLogicExceptionsTest - tearDown complete.
-22:13:27.829 [Test worker] INFO  c.m.s.s.MarkLogicExceptionsTest - test setup complete.
-22:13:28.994 [Test worker] INFO  c.m.s.s.MarkLogicExceptionsTest - tearDown complete.
-22:13:29.142 [Test worker] INFO  c.m.s.s.MarkLogicExceptionsTest - test setup complete.
-22:13:29.174 [Test worker] INFO  c.m.s.s.MarkLogicExceptionsTest - tearDown complete.
-22:13:29.320 [Test worker] INFO  c.m.s.s.MarkLogicExceptionsTest - test setup complete.
-22:13:29.320 [Test worker] INFO  c.m.s.s.MarkLogicExceptionsTest - active:false
-22:13:29.320 [Test worker] INFO  c.m.s.s.MarkLogicExceptionsTest - tearDown complete.
-22:13:29.452 [Finalizer] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
-22:13:29.453 [Finalizer] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
-22:13:29.455 [Finalizer] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
-22:13:29.456 [Finalizer] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
-22:13:29.488 [Test worker] INFO  c.m.s.s.MarkLogicExceptionsTest - test setup complete.
-22:13:29.508 [Test worker] INFO  c.m.s.s.MarkLogicExceptionsTest - tearDown complete.
-22:13:29.630 [Test worker] INFO  c.m.s.s.MarkLogicExceptionsTest - test setup complete.
-22:13:29.631 [Test worker] INFO  c.m.s.s.MarkLogicExceptionsTest - tearDown complete.
-22:13:29.753 [Test worker] INFO  c.m.s.s.MarkLogicExceptionsTest - test setup complete.
-22:13:29.772 [Test worker] INFO  c.m.s.s.MarkLogicExceptionsTest - tearDown complete.
-22:13:29.897 [Test worker] INFO  c.m.s.s.MarkLogicExceptionsTest - test setup complete.
-22:13:31.126 [Test worker] INFO  c.m.s.s.MarkLogicExceptionsTest - tearDown complete.
-22:13:31.205 [Finalizer] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
-22:13:31.206 [Finalizer] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
-22:13:31.206 [Finalizer] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
-22:13:31.207 [Finalizer] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
-22:13:31.261 [Test worker] INFO  c.m.s.s.MarkLogicExceptionsTest - test setup complete.
-22:13:32.187 [Test worker] INFO  c.m.s.s.MarkLogicExceptionsTest - tearDown complete.
+13:48:26.684 [Test worker] INFO  c.m.s.s.MarkLogicExceptionsTest - test setup complete.
+13:48:28.732 [Test worker] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+13:48:28.733 [Test worker] INFO  c.m.s.s.MarkLogicExceptionsTest - tearDown complete.
+13:48:29.090 [Test worker] INFO  c.m.s.s.MarkLogicExceptionsTest - test setup complete.
+13:48:29.130 [Test worker] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+13:48:29.131 [Test worker] INFO  c.m.s.s.MarkLogicExceptionsTest - tearDown complete.
+13:48:29.366 [Test worker] INFO  c.m.s.s.MarkLogicExceptionsTest - test setup complete.
+13:48:29.370 [Test worker] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+13:48:29.371 [Test worker] INFO  c.m.s.s.MarkLogicExceptionsTest - tearDown complete.
+13:48:29.709 [Test worker] INFO  c.m.s.s.MarkLogicExceptionsTest - test setup complete.
+13:48:29.709 [Test worker] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+13:48:29.709 [Test worker] INFO  c.m.s.s.MarkLogicExceptionsTest - tearDown complete.
+13:48:29.762 [Finalizer] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+13:48:29.763 [Finalizer] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+13:48:29.764 [Finalizer] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+13:48:29.986 [Test worker] INFO  c.m.s.s.MarkLogicExceptionsTest - test setup complete.
+13:48:31.012 [Test worker] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+13:48:31.012 [Test worker] INFO  c.m.s.s.MarkLogicExceptionsTest - tearDown complete.
+13:48:31.259 [Test worker] INFO  c.m.s.s.MarkLogicExceptionsTest - test setup complete.
+13:48:31.286 [Test worker] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+13:48:31.287 [Test worker] INFO  c.m.s.s.MarkLogicExceptionsTest - tearDown complete.
+13:48:31.303 [Finalizer] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+13:48:31.305 [Finalizer] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+13:48:31.527 [Test worker] INFO  c.m.s.s.MarkLogicExceptionsTest - test setup complete.
+13:48:31.528 [Test worker] INFO  c.m.s.s.MarkLogicExceptionsTest - active:false
+13:48:31.528 [Test worker] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+13:48:31.528 [Test worker] INFO  c.m.s.s.MarkLogicExceptionsTest - tearDown complete.
+13:48:31.758 [Test worker] INFO  c.m.s.s.MarkLogicExceptionsTest - test setup complete.
+13:48:31.789 [Test worker] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+13:48:31.789 [Test worker] INFO  c.m.s.s.MarkLogicExceptionsTest - tearDown complete.
+13:48:31.825 [Finalizer] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+13:48:31.825 [Finalizer] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+13:48:32.042 [Test worker] INFO  c.m.s.s.MarkLogicExceptionsTest - test setup complete.
+13:48:32.042 [Test worker] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+13:48:32.043 [Test worker] INFO  c.m.s.s.MarkLogicExceptionsTest - tearDown complete.
+13:48:32.397 [Test worker] INFO  c.m.s.s.MarkLogicExceptionsTest - test setup complete.
+13:48:32.438 [Test worker] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+13:48:32.439 [Test worker] INFO  c.m.s.s.MarkLogicExceptionsTest - tearDown complete.
+13:48:32.492 [Finalizer] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+13:48:32.493 [Finalizer] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+13:48:32.681 [Test worker] INFO  c.m.s.s.MarkLogicExceptionsTest - test setup complete.
+13:48:32.765 [Test worker] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+13:48:32.766 [Test worker] INFO  c.m.s.s.MarkLogicExceptionsTest - tearDown complete.
+13:48:32.991 [Test worker] INFO  c.m.s.s.MarkLogicExceptionsTest - test setup complete.
+13:48:33.015 [Test worker] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+13:48:33.016 [Test worker] INFO  c.m.s.s.MarkLogicExceptionsTest - tearDown complete.
+releasing test repos
+13:48:33.016 [Test worker] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+13:48:33.016 [Test worker] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+13:48:33.016 [Test worker] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+just waiting now before shutting down JVM
 </pre>
 </span>
 </div>
@@ -207,7 +297,7 @@
 <input id="line-wrapping-toggle" type="checkbox" autocomplete="off"/>
 </label>
 </div>Generated by 
-<a href="http://www.gradle.org">Gradle 2.3</a> at Apr 4, 2016 10:16:59 PM</p>
+<a href="http://www.gradle.org">Gradle 2.6</a> at Aug 31, 2016 1:50:10 PM</p>
 </div>
 </div>
 </body>

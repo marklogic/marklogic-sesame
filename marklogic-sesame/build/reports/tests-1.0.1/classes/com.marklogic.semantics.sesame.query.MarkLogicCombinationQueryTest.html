@@ -41,7 +41,7 @@
 </td>
 <td>
 <div class="infoBox" id="duration">
-<div class="counter">10.824s</div>
+<div class="counter">0.477s</div>
 <p>duration</p>
 </div>
 </td>
@@ -79,27 +79,27 @@
 </thead>
 <tr>
 <td class="success">testCombinationQuery</td>
-<td>2.259s</td>
+<td>0.135s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">testStringCombinationQuery</td>
-<td>2.205s</td>
+<td>0.090s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">testStringCombinationQueryUnsetSet</td>
-<td>2.141s</td>
+<td>0.081s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">testStringCombinationQueryWithDefaults</td>
-<td>2.142s</td>
+<td>0.085s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">testStructuredCombinedQuery</td>
-<td>2.077s</td>
+<td>0.086s</td>
 <td class="success">passed</td>
 </tr>
 </table>
@@ -107,36 +107,51 @@
 <div id="tab1" class="tab">
 <h2>Standard output</h2>
 <span class="code">
-<pre>22:15:56.001 [Test worker] INFO  c.m.s.s.q.MarkLogicCombinationQueryTest - test setup complete.
-22:15:56.001 [Test worker] INFO  c.m.c.i.DocumentManagerImpl - Writing content for /directory1/doc1.xml
-22:15:56.625 [Test worker] INFO  c.m.c.i.DocumentManagerImpl - Writing content for /directory2/doc2.xml
-22:15:57.715 [Test worker] INFO  c.m.s.s.q.MarkLogicCombinationQueryTest - tearDown complete.
-22:15:57.716 [Test worker] INFO  c.m.c.i.DocumentManagerImpl - Deleting /directory1/doc1.xml
-22:15:57.722 [Test worker] INFO  c.m.c.i.DocumentManagerImpl - Deleting /directory2/doc2.xml
-22:15:58.351 [Test worker] INFO  c.m.s.s.q.MarkLogicCombinationQueryTest - test setup complete.
-22:15:58.352 [Test worker] INFO  c.m.c.i.DocumentManagerImpl - Writing content for /directory1/doc1.xml
-22:15:58.954 [Test worker] INFO  c.m.c.i.DocumentManagerImpl - Writing content for /directory2/doc2.xml
-22:15:59.911 [Test worker] INFO  c.m.s.s.q.MarkLogicCombinationQueryTest - tearDown complete.
-22:15:59.912 [Test worker] INFO  c.m.c.i.DocumentManagerImpl - Deleting /directory1/doc1.xml
-22:15:59.918 [Test worker] INFO  c.m.c.i.DocumentManagerImpl - Deleting /directory2/doc2.xml
-22:16:00.586 [Test worker] INFO  c.m.s.s.q.MarkLogicCombinationQueryTest - test setup complete.
-22:16:00.586 [Test worker] INFO  c.m.c.i.DocumentManagerImpl - Writing content for /directory1/doc1.xml
-22:16:01.131 [Test worker] INFO  c.m.c.i.DocumentManagerImpl - Writing content for /directory2/doc2.xml
-22:16:02.079 [Test worker] INFO  c.m.s.s.q.MarkLogicCombinationQueryTest - tearDown complete.
-22:16:02.080 [Test worker] INFO  c.m.c.i.DocumentManagerImpl - Deleting /directory1/doc1.xml
-22:16:02.086 [Test worker] INFO  c.m.c.i.DocumentManagerImpl - Deleting /directory2/doc2.xml
-22:16:02.755 [Test worker] INFO  c.m.s.s.q.MarkLogicCombinationQueryTest - test setup complete.
-22:16:02.755 [Test worker] INFO  c.m.c.i.DocumentManagerImpl - Writing content for /directory1/doc1.xml
-22:16:03.318 [Test worker] INFO  c.m.c.i.DocumentManagerImpl - Writing content for /directory2/doc2.xml
-22:16:04.316 [Test worker] INFO  c.m.s.s.q.MarkLogicCombinationQueryTest - tearDown complete.
-22:16:04.316 [Test worker] INFO  c.m.c.i.DocumentManagerImpl - Deleting /directory1/doc1.xml
-22:16:04.323 [Test worker] INFO  c.m.c.i.DocumentManagerImpl - Deleting /directory2/doc2.xml
-22:16:05.054 [Test worker] INFO  c.m.s.s.q.MarkLogicCombinationQueryTest - test setup complete.
-22:16:05.055 [Test worker] INFO  c.m.c.i.DocumentManagerImpl - Writing content for /directory1/doc1.xml
-22:16:05.650 [Test worker] INFO  c.m.c.i.DocumentManagerImpl - Writing content for /directory2/doc2.xml
-22:16:06.578 [Test worker] INFO  c.m.s.s.q.MarkLogicCombinationQueryTest - tearDown complete.
-22:16:06.579 [Test worker] INFO  c.m.c.i.DocumentManagerImpl - Deleting /directory1/doc1.xml
-22:16:06.585 [Test worker] INFO  c.m.c.i.DocumentManagerImpl - Deleting /directory2/doc2.xml
+<pre>13:49:39.403 [Test worker] INFO  c.m.s.s.q.MarkLogicCombinationQueryTest - test setup complete.
+13:49:39.403 [Test worker] INFO  c.m.c.i.DocumentManagerImpl - Writing content for /directory1/doc1.xml
+13:49:39.415 [Test worker] INFO  c.m.c.i.DocumentManagerImpl - Writing content for /directory2/doc2.xml
+13:49:39.494 [Test worker] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+13:49:39.494 [Test worker] INFO  c.m.s.s.q.MarkLogicCombinationQueryTest - tearDown complete.
+13:49:39.494 [Test worker] INFO  c.m.c.i.DocumentManagerImpl - Deleting /directory1/doc1.xml
+13:49:39.502 [Test worker] INFO  c.m.c.i.DocumentManagerImpl - Deleting /directory2/doc2.xml
+13:49:39.638 [Test worker] INFO  c.m.s.s.q.MarkLogicCombinationQueryTest - test setup complete.
+13:49:39.639 [Test worker] INFO  c.m.c.i.DocumentManagerImpl - Writing content for /directory1/doc1.xml
+13:49:39.647 [Test worker] INFO  c.m.c.i.DocumentManagerImpl - Writing content for /directory2/doc2.xml
+13:49:39.680 [Test worker] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+13:49:39.680 [Test worker] INFO  c.m.s.s.q.MarkLogicCombinationQueryTest - tearDown complete.
+13:49:39.680 [Test worker] INFO  c.m.c.i.DocumentManagerImpl - Deleting /directory1/doc1.xml
+13:49:39.685 [Test worker] INFO  c.m.c.i.DocumentManagerImpl - Deleting /directory2/doc2.xml
+13:49:39.727 [Finalizer] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+13:49:39.727 [Finalizer] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+13:49:39.728 [Finalizer] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+13:49:39.819 [Test worker] INFO  c.m.s.s.q.MarkLogicCombinationQueryTest - test setup complete.
+13:49:39.819 [Test worker] INFO  c.m.c.i.DocumentManagerImpl - Writing content for /directory1/doc1.xml
+13:49:39.827 [Test worker] INFO  c.m.c.i.DocumentManagerImpl - Writing content for /directory2/doc2.xml
+13:49:39.864 [Test worker] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+13:49:39.864 [Test worker] INFO  c.m.s.s.q.MarkLogicCombinationQueryTest - tearDown complete.
+13:49:39.864 [Test worker] INFO  c.m.c.i.DocumentManagerImpl - Deleting /directory1/doc1.xml
+13:49:39.869 [Test worker] INFO  c.m.c.i.DocumentManagerImpl - Deleting /directory2/doc2.xml
+13:49:40.027 [Test worker] INFO  c.m.s.s.q.MarkLogicCombinationQueryTest - test setup complete.
+13:49:40.028 [Test worker] INFO  c.m.c.i.DocumentManagerImpl - Writing content for /directory1/doc1.xml
+13:49:40.038 [Test worker] INFO  c.m.c.i.DocumentManagerImpl - Writing content for /directory2/doc2.xml
+13:49:40.068 [Test worker] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+13:49:40.068 [Test worker] INFO  c.m.s.s.q.MarkLogicCombinationQueryTest - tearDown complete.
+13:49:40.068 [Test worker] INFO  c.m.c.i.DocumentManagerImpl - Deleting /directory1/doc1.xml
+13:49:40.074 [Test worker] INFO  c.m.c.i.DocumentManagerImpl - Deleting /directory2/doc2.xml
+13:49:40.182 [Finalizer] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+13:49:40.183 [Finalizer] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+13:49:40.211 [Test worker] INFO  c.m.s.s.q.MarkLogicCombinationQueryTest - test setup complete.
+13:49:40.211 [Test worker] INFO  c.m.c.i.DocumentManagerImpl - Writing content for /directory1/doc1.xml
+13:49:40.219 [Test worker] INFO  c.m.c.i.DocumentManagerImpl - Writing content for /directory2/doc2.xml
+13:49:40.243 [Test worker] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+13:49:40.244 [Test worker] INFO  c.m.s.s.q.MarkLogicCombinationQueryTest - tearDown complete.
+13:49:40.244 [Test worker] INFO  c.m.c.i.DocumentManagerImpl - Deleting /directory1/doc1.xml
+13:49:40.252 [Test worker] INFO  c.m.c.i.DocumentManagerImpl - Deleting /directory2/doc2.xml
+releasing test repos
+13:49:40.258 [Test worker] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+13:49:40.258 [Test worker] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+13:49:40.258 [Test worker] INFO  c.m.c.i.DatabaseClientImpl - Releasing connection
+just waiting now before shutting down JVM
 </pre>
 </span>
 </div>
@@ -148,7 +163,7 @@
 <input id="line-wrapping-toggle" type="checkbox" autocomplete="off"/>
 </label>
 </div>Generated by 
-<a href="http://www.gradle.org">Gradle 2.3</a> at Apr 4, 2016 10:16:59 PM</p>
+<a href="http://www.gradle.org">Gradle 2.6</a> at Aug 31, 2016 1:50:10 PM</p>
 </div>
 </div>
 </body>
