@@ -71,6 +71,7 @@ public class Example1_Simple {
         repo.initialize();
 
         // get repository connection
+        // note - It is best practice to open a single connection when accessing a single database
         MarkLogicRepositoryConnection conn = repo.getConnection();
 
         // return number of triples contained in repository
@@ -109,6 +110,9 @@ public class Example1_Simple {
             logger.info("predicate:{}", bindings.getValue("p"));
             logger.info("object:{}", bindings.getValue("o"));
         }
+
+        // must close TupleQueryResult
+        results.close()
 
         // clear all triples
         conn.clear();
