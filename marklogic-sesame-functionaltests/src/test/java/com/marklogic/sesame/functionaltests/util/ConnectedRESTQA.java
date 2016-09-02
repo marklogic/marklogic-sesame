@@ -30,12 +30,14 @@ import org.apache.http.NameValuePair;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
@@ -700,6 +702,34 @@ public abstract class ConnectedRESTQA {
 			System.out.println("Inside Deleting Rest server is throwing an error");
 			e.printStackTrace();
 		}
+	}
+	
+	public static String[] getHosts()	{
+		try{
+			DefaultHttpClient client = new DefaultHttpClient();
+			client.getCredentialsProvider().setCredentials(
+					new AuthScope("localhost", 8002),
+					new UsernamePasswordCredentials("admin", "admin"));
+			HttpGet get = new HttpGet("http://localhost:8002"+ "/manage/v2/hosts?format=json");
+			
+
+			HttpResponse response = client.execute(get);
+			ResponseHandler<String> handler = new BasicResponseHandler();
+			String body = handler.handleResponse(response);
+			JsonNode  actualObj = new ObjectMapper().readTree(body);
+			JsonNode nameNode = actualObj.path("host-default-list").path("list-items");
+			//.path("meta").path("list-items").path("list-item");
+			List<String> hosts = nameNode.findValuesAsText("nameref");
+			String[] s = new String[hosts.size()];
+			hosts.toArray(s);
+			return s;
+			
+			
+		}catch (Exception e) {
+			// writing error to Log
+			e.printStackTrace();
+		}
+		return null;
 	}
 	public static void detachForest(String dbName, String fName){
 		try{
