@@ -70,8 +70,9 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
 	private static final String TEST_DIR_PREFIX = "/testdata/";
 	private static String dbName = "MLSesame";
 	private static String [] fNames = {"MLSesame-1"};
-	private static String restServer = "REST-MLSesame-API-Server";
-	private static int restPort = 8023;
+	private static String restServer = "App-Services";
+	private static int restPort = 8000;
+	private static String[] hostNames ;
 		
 	protected static DatabaseClient databaseClient ;
 	protected static MarkLogicRepository testAdminRepository;
@@ -135,8 +136,17 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
 	
 	@BeforeClass
 	public static void initialSetup() throws Exception {
-		setupJavaRESTServer(dbName, fNames[0], restServer, restPort);
-		setupAppServicesConstraint(dbName);
+				
+		hostNames = getHosts();	    
+		createDB(dbName);
+		Thread.currentThread().sleep(500L);
+		int count = 1;
+		for ( String forestHost : hostNames ) {
+			createForestonHost(dbName+"-"+count,dbName,forestHost);
+		    count ++;
+			Thread.currentThread().sleep(500L);
+		}
+		associateRESTServerWithDB(restServer,dbName);
 		enableCollectionLexicon(dbName);
 		enableTripleIndex(dbName);
 		createRESTUser("reader", "reader", "rest-reader");
@@ -145,7 +155,15 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
 	
 	@AfterClass
 	public static void tearDownSetup() throws Exception  {
-		tearDownJavaRESTServer(dbName, fNames, restServer);
+		
+		associateRESTServerWithDB(restServer,"Documents");
+		for (int i =0 ; i < hostNames.length; i++){
+			System.out.println(dbName+"-"+(i+1));
+			detachForest(dbName, dbName+"-"+(i+1));
+			deleteForest(dbName+"-"+(i+1));
+		}
+		
+		deleteDB(dbName);
 		deleteUserRole("test-eval");
 		deleteRESTUser("reader");
 		deleteRESTUser("writer");
@@ -516,9 +534,9 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
        	t2 = new Thread(new MyRunnable());
        	t2.setName("T2");
     	t3 = new Thread(new MyRunnable());
-       	t3.setName("T2");
+       	t3.setName("T3");
     	t4 = new Thread(new MyRunnable());
-       	t4.setName("T2");
+       	t4.setName("T4");
       	
        	t1.start();
        	t2.start();
@@ -531,7 +549,7 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
        	t3.join();
        	t4.join();
        
-       	
+       	System.out.println("Number of triples: "+testAdminCon.size());
        	Assert.assertEquals(400, testAdminCon.size());
 	
 	}
@@ -2125,7 +2143,16 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
 		}
 		testAdminCon.remove(stmt, dirgraph);
 		testAdminCon.close();
-		Assert.assertFalse(testAdminCon.hasStatement(stmt, false, dirgraph));
+		
+		try{
+			testAdminCon.hasStatement(stmt, false, dirgraph);
+			fail("Should not be able to run statements on testAdminCon");
+		}
+		catch(Exception e){
+			Assert.assertTrue(e instanceof IllegalStateException);
+		}
+
+		
 		try{
 			testAdminCon.add(stmt);
 			fail("Adding triples after close should not be allowed");
@@ -2133,14 +2160,15 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
 		catch(Exception e){
 			Assert.assertTrue(e instanceof RepositoryException);
 		}
-		Assert.assertEquals("testAdminCon size should be zero",testAdminCon.size(),0);
-		assertThat("testAdminCon should not be open",testAdminCon.isOpen(), is(equalTo(false)));
-		assertThat("testWriterCon should be open",testWriterCon.isOpen(), is(equalTo(true)));
+
 		testAdminRepository.shutDown();
 		testAdminRepository = null;
 		testAdminCon = null;
 		setUp();
 		assertThat(testAdminCon.isOpen(), is(equalTo(true)));
+		Assert.assertEquals("testAdminCon size should be zero",testAdminCon.size(),0);
+		assertThat("testAdminCon should not be open",testAdminCon.isOpen(), is(equalTo(false)));
+		assertThat("testWriterCon should be open",testWriterCon.isOpen(), is(equalTo(true)));
 	}
 	
 
