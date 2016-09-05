@@ -257,7 +257,7 @@ public class MarkLogicTupleQueryTest extends SesameTestBase {
     public void testSPARQLQueryWithPagination()
             throws Exception {
         try{
-            for(int i=0; i<250; i++){
+            for(int i=0; i<101; i++){
                 String queryString = "select ?s ?p ?o { ?s ?p ?o } limit 100 ";
                 MarkLogicTupleQuery tupleQuery = conn.prepareTupleQuery(QueryLanguage.SPARQL, queryString);
                 TupleQueryResult results = tupleQuery.evaluate(3, 1);
@@ -298,7 +298,7 @@ public class MarkLogicTupleQueryTest extends SesameTestBase {
             String queryString = "select ?s ?p ?o { ?s ?p ?o } limit 100";
             MarkLogicTupleQuery tupleQuery = conn.prepareTupleQuery(QueryLanguage.SPARQL, queryString);
 
-            for(int i=0; i<200; i++){
+            for(int i=0; i<101; i++){
 
                 TupleQueryResult results = tupleQuery.evaluate(3,1);
                 // must close query result
