@@ -159,6 +159,8 @@ class MarkLogicClientImpl {
         if(notNull(graphPerms)){ qdef.setUpdatePermissions(graphPerms);}
         if(pageLength > 0){
             sparqlManager.setPageLength(pageLength);
+        }else{
+            sparqlManager.clearPageLength();
         }
         sparqlManager.executeSelect(qdef, handle, start, tx);
         return new BufferedInputStream(handle.get());
