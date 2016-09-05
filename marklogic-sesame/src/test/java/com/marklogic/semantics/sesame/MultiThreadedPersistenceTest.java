@@ -12,6 +12,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.After;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openrdf.model.Resource;
 import org.openrdf.model.Statement;
@@ -49,7 +50,9 @@ public class MultiThreadedPersistenceTest extends SesameTestBase {
     }
 
 
+    // ignore until we have new java api client
     @Test
+    @Ignore
     public void multiThreadedPersist() throws RepositoryException, InterruptedException {
         final PersistenceService persistenceService = new PersistenceService(SesameTestBase.host, SesameTestBase.port, SesameTestBase.adminUser, SesameTestBase.adminPassword, DatabaseClientFactory.Authentication.DIGEST.toString());
 
@@ -110,7 +113,9 @@ public class MultiThreadedPersistenceTest extends SesameTestBase {
 
     }
 
+    // ignore until we have new java api client
     @Test
+    @Ignore
     public void singleConnectionMultiThreadedPersist() throws RepositoryException, InterruptedException {
         final SingleConnectionPersistenceService persistenceService = new SingleConnectionPersistenceService(SesameTestBase.host, SesameTestBase.port, SesameTestBase.adminUser, SesameTestBase.adminPassword, DatabaseClientFactory.Authentication.DIGEST.toString());
 
