@@ -183,7 +183,7 @@ public class MarkLogicClient {
 	 * @throws UnauthorizedException
 	 * @throws QueryInterruptedException
 	 */
-	public TupleQueryResult sendTupleQuery(String queryString,SPARQLQueryBindingSet bindings, long start, long pageLength, boolean includeInferred, String baseURI) throws IOException, RepositoryException, MalformedQueryException, UnauthorizedException,
+	public TupleQueryResult sendTupleQuery(String queryString,SPARQLQueryBindingSet bindings, long start, long pageLength, boolean includeInferred, String baseURI) throws IOException, RepositoryException, MalformedQueryException,
 			QueryInterruptedException {
 		sync();
 		InputStream stream = getClient().performSPARQLQuery(queryString, bindings, start, pageLength, this.tx, includeInferred, baseURI);
@@ -239,7 +239,7 @@ public class MarkLogicClient {
 	 * @throws UnauthorizedException
 	 * @throws QueryInterruptedException
 	 */
-	public boolean sendBooleanQuery(String queryString, SPARQLQueryBindingSet bindings, boolean includeInferred, String baseURI) throws IOException, RepositoryException, MalformedQueryException, UnauthorizedException,
+	public boolean sendBooleanQuery(String queryString, SPARQLQueryBindingSet bindings, boolean includeInferred, String baseURI) throws IOException, RepositoryException, MalformedQueryException,
 			QueryInterruptedException {
 		sync();
 		return getClient().performBooleanQuery(queryString, bindings, this.tx, includeInferred, baseURI);

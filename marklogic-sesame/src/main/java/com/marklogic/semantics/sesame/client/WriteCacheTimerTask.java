@@ -134,8 +134,6 @@ public class WriteCacheTimerTask extends TimerTask {
                 log.warn("Exception thrown in other thread, when running writeCacheTimerTask.");
                 log.warn(e.toString(),e );
             }
-        } else {
-            return;
         }
     }
 

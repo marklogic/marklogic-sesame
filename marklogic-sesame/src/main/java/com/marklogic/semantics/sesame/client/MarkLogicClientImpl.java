@@ -152,7 +152,7 @@ class MarkLogicClientImpl {
      */
     public InputStream performSPARQLQuery(String queryString, SPARQLQueryBindingSet bindings, InputStreamHandle handle, long start, long pageLength, Transaction tx, boolean includeInferred, String baseURI) throws JsonProcessingException {
         SPARQLQueryDefinition qdef = sparqlManager.newQueryDefinition(queryString);
-        if(notNull(baseURI) && baseURI != ""){ qdef.setBaseUri(baseURI);}
+        if(notNull(baseURI) && !baseURI.isEmpty()){ qdef.setBaseUri(baseURI);}
         if (notNull(ruleset)){qdef.setRulesets(ruleset);}
         if (notNull(getConstrainingQueryDefinition())) {qdef.setConstrainingQueryDefinition(getConstrainingQueryDefinition());}
         qdef.setIncludeDefaultRulesets(includeInferred);
@@ -192,7 +192,7 @@ class MarkLogicClientImpl {
      */
     public InputStream performGraphQuery(String queryString, SPARQLQueryBindingSet bindings, InputStreamHandle handle, Transaction tx, boolean includeInferred, String baseURI) throws JsonProcessingException  {
         SPARQLQueryDefinition qdef = sparqlManager.newQueryDefinition(queryString);
-        if(notNull(baseURI) && baseURI != ""){ qdef.setBaseUri(baseURI);}
+        if(notNull(baseURI) && !baseURI.isEmpty()){ qdef.setBaseUri(baseURI);}
         if (notNull(ruleset)) {qdef.setRulesets(ruleset);}
         if (notNull(getConstrainingQueryDefinition())){qdef.setConstrainingQueryDefinition(getConstrainingQueryDefinition());}
         if(notNull(graphPerms)){ qdef.setUpdatePermissions(graphPerms);}
@@ -213,7 +213,7 @@ class MarkLogicClientImpl {
      */
     public boolean performBooleanQuery(String queryString, SPARQLQueryBindingSet bindings, Transaction tx, boolean includeInferred, String baseURI) {
         SPARQLQueryDefinition qdef = sparqlManager.newQueryDefinition(queryString);
-        if(notNull(baseURI) && baseURI != ""){ qdef.setBaseUri(baseURI);}
+        if(notNull(baseURI) && !baseURI.isEmpty()){ qdef.setBaseUri(baseURI);}
         qdef.setIncludeDefaultRulesets(includeInferred);
         if (notNull(ruleset)) {qdef.setRulesets(ruleset);}
         if (notNull(getConstrainingQueryDefinition())){qdef.setConstrainingQueryDefinition(getConstrainingQueryDefinition());}
@@ -232,7 +232,7 @@ class MarkLogicClientImpl {
      */
     public void performUpdateQuery(String queryString, SPARQLQueryBindingSet bindings, Transaction tx, boolean includeInferred, String baseURI) {
         SPARQLQueryDefinition qdef = sparqlManager.newQueryDefinition(queryString);
-        if(notNull(baseURI) && baseURI != ""){ qdef.setBaseUri(baseURI);}
+        if(notNull(baseURI) && !baseURI.isEmpty()){ qdef.setBaseUri(baseURI);}
         if (notNull(ruleset) ) {qdef.setRulesets(ruleset);}
         if(notNull(graphPerms)){ qdef.setUpdatePermissions(graphPerms);}
         qdef.setIncludeDefaultRulesets(includeInferred);
@@ -341,7 +341,7 @@ class MarkLogicClientImpl {
         SPARQLQueryDefinition qdef = sparqlManager.newQueryDefinition(sb.toString());
         if (notNull(ruleset) ) {qdef.setRulesets(ruleset);}
         if(notNull(graphPerms)){ qdef.setUpdatePermissions(graphPerms);}
-        if(notNull(baseURI) && baseURI != ""){ qdef.setBaseUri(baseURI);}
+        if(notNull(baseURI) && !baseURI.isEmpty()){ qdef.setBaseUri(baseURI);}
 
         if(notNull(subject)) qdef.withBinding("s", subject.stringValue());
         if(notNull(predicate)) qdef.withBinding("p", predicate.stringValue());
@@ -378,7 +378,7 @@ class MarkLogicClientImpl {
         }
 
         SPARQLQueryDefinition qdef = sparqlManager.newQueryDefinition(sb.toString());
-        if(notNull(baseURI) && baseURI != ""){ qdef.setBaseUri(baseURI);}
+        if(notNull(baseURI) && !baseURI.isEmpty()){ qdef.setBaseUri(baseURI);}
         if(notNull(subject)) qdef.withBinding("s", subject.stringValue());
         if(notNull(predicate)) qdef.withBinding("p", predicate.stringValue());
         if(notNull(object)) bindObject(qdef, "o", object);
