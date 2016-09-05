@@ -37,7 +37,7 @@ import java.net.URL;
  */
 public class MarkLogicRepositoryFactory implements RepositoryFactory {
 
-	protected final Logger logger = LoggerFactory.getLogger(MarkLogicRepositoryFactory.class);
+	private static final Logger logger = LoggerFactory.getLogger(MarkLogicRepositoryFactory.class);
 
 	public static final String REPOSITORY_TYPE = "marklogic:MarkLogicRepository";
 

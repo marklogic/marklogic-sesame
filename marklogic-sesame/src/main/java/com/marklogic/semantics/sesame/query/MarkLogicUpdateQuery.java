@@ -42,7 +42,7 @@ import java.io.IOException;
  */
 public class MarkLogicUpdateQuery extends MarkLogicQuery implements Update,MarkLogicQueryDependent {
 
-    protected final Logger logger = LoggerFactory.getLogger(MarkLogicUpdateQuery.class);
+    private static final Logger logger = LoggerFactory.getLogger(MarkLogicUpdateQuery.class);
 
     /**
      *  constructor

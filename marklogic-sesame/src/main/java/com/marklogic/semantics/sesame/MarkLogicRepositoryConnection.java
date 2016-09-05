@@ -62,7 +62,7 @@ import static org.openrdf.query.QueryLanguage.SPARQL;
  */
 public class MarkLogicRepositoryConnection extends RepositoryConnectionBase implements RepositoryConnection,MarkLogicRepositoryConnectionDependent {
 
-    protected final Logger logger = LoggerFactory.getLogger(MarkLogicRepositoryConnection.class);
+    private static final Logger logger = LoggerFactory.getLogger(MarkLogicRepositoryConnection.class);
 
     private static final String DEFAULT_GRAPH_URI = "http://marklogic.com/semantics#default-graph";
 
@@ -127,19 +127,15 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     public void close()
         throws RepositoryException
     {
-        try {
-            if(this.isOpen()){
-                sync();
-                if (this.isActive()) {
-                    logger.debug("rollback open transaction on closing connection.");
-                    client.rollbackTransaction();
-                }
-                client.stopTimer();
-                client.close();
-                super.close();
+        if(this.isOpen()){
+            sync();
+            if (this.isActive()) {
+                logger.debug("rollback open transaction on closing connection.");
+                client.rollbackTransaction();
             }
-        } catch (Exception e) {
-            throw new RepositoryException("Unable to close connection.");
+            client.stopTimer();
+            client.close();
+            super.close();
         }
     }
     
@@ -562,7 +558,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
         }
         try {
             if (isQuadMode()) {
-                StringBuffer sb = new StringBuffer();
+                StringBuilder sb = new StringBuilder();
                 sb.append("SELECT * WHERE { GRAPH ?ctx { ?s ?p ?o } filter (?ctx = (");
                 boolean first = true;
                 for (Resource context : contexts) {
@@ -817,7 +813,8 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
             contexts = new Resource[] { null };
         }
         try {
-            StringBuffer sb = new StringBuffer();
+            //StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
             sb.append("SELECT (count(?s) as ?ct) where { GRAPH ?g { ?s ?p ?o }");
             boolean first = true;
             // with no args, measure the whole triple store.

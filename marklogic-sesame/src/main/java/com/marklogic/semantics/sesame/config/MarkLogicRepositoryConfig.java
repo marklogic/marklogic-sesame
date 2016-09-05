@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
  */
 public class MarkLogicRepositoryConfig extends RepositoryImplConfigBase {
 
-	protected final Logger logger = LoggerFactory.getLogger(MarkLogicRepositoryConfig.class);
+	private static final Logger logger = LoggerFactory.getLogger(MarkLogicRepositoryConfig.class);
 
     public static ValueFactory vf= new ValueFactoryImpl();
 

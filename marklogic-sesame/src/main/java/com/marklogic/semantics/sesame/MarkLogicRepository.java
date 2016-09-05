@@ -47,7 +47,7 @@ import java.net.URL;
  */
 public class MarkLogicRepository extends RepositoryBase implements Repository,MarkLogicClientDependent {
 
-    protected final Logger logger = LoggerFactory.getLogger(MarkLogicRepository.class);
+    private static final Logger logger = LoggerFactory.getLogger(MarkLogicRepository.class);
 
     // MarkLogicClient vars
     private MarkLogicClient client;
@@ -138,22 +138,24 @@ public class MarkLogicRepository extends RepositoryBase implements Repository,Ma
     }
 
     /**
-     * @deprecated
+     * @Deprecated
      * implemented to honor Repository interface
      *
      * @throws RepositoryException
      */
     @Override
+    @Deprecated
     protected void initializeInternal() throws RepositoryException {
     }
 
     /**
-     * @deprecated
+     * @Deprecated
      * implemented to honor Repository interface
      *
      * @throws RepositoryException
      */
     @Override
+    @Deprecated
     protected void shutDownInternal() throws RepositoryException {
     }
 
