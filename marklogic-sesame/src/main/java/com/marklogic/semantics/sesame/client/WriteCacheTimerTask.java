@@ -124,7 +124,7 @@ public class WriteCacheTimerTask extends TimerTask {
      *
      */
     @Override
-    public void run(){
+    public synchronized void run(){
         Date now = new Date();
         if ( this.cache.size() > this.cacheSize - 1 || (this.cache.size() > 0 && now.getTime() - this.lastCacheAccess.getTime() > this.cacheMillis)) {
             try {
@@ -179,7 +179,7 @@ public class WriteCacheTimerTask extends TimerTask {
      * @param object
      * @param contexts
      */
-    public void add(Resource subject, URI predicate, Value object, Resource... contexts) throws MarkLogicSesameException {
+    public synchronized void add(Resource subject, URI predicate, Value object, Resource... contexts) throws MarkLogicSesameException {
         this.cache.add(subject,predicate,object,contexts);
         if(this.cache.size() > this.cacheSize){
             forceRun();
