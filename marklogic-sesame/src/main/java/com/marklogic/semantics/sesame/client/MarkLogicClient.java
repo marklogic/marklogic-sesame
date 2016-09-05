@@ -19,6 +19,7 @@
  */
 package com.marklogic.semantics.sesame.client;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.Transaction;
 import com.marklogic.client.query.QueryDefinition;
@@ -59,7 +60,7 @@ import java.util.concurrent.Executors;
  */
 public class MarkLogicClient {
 
-	protected final Logger logger = LoggerFactory.getLogger(MarkLogicClient.class);
+	private static final Logger logger = LoggerFactory.getLogger(MarkLogicClient.class);
 
 	protected static final Charset UTF8 = Charset.forName("UTF-8");
 	protected static final Charset charset = UTF8;
@@ -146,7 +147,8 @@ public class MarkLogicClient {
 	 * @throws MarkLogicSesameException
 	 */
 	public void sync() throws MarkLogicSesameException {
-		if(WRITE_CACHE_ENABLED && timerCache != null) timerCache.forceRun();
+		if(WRITE_CACHE_ENABLED && timerCache != null)
+			timerCache.forceRun();
 	}
 
 	/**
@@ -183,10 +185,16 @@ public class MarkLogicClient {
 	 * @throws UnauthorizedException
 	 * @throws QueryInterruptedException
 	 */
-	public TupleQueryResult sendTupleQuery(String queryString,SPARQLQueryBindingSet bindings, long start, long pageLength, boolean includeInferred, String baseURI) throws IOException, RepositoryException, MalformedQueryException,
+	public TupleQueryResult sendTupleQuery(String queryString,SPARQLQueryBindingSet bindings, long start, long pageLength, boolean includeInferred, String baseURI) throws RepositoryException, MalformedQueryException,
 			QueryInterruptedException {
 		sync();
-		InputStream stream = getClient().performSPARQLQuery(queryString, bindings, start, pageLength, this.tx, includeInferred, baseURI);
+		InputStream stream = null;
+		try {
+			stream = getClient().performSPARQLQuery(queryString, bindings, start, pageLength, this.tx, includeInferred, baseURI);
+		} catch (JsonProcessingException e) {
+			logger.error(e.getLocalizedMessage());
+			throw new MarkLogicSesameException("Issue processing json.");
+		}
 		TupleQueryResultParser parser = QueryResultIO.createParser(format, getValueFactory());
 		MarkLogicBackgroundTupleResult tRes = new MarkLogicBackgroundTupleResult(parser,stream);
 		execute(tRes);
@@ -284,7 +292,7 @@ public class MarkLogicClient {
 	 * @param dataFormat
 	 * @param contexts
 	 */
-	public void sendAdd(InputStream in, String baseURI, RDFFormat dataFormat, Resource... contexts) throws RDFParseException{
+	public void sendAdd(InputStream in, String baseURI, RDFFormat dataFormat, Resource... contexts) throws RDFParseException, MarkLogicSesameException {
 		getClient().performAdd(in, baseURI, dataFormat, this.tx, contexts);
 	}
 
@@ -296,7 +304,7 @@ public class MarkLogicClient {
 	 * @param dataFormat
 	 * @param contexts
 	 */
-	public void sendAdd(Reader in, String baseURI, RDFFormat dataFormat, Resource... contexts) throws RDFParseException{
+	public void sendAdd(Reader in, String baseURI, RDFFormat dataFormat, Resource... contexts) throws RDFParseException, MarkLogicSesameException {
 		//TBD- must deal with char encoding
 		getClient().performAdd(new ReaderInputStream(in), baseURI, dataFormat, this.tx, contexts);
 	}
