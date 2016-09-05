@@ -64,7 +64,7 @@ import com.marklogic.semantics.sesame.MarkLogicSesameException;
  */
 class MarkLogicClientImpl {
 
-    protected final Logger logger = LoggerFactory.getLogger(MarkLogicClientImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(MarkLogicClientImpl.class);
 
     private static final String DEFAULT_GRAPH_URI = "http://marklogic.com/semantics#default-graph";
 
@@ -287,7 +287,7 @@ class MarkLogicClientImpl {
      * @param contexts
      * @throws RDFParseException
      */
-    public void performAdd(InputStream in, String baseURI, RDFFormat dataFormat, Transaction tx, Resource... contexts) throws RDFParseException {
+    public void performAdd(InputStream in, String baseURI, RDFFormat dataFormat, Transaction tx, Resource... contexts) throws RDFParseException, MarkLogicSesameException {
         try {
             graphManager.setDefaultMimetype(dataFormat.getDefaultMIMEType());
             if (dataFormat.equals(RDFFormat.NQUADS) || dataFormat.equals(RDFFormat.TRIG)) {
@@ -309,7 +309,8 @@ class MarkLogicClientImpl {
         } catch (FailedRequestException e) {
             throw new RDFParseException("Request to MarkLogic server failed, check input is valid.");
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error(e.getLocalizedMessage());
+            throw new MarkLogicSesameException("IO error");
         }
     }
 

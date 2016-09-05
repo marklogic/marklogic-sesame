@@ -45,15 +45,15 @@ import java.util.TimerTask;
  */
 public class WriteCacheTimerTask extends TimerTask {
 
-    private static Logger log = LoggerFactory.getLogger(WriteCacheTimerTask.class);
+    private static final Logger log = LoggerFactory.getLogger(WriteCacheTimerTask.class);
 
     private Model cache;
     private MarkLogicClient client;
 
-    public static long DEFAULT_CACHE_SIZE = 500;
+    public static final long DEFAULT_CACHE_SIZE = 500;
 
-    public static long DEFAULT_CACHE_MILLIS = 500;
-    public static long DEFAULT_INITIAL_DELAY = 10;
+    public static final long DEFAULT_CACHE_MILLIS = 500;
+    public static final long DEFAULT_INITIAL_DELAY = 10;
 
     private RDFFormat format = RDFFormat.NQUADS;
 
