@@ -66,6 +66,7 @@ public class MarkLogicUpdateQueryTest extends SesameTestBase {
     public void tearDown()
             throws Exception {
         logger.debug("tearing down...");
+        conn.clear();
         conn.close();
         conn = null;
         rep.shutDown();
@@ -139,11 +140,11 @@ public class MarkLogicUpdateQueryTest extends SesameTestBase {
         conn.add(st);
         conn.begin();
         String defGraphQuery =  "DELETE DATA {GRAPH <" + context5.stringValue()+ "> { <" + alice.stringValue() + "> <" + name.stringValue() + "> \"" + alicesName.stringValue() + "\"^^<http://www.w3.org/2001/XMLSchema#string>} }";
-        Update updateQuery = conn.prepareUpdate(QueryLanguage.SPARQL, defGraphQuery);
-        updateQuery.execute();
+        conn.prepareUpdate(QueryLanguage.SPARQL, defGraphQuery).execute();
         Assert.assertTrue(conn.isEmpty());
         conn.add(st);
         conn.commit();
         Assert.assertFalse(conn.isEmpty());
+        conn.remove(st);
     }
 }
