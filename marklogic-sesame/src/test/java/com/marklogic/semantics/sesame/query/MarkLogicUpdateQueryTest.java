@@ -24,7 +24,8 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.openrdf.model.ValueFactory;
+import org.openrdf.OpenRDFException;
+import org.openrdf.model.*;
 import org.openrdf.query.BooleanQuery;
 import org.openrdf.query.QueryLanguage;
 import org.openrdf.query.Update;
@@ -119,5 +120,30 @@ public class MarkLogicUpdateQueryTest extends SesameTestBase {
         String defGraphQuery = "INSERT DATA GRAPH <http://marklogic.com/test/g27> { <http://marklogic.com/test> <pp1> <oo1> } }";
         Update updateQuery = conn.prepareUpdate(QueryLanguage.SPARQL, defGraphQuery);
         updateQuery.execute();
+    }
+
+
+    // duplicated functional test
+    @Test
+    public void testAddDeleteAdd()
+            throws OpenRDFException
+    {
+        Resource context5 = conn.getValueFactory().createURI("http://marklogic.com/test/context5");
+        ValueFactory f= conn.getValueFactory();
+        URI alice = f.createURI("http://example.org/people/alice");
+        URI name = f.createURI("http://example.org/ontology/name");
+        Literal alicesName = f.createLiteral("Alice");
+
+        Statement st = f.createStatement(alice, name, alicesName, context5);
+
+        conn.add(st);
+        conn.begin();
+        String defGraphQuery =  "DELETE DATA {GRAPH <" + context5.stringValue()+ "> { <" + alice.stringValue() + "> <" + name.stringValue() + "> \"" + alicesName.stringValue() + "\"^^<http://www.w3.org/2001/XMLSchema#string>} }";
+        Update updateQuery = conn.prepareUpdate(QueryLanguage.SPARQL, defGraphQuery);
+        updateQuery.execute();
+        Assert.assertTrue(conn.isEmpty());
+        conn.add(st);
+        conn.commit();
+        Assert.assertFalse(conn.isEmpty());
     }
 }
