@@ -86,7 +86,7 @@ class MarkLogicBackgroundGraphResult extends BackgroundGraphResult
         try {
             super.handleClose();
         }catch(Exception e){
-            logger.warn("handleClose() stream closed exception",e);
+            logger.warn("MarkLogicBackgroundGraphResult handleClose() stream closed exception",e);
         }
     }
 
