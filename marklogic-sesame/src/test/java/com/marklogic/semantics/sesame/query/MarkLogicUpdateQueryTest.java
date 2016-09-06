@@ -66,7 +66,6 @@ public class MarkLogicUpdateQueryTest extends SesameTestBase {
     public void tearDown()
             throws Exception {
         logger.debug("tearing down...");
-        conn.clear();
         conn.close();
         conn = null;
         rep.shutDown();
