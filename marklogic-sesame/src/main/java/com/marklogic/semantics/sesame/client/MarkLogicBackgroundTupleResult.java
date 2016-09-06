@@ -80,7 +80,7 @@ class MarkLogicBackgroundTupleResult extends BackgroundTupleResult {
         try {
             super.handleClose();
         }catch(Exception e){
-            logger.warn("handleClose() stream closed exception",e);
+            logger.warn("MarkLogicBackgroundTupleResult handleClose() stream closed exception",e);
         }
     }
 }
