@@ -381,11 +381,12 @@ public class MarkLogicClient {
 		if (isActiveTransaction()) {
 			try {
 				sync();
+				this.tx.commit();
+				this.tx=null;
 			} catch (MarkLogicSesameException e) {
+				logger.warn(e.getLocalizedMessage());
 				throw new MarkLogicTransactionException(e);
 			}
-			this.tx.commit();
-			this.tx=null;
 		}else{
 			throw new MarkLogicTransactionException("No active transaction to commit.");
 		}
