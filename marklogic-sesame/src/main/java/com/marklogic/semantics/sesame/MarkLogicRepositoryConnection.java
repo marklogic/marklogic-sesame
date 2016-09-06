@@ -654,7 +654,6 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
             queryString = SOMETHING;
         }
         else {
-            
             StringBuilder sb= new StringBuilder();
             sb.append("ASK { GRAPH ?ctx { ?s ?p ?o } filter (?ctx = (");
                 boolean first = true;
@@ -813,7 +812,6 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
             contexts = new Resource[] { null };
         }
         try {
-            //StringBuffer sb = new StringBuffer();
             StringBuilder sb = new StringBuilder();
             sb.append("SELECT (count(?s) as ?ct) where { GRAPH ?g { ?s ?p ?o }");
             boolean first = true;
