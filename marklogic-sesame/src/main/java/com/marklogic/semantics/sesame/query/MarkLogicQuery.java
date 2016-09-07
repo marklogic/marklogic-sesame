@@ -41,7 +41,7 @@ import org.slf4j.LoggerFactory;
  */
 public class MarkLogicQuery extends AbstractQuery implements Query,MarkLogicClientDependent,MarkLogicQueryDependent {
 
-    protected final Logger logger = LoggerFactory.getLogger(MarkLogicQuery.class);
+    private static final Logger logger = LoggerFactory.getLogger(MarkLogicQuery.class);
 
     private MarkLogicClient client;
 

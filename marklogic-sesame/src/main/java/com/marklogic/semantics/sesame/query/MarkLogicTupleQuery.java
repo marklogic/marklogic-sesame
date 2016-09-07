@@ -39,7 +39,7 @@ import java.io.IOException;
  */
 public class MarkLogicTupleQuery extends MarkLogicQuery implements TupleQuery,MarkLogicQueryDependent {
 
-    protected final Logger logger = LoggerFactory.getLogger(MarkLogicTupleQuery.class);
+    private static final Logger logger = LoggerFactory.getLogger(MarkLogicTupleQuery.class);
 
     protected final long start = 1;
     protected final long pageLength=-1; // this value is a flag to not set setPageLength()
@@ -83,8 +83,6 @@ public class MarkLogicTupleQuery extends MarkLogicQuery implements TupleQuery,Ma
             throw new QueryEvaluationException(e.getMessage(), e);
         }catch (MalformedQueryException e) {
             throw new QueryEvaluationException(e.getMessage(), e);
-        }catch (IOException e) {
-            throw new QueryEvaluationException(e.getMessage(), e);
         }catch(FailedRequestException e){
             throw new QueryEvaluationException(e.getMessage(), e);
         }
@@ -103,6 +101,7 @@ public class MarkLogicTupleQuery extends MarkLogicQuery implements TupleQuery,Ma
         if(queryResult.hasNext()) {
             QueryResults.report(queryResult, resultHandler);
         }
+        queryResult.close();
     }
 
     /**
@@ -117,5 +116,6 @@ public class MarkLogicTupleQuery extends MarkLogicQuery implements TupleQuery,Ma
         if(queryResult.hasNext()){
             QueryResults.report(queryResult, resultHandler);
         }
+        queryResult.close();
     }
 }

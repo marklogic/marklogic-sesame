@@ -17,6 +17,9 @@ package com.marklogic.semantics.sesame;
 
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
+import com.marklogic.client.io.StringHandle;
+import org.junit.After;
+import org.junit.AfterClass;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -48,9 +51,9 @@ public class SesameTestBase {
     public MarkLogicRepository writerRep;
     public MarkLogicRepository readerRep;
 
-    public DatabaseClient readerClient;
-    public DatabaseClient writerClient;
-    public DatabaseClient adminClient;
+    public static DatabaseClient readerClient;
+    public static DatabaseClient writerClient;
+    public static DatabaseClient adminClient;
 
     protected static final String TESTFILE_OWL = "src/test/resources/testdata/test-small.owl";
 
@@ -86,6 +89,20 @@ public class SesameTestBase {
         rep = new MarkLogicRepository(adminClient);
         writerRep = new MarkLogicRepository(writerClient);
         readerRep = new MarkLogicRepository(readerClient);
+    }
+
+    @AfterClass
+    public static void afterClass() {
+        System.out.println("releasing test repos");
+        readerClient.release();
+        writerClient.release();
+        adminClient.release();
+        System.out.println("just waiting now before shutting down JVM");
+        try {
+            Thread.sleep(10);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }
 

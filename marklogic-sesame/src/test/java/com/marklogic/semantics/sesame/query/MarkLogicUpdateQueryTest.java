@@ -24,7 +24,8 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.openrdf.model.ValueFactory;
+import org.openrdf.OpenRDFException;
+import org.openrdf.model.*;
 import org.openrdf.query.BooleanQuery;
 import org.openrdf.query.QueryLanguage;
 import org.openrdf.query.Update;
@@ -120,4 +121,5 @@ public class MarkLogicUpdateQueryTest extends SesameTestBase {
         Update updateQuery = conn.prepareUpdate(QueryLanguage.SPARQL, defGraphQuery);
         updateQuery.execute();
     }
+
 }

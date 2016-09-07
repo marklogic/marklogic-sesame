@@ -89,8 +89,8 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
         //conn.clear();
         if(conn.isOpen()){conn.clear();}
         conn.close();
-        conn = null;
         rep.shutDown();
+        conn=null;
         rep = null;
         logger.info("tearDown complete.");
     }
@@ -1248,5 +1248,29 @@ conn.sync();
 
         conn.commit();
 
+    }
+    
+    // duplicated functional test
+    @Test
+    public void testAddDeleteAdd()
+            throws OpenRDFException
+    {
+        Resource context5 = conn.getValueFactory().createURI("http://marklogic.com/test/context5");
+        ValueFactory f= conn.getValueFactory();
+        URI alice = f.createURI("http://example.org/people/alice");
+        URI name = f.createURI("http://example.org/ontology/name");
+        Literal alicesName = f.createLiteral("Alice");
+
+        Statement st = f.createStatement(alice, name, alicesName, context5);
+
+        conn.add(st);
+        conn.begin();
+        String defGraphQuery =  "DELETE DATA {GRAPH <" + context5.stringValue()+ "> { <" + alice.stringValue() + "> <" + name.stringValue() + "> \"" + alicesName.stringValue() + "\"^^<http://www.w3.org/2001/XMLSchema#string>} }";
+        conn.prepareUpdate(QueryLanguage.SPARQL, defGraphQuery).execute();
+        Assert.assertTrue(conn.isEmpty());
+        conn.add(st);
+        conn.commit();
+        Assert.assertFalse(conn.isEmpty());
+        conn.remove(st);
     }
 }

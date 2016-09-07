@@ -41,7 +41,7 @@ import java.io.IOException;
  */
 public class MarkLogicBooleanQuery extends MarkLogicQuery implements BooleanQuery,MarkLogicQueryDependent {
 
-    protected final Logger logger = LoggerFactory.getLogger(MarkLogicBooleanQuery.class);
+    private static final Logger logger = LoggerFactory.getLogger(MarkLogicBooleanQuery.class);
 
     /**
      * constructor
