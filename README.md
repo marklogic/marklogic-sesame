@@ -1,4 +1,4 @@
-# marklogic-sesame-repository v1.0.1
+# marklogic-sesame-repository v1.0.2
 
 ## Introduction
 
@@ -23,13 +23,13 @@ Ensure MarkLogic 8.0-5 or greater is installed and running. To use marklogic-ses
 
 ### Quick Start
 
-The MarkLogic Sesame API is available via [Maven Central](http://mvnrepository.com/artifact/com.marklogic/marklogic-sesame/1.0.1).
+The MarkLogic Sesame API is available via [Maven Central](http://mvnrepository.com/artifact/com.marklogic/marklogic-sesame/1.0.2).
 
 For gradle projects, include the following dependency in your `build.gradle`:
 
 ```
 dependencies {
-    compile group: 'com.marklogic', name: 'marklogic-sesame-repository', version: '1.0.1'
+    compile group: 'com.marklogic', name: 'marklogic-sesame-repository', version: '1.0.2'
 }
 ```
 
@@ -39,7 +39,7 @@ For maven projects, include in your pom.xml:
 <dependency>
     <groupId>com.marklogic</groupId>
     <artifactId>marklogic-sesame-repository</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
 </dependency>
 ```
 
@@ -49,7 +49,7 @@ This section describes how to build and test MarkLogic Sesame API from _develop_
 
 #### Setup MarkLogic Java API Client (optional)
 
-marklogic-sesame-repository depends on [MarkLogic Java API Client v3.0-4](http://mvnrepository.com/artifact/com.marklogic/java-client-api/3.0.4) and should pull down this version from maven central.
+marklogic-sesame-repository depends on [MarkLogic Java API Client v3.0.6](http://mvnrepository.com/artifact/com.marklogic/java-client-api/3.0.6) and should pull down this version from maven central.
 
 To optionally build marklogic-sesame-repository with _develop_ branch version of MarkLogic Java API Client:
 
@@ -99,7 +99,7 @@ optionally you can build the jar without running tests.
 gradle build -x test
 ```
 
-and copy resultant build/lib/marklogic-sesame-1.0.1-SNAPSHOT.jar.
+and copy resultant build/lib/marklogic-sesame-1.0.2.jar.
 
 ### Examples
 
