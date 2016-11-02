@@ -179,7 +179,6 @@ public class MarkLogicClient {
 	 * @param includeInferred
 	 * @param baseURI
 	 * @return
-	 * @throws IOException
 	 * @throws RepositoryException
 	 * @throws MalformedQueryException
 	 * @throws UnauthorizedException
