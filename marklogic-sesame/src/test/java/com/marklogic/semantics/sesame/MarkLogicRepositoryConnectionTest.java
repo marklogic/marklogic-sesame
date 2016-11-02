@@ -1217,10 +1217,10 @@ conn.sync();
             throws OpenRDFException {
 
         MarkLogicRepositoryConfig config = new MarkLogicRepositoryConfig();
-        config.setHost("localhost");
-        config.setPort(8200);
-        config.setUser("admin");
-        config.setPassword("admin");
+        config.setHost(host);
+        config.setPort(port);
+        config.setUser(user);
+        config.setPassword(password);
         config.setAuth("DIGEST");
 
         MarkLogicRepositoryFactory FACTORY = new MarkLogicRepositoryFactory();

@@ -115,7 +115,6 @@ public class MultiThreadedPersistenceTest extends SesameTestBase {
 
     // ignore until we have new java api client
     @Test
-    @Ignore
     public void singleConnectionMultiThreadedPersist() throws RepositoryException, InterruptedException {
         final SingleConnectionPersistenceService persistenceService = new SingleConnectionPersistenceService(SesameTestBase.host, SesameTestBase.port, SesameTestBase.adminUser, SesameTestBase.adminPassword, DatabaseClientFactory.Authentication.DIGEST.toString());
 

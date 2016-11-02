@@ -48,7 +48,7 @@ public class SPARQLRepositoryTest extends SesameTestBase {
     public void setUp()
             throws Exception {
         logger.debug("setting up test");
-        SPARQLRepository sr = new SPARQLRepository("http://localhost:8200/v1/graphs/sparql");
+        SPARQLRepository sr = new SPARQLRepository("http://"+host+":"+port+"/v1/graphs/sparql");
         sr.setUsernameAndPassword("admin","admin");
         sr.initialize();
         f = sr.getValueFactory();
@@ -75,7 +75,7 @@ public class SPARQLRepositoryTest extends SesameTestBase {
     public void testSPARQLRepositoryWithMarkLogic()
             throws Exception
     {
-        SPARQLRepository sparqlRepo = new SPARQLRepository("http://localhost:8200/v1/graphs/sparql");
+        SPARQLRepository sparqlRepo = new SPARQLRepository("http://"+host+":"+port+"/v1/graphs/sparql");
         sparqlRepo.initialize();
         sparqlRepo.setUsernameAndPassword("s-rest-writer","x");
         RepositoryConnection sparqlConn = sparqlRepo.getConnection();
