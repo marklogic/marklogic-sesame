@@ -43,6 +43,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 
+import static com.marklogic.semantics.sesame.SesameTestBase.*;
+
 /**
  * test factory
  *
@@ -60,7 +62,7 @@ public class MarkLogicRepositoryManagerTest {
         RepositoryManager manager;
         manager = new LocalRepositoryManager(new File("/tmp/localmanager"));
         manager.initialize();
-        RepositoryConfig mlconf = new RepositoryConfig("jimtest1",new MarkLogicRepositoryConfig("localhost", 8200, "admin", "admin", "DIGEST"));
+        RepositoryConfig mlconf = new RepositoryConfig("jimtest1",new MarkLogicRepositoryConfig(host, port, user, password, "DIGEST"));
 
         manager.addRepositoryConfig(new RepositoryConfig("test", new SailRepositoryConfig(
                 new MemoryStoreConfig(true))));
