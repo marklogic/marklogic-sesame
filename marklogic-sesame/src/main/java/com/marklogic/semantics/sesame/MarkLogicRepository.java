@@ -138,7 +138,7 @@ public class MarkLogicRepository extends RepositoryBase implements Repository,Ma
     }
 
     /**
-     * @Deprecated
+     * @deprecated
      * implemented to honor Repository interface
      *
      * @throws RepositoryException
@@ -149,7 +149,7 @@ public class MarkLogicRepository extends RepositoryBase implements Repository,Ma
     }
 
     /**
-     * @Deprecated
+     * @deprecated
      * implemented to honor Repository interface
      *
      * @throws RepositoryException

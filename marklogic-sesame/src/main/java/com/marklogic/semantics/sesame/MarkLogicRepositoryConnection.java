@@ -453,7 +453,6 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     /**
      * returns list of graph names as Resource
      *
-     * @return RepositoryResult<Resource>
      * @throws RepositoryException
      */
     @Override
@@ -493,7 +492,6 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
      * @param pred
      * @param obj
      * @param includeInferred
-     * @return RepositoryResult<Statement>
      * @throws RepositoryException
      */
     public RepositoryResult<Statement> getStatements(Resource subj, URI pred, Value obj, boolean includeInferred) throws RepositoryException {
@@ -548,7 +546,6 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
      * @param obj
      * @param includeInferred
      * @param contexts
-     * @return RepositoryResult<Statement>
      * @throws RepositoryException
      */
     @Override
