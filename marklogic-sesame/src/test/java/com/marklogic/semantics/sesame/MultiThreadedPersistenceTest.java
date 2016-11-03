@@ -95,7 +95,7 @@ public class MultiThreadedPersistenceTest extends SesameTestBase {
             }
         }
 
-        public void persist(List<Entity> entities){
+        public void persist(List<Entity> entities) {
 
             MarkLogicRepositoryConnection connection = null;
             try {
@@ -107,6 +107,12 @@ public class MultiThreadedPersistenceTest extends SesameTestBase {
                 //print to sysout as thread exceptions are not propagated up to main thread
                 e.printStackTrace();
                 throw new RuntimeException(e);
+            }finally {
+                try {
+                    connection.close();
+                } catch (RepositoryException e) {
+                    e.printStackTrace();
+                }
             }
         }
 

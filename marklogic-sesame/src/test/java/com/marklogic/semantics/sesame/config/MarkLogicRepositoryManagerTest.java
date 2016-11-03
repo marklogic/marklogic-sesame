@@ -86,7 +86,7 @@ public class MarkLogicRepositoryManagerTest {
 
     @Ignore
     @Test
-    // will not work due to RemoteRepositoryManager usage of HTTPRepository
+    // requires a Sesame server to be running eg. RemoteRepositoryManager uses HTTPRepository
     public void testRemoteManager() throws Exception {
         RepositoryManager manager;
         manager = new RemoteRepositoryManager("http://localhost:8080/openrdf-sesame");

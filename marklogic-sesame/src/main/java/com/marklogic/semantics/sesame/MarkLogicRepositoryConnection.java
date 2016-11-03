@@ -672,7 +672,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
         }
         try {
             logger.debug(queryString);
-            BooleanQuery query = prepareBooleanQuery(queryString); // baseuri ?
+            MarkLogicBooleanQuery query = prepareBooleanQuery(queryString); // baseuri ?
 
             setBindings(query, subject, predicate, object, contexts);
             return query.evaluate();
@@ -779,7 +779,6 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
      */
     @Override
     public long size() throws RepositoryException{
-        sync();
         try {
             MarkLogicTupleQuery tupleQuery = prepareTupleQuery(COUNT_EVERYTHING);
             tupleQuery.setIncludeInferred(false);
@@ -804,7 +803,6 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
      */
     @Override
     public long size(Resource... contexts) throws RepositoryException {
-        sync();
         if (contexts == null) {
             contexts = new Resource[] { null };
         }
@@ -1130,7 +1128,6 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
      */
     @Override
     public void remove(Iterable<? extends Statement> statements) throws RepositoryException {
-        sync();
         Iterator <? extends Statement> iter = statements.iterator();
         while(iter.hasNext()){
             Statement st = iter.next();
@@ -1147,7 +1144,6 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
      */
     @Override
     public void remove(Iterable<? extends Statement> statements, Resource... contexts) throws RepositoryException {
-        sync();
         Iterator <? extends Statement> iter = statements.iterator();
         while(iter.hasNext()){
             Statement st = iter.next();
@@ -1165,7 +1161,6 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
      */
     @Override
     public <E extends Exception> void remove(Iteration<? extends Statement, E> statements) throws RepositoryException, E {
-        sync();
         while(statements.hasNext()){
             Statement st = statements.next();
             getClient().sendRemove(null, st.getSubject(), st.getPredicate(), st.getObject());
@@ -1183,7 +1178,6 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
      */
     @Override
     public <E extends Exception> void remove(Iteration<? extends Statement, E> statements, Resource... contexts) throws RepositoryException, E {
-        sync();
         while(statements.hasNext()){
             Statement st = statements.next();
             getClient().sendRemove(null, st.getSubject(), st.getPredicate(), st.getObject(), mergeResource(st.getContext(), contexts));

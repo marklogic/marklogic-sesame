@@ -1152,10 +1152,10 @@ conn.sync();
         conn.add(fei, lname, feilname);
         conn.add(fei, age, feiage);
         //conn.add(fei, age, invalidIntegerLiteral);
-
-        logger.info("lang:{}", conn.hasStatement(vf.createStatement(fei, lname, vf.createLiteral("Ling", "en")), false));
+        logger.info("lang:{}", conn.hasStatement(vf.createStatement(fei, lname, vf.createLiteral("Ling", "zh")), false));
+        logger.info("size:{}", conn.size());
         Assert.assertFalse("The lang tag of lname is not en", conn.hasStatement(vf.createStatement(fei, lname, vf.createLiteral("Ling", "en")), false));
-        Assert.assertTrue("The lang tag of lname is zh", conn.hasStatement(vf.createStatement(fei, lname, vf.createLiteral("Ling", "zh")), false));
+        Assert.assertTrue("The lang tag of lname is zh", conn.hasStatement(vf.createStatement(fei, lname, feilname), false));
         Assert.assertFalse(conn.isEmpty());
     }
 
