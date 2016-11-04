@@ -89,8 +89,8 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
         //conn.clear();
         if(conn.isOpen()){conn.clear();}
         conn.close();
-        conn = null;
         rep.shutDown();
+        conn=null;
         rep = null;
         logger.info("tearDown complete.");
     }
@@ -1152,10 +1152,10 @@ conn.sync();
         conn.add(fei, lname, feilname);
         conn.add(fei, age, feiage);
         //conn.add(fei, age, invalidIntegerLiteral);
-
-        logger.info("lang:{}", conn.hasStatement(vf.createStatement(fei, lname, vf.createLiteral("Ling", "en")), false));
+        logger.info("lang:{}", conn.hasStatement(vf.createStatement(fei, lname, vf.createLiteral("Ling", "zh")), false));
+        logger.info("size:{}", conn.size());
         Assert.assertFalse("The lang tag of lname is not en", conn.hasStatement(vf.createStatement(fei, lname, vf.createLiteral("Ling", "en")), false));
-        Assert.assertTrue("The lang tag of lname is zh", conn.hasStatement(vf.createStatement(fei, lname, vf.createLiteral("Ling", "zh")), false));
+        Assert.assertTrue("The lang tag of lname is zh", conn.hasStatement(vf.createStatement(fei, lname, feilname), false));
         Assert.assertFalse(conn.isEmpty());
     }
 
@@ -1217,10 +1217,10 @@ conn.sync();
             throws OpenRDFException {
 
         MarkLogicRepositoryConfig config = new MarkLogicRepositoryConfig();
-        config.setHost("localhost");
-        config.setPort(8200);
-        config.setUser("admin");
-        config.setPassword("admin");
+        config.setHost(host);
+        config.setPort(port);
+        config.setUser(user);
+        config.setPassword(password);
         config.setAuth("DIGEST");
 
         MarkLogicRepositoryFactory FACTORY = new MarkLogicRepositoryFactory();
@@ -1248,5 +1248,29 @@ conn.sync();
 
         conn.commit();
 
+    }
+    
+    // duplicated functional test
+    @Test
+    public void testAddDeleteAdd()
+            throws OpenRDFException
+    {
+        Resource context5 = conn.getValueFactory().createURI("http://marklogic.com/test/context5");
+        ValueFactory f= conn.getValueFactory();
+        URI alice = f.createURI("http://example.org/people/alice");
+        URI name = f.createURI("http://example.org/ontology/name");
+        Literal alicesName = f.createLiteral("Alice");
+
+        Statement st = f.createStatement(alice, name, alicesName, context5);
+
+        conn.add(st);
+        conn.begin();
+        String defGraphQuery =  "DELETE DATA {GRAPH <" + context5.stringValue()+ "> { <" + alice.stringValue() + "> <" + name.stringValue() + "> \"" + alicesName.stringValue() + "\"^^<http://www.w3.org/2001/XMLSchema#string>} }";
+        conn.prepareUpdate(QueryLanguage.SPARQL, defGraphQuery).execute();
+        Assert.assertTrue(conn.isEmpty());
+        conn.add(st);
+        conn.commit();
+        Assert.assertFalse(conn.isEmpty());
+        conn.remove(st);
     }
 }

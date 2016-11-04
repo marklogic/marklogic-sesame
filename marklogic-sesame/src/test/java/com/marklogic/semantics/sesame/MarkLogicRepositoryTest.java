@@ -62,7 +62,7 @@ public class MarkLogicRepositoryTest extends SesameTestBase {
     public void negativeTestRepo2()
             throws Exception {
 
-        Repository rep = new MarkLogicRepository("localhost", 8200, "admin", "admin", "DIGEST");
+        Repository rep = new MarkLogicRepository(host, port, user, password, "DIGEST");
         rep.initialize();
         rep.shutDown();
 
@@ -77,7 +77,7 @@ public class MarkLogicRepositoryTest extends SesameTestBase {
     public void testRepo()
             throws Exception {
 
-        Repository rep = new MarkLogicRepository("localhost", 8200, "admin", "admin", "DIGEST");
+        Repository rep = new MarkLogicRepository(host, port, user, password, "DIGEST");
         rep.initialize();
         rep.shutDown();
 
@@ -92,7 +92,7 @@ public class MarkLogicRepositoryTest extends SesameTestBase {
     public void testRepo2()
             throws Exception {
 
-        MarkLogicRepository rep = new MarkLogicRepository("localhost", 8200, "admin", "admin", "DIGEST");
+        MarkLogicRepository rep = new MarkLogicRepository(host, port, user, password, "DIGEST");
         rep.initialize();
         rep.shutDown();
 
@@ -106,7 +106,7 @@ public class MarkLogicRepositoryTest extends SesameTestBase {
     @Test
     public void TestRepoWithJavaAPIClientDatabaseClient()
             throws Exception {
-        DatabaseClient databaseClient = DatabaseClientFactory.newClient("localhost", 8200, "admin", "admin", DatabaseClientFactory.Authentication.valueOf("DIGEST"));
+        DatabaseClient databaseClient = DatabaseClientFactory.newClient(host, port, user, password, DatabaseClientFactory.Authentication.valueOf("DIGEST"));
         Repository rep = new MarkLogicRepository(databaseClient);
         rep.initialize();
         Assert.assertTrue(rep instanceof Repository);

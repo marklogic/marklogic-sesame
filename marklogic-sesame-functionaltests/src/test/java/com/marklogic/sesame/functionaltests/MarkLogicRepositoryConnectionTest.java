@@ -1,11 +1,85 @@
 package com.marklogic.sesame.functionaltests;
 
+import static org.hamcrest.core.AnyOf.anyOf;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsEqual.equalTo;
+import static org.hamcrest.core.IsNot.not;
+import static org.hamcrest.core.IsNull.notNullValue;
+import static org.hamcrest.core.IsNull.nullValue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.Set;
+
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.openrdf.IsolationLevels;
+import org.openrdf.OpenRDFException;
+import org.openrdf.model.Literal;
+import org.openrdf.model.Resource;
+import org.openrdf.model.Statement;
+import org.openrdf.model.URI;
+import org.openrdf.model.Value;
+import org.openrdf.model.ValueFactory;
+import org.openrdf.model.vocabulary.XMLSchema;
+import org.openrdf.query.BindingSet;
+import org.openrdf.query.BooleanQuery;
+import org.openrdf.query.GraphQuery;
+import org.openrdf.query.GraphQueryResult;
+import org.openrdf.query.Query;
+import org.openrdf.query.QueryLanguage;
+import org.openrdf.query.TupleQuery;
+import org.openrdf.query.TupleQueryResult;
+import org.openrdf.query.UnsupportedQueryLanguageException;
+import org.openrdf.query.UpdateExecutionException;
+import org.openrdf.repository.Repository;
+import org.openrdf.repository.RepositoryConnection;
+import org.openrdf.repository.RepositoryException;
+import org.openrdf.repository.RepositoryResult;
+import org.openrdf.repository.UnknownTransactionStateException;
+import org.openrdf.repository.config.RepositoryConfigException;
+import org.openrdf.repository.config.RepositoryFactory;
+import org.openrdf.rio.RDFFormat;
+import org.openrdf.rio.RDFHandlerException;
+import org.openrdf.rio.RDFParseException;
+import org.openrdf.rio.RioSetting;
+import org.openrdf.rio.helpers.BasicParserSettings;
+import org.openrdf.rio.helpers.RDFHandlerBase;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
 import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.io.Format;
 import com.marklogic.client.io.StringHandle;
-import com.marklogic.client.query.*;
+import com.marklogic.client.query.QueryDefinition;
+import com.marklogic.client.query.QueryManager;
+import com.marklogic.client.query.RawCombinedQueryDefinition;
+import com.marklogic.client.query.StringQueryDefinition;
+import com.marklogic.client.query.StructuredQueryBuilder;
 import com.marklogic.client.semantics.Capability;
 import com.marklogic.client.semantics.GraphManager;
 import com.marklogic.client.semantics.GraphPermissions;
@@ -29,49 +103,13 @@ import info.aduna.iteration.Iteration;
 import info.aduna.iteration.Iterations;
 import info.aduna.iteration.IteratorIteration;
 
-import org.junit.*;
-import org.openrdf.IsolationLevels;
-import org.openrdf.OpenRDFException;
-import org.openrdf.model.*;
-import org.openrdf.model.vocabulary.XMLSchema;
-import org.openrdf.query.*;
-import org.openrdf.repository.Repository;
-import org.openrdf.repository.RepositoryConnection;
-import org.openrdf.repository.RepositoryException;
-import org.openrdf.repository.RepositoryResult;
-import org.openrdf.repository.UnknownTransactionStateException;
-import org.openrdf.repository.config.RepositoryConfigException;
-import org.openrdf.repository.config.RepositoryFactory;
-import org.openrdf.repository.config.RepositoryImplConfig;
-import org.openrdf.rio.RDFFormat;
-import org.openrdf.rio.RDFHandlerException;
-import org.openrdf.rio.RDFParseException;
-import org.openrdf.rio.RioSetting;
-import org.openrdf.rio.helpers.BasicParserSettings;
-import org.openrdf.rio.helpers.RDFHandlerBase;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.*;
-import java.net.URL;
-import java.util.*;
-import java.util.Map.Entry;
-
-import static org.hamcrest.core.AnyOf.anyOf;
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsEqual.equalTo;
-import static org.hamcrest.core.IsNot.not;
-import static org.hamcrest.core.IsNull.notNullValue;
-import static org.hamcrest.core.IsNull.nullValue;
-import static org.junit.Assert.*;
-
 public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
 
 	private static final String TEST_DIR_PREFIX = "/testdata/";
 	private static String dbName = "MLSesame";
-	private static String [] fNames = {"MLSesame-1"};
-	private static String restServer = "REST-MLSesame-API-Server";
-	private static int restPort = 8023;
+	private static String restServer = "App-Services";
+	private static int restPort = 8000;
+	private static String[] hostNames ;
 		
 	protected static DatabaseClient databaseClient ;
 	protected static MarkLogicRepository testAdminRepository;
@@ -135,8 +173,17 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
 	
 	@BeforeClass
 	public static void initialSetup() throws Exception {
-		setupJavaRESTServer(dbName, fNames[0], restServer, restPort);
-		setupAppServicesConstraint(dbName);
+				
+		hostNames = getHosts();	    
+		createDB(dbName);
+		Thread.currentThread().sleep(500L);
+		int count = 1;
+		for ( String forestHost : hostNames ) {
+			createForestonHost(dbName+"-"+count,dbName,forestHost);
+		    count ++;
+			Thread.currentThread().sleep(500L);
+		}
+		associateRESTServerWithDB(restServer,dbName);
 		enableCollectionLexicon(dbName);
 		enableTripleIndex(dbName);
 		createRESTUser("reader", "reader", "rest-reader");
@@ -145,11 +192,17 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
 	
 	@AfterClass
 	public static void tearDownSetup() throws Exception  {
-		tearDownJavaRESTServer(dbName, fNames, restServer);
-		deleteUserRole("test-eval");
+		
+		associateRESTServerWithDB(restServer,"Documents");
+		for (int i =0 ; i < hostNames.length; i++){
+			detachForest(dbName, dbName+"-"+(i+1));
+			deleteForest(dbName+"-"+(i+1));
+		}
+		
+		deleteDB(dbName);
 		deleteRESTUser("reader");
 		deleteRESTUser("writer");
-	
+		 
 	}
 	
 	@Before
@@ -216,7 +269,7 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
 		testAdminRepository.shutDown();
 		testAdminRepository = null;
 		testAdminCon = null;
-
+		
 		testReaderRepository.shutDown();
 		testReaderRepository = null;
 		testReaderCon = null;
@@ -225,10 +278,9 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
 		testWriterRepository.shutDown();
 		testWriterCon = null; 
 		testWriterRepository = null;
+		
         logger.info("tearDown complete.");
-        
-        
-	}
+   	}
 
 	/**
 	 * Gets an (uninitialized) instance of the repository that should be tested.
@@ -252,14 +304,12 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
         try {
 			testAdminRepository = (MarkLogicRepository) factory.getRepository(adminconfig);
 		} catch (RepositoryConfigException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
         try {
 			testAdminRepository.initialize();
 			testAdminCon = (MarkLogicRepositoryConnection) testAdminRepository.getConnection();
 		} catch (RepositoryException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
         
@@ -278,13 +328,15 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
         Assert.assertTrue(testAdminCon instanceof MarkLogicRepositoryConnection);
         
         Repository otherrepo =  factory.getRepository(adminconfig);
+        RepositoryConnection conn = null;
         try{
         	 //try to get connection without initializing repo, will throw error
-            RepositoryConnection conn = otherrepo.getConnection();
+            conn = otherrepo.getConnection();
             Assert.assertTrue(false);
        }
         catch(Exception e){
         	Assert.assertTrue(e instanceof RepositoryException);
+        	Assert.assertTrue(conn == null);
         	otherrepo.shutDown();
         }
         
@@ -297,22 +349,24 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
         
        //Creating MLSesame Connection object Using MarkLogicRepository overloaded constructor
         if(testReaderCon == null || testReaderRepository ==null){
-	        testReaderRepository = new MarkLogicRepository("localhost", restPort, "reader", "reader", "DIGEST");
+        	testReaderRepository = new MarkLogicRepository("localhost", restPort, "reader", "reader", "DIGEST");
 	        try {
 				testReaderRepository.initialize();
 				Assert.assertNotNull(testReaderRepository);
 				testReaderCon = (MarkLogicRepositoryConnection) testReaderRepository.getConnection();
 			} catch (RepositoryException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 	        Assert.assertTrue(testReaderCon instanceof MarkLogicRepositoryConnection);
-        }
+	      
+	   }
+        
        
         //Creating MLSesame Connection object Using MarkLogicRepository(databaseclient)  constructor
-        if (databaseClient == null)
+        if (databaseClient == null){
         	databaseClient = DatabaseClientFactory.newClient("localhost", restPort, "writer", "writer", DatabaseClientFactory.Authentication.valueOf("DIGEST"));
-		
+        }
+       		
 		if(testWriterCon == null || testWriterRepository ==null){
 			testWriterRepository = new MarkLogicRepository(databaseClient);
 			qmgr = databaseClient.newQueryManager();
@@ -322,7 +376,6 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
 				Assert.assertNotNull(testWriterRepository);
 				testWriterCon = (MarkLogicRepositoryConnection) testWriterRepository.getConnection();
 			} catch (RepositoryException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -347,7 +400,6 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
 					testAdminCon.commit();
 					
 				} catch (RepositoryException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
        		  	finally{
@@ -355,10 +407,8 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
 						if(testAdminCon.isActive())
 							testAdminCon.rollback();
 					} catch (UnknownTransactionStateException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					} catch (RepositoryException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
        		  	}
@@ -402,54 +452,46 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
        	t1.setName("T1");
        	t2 = new Thread(new MyRunnable1());
        	t2.setName("T2");
-       	
-      	
+       	      	
        	t1.start();
        	t2.start();
-      
-       	
+             	
        	t1.join();
        	t2.join();
-       
-       	
+             	
        	Assert.assertEquals(200, testAdminCon.size());
-	
 	}
 	
-	@Ignore
+	@Test
 	public void testMultiThreadedAdd1() throws Exception{
 		
 		class MyRunnable implements Runnable {
-       	  private final Object lock = new Object();
-       	  @Override
+		  @Override
        	  public void run(){
+       		MarkLogicRepositoryConnection tempConn = null;
        		  	try {
-       		  		synchronized (lock){
-       		  		if(! testAdminCon.isActive())
-       		  			testAdminCon.begin();
-       		  		}
-       		  		
-					for (int j =0 ;j < 100; j++){
+       		  		if(! testAdminRepository.isInitialized())
+       		  			testAdminRepository.initialize();
+       		  		tempConn= testAdminRepository.getConnection();
+       		  		tempConn.begin();
+       		  		for (int j =0 ;j < 100; j++){
 	           			URI subject = vf.createURI(NS+ID+"/"+Thread.currentThread().getId()+"/"+j+"#1111");
 	           			URI predicate = 	fname = vf.createURI(NS+ADDRESS+"/"+Thread.currentThread().getId()+"/"+"#firstName");
 	           			Literal object = vf.createLiteral(Thread.currentThread().getId()+ "-" + j +"-" +"John");
-	           			testAdminCon.add(subject, predicate,object, dirgraph);
-					}
-					testAdminCon.commit();
+	           			tempConn.add(subject, predicate,object, dirgraph);
+	           		  	}
+       		  	tempConn.commit();
 					
 				} catch (RepositoryException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
        		  	finally{
 	       		  	try {
-						if(testAdminCon.isActive())
-							testAdminCon.rollback();
+						if(tempConn.isActive())
+							tempConn.rollback();
 					} catch (UnknownTransactionStateException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					} catch (RepositoryException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
        		  	}
@@ -464,16 +506,15 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
        	t2 = new Thread(new MyRunnable());
        	t2.setName("T2");
     	t3 = new Thread(new MyRunnable());
-       	t3.setName("T2");
+       	t3.setName("T3");
     	t4 = new Thread(new MyRunnable());
-       	t4.setName("T2");
+       	t4.setName("T4");
       	
        	t1.start();
        	t2.start();
        	t3.start();
        	t4.start();
-      
-       	
+             	
        	t1.join();
        	t2.join();
        	t3.join();
@@ -483,44 +524,38 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
        	Assert.assertEquals(400, testAdminCon.size());
 	
 	}
-	
-	
+		
 	@Test
 	public void testMultiThreadedAdd2() throws Exception{
 		
+		Assert.assertEquals(0, testAdminCon.size());
 		class MyRunnable implements Runnable {
-       	  private final Object lock = new Object();
        	  @Override
        	  public void run(){
        		  	try {
-       		   		  		
-					for (int j =0 ;j < 100; j++){
+       		   		 for (int j =0 ;j < 100; j++){
 	           			URI subject = vf.createURI(NS+ID+"/"+Thread.currentThread().getId()+"/"+j+"#1111");
-	           			URI predicate = 	fname = vf.createURI(NS+ADDRESS+"/"+Thread.currentThread().getId()+"/"+"#firstName");
+	           			URI predicate = vf.createURI(NS+ADDRESS+"/"+Thread.currentThread().getId()+"/"+"#firstName");
 	           			Literal object = vf.createLiteral(Thread.currentThread().getId()+ "-" + j +"-" +"John");
 	           			testAdminCon.add(subject, predicate,object, dirgraph);
-					}
-					
-					
-				} catch (RepositoryException e1) {
-					// TODO Auto-generated catch block
+	           			
+	           		}
+       		  	} catch (RepositoryException e1) {
 					e1.printStackTrace();
 				}
        		  	
-       	  	}
+       	  }
+      	}  
            		
-       	  }  
-           		
-		
        	Thread t1,t2,t3,t4;
        	t1 = new Thread(new MyRunnable());
        	t1.setName("T1");
        	t2 = new Thread(new MyRunnable());
        	t2.setName("T2");
     	t3 = new Thread(new MyRunnable());
-       	t3.setName("T2");
+       	t3.setName("T3");
     	t4 = new Thread(new MyRunnable());
-       	t4.setName("T2");
+       	t4.setName("T4");
       	
        	t1.start();
        	t2.start();
@@ -533,9 +568,7 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
        	t3.join();
        	t4.join();
        
-       	
        	Assert.assertEquals(400, testAdminCon.size());
-	
 	}
 	
 	@Test
@@ -554,7 +587,6 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
            			try {
 						testAdminCon.add(subject, predicate,object, dirgraph);
 					} catch (RepositoryException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
     				
@@ -1247,7 +1279,7 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
 		
 		
 		StatementIterator iter = new StatementIterator(sL);
-		Iteration<Statement, Exception> it = new IteratorIteration<Statement, Exception> (iter);
+		Iteration<Statement, Exception> it = new IteratorIteration<> (iter);
 		testAdminCon.add(it, dirgraph);
 		Assert.assertEquals(10, testAdminCon.size(dirgraph));		
 			
@@ -1904,13 +1936,16 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
 		final Statement st2 = vf.createStatement(john, lname, johnlname);
 		testAdminCon.add(st1);
 		testAdminCon.add(st2,dirgraph);
+		Assert.assertEquals(2L, testAdminCon.size());	
 		try{
 			testAdminCon.begin();
 			testAdminCon.prepareUpdate(QueryLanguage.SPARQL,
 					"INSERT DATA {GRAPH <" + dirgraph.stringValue()+ "> { <" + john.stringValue() + "> <" + fname.stringValue() + "> \"" + johnfname.stringValue() + "\"} }").execute();
+			Assert.assertEquals(3L, testAdminCon.size());
 			
 			testAdminCon.prepareUpdate(
 					"DELETE DATA {GRAPH <" + dirgraph.stringValue()+ "> { <" + john.stringValue() + "> <" + email.stringValue() + "> \"" + johnemail.stringValue() + "\"} }").execute();
+			Assert.assertEquals(2L, testAdminCon.size());
 			
 			String query1 ="PREFIX ad: <http://marklogicsparql.com/addressbook#>"
 					+" INSERT {GRAPH <"
@@ -1919,6 +1954,7 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
 					+ " where { GRAPH <"+ dirgraph.stringValue()+">{<#1111> ad:lastName  ?name .} } " ;
 			
 			testAdminCon.prepareUpdate(QueryLanguage.SPARQL,query1, "http://marklogicsparql.com/id").execute();
+			Assert.assertEquals(3L, testAdminCon.size());
 			testAdminCon.commit();
 		}
 		catch(Exception e){
@@ -1946,29 +1982,53 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
 	@Test
 	public void testAddRemoveAdd()
 		throws OpenRDFException
-	{
+	{	
+		Assert.assertEquals(0L, testAdminCon.size());
 		Statement st = vf.createStatement(john, lname, johnlname, dirgraph);
 		testAdminCon.add(st);
 		Assert.assertEquals(1L, testAdminCon.size());
-		testAdminCon.begin();
-		testAdminCon.remove(st, dirgraph);
-		testAdminCon.add(st);
-		testAdminCon.commit();
+		try{
+			testAdminCon.begin();
+			testAdminCon.remove(st, dirgraph);
+			testAdminCon.add(st);
+			testAdminCon.commit();
+		}
+		catch(Exception e){
+			logger.debug(e.getMessage());
+		}
+		finally{
+			if(testAdminCon.isActive())
+				testAdminCon.rollback();
+		}
 		Assert.assertFalse(testAdminCon.isEmpty());
+		Assert.assertEquals(1L, testAdminCon.size());
 	}
 	
 	@Test
 	public void testAddDeleteAdd()
 		throws OpenRDFException
 	{
+		assertThat(testAdminCon.isOpen(), is(equalTo(true)));
+		Assert.assertEquals(0L, testAdminCon.size());
 		Statement stmt = vf.createStatement(micah, homeTel, micahhomeTel, dirgraph);
-		testAdminCon.add(stmt);
-		testAdminCon.begin();
-		testAdminCon.prepareUpdate(QueryLanguage.SPARQL,
-				"DELETE DATA {GRAPH <" + dirgraph.stringValue()+ "> { <" + micah.stringValue() + "> <" + homeTel.stringValue() + "> \"" + micahhomeTel.doubleValue() + "\"^^<http://www.w3.org/2001/XMLSchema#double>} }").execute();
-		Assert.assertTrue(testAdminCon.isEmpty());
-		testAdminCon.add(stmt);
-		testAdminCon.commit();
+		try{
+			testAdminCon.add(stmt);
+			testAdminCon.begin();
+			testAdminCon.prepareUpdate(QueryLanguage.SPARQL,
+					"DELETE DATA {GRAPH <" + dirgraph.stringValue()+ "> { <" + micah.stringValue() + "> <" + homeTel.stringValue() + "> \"" + micahhomeTel.doubleValue() + "\"^^<http://www.w3.org/2001/XMLSchema#double>} }").execute();
+			Thread.currentThread().sleep(10000L);
+			Assert.assertTrue(testAdminCon.isEmpty());
+			testAdminCon.add(stmt);
+			testAdminCon.commit();
+		}
+		catch(Exception e){
+			logger.debug(e.getMessage());
+		}
+		finally{
+			if(testAdminCon.isActive()){
+				testAdminCon.rollback();
+			}
+		}
 		Assert.assertFalse(testAdminCon.isEmpty());
 	}
 
@@ -2127,7 +2187,16 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
 		}
 		testAdminCon.remove(stmt, dirgraph);
 		testAdminCon.close();
-		Assert.assertFalse(testAdminCon.hasStatement(stmt, false, dirgraph));
+		
+		try{
+			testAdminCon.hasStatement(stmt, false, dirgraph);
+			fail("Should not be able to run statements on testAdminCon");
+		}
+		catch(Exception e){
+			Assert.assertTrue(e instanceof IllegalStateException);
+		}
+
+		
 		try{
 			testAdminCon.add(stmt);
 			fail("Adding triples after close should not be allowed");
@@ -2135,14 +2204,14 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
 		catch(Exception e){
 			Assert.assertTrue(e instanceof RepositoryException);
 		}
-		Assert.assertEquals("testAdminCon size should be zero",testAdminCon.size(),0);
-		assertThat("testAdminCon should not be open",testAdminCon.isOpen(), is(equalTo(false)));
-		assertThat("testWriterCon should be open",testWriterCon.isOpen(), is(equalTo(true)));
+
 		testAdminRepository.shutDown();
 		testAdminRepository = null;
 		testAdminCon = null;
 		setUp();
 		assertThat(testAdminCon.isOpen(), is(equalTo(true)));
+		Assert.assertEquals("testAdminCon size should be zero",testAdminCon.size(),0);
+		assertThat("testWriterCon should be open",testWriterCon.isOpen(), is(equalTo(true)));
 	}
 	
 
@@ -2435,8 +2504,6 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
 
 			while (result.hasNext()) {
 				Statement st = result.next();
-				
-				// clarify with Charles if context is null or http://...
 				Assert.assertNull("Statement should not be in a context ", st.getContext());
 				assertTrue("Statement predicate should be equal to name ", st.getPredicate().equals(homeTel));
 			}
@@ -2743,7 +2810,6 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
 			while (iter.hasNext()) {
 				count++;
 				Statement st = iter.next();
-				System.out.println("Context is "+st.getContext());
 				assertThat(st.getContext(), anyOf(is(nullValue(Resource.class)), is(equalTo((Resource)dirgraph)) ));
 			}
 			assertEquals("there should be four statements", 4, count);
@@ -3104,7 +3170,7 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
 			testReaderCon.add(st1, vf.createURI("http://abc"));
 		}
 		catch(Exception e){
-			
+			Assert.assertTrue(e instanceof UpdateExecutionException);
 		}
 	
 		
@@ -3114,7 +3180,7 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
 			testReaderCon.commit();
 		}
 		catch(Exception e){
-			
+	
 		}
 		finally{
 			if(testReaderCon.isActive())

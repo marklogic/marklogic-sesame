@@ -32,28 +32,28 @@ import java.io.InputStream;
  */
 class MarkLogicBackgroundTupleResult extends BackgroundTupleResult {
 
-	protected final Logger logger = LoggerFactory.getLogger(MarkLogicBackgroundGraphResult.class);
+    private static final Logger logger = LoggerFactory.getLogger(MarkLogicBackgroundGraphResult.class);
 
-	/**
-	 *  constructor
-	 *
-	 * @param parser
-	 * @param in
-	 */
-	public MarkLogicBackgroundTupleResult(TupleQueryResultParser parser, InputStream in) {
-		super(parser, in);
-	}
+    /**
+     *  constructor
+     *
+     * @param parser
+     * @param in
+     */
+    public MarkLogicBackgroundTupleResult(TupleQueryResultParser parser, InputStream in) {
+        super(parser, in);
+    }
 
-	/**
-	 * constructor
-	 *
-	 * @param queue
-	 * @param parser
-	 * @param in
-	 */
-	public MarkLogicBackgroundTupleResult(QueueCursor<BindingSet> queue, TupleQueryResultParser parser, InputStream in) {
-		super(queue, parser, in);
-	}
+    /**
+     * constructor
+     *
+     * @param queue
+     * @param parser
+     * @param in
+     */
+    public MarkLogicBackgroundTupleResult(QueueCursor<BindingSet> queue, TupleQueryResultParser parser, InputStream in) {
+        super(queue, parser, in);
+    }
 
     /**
      * wrap exception to return false instead of throwing error, debug log
@@ -66,21 +66,21 @@ class MarkLogicBackgroundTupleResult extends BackgroundTupleResult {
         try {
             return super.hasNext();
         }catch(Exception e){
-            logger.debug("hasNext() stream closed exception",e);
+            logger.warn("MarkLogicBackgroundTupleResult hasNext() stream closed exception",e);
             return false;
         }
     }
 
-	/**
-	 * wrap exception, debug log
-	 *
-	 */
-	@Override
-	protected void handleClose() throws QueryEvaluationException {
-		try {
-			super.handleClose();
-		}catch(Exception e){
-			logger.debug("handleClose() stream closed exception",e);
-		}
-	}
+    /**
+     * wrap exception, debug log
+     *
+     */
+    @Override
+    protected void handleClose() throws QueryEvaluationException {
+        try {
+            super.handleClose();
+        }catch(Exception e){
+            logger.warn("MarkLogicBackgroundTupleResult handleClose() stream closed exception",e);
+        }
+    }
 }

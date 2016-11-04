@@ -34,60 +34,60 @@ import java.nio.charset.Charset;
 
 class MarkLogicBackgroundGraphResult extends BackgroundGraphResult
 {
-	protected final Logger logger = LoggerFactory.getLogger(MarkLogicBackgroundGraphResult.class);
+    private static final Logger logger = LoggerFactory.getLogger(MarkLogicBackgroundGraphResult.class);
 
-	/**
-	 *  constructor
-	 *
-	 * @param parser
-	 * @param in
-	 * @param charset
-	 * @param baseURI
-	 */
-	public MarkLogicBackgroundGraphResult(RDFParser parser, InputStream in, Charset charset, String baseURI) {
-		super(parser, in, charset, baseURI);
-	}
+    /**
+     *  constructor
+     *
+     * @param parser
+     * @param in
+     * @param charset
+     * @param baseURI
+     */
+    public MarkLogicBackgroundGraphResult(RDFParser parser, InputStream in, Charset charset, String baseURI) {
+        super(parser, in, charset, baseURI);
+    }
 
-	/**
-	 * constructor
-	 *
-	 * @param queue
-	 * @param parser
-	 * @param in
-	 * @param charset
-	 * @param baseURI
-	 */
-	public MarkLogicBackgroundGraphResult(QueueCursor<Statement> queue, RDFParser parser, InputStream in, Charset charset, String baseURI) {
-		super(queue, parser, in, charset, baseURI);
-	}
+    /**
+     * constructor
+     *
+     * @param queue
+     * @param parser
+     * @param in
+     * @param charset
+     * @param baseURI
+     */
+    public MarkLogicBackgroundGraphResult(QueueCursor<Statement> queue, RDFParser parser, InputStream in, Charset charset, String baseURI) {
+        super(queue, parser, in, charset, baseURI);
+    }
 
-	/**
-	 * wrap exception to return false instead of throwing error, debug log
-	 *
-	 */
-	@Override
-	public boolean hasNext()
-		throws QueryEvaluationException
-	{
-		try {
-			return super.hasNext();
-		}catch(Exception e){
-			logger.debug("hasNext() stream closed exception",e);
-			return false;
-		}
-	}
+    /**
+     * wrap exception to return false instead of throwing error, debug log
+     *
+     */
+    @Override
+    public boolean hasNext()
+        throws QueryEvaluationException
+    {
+        try {
+            return super.hasNext();
+        }catch(Exception e){
+            logger.warn("MarkLogicBackgroundGraphResult hasNext() stream closed exception",e);
+            return false;
+        }
+    }
 
-	/**
-	 * wrap exception, debug log
-	 *
-	 */
-	@Override
-	protected void handleClose() throws QueryEvaluationException {
-		try {
-			super.handleClose();
-		}catch(Exception e){
-			logger.debug("handleClose() stream closed exception",e);
-		}
-	}
+    /**
+     * wrap exception, debug log
+     *
+     */
+    @Override
+    protected void handleClose() throws QueryEvaluationException {
+        try {
+            super.handleClose();
+        }catch(Exception e){
+            logger.warn("MarkLogicBackgroundGraphResult handleClose() stream closed exception",e);
+        }
+    }
 
 }

@@ -23,6 +23,7 @@ import com.marklogic.client.FailedRequestException;
 import com.marklogic.client.semantics.GraphPermissions;
 import com.marklogic.client.query.QueryDefinition;
 import com.marklogic.client.semantics.SPARQLRuleset;
+import com.marklogic.semantics.sesame.MarkLogicSesameException;
 import com.marklogic.semantics.sesame.client.MarkLogicClient;
 import org.openrdf.query.*;
 import org.openrdf.repository.RepositoryException;
@@ -39,7 +40,7 @@ import java.io.IOException;
  */
 public class MarkLogicTupleQuery extends MarkLogicQuery implements TupleQuery,MarkLogicQueryDependent {
 
-    protected final Logger logger = LoggerFactory.getLogger(MarkLogicTupleQuery.class);
+    private static final Logger logger = LoggerFactory.getLogger(MarkLogicTupleQuery.class);
 
     protected final long start = 1;
     protected final long pageLength=-1; // this value is a flag to not set setPageLength()
@@ -78,12 +79,11 @@ public class MarkLogicTupleQuery extends MarkLogicQuery implements TupleQuery,Ma
     public TupleQueryResult evaluate(long start, long pageLength)
             throws QueryEvaluationException {
         try {
+            sync();
             return getMarkLogicClient().sendTupleQuery(getQueryString(), getBindings(), start, pageLength, getIncludeInferred(), getBaseURI());
         }catch (RepositoryException e) {
             throw new QueryEvaluationException(e.getMessage(), e);
         }catch (MalformedQueryException e) {
-            throw new QueryEvaluationException(e.getMessage(), e);
-        }catch (IOException e) {
             throw new QueryEvaluationException(e.getMessage(), e);
         }catch(FailedRequestException e){
             throw new QueryEvaluationException(e.getMessage(), e);
@@ -99,10 +99,15 @@ public class MarkLogicTupleQuery extends MarkLogicQuery implements TupleQuery,Ma
      */
     @Override
     public void evaluate(TupleQueryResultHandler resultHandler) throws QueryEvaluationException, TupleQueryResultHandlerException {
-        TupleQueryResult queryResult = evaluate();
+        try {
+            sync();
+        } catch (MarkLogicSesameException e) {
+            e.printStackTrace();
+        }        TupleQueryResult queryResult = evaluate();
         if(queryResult.hasNext()) {
             QueryResults.report(queryResult, resultHandler);
         }
+        queryResult.close();
     }
 
     /**
@@ -117,5 +122,6 @@ public class MarkLogicTupleQuery extends MarkLogicQuery implements TupleQuery,Ma
         if(queryResult.hasNext()){
             QueryResults.report(queryResult, resultHandler);
         }
+        queryResult.close();
     }
 }

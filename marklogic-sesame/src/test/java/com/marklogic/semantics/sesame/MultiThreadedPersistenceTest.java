@@ -12,6 +12,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.After;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openrdf.model.Resource;
 import org.openrdf.model.Statement;
@@ -49,6 +50,7 @@ public class MultiThreadedPersistenceTest extends SesameTestBase {
     }
 
 
+    // ignore until we have new java api client
     @Test
     public void multiThreadedPersist() throws RepositoryException, InterruptedException {
         final PersistenceService persistenceService = new PersistenceService(SesameTestBase.host, SesameTestBase.port, SesameTestBase.adminUser, SesameTestBase.adminPassword, DatabaseClientFactory.Authentication.DIGEST.toString());
@@ -93,36 +95,98 @@ public class MultiThreadedPersistenceTest extends SesameTestBase {
             }
         }
 
-        public void persist(List<Entity> entities){
+        public void persist(List<Entity> entities) {
 
             MarkLogicRepositoryConnection connection = null;
             try {
                 connection = markLogicRepository.getConnection();
-
-                connection.begin();
-
                 for(Entity e : entities) {
                     connection.add(e.getStatements(), e.getGraph());
                 }
-
-                connection.commit();
-
             } catch (RepositoryException e) {
                 //print to sysout as thread exceptions are not propagated up to main thread
                 e.printStackTrace();
                 throw new RuntimeException(e);
-            } finally {
+            }finally {
                 try {
-                    if (connection != null) {
-                        connection.close();
-                    }
+                    connection.close();
                 } catch (RepositoryException e) {
-                    throw new RuntimeException(e);
+                    e.printStackTrace();
                 }
             }
         }
 
     }
+
+    // ignore until we have new java api client
+    @Test
+    public void singleConnectionMultiThreadedPersist() throws RepositoryException, InterruptedException {
+        final SingleConnectionPersistenceService persistenceService = new SingleConnectionPersistenceService(SesameTestBase.host, SesameTestBase.port, SesameTestBase.adminUser, SesameTestBase.adminPassword, DatabaseClientFactory.Authentication.DIGEST.toString());
+
+        //persist data with multiple threads against singleConnectionPersistence service - simulate multiple concurrent requests against a tomcat deployed ingestion service
+        //results in intermittent MarkLogicTransactionExceptions in executor threads
+        ExecutorService executorService = Executors.newFixedThreadPool(10);
+        try {
+            persistenceService.connection.begin();
+
+            for(final String identifier: identifiers) {
+                for (int i=0; i<20; i++) {
+                    executorService.submit(
+                            new Runnable() {
+                                @Override
+                                public void run() {
+                                    persistenceService.persist(entitiesFor(identifier));
+                                }
+                            }
+                    );
+                }
+            }
+
+            persistenceService.connection.commit();
+
+            executorService.shutdown();
+            executorService.awaitTermination(60, TimeUnit.SECONDS);
+        } finally {
+            if(!executorService.isTerminated()) {
+                System.out.println("cancel non finished tasks");
+            }
+            executorService.shutdownNow();
+            System.out.println("shut down finished");
+        }
+    }
+
+    class SingleConnectionPersistenceService {
+        private MarkLogicRepositoryConnection connection;
+
+        public SingleConnectionPersistenceService(String host, int port, String user, String password, String digest) {
+            MarkLogicRepository markLogicRepository = new MarkLogicRepository(host, port, user, password, digest);
+            try {
+                markLogicRepository.initialize();
+                connection = markLogicRepository.getConnection();
+            } catch (RepositoryException e) {
+                throw new RuntimeException("error initialising repo", e);
+            }
+        }
+
+        public void persist(List<Entity> entities){
+            try {
+                for(Entity e : entities) {
+                    connection.add(e.getStatements(), e.getGraph());
+                }
+            } catch (RepositoryException e) {
+                //print to sysout as thread exceptions are not propagated up to main thread
+                e.printStackTrace();
+                throw new RuntimeException(e);
+            }finally {
+                try {
+                    connection.sync();
+                } catch (MarkLogicSesameException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
     class Entity {
         private Collection<Statement> statements;
         private Resource[] graph;

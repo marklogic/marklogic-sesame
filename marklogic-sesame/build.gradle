@@ -6,7 +6,7 @@ buildscript {
         maven {url "http://developer.marklogic.com/maven2/"}
     }
     dependencies {
-        classpath "gradle.plugin.com.marklogic:ml-gradle:2.3.3"
+        classpath "gradle.plugin.com.marklogic:ml-gradle:2.4.0"
     }
 }
 
@@ -42,6 +42,11 @@ jacocoTestReport {
 
 dependencies {
     compile('org.openrdf.sesame:sesame-runtime:2.8.10')
+
+//    compile('com.marklogic:java-client-api:3.0-SNAPSHOT') {
+//        exclude(group: 'org.slf4j')
+//        exclude(group: 'ch.qos.logback')
+//    }
 
     // for the bleeding edge switch to com.marklogic:java-client-api:4.0-SNAPSHOT
     compile('com.marklogic:java-client-api:3.0.+') {
