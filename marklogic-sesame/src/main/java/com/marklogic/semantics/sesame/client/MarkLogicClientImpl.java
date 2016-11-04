@@ -154,7 +154,10 @@ class MarkLogicClientImpl {
         SPARQLQueryDefinition qdef = sparqlManager.newQueryDefinition(queryString);
         if(notNull(baseURI) && !baseURI.isEmpty()){ qdef.setBaseUri(baseURI);}
         if (notNull(ruleset)){qdef.setRulesets(ruleset);}
-        if (notNull(getConstrainingQueryDefinition())) {qdef.setConstrainingQueryDefinition(getConstrainingQueryDefinition());}
+        if (notNull(getConstrainingQueryDefinition())) {
+        	qdef.setConstrainingQueryDefinition(getConstrainingQueryDefinition()); 
+        	qdef.setOptionsName(getConstrainingQueryDefinition().getOptionsName());
+        }
         qdef.setIncludeDefaultRulesets(includeInferred);
         if(notNull(graphPerms)){ qdef.setUpdatePermissions(graphPerms);}
         if(pageLength > 0){
