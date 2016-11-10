@@ -72,7 +72,7 @@ class MarkLogicBackgroundGraphResult extends BackgroundGraphResult
         try {
             return super.hasNext();
         }catch(Exception e){
-            logger.warn("MarkLogicBackgroundGraphResult hasNext() stream closed exception",e);
+            logger.info("MarkLogicBackgroundGraphResult hasNext() stream closed exception",e);
             return false;
         }
     }
@@ -86,7 +86,7 @@ class MarkLogicBackgroundGraphResult extends BackgroundGraphResult
         try {
             super.handleClose();
         }catch(Exception e){
-            logger.warn("MarkLogicBackgroundGraphResult handleClose() stream closed exception",e);
+            logger.info("MarkLogicBackgroundGraphResult handleClose() stream closed exception",e);
         }
     }
 
