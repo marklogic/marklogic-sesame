@@ -162,6 +162,8 @@ public class MarkLogicExceptionsTest extends SesameTestBase {
 
     // https://github.com/marklogic/marklogic-sesame/issues/174
     @Test
+    @Ignore
+    // Note- we have relaxed the conditions for throwing this exception
     public void testEmptyCommit() throws Exception {
         exception.expect(MarkLogicTransactionException.class);
         logger.info("active:{}",conn.isActive());
