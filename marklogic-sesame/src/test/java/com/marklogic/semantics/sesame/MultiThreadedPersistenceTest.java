@@ -168,9 +168,8 @@ public class MultiThreadedPersistenceTest extends SesameTestBase {
             }
         }
 
-        public synchronized void persist(List<Entity> entities){
+        public void persist(List<Entity> entities){
             try {
-                connection.begin();
                 for(Entity e : entities) {
                     connection.add(e.getStatements(), e.getGraph());
                 }
@@ -180,10 +179,8 @@ public class MultiThreadedPersistenceTest extends SesameTestBase {
                 throw new RuntimeException(e);
             }finally {
                 try {
-                    connection.commit();
+                    connection.sync();
                 } catch (MarkLogicSesameException e) {
-                    e.printStackTrace();
-                } catch (RepositoryException e) {
                     e.printStackTrace();
                 }
             }
