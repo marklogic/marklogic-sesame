@@ -386,9 +386,11 @@ public class MarkLogicClient {
 	 *
 	 * @throws MarkLogicTransactionException
 	 */
-	public synchronized void openTransaction() throws MarkLogicTransactionException {
+	public void openTransaction() throws MarkLogicTransactionException {
 		if (!isActiveTransaction()) {
 			this.tx = getClient().getDatabaseClient().openTransaction();
+		}else{
+			throw new MarkLogicTransactionException("Only one active transaction allowed.");
 		}
 	}
 
@@ -397,19 +399,18 @@ public class MarkLogicClient {
 	 *
 	 * @throws MarkLogicTransactionException
 	 */
-	public synchronized void commitTransaction() throws MarkLogicTransactionException {
+	public void commitTransaction() throws MarkLogicTransactionException {
 		if (isActiveTransaction()) {
 			try {
 				sync();
 				this.tx.commit();
+				this.tx=null;
 			} catch (MarkLogicSesameException e) {
 				logger.warn(e.getLocalizedMessage());
 				throw new MarkLogicTransactionException(e);
-			}finally{
-                this.tx=null;
-            }
+			}
 		}else{
-            logger.warn("No active transaction to commit.");
+			throw new MarkLogicTransactionException("No active transaction to commit.");
 		}
 	}
 
@@ -418,7 +419,7 @@ public class MarkLogicClient {
 	 *
 	 * @throws MarkLogicTransactionException
 	 */
-	public synchronized void rollbackTransaction() throws MarkLogicTransactionException {
+	public void rollbackTransaction() throws MarkLogicTransactionException {
 		if(isActiveTransaction()) {
 			try {
 				sync();

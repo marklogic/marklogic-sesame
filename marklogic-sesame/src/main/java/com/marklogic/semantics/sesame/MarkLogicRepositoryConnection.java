@@ -933,7 +933,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
      * @throws RepositoryException
      */
     @Override
-    public synchronized void begin(IsolationLevel level) throws RepositoryException {
+    public void begin(IsolationLevel level) throws RepositoryException {
         setIsolationLevel(level);
         begin();
     }
@@ -944,7 +944,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
      * @throws RepositoryException
      */
     @Override
-    public synchronized void commit() throws RepositoryException {
+    public void commit() throws RepositoryException {
             getClient().commitTransaction();
     }
 

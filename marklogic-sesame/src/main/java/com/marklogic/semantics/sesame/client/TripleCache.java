@@ -172,7 +172,7 @@ public abstract class TripleCache extends TimerTask {
      *
      * @throws MarkLogicSesameException
      */
-    public synchronized void forceRun() throws MarkLogicSesameException {
+    public void forceRun() throws MarkLogicSesameException {
         log.debug(String.valueOf(cache.size()));
         if( !cache.isEmpty()) {
             try {
