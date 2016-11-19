@@ -1208,6 +1208,7 @@ conn.sync();
                     throws RDFHandlerException {
                 Assert.assertNull(st1);
             }
+
         }, dirgraph);
     }
 

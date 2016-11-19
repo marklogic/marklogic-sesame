@@ -90,6 +90,5 @@ public class MarkLogicGraphQuery extends MarkLogicQuery implements GraphQuery,Ma
         {
             QueryResults.report(queryResult, resultHandler);
         }
-        queryResult.close();
     }
 }

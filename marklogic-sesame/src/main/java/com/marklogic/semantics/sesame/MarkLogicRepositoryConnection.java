@@ -595,7 +595,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
                 }
             }
             else {
-                GraphQuery query = prepareGraphQuery(EVERYTHING);
+                MarkLogicGraphQuery query = prepareGraphQuery(EVERYTHING);
                 setBindings(query, subj, pred, obj, contexts);
                 GraphQueryResult result = query.evaluate();
                 return new RepositoryResult<Statement>(
@@ -759,7 +759,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
                 }
             }
             logger.debug(sb.toString());
-            GraphQuery query = prepareGraphQuery(sb.toString());
+            MarkLogicGraphQuery query = prepareGraphQuery(sb.toString());
             setBindings(query, subject, predicate, object, contexts);
             query.evaluate(handler);
         }
