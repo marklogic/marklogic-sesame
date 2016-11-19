@@ -29,7 +29,6 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.apache.commons.dbcp.DbcpException;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -114,6 +113,7 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
 	private static String restServer = "App-Services";
 	private static int restPort = 8000;
 	private static String[] hostNames ;
+	private static String host = "localhost";
 		
 	protected static DatabaseClient databaseClient ;
 	protected static MarkLogicRepository testAdminRepository;
@@ -298,7 +298,7 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
 		//Creating MLSesame Connection object Using MarkLogicRepositoryConfig
 		
 		MarkLogicRepositoryConfig adminconfig = new MarkLogicRepositoryConfig();
-		adminconfig.setHost("localhost");
+		adminconfig.setHost(host);
 		adminconfig.setAuth("DIGEST");
 		adminconfig.setUser("admin");
 		adminconfig.setPassword("admin");
@@ -323,7 +323,7 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
         testAdminRepository = null; 
         testAdminCon = null; 
         
-        adminconfig = new MarkLogicRepositoryConfig("localhost",restPort,"admin","admin","DIGEST");
+        adminconfig = new MarkLogicRepositoryConfig(host,restPort,"admin","admin","DIGEST");
         Assert.assertEquals("marklogic:MarkLogicRepository", factory.getRepositoryType());
         testAdminRepository = (MarkLogicRepository) factory.getRepository(adminconfig);
         testAdminRepository.initialize();
@@ -353,7 +353,7 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
         
        //Creating MLSesame Connection object Using MarkLogicRepository overloaded constructor
         if(testReaderCon == null || testReaderRepository ==null){
-        	testReaderRepository = new MarkLogicRepository("localhost", restPort, "reader", "reader", "DIGEST");
+        	testReaderRepository = new MarkLogicRepository(host, restPort, "reader", "reader", "DIGEST");
 	        try {
 				testReaderRepository.initialize();
 				Assert.assertNotNull(testReaderRepository);
@@ -368,7 +368,7 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
        
         //Creating MLSesame Connection object Using MarkLogicRepository(databaseclient)  constructor
         if (databaseClient == null){
-        	databaseClient = DatabaseClientFactory.newClient("localhost", restPort, "writer", "writer", DatabaseClientFactory.Authentication.valueOf("DIGEST"));
+        	databaseClient = DatabaseClientFactory.newClient(host, restPort, "writer", "writer", DatabaseClientFactory.Authentication.valueOf("DIGEST"));
         }
        		
 		if(testWriterCon == null || testWriterRepository ==null){
@@ -3087,7 +3087,7 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
 		Repository tempRep1 = null;
 		try{
 			MarkLogicRepositoryConfig tempConfig1 = new MarkLogicRepositoryConfig();
-			tempConfig1.setHost("localhost");
+			tempConfig1.setHost(host);
 			tempConfig1.setAuth("DIGEST");
 			tempConfig1.setUser("admin");
 			tempConfig1.setPassword("admin");
@@ -3121,7 +3121,7 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
 		Repository tempRep2 = null;
 		try{
 			MarkLogicRepositoryConfig tempConfig2 = new MarkLogicRepositoryConfig();
-			tempConfig2.setHost("localhost");
+			tempConfig2.setHost(host);
 			tempConfig2.setAuth("DIGEST");
 			tempConfig2.setUser("admin");
 			tempConfig2.setPassword("admin");
@@ -3539,7 +3539,7 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
     public void testQuerywithOptions() throws Exception {
 	 
 	 addRangeElementIndex(dbName, "int", "", "popularity");
-	 DatabaseClient dbClient = DatabaseClientFactory.newClient("localhost", restPort, "admin", "admin", DatabaseClientFactory.Authentication.valueOf("DIGEST"));
+	 DatabaseClient dbClient = DatabaseClientFactory.newClient(host, restPort, "admin", "admin", DatabaseClientFactory.Authentication.valueOf("DIGEST"));
 	 setupData();
 	 	 
 	 Thread.currentThread().sleep(5000L);
@@ -3581,6 +3581,43 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
      
    }
 
+	@Test
+    public void testQuerywithNoOptions() throws Exception {
+	 
+	 setupData();
+	 	 
+	 Thread.currentThread().sleep(5000L);
+	 
+		 
+	 StringQueryDefinition stringDef = qmgr.newStringDefinition();
+	 
+     
+     String posQuery = "ASK WHERE {<http://example.org/r9929> ?p ?o .}";
+     String negQuery = "ASK WHERE {<http://example.org/r9928> ?p ?o .}";
+       
+     MarkLogicBooleanQuery askQuery = (MarkLogicBooleanQuery) testAdminCon.prepareBooleanQuery(QueryLanguage.SPARQL,posQuery);
+     askQuery.setConstrainingQueryDefinition(stringDef);
+     Assert.assertEquals(true, askQuery.evaluate());
+     System.out.println(askQuery.evaluate());
+     
+     testAdminCon.setDefaultConstrainingQueryDefinition(stringDef);
+     MarkLogicBooleanQuery askQuery1 = (MarkLogicBooleanQuery) testAdminCon.prepareBooleanQuery(QueryLanguage.SPARQL,negQuery);
+     Assert.assertEquals(true, askQuery1.evaluate());
+     System.out.println(askQuery1.evaluate());
+     
+     StringQueryDefinition stringDef1 = qmgr.newStringDefinition();
+              
+     testAdminCon.setDefaultConstrainingQueryDefinition(stringDef1);
+     askQuery1 = (MarkLogicBooleanQuery) testAdminCon.prepareBooleanQuery(QueryLanguage.SPARQL,negQuery);
+     Assert.assertEquals(true, askQuery1.evaluate());
+     System.out.println(askQuery1.evaluate());
+     
+     testAdminCon.setDefaultConstrainingQueryDefinition(stringDef1);
+     askQuery1 = (MarkLogicBooleanQuery) testAdminCon.prepareBooleanQuery(QueryLanguage.SPARQL,posQuery);
+     Assert.assertEquals(true, askQuery1.evaluate());
+     System.out.println(askQuery1.evaluate());
+     
+   }
 	 
 	public void writeQueryOption(DatabaseClient client, String queryOptionName) throws FileNotFoundException
 	{
