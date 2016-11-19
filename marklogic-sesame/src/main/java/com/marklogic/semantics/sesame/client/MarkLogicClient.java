@@ -214,7 +214,7 @@ public class MarkLogicClient {
 		try {
 			stream = getClient().performSPARQLQuery(queryString, bindings, start, pageLength, this.tx, includeInferred, baseURI);
 		} catch (JsonProcessingException e) {
-			logger.error(e.getLocalizedMessage());
+			logger.info(e.getLocalizedMessage());
 			throw new MarkLogicSesameException("Issue processing json.");
 		}
 		TupleQueryResultParser parser = QueryResultIO.createParser(format, getValueFactory());
