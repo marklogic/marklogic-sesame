@@ -146,6 +146,7 @@ public class MarkLogicRepository extends RepositoryBase implements Repository,Ma
     @Override
     @Deprecated
     protected void initializeInternal() throws RepositoryException {
+        // originally implemented to honor repository interface
     }
 
     /**
@@ -157,6 +158,7 @@ public class MarkLogicRepository extends RepositoryBase implements Repository,Ma
     @Override
     @Deprecated
     protected void shutDownInternal() throws RepositoryException {
+        // originally implemented to honor repository interface
     }
 
     /**
@@ -178,6 +180,7 @@ public class MarkLogicRepository extends RepositoryBase implements Repository,Ma
      */
     @Override
     public void setDataDir(File dataDir) {
+        // originally implemented to honor repository interface
     }
 
     /**
