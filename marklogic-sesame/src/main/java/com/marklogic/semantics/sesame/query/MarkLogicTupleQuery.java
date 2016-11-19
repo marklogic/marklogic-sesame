@@ -102,8 +102,10 @@ public class MarkLogicTupleQuery extends MarkLogicQuery implements TupleQuery,Ma
         try {
             sync();
         } catch (MarkLogicSesameException e) {
-            e.printStackTrace();
-        }        TupleQueryResult queryResult = evaluate();
+            logger.info(e.getLocalizedMessage());
+            throw new QueryEvaluationException(e);
+        }
+        TupleQueryResult queryResult = evaluate();
         if(queryResult.hasNext()) {
             QueryResults.report(queryResult, resultHandler);
         }
