@@ -23,6 +23,7 @@ import org.openrdf.rio.RDFParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 
@@ -71,8 +72,9 @@ class MarkLogicBackgroundGraphResult extends BackgroundGraphResult
     {
         try {
             return super.hasNext();
-        }catch(Exception e){
-            logger.info("MarkLogicBackgroundGraphResult hasNext() stream closed exception",e);
+
+        }catch(QueryEvaluationException e){
+            logger.info("MarkLogicBackgroundGraphResult hasNext() stream closed");
             return false;
         }
     }
@@ -86,7 +88,8 @@ class MarkLogicBackgroundGraphResult extends BackgroundGraphResult
         try {
             super.handleClose();
         }catch(Exception e){
-            logger.info("MarkLogicBackgroundGraphResult handleClose() stream closed exception",e);
+            logger.error("MarkLogicBackgroundGraphResult handleClose() stream closed exception",e);
+            throw new QueryEvaluationException(e);
         }
     }
 

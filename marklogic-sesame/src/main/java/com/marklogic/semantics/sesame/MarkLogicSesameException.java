@@ -28,10 +28,16 @@ import org.openrdf.repository.RepositoryException;
  */
 @SuppressWarnings("serial")
 public class MarkLogicSesameException extends RepositoryException {
+
     public MarkLogicSesameException(String message) {
         super(message);
     }
+
     public MarkLogicSesameException(Exception e) {
-        super(e.getMessage());
+        super(e);
+    }
+
+    public MarkLogicSesameException(String message, Exception e) {
+        super(message,e);
     }
 }

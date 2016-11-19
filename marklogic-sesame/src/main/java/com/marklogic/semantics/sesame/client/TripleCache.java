@@ -135,35 +135,20 @@ public abstract class TripleCache extends TimerTask {
             try {
                 flush();
             } catch (RepositoryException e) {
-                e.printStackTrace();
+                log.error(e.getLocalizedMessage());
+                throw new RuntimeException(e);
             } catch (MalformedQueryException e) {
-                e.printStackTrace();
+                log.error(e.getLocalizedMessage());
+                throw new RuntimeException(e);
             } catch (UpdateExecutionException e) {
-                e.printStackTrace();
+                log.error(e.getLocalizedMessage());
+                throw new RuntimeException(e);
             } catch (IOException e) {
-                e.printStackTrace();
+                log.error(e.getLocalizedMessage());
+                throw new RuntimeException(e);
             }
         }
     }
-
-//    /**
-//     * flushes the cache, writing triples as graph
-//     *
-//     * @throws MarkLogicSesameException
-//     */
-//    private void flush1() throws MarkLogicSesameException, InterruptedException {
-//        log.debug("flushing write cache:" + this.cache.size());
-//        try {
-//            ByteArrayOutputStream out = new ByteArrayOutputStream();
-//            Rio.write(this.cache, out, this.format);
-//            this.client.sendAdd(new ByteArrayInputStream(out.toByteArray()), null, this.format);
-//            this.lastCacheAccess = new Date();
-//            this.cache.clear();
-//        } catch (RDFHandlerException | RDFParseException e) {
-//            log.info(e.getLocalizedMessage());
-//            throw new MarkLogicSesameException(e);
-//        }
-//    }
 
     protected abstract void flush() throws RepositoryException, MalformedQueryException, UpdateExecutionException, IOException;
 
@@ -172,19 +157,19 @@ public abstract class TripleCache extends TimerTask {
      *
      * @throws MarkLogicSesameException
      */
-    public void forceRun() throws MarkLogicSesameException {
+    public synchronized void forceRun() throws MarkLogicSesameException {
         log.debug(String.valueOf(cache.size()));
         if( !cache.isEmpty()) {
             try {
                 flush();
             } catch (RepositoryException e) {
-                e.printStackTrace();
+                throw new MarkLogicSesameException("Could not flush write cache, encountered repository issue.",e);
             } catch (MalformedQueryException e) {
-                e.printStackTrace();
+                throw new MarkLogicSesameException("Could not flush write cache, query was malformed.",e);
             } catch (UpdateExecutionException e) {
-                e.printStackTrace();
+                throw new MarkLogicSesameException("Could not flush write cache, query update failed.",e);
             } catch (IOException e) {
-                e.printStackTrace();
+                throw new MarkLogicSesameException("Could not flush write cache, encountered IO issue.",e);
             }
         }
     }
