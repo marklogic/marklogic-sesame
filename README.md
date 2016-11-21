@@ -1,4 +1,4 @@
-# marklogic-sesame-repository v1.0.2.1
+# marklogic-sesame-repository v1.0.3
 
 ## Introduction
 
@@ -23,13 +23,13 @@ Ensure MarkLogic 8.0-5 or greater is installed and running. To use marklogic-ses
 
 ### Quick Start
 
-The MarkLogic Sesame API is available via [Maven Central](http://mvnrepository.com/artifact/com.marklogic/marklogic-sesame/1.0.2.1).
+The MarkLogic Sesame API is available via [Maven Central](http://mvnrepository.com/artifact/com.marklogic/marklogic-sesame/1.0.3).
 
 For gradle projects, include the following dependency in your `build.gradle`:
 
 ```
 dependencies {
-    compile group: 'com.marklogic', name: 'marklogic-sesame-repository', version: '1.0.2.1'
+    compile group: 'com.marklogic', name: 'marklogic-sesame-repository', version: '1.0.3'
 }
 ```
 
@@ -39,7 +39,7 @@ For maven projects, include in your pom.xml:
 <dependency>
     <groupId>com.marklogic</groupId>
     <artifactId>marklogic-sesame-repository</artifactId>
-    <version>1.0.2.1</version>
+    <version>1.0.3</version>
 </dependency>
 ```
 
@@ -99,7 +99,7 @@ optionally you can build the jar without running tests.
 gradle build -x test
 ```
 
-and copy resultant build/lib/marklogic-sesame-1.0.2.1-SNAPSHOT.jar.
+and copy resultant build/lib/marklogic-sesame-1.0.3-SNAPSHOT.jar.
 
 ### Examples
 
