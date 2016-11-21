@@ -644,6 +644,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
      */
     @Override
     public boolean hasStatement(Resource subject, URI predicate, Value object, boolean includeInferred, Resource... contexts) throws RepositoryException {
+        if(!this.isOpen()){throw new RepositoryException("Connection is closed.");}
         String queryString = null;
         if(contexts == null) {
             queryString="ASK { GRAPH ?ctx { ?s ?p ?o } filter (?ctx = (IRI(\""+DEFAULT_GRAPH_URI+"\")))}";
@@ -877,6 +878,11 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     @Override
     public boolean isEmpty() throws RepositoryException {
         return size() == 0;
+    }
+
+    @Override
+    public boolean isOpen() throws RepositoryException {
+        return super.isOpen();
     }
 
     /**

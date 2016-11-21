@@ -2191,16 +2191,15 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
 		}
 		testAdminCon.remove(stmt, dirgraph);
 		testAdminCon.close();
-		
+
 		try{
 			testAdminCon.hasStatement(stmt, false, dirgraph);
 			fail("Should not be able to run statements on testAdminCon");
 		}
 		catch(Exception e){
-			Assert.assertTrue(e instanceof IllegalStateException);
+			Assert.assertTrue(e instanceof RepositoryException);
 		}
 
-		
 		try{
 			testAdminCon.add(stmt);
 			fail("Adding triples after close should not be allowed");
