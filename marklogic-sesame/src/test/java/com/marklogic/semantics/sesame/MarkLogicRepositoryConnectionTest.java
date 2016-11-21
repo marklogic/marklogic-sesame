@@ -21,6 +21,7 @@ package com.marklogic.semantics.sesame;
 
 import com.marklogic.semantics.sesame.config.MarkLogicRepositoryConfig;
 import com.marklogic.semantics.sesame.config.MarkLogicRepositoryFactory;
+import com.marklogic.semantics.sesame.query.MarkLogicBooleanQuery;
 import info.aduna.iteration.CloseableIteration;
 import info.aduna.iteration.Iteration;
 import info.aduna.iteration.Iterations;
@@ -91,7 +92,6 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
         conn.close();
         rep.shutDown();
         conn=null;
-        rep = null;
         logger.info("tearDown complete.");
     }
 
@@ -125,10 +125,12 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
         Assert.assertNotNull("Expected repository to exist.", rep);
         Assert.assertFalse("Expected repository to not be initialized.", rep.isInitialized());
         rep.initialize();
+        conn = rep.getConnection();
         Assert.assertTrue("Expected repository to be initialized.", rep.isInitialized());
         rep.shutDown();
         Assert.assertFalse("Expected repository to not be initialized.", rep.isInitialized());
         rep.initialize();
+        conn = rep.getConnection();
         Assert.assertNotNull("Expected repository to exist.", rep);
     }
 

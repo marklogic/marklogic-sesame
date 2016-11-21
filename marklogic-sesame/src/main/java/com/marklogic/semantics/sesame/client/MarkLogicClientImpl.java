@@ -282,7 +282,7 @@ class MarkLogicClientImpl {
                 }
             }
         } catch (FailedRequestException e) {
-            logger.info(e.getLocalizedMessage());
+            logger.error(e.getLocalizedMessage());
             throw new RDFParseException("Request to MarkLogic server failed, check file and format.");
         }
     }
@@ -317,10 +317,10 @@ class MarkLogicClientImpl {
             }
             in.close();
         } catch (FailedRequestException e) {
-            logger.info(e.getLocalizedMessage());
+            logger.error(e.getLocalizedMessage());
             throw new RDFParseException("Request to MarkLogic server failed, check input is valid.");
         } catch (IOException e) {
-            logger.info(e.getLocalizedMessage());
+            logger.error(e.getLocalizedMessage());
             throw new MarkLogicSesameException("IO error");
         }
     }
@@ -498,6 +498,10 @@ class MarkLogicClientImpl {
      * @return
      */
     public void close() {
+        // close MarkLogicClientImpl
+    }
+
+    public void release() {
         if (this.databaseClient != null) {
             try {
                 this.databaseClient.release();
@@ -506,7 +510,6 @@ class MarkLogicClientImpl {
             }
         }
     }
-
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -550,7 +553,7 @@ class MarkLogicClientImpl {
                         String fragment = new java.net.URI(xsdType).getFragment();
                         bindings.bind(variableName,lit.getLabel(),RDFTypes.valueOf(fragment.toUpperCase()));
                     } catch (URISyntaxException e) {
-                        logger.info(e.getLocalizedMessage());
+                        logger.error(e.getLocalizedMessage());
                         throw new MarkLogicSesameException("Problem with object datatype.");
                     }
                 }else {

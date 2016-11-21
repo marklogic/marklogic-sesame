@@ -214,7 +214,7 @@ public class MarkLogicClient {
 		try {
 			stream = getClient().performSPARQLQuery(queryString, bindings, start, pageLength, this.tx, includeInferred, baseURI);
 		} catch (JsonProcessingException e) {
-			logger.info(e.getLocalizedMessage());
+			logger.error(e.getLocalizedMessage());
 			throw new MarkLogicSesameException("Issue processing json.");
 		}
 		TupleQueryResultParser parser = QueryResultIO.createParser(format, getValueFactory());
@@ -406,7 +406,7 @@ public class MarkLogicClient {
 				this.tx.commit();
 				this.tx=null;
 			} catch (MarkLogicSesameException e) {
-				logger.warn(e.getLocalizedMessage());
+				logger.error(e.getLocalizedMessage());
 				throw new MarkLogicTransactionException(e);
 			}
 		}else{
@@ -576,5 +576,10 @@ public class MarkLogicClient {
 	public void close() {
 		_client.close();
 	}
-
+	/**
+	 *
+	 */
+	public void release() {
+		_client.release();
+	}
 }
