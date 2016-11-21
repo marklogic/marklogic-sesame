@@ -155,8 +155,11 @@ class MarkLogicClientImpl {
         if(notNull(baseURI) && !baseURI.isEmpty()){ qdef.setBaseUri(baseURI);}
         if (notNull(ruleset)){qdef.setRulesets(ruleset);}
         if (notNull(getConstrainingQueryDefinition())) {
-        	qdef.setConstrainingQueryDefinition(getConstrainingQueryDefinition()); 
-        	qdef.setOptionsName(getConstrainingQueryDefinition().getOptionsName());
+        	qdef.setConstrainingQueryDefinition(getConstrainingQueryDefinition());
+            qdef.setDirectory(getConstrainingQueryDefinition().getDirectory());
+            qdef.setCollections(getConstrainingQueryDefinition().getCollections());
+            qdef.setResponseTransform(getConstrainingQueryDefinition().getResponseTransform());
+            qdef.setOptionsName(getConstrainingQueryDefinition().getOptionsName());
         }
         qdef.setIncludeDefaultRulesets(includeInferred);
         if(notNull(graphPerms)){ qdef.setUpdatePermissions(graphPerms);}
@@ -201,7 +204,10 @@ class MarkLogicClientImpl {
         if (notNull(ruleset)) {qdef.setRulesets(ruleset);}
         if (notNull(getConstrainingQueryDefinition())){
         	qdef.setConstrainingQueryDefinition(getConstrainingQueryDefinition());
-        	qdef.setOptionsName(getConstrainingQueryDefinition().getOptionsName());
+            qdef.setDirectory(getConstrainingQueryDefinition().getDirectory());
+            qdef.setCollections(getConstrainingQueryDefinition().getCollections());
+            qdef.setResponseTransform(getConstrainingQueryDefinition().getResponseTransform());
+            qdef.setOptionsName(getConstrainingQueryDefinition().getOptionsName());
         	}
         if(notNull(graphPerms)){ qdef.setUpdatePermissions(graphPerms);}
         qdef.setIncludeDefaultRulesets(includeInferred);
@@ -226,7 +232,10 @@ class MarkLogicClientImpl {
         if (notNull(ruleset)) {qdef.setRulesets(ruleset);}
         if (notNull(getConstrainingQueryDefinition())){
         	qdef.setConstrainingQueryDefinition(getConstrainingQueryDefinition());
-        	qdef.setOptionsName(getConstrainingQueryDefinition().getOptionsName());
+            qdef.setDirectory(getConstrainingQueryDefinition().getDirectory());
+            qdef.setCollections(getConstrainingQueryDefinition().getCollections());
+            qdef.setResponseTransform(getConstrainingQueryDefinition().getResponseTransform());
+            qdef.setOptionsName(getConstrainingQueryDefinition().getOptionsName());
         	}
         if(notNull(graphPerms)){ qdef.setUpdatePermissions(graphPerms);}
         return sparqlManager.executeAsk(qdef,tx);
