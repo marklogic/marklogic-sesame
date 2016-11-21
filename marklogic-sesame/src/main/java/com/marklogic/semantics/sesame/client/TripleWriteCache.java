@@ -79,8 +79,16 @@ public class TripleWriteCache extends TripleCache {
                    entireQuery.append(" GRAPH <" + ctx + "> { ");
                }
                 for (Statement stmt : cache.filter(null, null, null, ctx)) {
-                    entireQuery.append("<" + stmt.getSubject().stringValue() + "> ");
-                    entireQuery.append("<" + stmt.getPredicate().stringValue() + "> ");
+                    if (stmt.getSubject() instanceof org.openrdf.model.BNode) {
+                        entireQuery.append("<http://marklogic.com/semantics/blank/" + stmt.getSubject().stringValue() + "> ");
+                    }else {
+                        entireQuery.append("<" + stmt.getSubject().stringValue() + "> ");
+                    }
+                    if (stmt.getPredicate() instanceof org.openrdf.model.BNode) {
+                        entireQuery.append("<http://marklogic.com/semantics/blank/" + stmt.getPredicate().stringValue() + "> ");
+                    }else{
+                        entireQuery.append("<" + stmt.getPredicate().stringValue() + "> ");
+                    }
                     Value object=stmt.getObject();
                     if (object instanceof Literal) {
                         Literal lit = (Literal) object;
@@ -93,7 +101,11 @@ public class TripleWriteCache extends TripleCache {
                             entireQuery.append("@" + lit.getLanguage().toString());
                         }
                     } else {
-                        entireQuery.append("<" + object.stringValue() + "> ");
+                        if (stmt.getObject() instanceof org.openrdf.model.BNode) {
+                            entireQuery.append("<http://marklogic.com/semantics/blank/" + stmt.getObject().stringValue() + "> ");
+                        }else {
+                            entireQuery.append("<" + object.stringValue() + "> ");
+                        }
                     }
                     entireQuery.append(".");
                 }
@@ -110,6 +122,5 @@ public class TripleWriteCache extends TripleCache {
         cache.clear();
 
     }
-
 
 }
