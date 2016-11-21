@@ -122,4 +122,12 @@ public class MarkLogicUpdateQueryTest extends SesameTestBase {
         updateQuery.execute();
     }
 
+    @Test(expected=org.openrdf.query.UpdateExecutionException.class)
+    public void testUpdateQueryMalformedException()
+            throws Exception {
+        String defGraphQuery = "INSERT1 DATA GRAPH <http://marklogic.com/test/g27> { <http://marklogic.com/test> <pp1> <oo1> } }";
+        Update updateQuery = conn.prepareUpdate(QueryLanguage.SPARQL, defGraphQuery);
+        updateQuery.execute();
+    }
+
 }
