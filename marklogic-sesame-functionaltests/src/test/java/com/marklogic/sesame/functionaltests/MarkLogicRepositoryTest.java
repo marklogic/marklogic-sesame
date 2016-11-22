@@ -8,29 +8,21 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.Timeout;
-import org.openrdf.model.Literal;
 import org.openrdf.model.Resource;
 import org.openrdf.model.URI;
 import org.openrdf.model.Value;
 import org.openrdf.model.ValueFactory;
 import org.openrdf.model.impl.ValueFactoryImpl;
-import org.openrdf.model.vocabulary.DC;
-import org.openrdf.query.TupleQueryResult;
 import org.openrdf.repository.Repository;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.config.RepositoryFactory;
-import org.openrdf.rio.RDFFormat;
-import org.openrdf.rio.RDFParseException;
 
 import com.marklogic.semantics.sesame.MarkLogicRepository;
 import com.marklogic.semantics.sesame.MarkLogicRepositoryConnection;
 import com.marklogic.semantics.sesame.config.MarkLogicRepositoryConfig;
 import com.marklogic.semantics.sesame.config.MarkLogicRepositoryFactory;
-import com.marklogic.semantics.sesame.query.MarkLogicTupleQuery;
 import com.marklogic.sesame.functionaltests.util.ConnectedRESTQA;
 
 /**
@@ -41,23 +33,38 @@ import com.marklogic.sesame.functionaltests.util.ConnectedRESTQA;
 public class MarkLogicRepositoryTest extends  ConnectedRESTQA{
 	private static MarkLogicRepository testRepository;
 	private static ValueFactory vf ;
+	private static String[] hostNames ;
 	private static MarkLogicRepositoryConnection testConn;
-	private static int restPort = 8024;
+	private static int restPort = 8000;
+	private static String host = "localhost";
 	private static String dbName = "MLSesameRep";
-	private static String [] fNames = {"MLSesameRep-1"};
-	private static String restServer = "REST-MLSesame-Rep-API-Server";
+	private static String restServer = "App-Services";
 	
 	@BeforeClass
 	public static void initialSetup() throws Exception {			
-		setupJavaRESTServer(dbName, fNames[0], restServer, restPort);
-		setupAppServicesConstraint(dbName);
+		hostNames = getHosts();	    
+		createDB(dbName);
+		Thread.currentThread().sleep(500L);
+		int count = 1;
+		for ( String forestHost : hostNames ) {
+			createForestonHost(dbName+"-"+count,dbName,forestHost);
+		    count ++;
+			Thread.currentThread().sleep(500L);
+		}
+		associateRESTServerWithDB(restServer,dbName);
 		enableCollectionLexicon(dbName);
 		enableTripleIndex(dbName);		
 	}
 	
 	@AfterClass
 	public static void tearDownSetup() throws Exception  {
-		tearDownJavaRESTServer(dbName, fNames, restServer);
+		associateRESTServerWithDB(restServer,"Documents");
+		for (int i =0 ; i < hostNames.length; i++){
+			detachForest(dbName, dbName+"-"+(i+1));
+			deleteForest(dbName+"-"+(i+1));
+		}
+		
+		deleteDB(dbName);
 		
 	}
 	
@@ -65,7 +72,7 @@ public class MarkLogicRepositoryTest extends  ConnectedRESTQA{
     public void testGetRepository() throws Exception {
         MarkLogicRepositoryConfig config = new MarkLogicRepositoryConfig();
 
-        config.setHost("localhost");
+        config.setHost(host);
         config.setPort(restPort);
         config.setUser("admin");
         config.setPassword("admin");
@@ -144,6 +151,4 @@ public class MarkLogicRepositoryTest extends  ConnectedRESTQA{
         Assert.assertTrue(testRepository.isWritable());
         Assert.assertTrue(testRepository.getValueFactory() instanceof ValueFactoryImpl);
     }
-	
-	
 }
