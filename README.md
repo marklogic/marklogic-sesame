@@ -49,7 +49,7 @@ This section describes how to build and test MarkLogic Sesame API from _develop_
 
 #### Setup MarkLogic Java API Client (optional)
 
-marklogic-sesame-repository depends on [MarkLogic Java API Client v3.0-4](http://mvnrepository.com/artifact/com.marklogic/java-client-api/3.0.4) and should pull down this version from maven central.
+marklogic-sesame-repository depends on [MarkLogic Java API Client v3.0-5.1](http://mvnrepository.com/artifact/com.marklogic/java-client-api/3.0.5.1) and should pull down this version from maven central.
 
 To optionally build marklogic-sesame-repository with _develop_ branch version of MarkLogic Java API Client:
 
@@ -61,7 +61,7 @@ mvn -Dmaven.test.skip=true -Dmaven.javadoc.skip=true deploy
 Verify that Java API client has been deployed to your local maven repo.
 3. edit marklogic-sesame/build.gradle to use that snapshot
 ```
-    compile('com.marklogic:java-client-api:4.0-SNAPSHOT') {
+    compile('com.marklogic:java-client-api:3.0.5.1') {
         exclude(group: 'org.slf4j')
         exclude(group: 'ch.qos.logback')
     }
