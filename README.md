@@ -99,7 +99,7 @@ optionally you can build the jar without running tests.
 gradle build -x test
 ```
 
-and copy resultant build/lib/marklogic-sesame-1.0.1.3-SNAPSHOT.jar.
+and copy resultant build/lib/marklogic-sesame-1.0.1.3.jar.
 
 ### Examples
 
