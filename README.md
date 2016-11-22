@@ -61,7 +61,7 @@ mvn -Dmaven.test.skip=true -Dmaven.javadoc.skip=true deploy
 Verify that Java API client has been deployed to your local maven repo.
 3. edit marklogic-sesame/build.gradle to use that snapshot
 ```
-    compile('com.marklogic:java-client-api:3.0.6-SNAPSHOT') {
+    compile('com.marklogic:java-client-api:3.0.6') {
         exclude(group: 'org.slf4j')
         exclude(group: 'ch.qos.logback')
     }
@@ -99,7 +99,7 @@ optionally you can build the jar without running tests.
 gradle build -x test
 ```
 
-and copy resultant build/lib/marklogic-sesame-1.0.2.1-SNAPSHOT.jar.
+and copy resultant build/lib/marklogic-sesame-1.0.2.1.jar.
 
 ### Examples
 
