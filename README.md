@@ -17,7 +17,7 @@ The MarkLogic Sesame API supports [Sesame v2.8.10](http://rdf4j.org/).
 
 ### Setup MarkLogic
 
-Ensure MarkLogic 8.0-5 or greater is installed and running. To use marklogic-sesame applications you will need access to a running MarkLogic server.
+Ensure MarkLogic 8.0-6 or greater is installed and running. To use marklogic-sesame applications you will need access to a running MarkLogic server.
 
 ## Usage
 
@@ -49,7 +49,7 @@ This section describes how to build and test MarkLogic Sesame API from _develop_
 
 #### Setup MarkLogic Java API Client (optional)
 
-marklogic-sesame-repository depends on [MarkLogic Java API Client v3.0-4](http://mvnrepository.com/artifact/com.marklogic/java-client-api/3.0.4) and should pull down this version from maven central.
+marklogic-sesame-repository depends on [MarkLogic Java API Client v3.0-6](http://mvnrepository.com/artifact/com.marklogic/java-client-api/3.0.6) and should pull down this version from maven central.
 
 To optionally build marklogic-sesame-repository with _develop_ branch version of MarkLogic Java API Client:
 
@@ -61,7 +61,7 @@ mvn -Dmaven.test.skip=true -Dmaven.javadoc.skip=true deploy
 Verify that Java API client has been deployed to your local maven repo.
 3. edit marklogic-sesame/build.gradle to use that snapshot
 ```
-    compile('com.marklogic:java-client-api:4.0-SNAPSHOT') {
+    compile('com.marklogic:java-client-api:4..0-SNAPSHOT') {
         exclude(group: 'org.slf4j')
         exclude(group: 'ch.qos.logback')
     }
@@ -70,7 +70,7 @@ Verify that Java API client has been deployed to your local maven repo.
 
 #### Setup and Test MarkLogic Sesame API
 
-marklogic-sesame-repository depends on MarkLogic v8.0-5 or greater installed and running;
+marklogic-sesame-repository depends on MarkLogic v8.0-6 or greater installed and running;
 
 1. Clone or download [marklogic-sesame](https://github.com/marklogic/marklogic-sesame/tree/develop) _develop_ branch.
 2. Review [marklogic-sesame/gradle.properties](marklogic-sesame/gradle.properties) which defines test deployment settings.
