@@ -1860,12 +1860,20 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
 		throws OpenRDFException
 	{
 		final Statement st1 = vf.createStatement(john, fname, johnfname);
-		testWriterCon.begin();
-		testWriterCon.add(st1);
-		testWriterCon.prepareUpdate(QueryLanguage.SPARQL,
-				"DELETE DATA {<" + john.stringValue() + "> <" + fname.stringValue() + "> \"" + johnfname.stringValue() + "\"}").execute();
-		testWriterCon.commit();
-
+		try{
+			testWriterCon.begin();
+			testWriterCon.add(st1);
+			testWriterCon.prepareUpdate(QueryLanguage.SPARQL,
+					"DELETE DATA {<" + john.stringValue() + "> <" + fname.stringValue() + "> \"" + johnfname.stringValue() + "\"}").execute();
+			testWriterCon.commit();
+		}
+		catch(Exception e){
+			logger.debug(e.getMessage());
+		}
+		finally{
+			if(testWriterCon.isActive())
+				testWriterCon.rollback();
+		}
 		testWriterCon.exportStatements(null, null, null, false, new RDFHandlerBase() {
 
 			@Override
@@ -2020,10 +2028,11 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
 			testAdminCon.begin();
 			testAdminCon.prepareUpdate(QueryLanguage.SPARQL,
 					"DELETE DATA {GRAPH <" + dirgraph.stringValue()+ "> { <" + micah.stringValue() + "> <" + homeTel.stringValue() + "> \"" + micahhomeTel.doubleValue() + "\"^^<http://www.w3.org/2001/XMLSchema#double>} }").execute();
-			Thread.currentThread().sleep(10000L);
+			Thread.currentThread().sleep(5000L);
 			Assert.assertTrue(testAdminCon.isEmpty());
 			testAdminCon.add(stmt);
 			testAdminCon.commit();
+			Thread.currentThread().sleep(5000L);
 		}
 		catch(Exception e){
 			logger.debug(e.getMessage());
@@ -2197,7 +2206,7 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
 			fail("Should not be able to run statements on testAdminCon");
 		}
 		catch(Exception e){
-			Assert.assertTrue(e instanceof RepositoryException);
+			Assert.assertTrue(e instanceof IllegalStateException);
 		}
 
 		try{
