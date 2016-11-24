@@ -2206,7 +2206,7 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
 			fail("Should not be able to run statements on testAdminCon");
 		}
 		catch(Exception e){
-			Assert.assertTrue(e instanceof IllegalStateException);
+			Assert.assertTrue(e instanceof RepositoryException);
 		}
 
 		try{
