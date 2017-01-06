@@ -30,7 +30,6 @@ For gradle projects, include the following dependency in your `build.gradle`:
 ```
 dependencies {
     compile group: 'com.marklogic', name: 'marklogic-sesame-repository', version: '1.0.2.1'
-}
 ```
 
 For maven projects, include in your pom.xml:
