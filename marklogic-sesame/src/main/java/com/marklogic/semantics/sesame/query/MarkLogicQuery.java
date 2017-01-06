@@ -22,6 +22,7 @@ package com.marklogic.semantics.sesame.query;
 import com.marklogic.client.query.QueryDefinition;
 import com.marklogic.client.semantics.GraphPermissions;
 import com.marklogic.client.semantics.SPARQLRuleset;
+import com.marklogic.semantics.sesame.MarkLogicSesameException;
 import com.marklogic.semantics.sesame.client.MarkLogicClient;
 import com.marklogic.semantics.sesame.client.MarkLogicClientDependent;
 import org.openrdf.model.Value;
@@ -297,5 +298,9 @@ public class MarkLogicQuery extends AbstractQuery implements Query,MarkLogicClie
     @Override
     public GraphPermissions getGraphPerms() {
         return getMarkLogicClient().getGraphPerms();
+    }
+
+    protected void sync() throws MarkLogicSesameException {
+        getMarkLogicClient().sync();
     }
 }

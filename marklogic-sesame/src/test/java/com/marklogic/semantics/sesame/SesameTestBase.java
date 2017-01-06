@@ -18,6 +18,7 @@ package com.marklogic.semantics.sesame;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
 import com.marklogic.client.io.StringHandle;
+
 import org.junit.After;
 import org.junit.AfterClass;
 

@@ -23,6 +23,7 @@ import com.marklogic.client.FailedRequestException;
 import com.marklogic.client.semantics.GraphPermissions;
 import com.marklogic.client.query.QueryDefinition;
 import com.marklogic.client.semantics.SPARQLRuleset;
+import com.marklogic.semantics.sesame.MarkLogicSesameException;
 import com.marklogic.semantics.sesame.client.MarkLogicClient;
 import org.openrdf.query.BooleanQuery;
 import org.openrdf.query.MalformedQueryException;
@@ -64,6 +65,7 @@ public class MarkLogicBooleanQuery extends MarkLogicQuery implements BooleanQuer
     @Override
     public boolean evaluate() throws QueryEvaluationException {
         try {
+            sync();
             return getMarkLogicClient().sendBooleanQuery(getQueryString(), getBindings(), getIncludeInferred(),getBaseURI());
         }catch (RepositoryException e) {
             throw new QueryEvaluationException(e.getMessage(), e);

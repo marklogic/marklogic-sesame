@@ -15,6 +15,7 @@ import static org.junit.Assert.fail;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -72,8 +73,10 @@ import org.slf4j.LoggerFactory;
 
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
+import com.marklogic.client.admin.QueryOptionsManager;
 import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.io.Format;
+import com.marklogic.client.io.ReaderHandle;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.query.QueryDefinition;
 import com.marklogic.client.query.QueryManager;
@@ -110,6 +113,7 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
 	private static String restServer = "App-Services";
 	private static int restPort = 8000;
 	private static String[] hostNames ;
+	private static String host = "localhost";
 		
 	protected static DatabaseClient databaseClient ;
 	protected static MarkLogicRepository testAdminRepository;
@@ -294,7 +298,7 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
 		//Creating MLSesame Connection object Using MarkLogicRepositoryConfig
 		
 		MarkLogicRepositoryConfig adminconfig = new MarkLogicRepositoryConfig();
-		adminconfig.setHost("localhost");
+		adminconfig.setHost(host);
 		adminconfig.setAuth("DIGEST");
 		adminconfig.setUser("admin");
 		adminconfig.setPassword("admin");
@@ -319,7 +323,7 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
         testAdminRepository = null; 
         testAdminCon = null; 
         
-        adminconfig = new MarkLogicRepositoryConfig("localhost",restPort,"admin","admin","DIGEST");
+        adminconfig = new MarkLogicRepositoryConfig(host,restPort,"admin","admin","DIGEST");
         Assert.assertEquals("marklogic:MarkLogicRepository", factory.getRepositoryType());
         testAdminRepository = (MarkLogicRepository) factory.getRepository(adminconfig);
         testAdminRepository.initialize();
@@ -349,7 +353,7 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
         
        //Creating MLSesame Connection object Using MarkLogicRepository overloaded constructor
         if(testReaderCon == null || testReaderRepository ==null){
-        	testReaderRepository = new MarkLogicRepository("localhost", restPort, "reader", "reader", "DIGEST");
+        	testReaderRepository = new MarkLogicRepository(host, restPort, "reader", "reader", "DIGEST");
 	        try {
 				testReaderRepository.initialize();
 				Assert.assertNotNull(testReaderRepository);
@@ -364,7 +368,7 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
        
         //Creating MLSesame Connection object Using MarkLogicRepository(databaseclient)  constructor
         if (databaseClient == null){
-        	databaseClient = DatabaseClientFactory.newClient("localhost", restPort, "writer", "writer", DatabaseClientFactory.Authentication.valueOf("DIGEST"));
+        	databaseClient = DatabaseClientFactory.newClient(host, restPort, "writer", "writer", DatabaseClientFactory.Authentication.valueOf("DIGEST"));
         }
        		
 		if(testWriterCon == null || testWriterRepository ==null){
@@ -2187,16 +2191,15 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
 		}
 		testAdminCon.remove(stmt, dirgraph);
 		testAdminCon.close();
-		
+
 		try{
 			testAdminCon.hasStatement(stmt, false, dirgraph);
 			fail("Should not be able to run statements on testAdminCon");
 		}
 		catch(Exception e){
-			Assert.assertTrue(e instanceof IllegalStateException);
+			Assert.assertTrue(e instanceof RepositoryException);
 		}
 
-		
 		try{
 			testAdminCon.add(stmt);
 			fail("Adding triples after close should not be allowed");
@@ -3083,7 +3086,7 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
 		Repository tempRep1 = null;
 		try{
 			MarkLogicRepositoryConfig tempConfig1 = new MarkLogicRepositoryConfig();
-			tempConfig1.setHost("localhost");
+			tempConfig1.setHost(host);
 			tempConfig1.setAuth("DIGEST");
 			tempConfig1.setUser("admin");
 			tempConfig1.setPassword("admin");
@@ -3117,7 +3120,7 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
 		Repository tempRep2 = null;
 		try{
 			MarkLogicRepositoryConfig tempConfig2 = new MarkLogicRepositoryConfig();
-			tempConfig2.setHost("localhost");
+			tempConfig2.setHost(host);
 			tempConfig2.setAuth("DIGEST");
 			tempConfig2.setUser("admin");
 			tempConfig2.setPassword("admin");
@@ -3529,7 +3532,113 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
      askQuery.setConstrainingQueryDefinition(null);
      Assert.assertEquals(true, askQuery1.evaluate());
    }
+	
+	
+	@Test
+    public void testQuerywithOptions() throws Exception {
+	 
+	 addRangeElementIndex(dbName, "int", "", "popularity");
+	 DatabaseClient dbClient = DatabaseClientFactory.newClient(host, restPort, "admin", "admin", DatabaseClientFactory.Authentication.valueOf("DIGEST"));
+	 setupData();
+	 	 
+	 Thread.currentThread().sleep(5000L);
+	 
+	 String option = "setViewOpt.xml";
+	 writeQueryOption(dbClient, option);
+	 
+	 StringQueryDefinition stringDef = qmgr.newStringDefinition();
+	 stringDef.setOptionsName(option);
+     stringDef.withCriteria("pop:high");
+
+     
+     String posQuery = "ASK WHERE {<http://example.org/r9929> ?p ?o .}";
+     String negQuery = "ASK WHERE {<http://example.org/r9928> ?p ?o .}";
+       
+     MarkLogicBooleanQuery askQuery = (MarkLogicBooleanQuery) testAdminCon.prepareBooleanQuery(QueryLanguage.SPARQL,posQuery);
+     askQuery.setConstrainingQueryDefinition(stringDef);
+     Assert.assertEquals(true, askQuery.evaluate());
+     System.out.println(askQuery.evaluate());
+     
+     testAdminCon.setDefaultConstrainingQueryDefinition(stringDef);
+     MarkLogicBooleanQuery askQuery1 = (MarkLogicBooleanQuery) testAdminCon.prepareBooleanQuery(QueryLanguage.SPARQL,negQuery);
+     Assert.assertEquals(false, askQuery1.evaluate());
+     System.out.println(askQuery1.evaluate());
+     
+     StringQueryDefinition stringDef1 = qmgr.newStringDefinition();
+     stringDef1.setOptionsName(option);
+     stringDef1.withCriteria("pop:low");
+         
+     testAdminCon.setDefaultConstrainingQueryDefinition(stringDef1);
+     askQuery1 = (MarkLogicBooleanQuery) testAdminCon.prepareBooleanQuery(QueryLanguage.SPARQL,negQuery);
+     Assert.assertEquals(true, askQuery1.evaluate());
+     System.out.println(askQuery1.evaluate());
+     
+     testAdminCon.setDefaultConstrainingQueryDefinition(stringDef1);
+     askQuery1 = (MarkLogicBooleanQuery) testAdminCon.prepareBooleanQuery(QueryLanguage.SPARQL,posQuery);
+     Assert.assertEquals(false, askQuery1.evaluate());
+     System.out.println(askQuery1.evaluate());
+     
+   }
+
+	@Test
+    public void testQuerywithNoOptions() throws Exception {
+	 
+	 setupData();
+	 	 
+	 Thread.currentThread().sleep(5000L);
+	 
+		 
+	 StringQueryDefinition stringDef = qmgr.newStringDefinition();
+	 
+     
+     String posQuery = "ASK WHERE {<http://example.org/r9929> ?p ?o .}";
+     String negQuery = "ASK WHERE {<http://example.org/r9928> ?p ?o .}";
+       
+     MarkLogicBooleanQuery askQuery = (MarkLogicBooleanQuery) testAdminCon.prepareBooleanQuery(QueryLanguage.SPARQL,posQuery);
+     askQuery.setConstrainingQueryDefinition(stringDef);
+     Assert.assertEquals(true, askQuery.evaluate());
+     System.out.println(askQuery.evaluate());
+     
+     testAdminCon.setDefaultConstrainingQueryDefinition(stringDef);
+     MarkLogicBooleanQuery askQuery1 = (MarkLogicBooleanQuery) testAdminCon.prepareBooleanQuery(QueryLanguage.SPARQL,negQuery);
+     Assert.assertEquals(true, askQuery1.evaluate());
+     System.out.println(askQuery1.evaluate());
+     
+     StringQueryDefinition stringDef1 = qmgr.newStringDefinition();
+              
+     testAdminCon.setDefaultConstrainingQueryDefinition(stringDef1);
+     askQuery1 = (MarkLogicBooleanQuery) testAdminCon.prepareBooleanQuery(QueryLanguage.SPARQL,negQuery);
+     Assert.assertEquals(true, askQuery1.evaluate());
+     System.out.println(askQuery1.evaluate());
+     
+     testAdminCon.setDefaultConstrainingQueryDefinition(stringDef1);
+     askQuery1 = (MarkLogicBooleanQuery) testAdminCon.prepareBooleanQuery(QueryLanguage.SPARQL,posQuery);
+     Assert.assertEquals(true, askQuery1.evaluate());
+     System.out.println(askQuery1.evaluate());
+     
+   }
+	 
+	public void writeQueryOption(DatabaseClient client, String queryOptionName) throws FileNotFoundException
+	{
+		// create a manager for writing query options
+		QueryOptionsManager optionsMgr = client.newServerConfigManager().newQueryOptionsManager();
+
+		// create handle
+		ReaderHandle handle = new ReaderHandle();
+		
+		// write the files
+		BufferedReader docStream = new BufferedReader(new FileReader(MarkLogicRepositoryConnectionTest.class.getResource(TEST_DIR_PREFIX+ queryOptionName).getFile()));
+		handle.set(docStream);
+			
+		//handle.setFormat(Format.XML);
+		
+		// write the query options to the database
+		optionsMgr.writeOptions(queryOptionName, handle);		    
+
+		System.out.println("Write " + queryOptionName + " to database");
+	}
    
+	
 	// ISSUE 124
    @Test
     public void testStringQuery() throws Exception {
@@ -3561,6 +3670,7 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
 	   String tripleDocOne = 
 			   "<semantic-document>\n" +
                 "<title>First Title</title>\n" +
+                "<popularity>1</popularity>\n"+
                 "<size>100</size>\n" +
                 "<sem:triples xmlns:sem=\"http://marklogic.com/semantics\">" +
                 "<sem:triple><sem:subject>http://example.org/r9928</sem:subject>" +
@@ -3572,6 +3682,7 @@ public class MarkLogicRepositoryConnectionTest extends ConnectedRESTQA {
         String tripleDocTwo = 
         		"<semantic-document>\n" +
                 "<title>Second Title</title>\n" +
+                "<popularity>5</popularity>\n" +
                 "<size>500</size>\n" +
                 "<sem:triples xmlns:sem=\"http://marklogic.com/semantics\">" +
                 "<sem:triple><sem:subject>http://example.org/r9929</sem:subject>" +

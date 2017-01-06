@@ -67,6 +67,7 @@ public class MarkLogicGraphQuery extends MarkLogicQuery implements GraphQuery,Ma
     public GraphQueryResult evaluate()
             throws QueryEvaluationException {
         try {
+            sync();
             return getMarkLogicClient().sendGraphQuery(getQueryString(),getBindings(),getIncludeInferred(),getBaseURI());
         } catch (IOException e) {
             throw new QueryEvaluationException(e);
@@ -89,6 +90,5 @@ public class MarkLogicGraphQuery extends MarkLogicQuery implements GraphQuery,Ma
         {
             QueryResults.report(queryResult, resultHandler);
         }
-        queryResult.close();
     }
 }

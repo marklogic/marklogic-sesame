@@ -24,6 +24,7 @@ import com.marklogic.client.ForbiddenUserException;
 import com.marklogic.client.semantics.GraphPermissions;
 import com.marklogic.client.query.QueryDefinition;
 import com.marklogic.client.semantics.SPARQLRuleset;
+import com.marklogic.semantics.sesame.MarkLogicSesameException;
 import com.marklogic.semantics.sesame.client.MarkLogicClient;
 import org.openrdf.query.MalformedQueryException;
 import org.openrdf.query.Update;
@@ -64,6 +65,7 @@ public class MarkLogicUpdateQuery extends MarkLogicQuery implements Update,MarkL
     @Override
     public void execute() throws UpdateExecutionException {
         try {
+            sync();
             getMarkLogicClient().sendUpdateQuery(getQueryString(), getBindings(), getIncludeInferred(), getBaseURI());
         }catch(ForbiddenUserException | FailedRequestException e){
             throw new UpdateExecutionException(e);

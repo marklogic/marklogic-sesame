@@ -21,6 +21,7 @@
 package com.marklogic.semantics.sesame;
 
 import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.DatabaseClientFactory;
 import com.marklogic.semantics.sesame.client.MarkLogicClient;
 import com.marklogic.semantics.sesame.client.MarkLogicClientDependent;
 import org.openrdf.model.ValueFactory;
@@ -61,6 +62,8 @@ public class MarkLogicRepository extends RepositoryBase implements Repository,Ma
 
     private ValueFactory f;
 
+    private DatabaseClient databaseClient;
+
     /**
      * constructor inited with connection URL
      *
@@ -99,7 +102,8 @@ public class MarkLogicRepository extends RepositoryBase implements Repository,Ma
         this.user = user;
         this.password = password;
         this.auth = auth;
-        this.client = getMarkLogicClient();
+        this.databaseClient = DatabaseClientFactory.newClient(host,port,user,password,DatabaseClientFactory.Authentication.valueOf(auth));
+        this.client = new MarkLogicClient(databaseClient);
     }
 
     /**
@@ -110,6 +114,8 @@ public class MarkLogicRepository extends RepositoryBase implements Repository,Ma
     public MarkLogicRepository(DatabaseClient databaseClient) {
         super();
         this.f = new ValueFactoryImpl();
+
+        this.databaseClient = databaseClient;
         this.quadMode = true;
         this.host = databaseClient.getHost();
         this.port = databaseClient.getPort();
@@ -138,7 +144,7 @@ public class MarkLogicRepository extends RepositoryBase implements Repository,Ma
     }
 
     /**
-     * @Deprecated
+     * @deprecated
      * implemented to honor Repository interface
      *
      * @throws RepositoryException
@@ -146,10 +152,12 @@ public class MarkLogicRepository extends RepositoryBase implements Repository,Ma
     @Override
     @Deprecated
     protected void initializeInternal() throws RepositoryException {
+        this.databaseClient = DatabaseClientFactory.newClient(host,port,user,password,DatabaseClientFactory.Authentication.valueOf(auth));
+        this.client = new MarkLogicClient(databaseClient);
     }
 
     /**
-     * @Deprecated
+     * @deprecated
      * implemented to honor Repository interface
      *
      * @throws RepositoryException
@@ -157,6 +165,7 @@ public class MarkLogicRepository extends RepositoryBase implements Repository,Ma
     @Override
     @Deprecated
     protected void shutDownInternal() throws RepositoryException {
+        client.release();
     }
 
     /**
@@ -178,6 +187,7 @@ public class MarkLogicRepository extends RepositoryBase implements Repository,Ma
      */
     @Override
     public void setDataDir(File dataDir) {
+        // originally implemented to honor repository interface
     }
 
     /**
@@ -220,7 +230,11 @@ public class MarkLogicRepository extends RepositoryBase implements Repository,Ma
      */
     @Override
     public synchronized MarkLogicClient getMarkLogicClient() {
-        this.client = new MarkLogicClient(host, port, user, password, auth); // consider factory method ?
+        if(null != databaseClient){
+            this.client = new MarkLogicClient(databaseClient);
+        }else{
+            this.client = new MarkLogicClient(host, port, user, password, auth);
+        }
         return this.client;
     }
 

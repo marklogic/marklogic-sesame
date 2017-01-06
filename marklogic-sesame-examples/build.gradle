@@ -18,7 +18,7 @@ configure(allprojects){
 }
 
 dependencies {
-  compile('com.marklogic:marklogic-sesame:1.0.2'){
+  compile('com.marklogic:marklogic-sesame:1.0.2.1'){
       changing=true
       exclude(group: 'org.slf4j')
       exclude(group: 'log4j')

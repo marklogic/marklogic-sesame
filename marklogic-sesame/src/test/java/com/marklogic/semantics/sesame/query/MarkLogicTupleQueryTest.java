@@ -165,7 +165,6 @@ public class MarkLogicTupleQueryTest extends SesameTestBase {
             conn.close();
             Thread.sleep(1000);
         }
-
     }
 
     @Test
@@ -531,6 +530,16 @@ public class MarkLogicTupleQueryTest extends SesameTestBase {
     public void testSPARQLQueryQueryEvaluationException()
             throws Exception {
         String queryString = "select *  <http://marklogic.com/nonexistent> ?p ?o } limit 100 ";
+        TupleQuery tupleQuery = conn.prepareTupleQuery(QueryLanguage.SPARQL, queryString);
+        TupleQueryResult results = tupleQuery.evaluate();
+        Assert.assertFalse(results.hasNext());
+        results.close();
+    }
+
+    @Test(expected=org.openrdf.query.QueryEvaluationException.class)
+    public void testSPARQLMalformedException()
+            throws Exception {
+        String queryString = "select1 *  <http://marklogic.com/nonexistent> ?p ?o } limit 100 ";
         TupleQuery tupleQuery = conn.prepareTupleQuery(QueryLanguage.SPARQL, queryString);
         TupleQueryResult results = tupleQuery.evaluate();
         Assert.assertFalse(results.hasNext());

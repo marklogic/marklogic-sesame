@@ -1,4 +1,4 @@
-# marklogic-sesame-repository v1.0.2
+# marklogic-sesame-repository v1.0.2.1
 
 ## Introduction
 
@@ -17,20 +17,19 @@ The MarkLogic Sesame API supports [Sesame v2.8.10](http://rdf4j.org/).
 
 ### Setup MarkLogic
 
-Ensure MarkLogic 8.0-5 or greater is installed and running. To use marklogic-sesame applications you will need access to a running MarkLogic server.
+Ensure MarkLogic 8.0-6 or greater is installed and running. To use marklogic-sesame applications you will need access to a running MarkLogic server.
 
 ## Usage
 
 ### Quick Start
 
-The MarkLogic Sesame API is available via [Maven Central](http://mvnrepository.com/artifact/com.marklogic/marklogic-sesame/1.0.2).
+The MarkLogic Sesame API is available via [Maven Central](http://mvnrepository.com/artifact/com.marklogic/marklogic-sesame/1.0.2.1).
 
 For gradle projects, include the following dependency in your `build.gradle`:
 
 ```
 dependencies {
-    compile group: 'com.marklogic', name: 'marklogic-sesame-repository', version: '1.0.2'
-}
+    compile group: 'com.marklogic', name: 'marklogic-sesame-repository', version: '1.0.2.1'
 ```
 
 For maven projects, include in your pom.xml:
@@ -39,7 +38,7 @@ For maven projects, include in your pom.xml:
 <dependency>
     <groupId>com.marklogic</groupId>
     <artifactId>marklogic-sesame-repository</artifactId>
-    <version>1.0.2</version>
+    <version>1.0.2.1</version>
 </dependency>
 ```
 
@@ -49,7 +48,7 @@ This section describes how to build and test MarkLogic Sesame API from _develop_
 
 #### Setup MarkLogic Java API Client (optional)
 
-marklogic-sesame-repository depends on [MarkLogic Java API Client v3.0.6](http://mvnrepository.com/artifact/com.marklogic/java-client-api/3.0.6) and should pull down this version from maven central.
+marklogic-sesame-repository depends on [MarkLogic Java API Client v3.0-6](http://mvnrepository.com/artifact/com.marklogic/java-client-api/3.0.6) and should pull down this version from maven central.
 
 To optionally build marklogic-sesame-repository with _develop_ branch version of MarkLogic Java API Client:
 
@@ -61,7 +60,7 @@ mvn -Dmaven.test.skip=true -Dmaven.javadoc.skip=true deploy
 Verify that Java API client has been deployed to your local maven repo.
 3. edit marklogic-sesame/build.gradle to use that snapshot
 ```
-    compile('com.marklogic:java-client-api:4.0-SNAPSHOT') {
+    compile('com.marklogic:java-client-api:3.0.6') {
         exclude(group: 'org.slf4j')
         exclude(group: 'ch.qos.logback')
     }
@@ -70,7 +69,7 @@ Verify that Java API client has been deployed to your local maven repo.
 
 #### Setup and Test MarkLogic Sesame API
 
-marklogic-sesame-repository depends on MarkLogic v8.0-5 or greater installed and running;
+marklogic-sesame-repository depends on MarkLogic v8.0-6 or greater installed and running;
 
 1. Clone or download [marklogic-sesame](https://github.com/marklogic/marklogic-sesame/tree/develop) _develop_ branch.
 2. Review [marklogic-sesame/gradle.properties](marklogic-sesame/gradle.properties) which defines test deployment settings.
@@ -99,7 +98,7 @@ optionally you can build the jar without running tests.
 gradle build -x test
 ```
 
-and copy resultant build/lib/marklogic-sesame-1.0.2.jar.
+and copy resultant build/lib/marklogic-sesame-1.0.2.1.jar.
 
 ### Examples
 
@@ -124,7 +123,7 @@ Learn how to [contribute](CONTRIBUTING.md).
 
 ### Support
 
-The marklogic-sesame-repository is maintained by MarkLogic Engineering and distributed under the Apache 2.0 license. In addition, MarkLogic provides technical support for release tags of the Java Client API to licensed customers under the terms outlined in the Support Handbook. For more information or to sign up for support, visit [help.marklogic.com](http://help.marklogic.com).
+The marklogic-sesame-repository is maintained by MarkLogic Engineering and distributed under the Apache 2.0 license. In addition, MarkLogic provides technical support for release tags of the MarkLogic Sesame API to licensed customers under the terms outlined in the Support Handbook. For more information or to sign up for support, visit [help.marklogic.com](http://help.marklogic.com).
 
 ### License
 

@@ -23,6 +23,7 @@ import com.marklogic.client.FailedRequestException;
 import com.marklogic.client.semantics.GraphPermissions;
 import com.marklogic.client.query.QueryDefinition;
 import com.marklogic.client.semantics.SPARQLRuleset;
+import com.marklogic.semantics.sesame.MarkLogicSesameException;
 import com.marklogic.semantics.sesame.client.MarkLogicClient;
 import org.openrdf.query.*;
 import org.openrdf.repository.RepositoryException;
@@ -78,6 +79,7 @@ public class MarkLogicTupleQuery extends MarkLogicQuery implements TupleQuery,Ma
     public TupleQueryResult evaluate(long start, long pageLength)
             throws QueryEvaluationException {
         try {
+            sync();
             return getMarkLogicClient().sendTupleQuery(getQueryString(), getBindings(), start, pageLength, getIncludeInferred(), getBaseURI());
         }catch (RepositoryException e) {
             throw new QueryEvaluationException(e.getMessage(), e);
@@ -97,6 +99,12 @@ public class MarkLogicTupleQuery extends MarkLogicQuery implements TupleQuery,Ma
      */
     @Override
     public void evaluate(TupleQueryResultHandler resultHandler) throws QueryEvaluationException, TupleQueryResultHandlerException {
+        try {
+            sync();
+        } catch (MarkLogicSesameException e) {
+            logger.info(e.getLocalizedMessage());
+            throw new QueryEvaluationException(e);
+        }
         TupleQueryResult queryResult = evaluate();
         if(queryResult.hasNext()) {
             QueryResults.report(queryResult, resultHandler);

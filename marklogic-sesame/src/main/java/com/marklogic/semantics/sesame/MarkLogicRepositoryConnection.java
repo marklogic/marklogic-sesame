@@ -453,7 +453,6 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     /**
      * returns list of graph names as Resource
      *
-     * @return RepositoryResult<Resource>
      * @throws RepositoryException
      */
     @Override
@@ -493,7 +492,6 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
      * @param pred
      * @param obj
      * @param includeInferred
-     * @return RepositoryResult<Statement>
      * @throws RepositoryException
      */
     public RepositoryResult<Statement> getStatements(Resource subj, URI pred, Value obj, boolean includeInferred) throws RepositoryException {
@@ -548,7 +546,6 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
      * @param obj
      * @param includeInferred
      * @param contexts
-     * @return RepositoryResult<Statement>
      * @throws RepositoryException
      */
     @Override
@@ -598,7 +595,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
                 }
             }
             else {
-                GraphQuery query = prepareGraphQuery(EVERYTHING);
+                MarkLogicGraphQuery query = prepareGraphQuery(EVERYTHING);
                 setBindings(query, subj, pred, obj, contexts);
                 GraphQueryResult result = query.evaluate();
                 return new RepositoryResult<Statement>(
@@ -647,6 +644,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
      */
     @Override
     public boolean hasStatement(Resource subject, URI predicate, Value object, boolean includeInferred, Resource... contexts) throws RepositoryException {
+        if(!this.isOpen()){throw new RepositoryException("Connection is closed.");}
         String queryString = null;
         if(contexts == null) {
             queryString="ASK { GRAPH ?ctx { ?s ?p ?o } filter (?ctx = (IRI(\""+DEFAULT_GRAPH_URI+"\")))}";
@@ -675,7 +673,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
         }
         try {
             logger.debug(queryString);
-            BooleanQuery query = prepareBooleanQuery(queryString); // baseuri ?
+            MarkLogicBooleanQuery query = prepareBooleanQuery(queryString); // baseuri ?
 
             setBindings(query, subject, predicate, object, contexts);
             return query.evaluate();
@@ -762,7 +760,7 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
                 }
             }
             logger.debug(sb.toString());
-            GraphQuery query = prepareGraphQuery(sb.toString());
+            MarkLogicGraphQuery query = prepareGraphQuery(sb.toString());
             setBindings(query, subject, predicate, object, contexts);
             query.evaluate(handler);
         }
@@ -782,7 +780,6 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
      */
     @Override
     public long size() throws RepositoryException{
-        sync();
         try {
             MarkLogicTupleQuery tupleQuery = prepareTupleQuery(COUNT_EVERYTHING);
             tupleQuery.setIncludeInferred(false);
@@ -807,7 +804,6 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
      */
     @Override
     public long size(Resource... contexts) throws RepositoryException {
-        sync();
         if (contexts == null) {
             contexts = new Resource[] { null };
         }
@@ -882,6 +878,11 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
     @Override
     public boolean isEmpty() throws RepositoryException {
         return size() == 0;
+    }
+
+    @Override
+    public boolean isOpen() throws RepositoryException {
+        return super.isOpen();
     }
 
     /**
@@ -1133,7 +1134,6 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
      */
     @Override
     public void remove(Iterable<? extends Statement> statements) throws RepositoryException {
-        sync();
         Iterator <? extends Statement> iter = statements.iterator();
         while(iter.hasNext()){
             Statement st = iter.next();
@@ -1150,7 +1150,6 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
      */
     @Override
     public void remove(Iterable<? extends Statement> statements, Resource... contexts) throws RepositoryException {
-        sync();
         Iterator <? extends Statement> iter = statements.iterator();
         while(iter.hasNext()){
             Statement st = iter.next();
@@ -1168,7 +1167,6 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
      */
     @Override
     public <E extends Exception> void remove(Iteration<? extends Statement, E> statements) throws RepositoryException, E {
-        sync();
         while(statements.hasNext()){
             Statement st = statements.next();
             getClient().sendRemove(null, st.getSubject(), st.getPredicate(), st.getObject());
@@ -1186,7 +1184,6 @@ public class MarkLogicRepositoryConnection extends RepositoryConnectionBase impl
      */
     @Override
     public <E extends Exception> void remove(Iteration<? extends Statement, E> statements, Resource... contexts) throws RepositoryException, E {
-        sync();
         while(statements.hasNext()){
             Statement st = statements.next();
             getClient().sendRemove(null, st.getSubject(), st.getPredicate(), st.getObject(), mergeResource(st.getContext(), contexts));

@@ -708,7 +708,7 @@ public abstract class ConnectedRESTQA {
 		try{
 			DefaultHttpClient client = new DefaultHttpClient();
 			client.getCredentialsProvider().setCredentials(
-					new AuthScope("localhost", 8002),
+					new AuthScope( "localhost", 8002),
 					new UsernamePasswordCredentials("admin", "admin"));
 			HttpGet get = new HttpGet("http://localhost:8002"+ "/manage/v2/hosts?format=json");
 			

@@ -38,6 +38,8 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.FileInputStream;
 
+import static junit.framework.TestCase.fail;
+
 /**
  * tests that the correct exceptions are thrown
  *
@@ -162,6 +164,7 @@ public class MarkLogicExceptionsTest extends SesameTestBase {
 
     // https://github.com/marklogic/marklogic-sesame/issues/174
     @Test
+    // Note- we have relaxed the conditions for throwing this exception
     public void testEmptyCommit() throws Exception {
         exception.expect(MarkLogicTransactionException.class);
         logger.info("active:{}",conn.isActive());
@@ -179,5 +182,27 @@ public class MarkLogicExceptionsTest extends SesameTestBase {
         conn.add(inputFile, baseURI, RDFFormat.TURTLE, context1);
     }
 
+    @Test
+    public void testException1() throws Exception {
+        exception.expect(MarkLogicSesameException.class);
+        throw new MarkLogicSesameException("testing exception");
+    }
 
+    @Test
+    public void testException2() throws Exception {
+            exception.expect(MarkLogicSesameException.class);
+            throw new MarkLogicSesameException("testing exception",null);
+    }
+
+    @Test
+    public void testTransactionException1() throws Exception {
+        exception.expect(MarkLogicTransactionException.class);
+        throw new MarkLogicTransactionException("testing exception");
+    }
+
+    @Test
+    public void testTransactionException2() throws Exception {
+        exception.expect(MarkLogicTransactionException.class);
+        throw new MarkLogicTransactionException("testing exception",null);
+    }
 }

@@ -30,6 +30,8 @@ import org.openrdf.repository.config.RepositoryFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static com.marklogic.semantics.sesame.SesameTestBase.*;
+
 /**
  * test factory
  *
@@ -45,10 +47,10 @@ public class MarkLogicRepositoryFactoryTest {
     @Test
     public void testGetRepository() throws Exception {
         MarkLogicRepositoryConfig config = new MarkLogicRepositoryConfig();
-        config.setHost("localhost");
-        config.setPort(8200);
-        config.setUser("admin");
-        config.setPassword("admin");
+        config.setHost(host);
+        config.setPort(port);
+        config.setUser(adminUser);
+        config.setPassword(adminPassword);
         config.setAuth("DIGEST");
 
         RepositoryFactory factory = new MarkLogicRepositoryFactory();
@@ -66,7 +68,7 @@ public class MarkLogicRepositoryFactoryTest {
 
     @Test
     public void testGetRepositoryWithAllInOneConstructor() throws Exception {
-        MarkLogicRepositoryConfig config = new MarkLogicRepositoryConfig("localhost",8200,"admin","admin","DIGEST");
+        MarkLogicRepositoryConfig config = new MarkLogicRepositoryConfig(host, port, user, password, "DIGEST");
 
         RepositoryFactory factory = new MarkLogicRepositoryFactory();
         Assert.assertEquals("marklogic:MarkLogicRepository", factory.getRepositoryType());
