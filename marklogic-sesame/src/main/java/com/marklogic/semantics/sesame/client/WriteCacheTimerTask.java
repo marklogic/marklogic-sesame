@@ -25,9 +25,6 @@ import org.openrdf.model.Resource;
 import org.openrdf.model.URI;
 import org.openrdf.model.Value;
 import org.openrdf.model.impl.LinkedHashModel;
-import org.openrdf.query.MalformedQueryException;
-import org.openrdf.query.UpdateExecutionException;
-import org.openrdf.repository.RepositoryException;
 import org.openrdf.rio.RDFFormat;
 import org.openrdf.rio.RDFHandlerException;
 import org.openrdf.rio.RDFParseException;
@@ -38,7 +35,6 @@ import org.slf4j.LoggerFactory;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
-import java.io.IOException;
 import java.util.Date;
 import java.util.TimerTask;
 
@@ -47,32 +43,32 @@ import java.util.TimerTask;
  *
  * @author James Fuller
  */
-public abstract class TripleCache extends TimerTask {
+public class WriteCacheTimerTask extends TimerTask {
 
-    private static final Logger log = LoggerFactory.getLogger(TripleCache.class);
+    private static final Logger log = LoggerFactory.getLogger(WriteCacheTimerTask.class);
 
-    protected Model cache;
-    protected MarkLogicClient client;
+    private Model cache;
+    private MarkLogicClient client;
 
-    public static final long DEFAULT_CACHE_SIZE = 750;
+    public static final long DEFAULT_CACHE_SIZE = 500;
 
-    public static final long DEFAULT_CACHE_MILLIS = 800;
-    public static final long DEFAULT_INITIAL_DELAY = 50;
+    public static final long DEFAULT_CACHE_MILLIS = 500;
+    public static final long DEFAULT_INITIAL_DELAY = 10;
 
-    protected RDFFormat format = RDFFormat.NQUADS;
+    private RDFFormat format = RDFFormat.NQUADS;
 
-    protected long cacheSize;
+    private long cacheSize;
 
-    protected long cacheMillis;
+    private long cacheMillis;
 
-    protected Date lastCacheAccess = new Date();
+    private Date lastCacheAccess = new Date();
 
     /**
      * constructor
      *
      * @param client
      */
-    public TripleCache(MarkLogicClient client) {
+    public WriteCacheTimerTask(MarkLogicClient client) {
         super();
         this.client = client;
         this.cache = new LinkedHashModel();
@@ -80,7 +76,7 @@ public abstract class TripleCache extends TimerTask {
         this.cacheMillis = DEFAULT_CACHE_MILLIS;
     }
 
-    public TripleCache(MarkLogicClient client, long cacheSize) {
+    public WriteCacheTimerTask(MarkLogicClient client, long cacheSize) {
         super();
         this.client = client;
         this.cache = new LinkedHashModel();
@@ -130,47 +126,48 @@ public abstract class TripleCache extends TimerTask {
     @Override
     public synchronized void run(){
         Date now = new Date();
-        if ( !cache.isEmpty() &&
-                ((cache.size() > cacheSize - 1) || (now.getTime() - lastCacheAccess.getTime() > cacheMillis))) {
+        if ( this.cache.size() > this.cacheSize - 1 || (this.cache.size() > 0 && now.getTime() - this.lastCacheAccess.getTime() > this.cacheMillis)) {
             try {
                 flush();
-            } catch (RepositoryException e) {
-                log.error(e.getLocalizedMessage());
-                throw new RuntimeException(e);
-            } catch (MalformedQueryException e) {
-                log.error(e.getLocalizedMessage());
-                throw new RuntimeException(e);
-            } catch (UpdateExecutionException e) {
-                log.error(e.getLocalizedMessage());
-                throw new RuntimeException(e);
-            } catch (IOException e) {
-                log.error(e.getLocalizedMessage());
-                throw new RuntimeException(e);
+            } catch ( MarkLogicSesameException| InterruptedException e) {
+                // cannot throw exception in runnable run(), best we log it
+                log.warn("Exception thrown in other thread, when running writeCacheTimerTask.");
+                log.warn(e.toString(),e );
             }
         }
     }
 
-    protected abstract void flush() throws RepositoryException, MalformedQueryException, UpdateExecutionException, IOException;
+    /**
+     * flushes the cache, writing triples as graph
+     *
+     * @throws MarkLogicSesameException
+     */
+    private void flush() throws MarkLogicSesameException, InterruptedException {
+        log.debug("flushing write cache:" + this.cache.size());
+        try {
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            Rio.write(this.cache, out, this.format);
+            this.client.sendAdd(new ByteArrayInputStream(out.toByteArray()), null, this.format);
+            this.lastCacheAccess = new Date();
+            this.cache.clear();
+        } catch (RDFHandlerException | RDFParseException e) {
+            log.info(e.getLocalizedMessage());
+            throw new MarkLogicSesameException(e);
+        }
+    }
 
     /**min
      * forces the cache to flush if there is anything in it
      *
      * @throws MarkLogicSesameException
      */
-    public synchronized void forceRun() throws MarkLogicSesameException {
-        log.debug(String.valueOf(cache.size()));
-        if( !cache.isEmpty()) {
-            try {
+    public void forceRun() throws MarkLogicSesameException {
+        try {
+            if( this.cache.size() > 0) {
                 flush();
-            } catch (RepositoryException e) {
-                throw new MarkLogicSesameException("Could not flush write cache, encountered repository issue.",e);
-            } catch (MalformedQueryException e) {
-                throw new MarkLogicSesameException("Could not flush write cache, query was malformed.",e);
-            } catch (UpdateExecutionException e) {
-                throw new MarkLogicSesameException("Could not flush write cache, query update failed.",e);
-            } catch (IOException e) {
-                throw new MarkLogicSesameException("Could not flush write cache, encountered IO issue.",e);
             }
+        } catch (InterruptedException e) {
+            throw new MarkLogicSesameException(e);
         }
     }
 
@@ -183,8 +180,8 @@ public abstract class TripleCache extends TimerTask {
      * @param contexts
      */
     public synchronized void add(Resource subject, URI predicate, Value object, Resource... contexts) throws MarkLogicSesameException {
-        cache.add(subject,predicate,object,contexts);
-        if( cache.size() > cacheSize - 1){
+        this.cache.add(subject,predicate,object,contexts);
+        if(this.cache.size() > this.cacheSize){
             forceRun();
         }
     }

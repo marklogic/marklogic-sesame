@@ -154,13 +154,7 @@ class MarkLogicClientImpl {
         SPARQLQueryDefinition qdef = sparqlManager.newQueryDefinition(queryString);
         if(notNull(baseURI) && !baseURI.isEmpty()){ qdef.setBaseUri(baseURI);}
         if (notNull(ruleset)){qdef.setRulesets(ruleset);}
-        if (notNull(getConstrainingQueryDefinition())) {
-        	qdef.setConstrainingQueryDefinition(getConstrainingQueryDefinition());
-            qdef.setDirectory(getConstrainingQueryDefinition().getDirectory());
-            qdef.setCollections(getConstrainingQueryDefinition().getCollections());
-            qdef.setResponseTransform(getConstrainingQueryDefinition().getResponseTransform());
-            qdef.setOptionsName(getConstrainingQueryDefinition().getOptionsName());
-        }
+        if (notNull(getConstrainingQueryDefinition())) {qdef.setConstrainingQueryDefinition(getConstrainingQueryDefinition());}
         qdef.setIncludeDefaultRulesets(includeInferred);
         if(notNull(graphPerms)){ qdef.setUpdatePermissions(graphPerms);}
         if(pageLength > 0){
@@ -202,13 +196,7 @@ class MarkLogicClientImpl {
         SPARQLQueryDefinition qdef = sparqlManager.newQueryDefinition(queryString);
         if(notNull(baseURI) && !baseURI.isEmpty()){ qdef.setBaseUri(baseURI);}
         if (notNull(ruleset)) {qdef.setRulesets(ruleset);}
-        if (notNull(getConstrainingQueryDefinition())){
-        	qdef.setConstrainingQueryDefinition(getConstrainingQueryDefinition());
-            qdef.setDirectory(getConstrainingQueryDefinition().getDirectory());
-            qdef.setCollections(getConstrainingQueryDefinition().getCollections());
-            qdef.setResponseTransform(getConstrainingQueryDefinition().getResponseTransform());
-            qdef.setOptionsName(getConstrainingQueryDefinition().getOptionsName());
-        	}
+        if (notNull(getConstrainingQueryDefinition())){qdef.setConstrainingQueryDefinition(getConstrainingQueryDefinition());}
         if(notNull(graphPerms)){ qdef.setUpdatePermissions(graphPerms);}
         qdef.setIncludeDefaultRulesets(includeInferred);
         sparqlManager.executeDescribe(qdef, handle, tx);
@@ -230,13 +218,7 @@ class MarkLogicClientImpl {
         if(notNull(baseURI) && !baseURI.isEmpty()){ qdef.setBaseUri(baseURI);}
         qdef.setIncludeDefaultRulesets(includeInferred);
         if (notNull(ruleset)) {qdef.setRulesets(ruleset);}
-        if (notNull(getConstrainingQueryDefinition())){
-        	qdef.setConstrainingQueryDefinition(getConstrainingQueryDefinition());
-            qdef.setDirectory(getConstrainingQueryDefinition().getDirectory());
-            qdef.setCollections(getConstrainingQueryDefinition().getCollections());
-            qdef.setResponseTransform(getConstrainingQueryDefinition().getResponseTransform());
-            qdef.setOptionsName(getConstrainingQueryDefinition().getOptionsName());
-        	}
+        if (notNull(getConstrainingQueryDefinition())){qdef.setConstrainingQueryDefinition(getConstrainingQueryDefinition());}
         if(notNull(graphPerms)){ qdef.setUpdatePermissions(graphPerms);}
         return sparqlManager.executeAsk(qdef,tx);
     }
@@ -291,7 +273,6 @@ class MarkLogicClientImpl {
                 }
             }
         } catch (FailedRequestException e) {
-            logger.error(e.getLocalizedMessage());
             throw new RDFParseException("Request to MarkLogic server failed, check file and format.");
         }
     }
@@ -326,7 +307,6 @@ class MarkLogicClientImpl {
             }
             in.close();
         } catch (FailedRequestException e) {
-            logger.error(e.getLocalizedMessage());
             throw new RDFParseException("Request to MarkLogic server failed, check input is valid.");
         } catch (IOException e) {
             logger.error(e.getLocalizedMessage());
@@ -507,10 +487,6 @@ class MarkLogicClientImpl {
      * @return
      */
     public void close() {
-        // close MarkLogicClientImpl
-    }
-
-    public void release() {
         if (this.databaseClient != null) {
             try {
                 this.databaseClient.release();
@@ -519,6 +495,7 @@ class MarkLogicClientImpl {
             }
         }
     }
+
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -562,7 +539,6 @@ class MarkLogicClientImpl {
                         String fragment = new java.net.URI(xsdType).getFragment();
                         bindings.bind(variableName,lit.getLabel(),RDFTypes.valueOf(fragment.toUpperCase()));
                     } catch (URISyntaxException e) {
-                        logger.error(e.getLocalizedMessage());
                         throw new MarkLogicSesameException("Problem with object datatype.");
                     }
                 }else {

@@ -21,7 +21,6 @@ package com.marklogic.semantics.sesame;
 
 import com.marklogic.semantics.sesame.config.MarkLogicRepositoryConfig;
 import com.marklogic.semantics.sesame.config.MarkLogicRepositoryFactory;
-import com.marklogic.semantics.sesame.query.MarkLogicBooleanQuery;
 import info.aduna.iteration.CloseableIteration;
 import info.aduna.iteration.Iteration;
 import info.aduna.iteration.Iterations;
@@ -92,6 +91,7 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
         conn.close();
         rep.shutDown();
         conn=null;
+        rep = null;
         logger.info("tearDown complete.");
     }
 
@@ -125,12 +125,10 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
         Assert.assertNotNull("Expected repository to exist.", rep);
         Assert.assertFalse("Expected repository to not be initialized.", rep.isInitialized());
         rep.initialize();
-        conn = rep.getConnection();
         Assert.assertTrue("Expected repository to be initialized.", rep.isInitialized());
         rep.shutDown();
         Assert.assertFalse("Expected repository to not be initialized.", rep.isInitialized());
         rep.initialize();
-        conn = rep.getConnection();
         Assert.assertNotNull("Expected repository to exist.", rep);
     }
 
@@ -1154,10 +1152,10 @@ conn.sync();
         conn.add(fei, lname, feilname);
         conn.add(fei, age, feiage);
         //conn.add(fei, age, invalidIntegerLiteral);
-        logger.info("lang:{}", conn.hasStatement(vf.createStatement(fei, lname, vf.createLiteral("Ling", "zh")), false));
-        logger.info("size:{}", conn.size());
+
+        logger.info("lang:{}", conn.hasStatement(vf.createStatement(fei, lname, vf.createLiteral("Ling", "en")), false));
         Assert.assertFalse("The lang tag of lname is not en", conn.hasStatement(vf.createStatement(fei, lname, vf.createLiteral("Ling", "en")), false));
-        Assert.assertTrue("The lang tag of lname is zh", conn.hasStatement(vf.createStatement(fei, lname, feilname), false));
+        Assert.assertTrue("The lang tag of lname is zh", conn.hasStatement(vf.createStatement(fei, lname, vf.createLiteral("Ling", "zh")), false));
         Assert.assertFalse(conn.isEmpty());
     }
 
@@ -1210,7 +1208,6 @@ conn.sync();
                     throws RDFHandlerException {
                 Assert.assertNull(st1);
             }
-
         }, dirgraph);
     }
 
@@ -1220,10 +1217,10 @@ conn.sync();
             throws OpenRDFException {
 
         MarkLogicRepositoryConfig config = new MarkLogicRepositoryConfig();
-        config.setHost(host);
-        config.setPort(port);
-        config.setUser(user);
-        config.setPassword(password);
+        config.setHost("localhost");
+        config.setPort(8200);
+        config.setUser("admin");
+        config.setPassword("admin");
         config.setAuth("DIGEST");
 
         MarkLogicRepositoryFactory FACTORY = new MarkLogicRepositoryFactory();
@@ -1276,5 +1273,4 @@ conn.sync();
         Assert.assertFalse(conn.isEmpty());
         conn.remove(st);
     }
-
 }
