@@ -43,8 +43,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 
-import static com.marklogic.semantics.sesame.SesameTestBase.*;
-
 /**
  * test factory
  *
@@ -62,7 +60,7 @@ public class MarkLogicRepositoryManagerTest {
         RepositoryManager manager;
         manager = new LocalRepositoryManager(new File("/tmp/localmanager"));
         manager.initialize();
-        RepositoryConfig mlconf = new RepositoryConfig("jimtest1",new MarkLogicRepositoryConfig(host, port, user, password, "DIGEST"));
+        RepositoryConfig mlconf = new RepositoryConfig("jimtest1",new MarkLogicRepositoryConfig("localhost", 8200, "admin", "admin", "DIGEST"));
 
         manager.addRepositoryConfig(new RepositoryConfig("test", new SailRepositoryConfig(
                 new MemoryStoreConfig(true))));
@@ -86,7 +84,7 @@ public class MarkLogicRepositoryManagerTest {
 
     @Ignore
     @Test
-    // requires a Sesame server to be running eg. RemoteRepositoryManager uses HTTPRepository
+    // will not work due to RemoteRepositoryManager usage of HTTPRepository
     public void testRemoteManager() throws Exception {
         RepositoryManager manager;
         manager = new RemoteRepositoryManager("http://localhost:8080/openrdf-sesame");

@@ -66,7 +66,7 @@ class MarkLogicBackgroundTupleResult extends BackgroundTupleResult {
         try {
             return super.hasNext();
         }catch(Exception e){
-            logger.info("MarkLogicBackgroundTupleResult hasNext() stream closed");
+            logger.warn("MarkLogicBackgroundTupleResult hasNext() stream closed exception",e);
             return false;
         }
     }
@@ -80,8 +80,7 @@ class MarkLogicBackgroundTupleResult extends BackgroundTupleResult {
         try {
             super.handleClose();
         }catch(Exception e){
-            logger.error("MarkLogicBackgroundTupleResult handleClose() stream closed exception",e);
-            throw new QueryEvaluationException(e);
+            logger.warn("MarkLogicBackgroundTupleResult handleClose() stream closed exception",e);
         }
     }
 }

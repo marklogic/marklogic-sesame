@@ -28,7 +28,6 @@ import org.openrdf.IsolationLevels;
 import org.openrdf.model.*;
 import org.openrdf.model.impl.StatementImpl;
 import org.openrdf.model.impl.URIImpl;
-import org.openrdf.repository.RepositoryResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,7 +42,7 @@ import static org.junit.Assert.assertEquals;
  * @author James Fuller
  */
 // @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class MarkLogicRepositoryCacheTest extends SesameTestBase {
+public class MarkLogicRepositoryWriteCacheTest extends SesameTestBase {
 
     @Rule
     public ExpectedException exception = ExpectedException.none();
@@ -162,8 +161,5 @@ public class MarkLogicRepositoryCacheTest extends SesameTestBase {
         conn.add(bulkInsert, graph);
         conn.commit();
         assertEquals(100000L, conn.size());
-//        RepositoryResult stmts = conn.getStatements(null,null,null,false,graph);
-//        conn.remove(stmts);
-//        assertEquals(0L, conn.size());
     }
 }

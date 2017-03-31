@@ -26,8 +26,4 @@ public class MarkLogicTransactionException extends MarkLogicSesameException {
     public MarkLogicTransactionException(Exception e) {
         super(e.getMessage());
     }
-    public MarkLogicTransactionException(String message, Exception e) {
-        super(message,e);
-    }
-
 }

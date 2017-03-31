@@ -77,13 +77,10 @@ public class MarkLogicClient {
 
 	private Transaction tx = null;
 
-	private TripleWriteCache timerWriteCache;
-	private Timer writeTimer;
-	private TripleDeleteCache timerDeleteCache;
-	private Timer deleteTimer;
+	private WriteCacheTimerTask timerCache;
+	private Timer timer;
 
 	private static boolean WRITE_CACHE_ENABLED = true;
-	private static boolean DELETE_CACHE_ENABLED = false;
 
 	/**
 	 * constructor init with connection params
@@ -113,34 +110,21 @@ public class MarkLogicClient {
 	 * start Timer task (write cache)
 	 */
 	public void initTimer(){
-		stopTimer();
 		if(this.WRITE_CACHE_ENABLED) {
-			logger.debug("configuring write cache with defaults");
-			timerWriteCache = new TripleWriteCache(this);
-			writeTimer = new Timer();
-			writeTimer.scheduleAtFixedRate(timerWriteCache, TripleWriteCache.DEFAULT_INITIAL_DELAY, TripleWriteCache.DEFAULT_CACHE_MILLIS);
-		}
-		if(this.DELETE_CACHE_ENABLED) {
-			logger.debug("configuring delete cache with defaults");
-			timerDeleteCache = new TripleDeleteCache(this);
-			deleteTimer = new Timer();
-			deleteTimer.scheduleAtFixedRate(timerDeleteCache, TripleDeleteCache.DEFAULT_INITIAL_DELAY, TripleDeleteCache.DEFAULT_CACHE_MILLIS);
+			stopTimer();
+			timerCache = new WriteCacheTimerTask(this);
+			timer = new Timer();
+			timer.scheduleAtFixedRate(timerCache, WriteCacheTimerTask.DEFAULT_INITIAL_DELAY, WriteCacheTimerTask.DEFAULT_CACHE_MILLIS);
 		}
 	}
 
 	public void initTimer(long initDelay, long delayCache, long cacheSize ){
-		stopTimer();
 		if(this.WRITE_CACHE_ENABLED) {
 			logger.debug("configuring write cache");
-			timerWriteCache = new TripleWriteCache(this,cacheSize);
-			writeTimer = new Timer();
-			writeTimer.scheduleAtFixedRate(timerWriteCache, initDelay, delayCache);
-		}
-		if(this.DELETE_CACHE_ENABLED) {
-			logger.debug("configuring delete cache");
-			timerDeleteCache = new TripleDeleteCache(this);
-			deleteTimer = new Timer();
-			deleteTimer.scheduleAtFixedRate(timerDeleteCache, initDelay, delayCache);
+			stopTimer();
+			timerCache = new WriteCacheTimerTask(this,cacheSize);
+			timer = new Timer();
+			timer.scheduleAtFixedRate(timerCache, initDelay, delayCache);
 		}
 	}
 	/**
@@ -148,17 +132,11 @@ public class MarkLogicClient {
 	 */
 	public void stopTimer() {
 		if(this.WRITE_CACHE_ENABLED) {
-			if(timerWriteCache != null) {
-				timerWriteCache.cancel();
+			if(timerCache != null) {
+				timerCache.cancel();
 			}
-			if(writeTimer != null){
-				writeTimer.cancel();
-			}
-			if(timerDeleteCache != null) {
-				timerDeleteCache.cancel();
-			}
-			if(deleteTimer != null){
-				deleteTimer.cancel();
+			if(timer != null){
+				timer.cancel();
 			}
 		}
 	}
@@ -169,10 +147,8 @@ public class MarkLogicClient {
 	 * @throws MarkLogicSesameException
 	 */
 	public void sync() throws MarkLogicSesameException {
-		if(WRITE_CACHE_ENABLED && timerWriteCache != null)
-			timerWriteCache.forceRun();
-		if(DELETE_CACHE_ENABLED && timerDeleteCache != null)
-			timerDeleteCache.forceRun();
+		if(WRITE_CACHE_ENABLED && timerCache != null)
+			timerCache.forceRun();
 	}
 
 	/**
@@ -203,6 +179,7 @@ public class MarkLogicClient {
 	 * @param includeInferred
 	 * @param baseURI
 	 * @return
+	 * @throws IOException
 	 * @throws RepositoryException
 	 * @throws MalformedQueryException
 	 * @throws UnauthorizedException
@@ -210,6 +187,7 @@ public class MarkLogicClient {
 	 */
 	public TupleQueryResult sendTupleQuery(String queryString,SPARQLQueryBindingSet bindings, long start, long pageLength, boolean includeInferred, String baseURI) throws RepositoryException, MalformedQueryException,
 			QueryInterruptedException {
+		sync();
 		InputStream stream = null;
 		try {
 			stream = getClient().performSPARQLQuery(queryString, bindings, start, pageLength, this.tx, includeInferred, baseURI);
@@ -234,6 +212,7 @@ public class MarkLogicClient {
 	 * @throws IOException
 	 */
 	public GraphQueryResult sendGraphQuery(String queryString, SPARQLQueryBindingSet bindings, boolean includeInferred, String baseURI) throws IOException, MarkLogicSesameException {
+		sync();
 		InputStream stream = getClient().performGraphQuery(queryString, bindings, this.tx, includeInferred, baseURI);
 
 		RDFParser parser = Rio.createParser(rdfFormat, getValueFactory());
@@ -270,6 +249,7 @@ public class MarkLogicClient {
 	 */
 	public boolean sendBooleanQuery(String queryString, SPARQLQueryBindingSet bindings, boolean includeInferred, String baseURI) throws IOException, RepositoryException, MalformedQueryException,
 			QueryInterruptedException {
+		sync();
 		return getClient().performBooleanQuery(queryString, bindings, this.tx, includeInferred, baseURI);
 	}
 
@@ -287,6 +267,7 @@ public class MarkLogicClient {
 	 * @throws UpdateExecutionException
 	 */
 	public void sendUpdateQuery(String queryString, SPARQLQueryBindingSet bindings, boolean includeInferred, String baseURI) throws IOException, RepositoryException, MalformedQueryException,UpdateExecutionException {
+		sync();
 		getClient().performUpdateQuery(queryString, bindings, this.tx, includeInferred, baseURI);
 	}
 
@@ -339,7 +320,7 @@ public class MarkLogicClient {
 	 */
 	public void sendAdd(String baseURI, Resource subject, URI predicate, Value object, Resource... contexts) throws MarkLogicSesameException {
 		if (WRITE_CACHE_ENABLED) {
-			timerWriteCache.add(subject, predicate, object, contexts);
+			timerCache.add(subject, predicate, object, contexts);
 		} else {
 			getClient().performAdd(baseURI, (Resource) skolemize(subject), (URI) skolemize(predicate), skolemize(object), this.tx, contexts);
 		}
@@ -355,13 +336,8 @@ public class MarkLogicClient {
 	 * @param contexts
 	 */
 	public void sendRemove(String baseURI, Resource subject,URI predicate, Value object, Resource... contexts) throws MarkLogicSesameException {
-		if (DELETE_CACHE_ENABLED) {
-			timerDeleteCache.add(subject, predicate, object, contexts);
-		} else {
-			if (WRITE_CACHE_ENABLED)
-				sync();
-			getClient().performRemove(baseURI, (Resource) skolemize(subject), (URI) skolemize(predicate), skolemize(object), this.tx, contexts);
-		}
+		sync();
+		getClient().performRemove(baseURI, (Resource) skolemize(subject), (URI) skolemize(predicate), skolemize(object), this.tx, contexts);
 	}
 
 	/**
@@ -370,6 +346,7 @@ public class MarkLogicClient {
 	 * @param contexts
 	 */
 	public void sendClear(Resource... contexts) throws MarkLogicSesameException {
+		sync();
 		getClient().performClear(this.tx, contexts);
 	}
 
@@ -378,6 +355,7 @@ public class MarkLogicClient {
 	 *
 	 */
 	public void sendClearAll() throws MarkLogicSesameException {
+		sync();
 		getClient().performClearAll(this.tx);
 	}
 
@@ -406,7 +384,7 @@ public class MarkLogicClient {
 				this.tx.commit();
 				this.tx=null;
 			} catch (MarkLogicSesameException e) {
-				logger.error(e.getLocalizedMessage());
+				logger.warn(e.getLocalizedMessage());
 				throw new MarkLogicTransactionException(e);
 			}
 		}else{
@@ -576,10 +554,5 @@ public class MarkLogicClient {
 	public void close() {
 		_client.close();
 	}
-	/**
-	 *
-	 */
-	public void release() {
-		_client.release();
-	}
+
 }
