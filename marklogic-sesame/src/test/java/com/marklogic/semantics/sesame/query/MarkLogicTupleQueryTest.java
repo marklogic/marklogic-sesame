@@ -15,8 +15,8 @@
  */
 package com.marklogic.semantics.sesame.query;
 
-import info.aduna.iteration.ConvertingIteration;
-import info.aduna.iteration.ExceptionConvertingIteration;
+import org.eclipse.rdf4j.common.iteration.ConvertingIteration;
+import org.eclipse.rdf4j.common.iteration.ExceptionConvertingIteration;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -28,22 +28,22 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.openrdf.model.Resource;
-import org.openrdf.model.Value;
-import org.openrdf.model.ValueFactory;
-import org.openrdf.model.impl.ValueFactoryImpl;
-import org.openrdf.query.BindingSet;
-import org.openrdf.query.MalformedQueryException;
-import org.openrdf.query.Query;
-import org.openrdf.query.QueryEvaluationException;
-import org.openrdf.query.QueryLanguage;
-import org.openrdf.query.QueryResultHandlerException;
-import org.openrdf.query.TupleQuery;
-import org.openrdf.query.TupleQueryResult;
-import org.openrdf.query.TupleQueryResultHandler;
-import org.openrdf.query.resultio.sparqlxml.SPARQLResultsXMLWriter;
-import org.openrdf.repository.RepositoryException;
-import org.openrdf.repository.RepositoryResult;
+import org.eclipse.rdf4j.model.Resource;
+import org.eclipse.rdf4j.model.Value;
+import org.eclipse.rdf4j.model.ValueFactory;
+import org.eclipse.rdf4j.model.impl.ValueFactoryImpl;
+import org.eclipse.rdf4j.query.BindingSet;
+import org.eclipse.rdf4j.query.MalformedQueryException;
+import org.eclipse.rdf4j.query.Query;
+import org.eclipse.rdf4j.query.QueryEvaluationException;
+import org.eclipse.rdf4j.query.QueryLanguage;
+import org.eclipse.rdf4j.query.QueryResultHandlerException;
+import org.eclipse.rdf4j.query.TupleQuery;
+import org.eclipse.rdf4j.query.TupleQueryResult;
+import org.eclipse.rdf4j.query.TupleQueryResultHandler;
+import org.eclipse.rdf4j.query.resultio.sparqlxml.SPARQLResultsXMLWriter;
+import org.eclipse.rdf4j.repository.RepositoryException;
+import org.eclipse.rdf4j.repository.RepositoryResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -455,27 +455,28 @@ public class MarkLogicTupleQueryTest extends SesameTestBase {
 
         SPARQLResultsXMLWriter sparqlWriter = new SPARQLResultsXMLWriter(out);
 
-        String expected = "<?xml version='1.0' encoding='UTF-8'?>\n" +
-                "<sparql xmlns='http://www.w3.org/2005/sparql-results#'>\n" +
-                "\t<head>\n" +
-                "\t\t<variable name='s'/>\n" +
-                "\t\t<variable name='p'/>\n" +
-                "\t\t<variable name='o'/>\n" +
-                "\t</head>\n" +
-                "\t<results>\n" +
-                "\t\t<result>\n" +
-                "\t\t\t<binding name='s'>\n" +
-                "\t\t\t\t<uri>http://semanticbible.org/ns/2006/NTNames#AttaliaGeodata</uri>\n" +
-                "\t\t\t</binding>\n" +
-                "\t\t\t<binding name='p'>\n" +
-                "\t\t\t\t<uri>http://semanticbible.org/ns/2006/NTNames#altitude</uri>\n" +
-                "\t\t\t</binding>\n" +
-                "\t\t\t<binding name='o'>\n" +
-                "\t\t\t\t<literal datatype='http://www.w3.org/2001/XMLSchema#int'>0</literal>\n" +
-                "\t\t\t</binding>\n" +
-                "\t\t</result>\n" +
-                "\t</results>\n" +
-                "</sparql>\n";
+        //if you want to test the old format with indention you have to setPrettyPrint
+        String expected = "<?xml version='1.0' encoding='UTF-8'?>" +
+                "<sparql xmlns='http://www.w3.org/2005/sparql-results#'>" +
+                "<head>" +
+                "<variable name='s'/>" +
+                "<variable name='p'/>" +
+                "<variable name='o'/>" +
+                "</head>" +
+                "<results>" +
+                "<result>" +
+                "<binding name='s'>" +
+                "<uri>http://semanticbible.org/ns/2006/NTNames#AttaliaGeodata</uri>" +
+                "</binding>" +
+                "<binding name='p'>" +
+                "<uri>http://semanticbible.org/ns/2006/NTNames#altitude</uri>" +
+                "</binding>" +
+                "<binding name='o'>" +
+                "<literal datatype='http://www.w3.org/2001/XMLSchema#int'>0</literal>" +
+                "</binding>" +
+                "</result>" +
+                "</results>" +
+                "</sparql>";
 
         String queryString = "select * { ?s ?p ?o . } limit 1";
         TupleQuery tupleQuery = conn.prepareTupleQuery(QueryLanguage.SPARQL, queryString);
@@ -526,7 +527,7 @@ public class MarkLogicTupleQueryTest extends SesameTestBase {
         results.close();
     }
 
-    @Test(expected=org.openrdf.query.QueryEvaluationException.class)
+    @Test(expected=org.eclipse.rdf4j.query.QueryEvaluationException.class)
     public void testSPARQLQueryQueryEvaluationException()
             throws Exception {
         String queryString = "select *  <http://marklogic.com/nonexistent> ?p ?o } limit 100 ";
@@ -536,7 +537,7 @@ public class MarkLogicTupleQueryTest extends SesameTestBase {
         results.close();
     }
 
-    @Test(expected=org.openrdf.query.QueryEvaluationException.class)
+    @Test(expected=org.eclipse.rdf4j.query.QueryEvaluationException.class)
     public void testSPARQLMalformedException()
             throws Exception {
         String queryString = "select1 *  <http://marklogic.com/nonexistent> ?p ?o } limit 100 ";

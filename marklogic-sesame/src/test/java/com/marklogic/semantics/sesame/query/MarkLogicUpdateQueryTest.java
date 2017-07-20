@@ -24,12 +24,12 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.openrdf.OpenRDFException;
-import org.openrdf.model.*;
-import org.openrdf.query.BooleanQuery;
-import org.openrdf.query.QueryLanguage;
-import org.openrdf.query.Update;
-import org.openrdf.repository.RepositoryException;
+import org.eclipse.rdf4j.OpenRDFException;
+import org.eclipse.rdf4j.model.*;
+import org.eclipse.rdf4j.query.BooleanQuery;
+import org.eclipse.rdf4j.query.QueryLanguage;
+import org.eclipse.rdf4j.query.Update;
+import org.eclipse.rdf4j.repository.RepositoryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -114,7 +114,7 @@ public class MarkLogicUpdateQueryTest extends SesameTestBase {
         conn.clear(conn.getValueFactory().createURI("http://marklogic.com/test/context10"));
     }
 
-    @Test(expected=org.openrdf.query.UpdateExecutionException.class)
+    @Test(expected=org.eclipse.rdf4j.query.UpdateExecutionException.class)
     public void testUpdateQueryUpdateExecutionException()
             throws Exception {
         String defGraphQuery = "INSERT DATA GRAPH <http://marklogic.com/test/g27> { <http://marklogic.com/test> <pp1> <oo1> } }";
@@ -122,7 +122,7 @@ public class MarkLogicUpdateQueryTest extends SesameTestBase {
         updateQuery.execute();
     }
 
-    @Test(expected=org.openrdf.query.UpdateExecutionException.class)
+    @Test(expected=org.eclipse.rdf4j.query.UpdateExecutionException.class)
     public void testUpdateQueryMalformedException()
             throws Exception {
         String defGraphQuery = "INSERT1 DATA GRAPH <http://marklogic.com/test/g27> { <http://marklogic.com/test> <pp1> <oo1> } }";

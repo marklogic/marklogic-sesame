@@ -8,10 +8,10 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.openrdf.model.Literal;
-import org.openrdf.model.URI;
-import org.openrdf.model.ValueFactory;
-import org.openrdf.repository.RepositoryException;
+import org.eclipse.rdf4j.model.Literal;
+import org.eclipse.rdf4j.model.URI;
+import org.eclipse.rdf4j.model.ValueFactory;
+import org.eclipse.rdf4j.repository.RepositoryException;
 
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
@@ -35,7 +35,7 @@ public class TestCloseWait extends SesameTestBase {
     public void setUp()
             throws Exception {
         logger.debug("setting up test");
-        dbClient = DatabaseClientFactory.newClient(host, port, adminUser, adminPassword, DatabaseClientFactory.Authentication.valueOf("DIGEST"));
+        dbClient = DatabaseClientFactory.newClient(host, port, adminUser, adminPassword, DatabaseClientFactory.Authentication.valueOf("BASIC"));
         rep =  new MarkLogicRepository(dbClient);
         rep.initialize();
         vf = rep.getValueFactory();

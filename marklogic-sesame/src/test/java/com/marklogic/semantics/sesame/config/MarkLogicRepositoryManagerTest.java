@@ -21,36 +21,35 @@ package com.marklogic.semantics.sesame.config;
 
 import com.marklogic.semantics.sesame.MarkLogicRepository;
 import com.marklogic.semantics.sesame.MarkLogicRepositoryConnection;
+import com.marklogic.semantics.sesame.SesameTestBase;
+import org.eclipse.rdf4j.model.Literal;
+import org.eclipse.rdf4j.model.Statement;
+import org.eclipse.rdf4j.model.URI;
+import org.eclipse.rdf4j.model.ValueFactory;
+import org.eclipse.rdf4j.repository.Repository;
+import org.eclipse.rdf4j.repository.RepositoryConnection;
+import org.eclipse.rdf4j.repository.config.RepositoryConfig;
+import org.eclipse.rdf4j.repository.manager.LocalRepositoryManager;
+import org.eclipse.rdf4j.repository.manager.RemoteRepositoryManager;
+import org.eclipse.rdf4j.repository.manager.RepositoryManager;
+import org.eclipse.rdf4j.repository.sail.config.SailRepositoryConfig;
+import org.eclipse.rdf4j.sail.memory.config.MemoryStoreConfig;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.openrdf.model.Literal;
-import org.openrdf.model.Statement;
-import org.openrdf.model.URI;
-import org.openrdf.model.ValueFactory;
-import org.openrdf.repository.Repository;
-import org.openrdf.repository.RepositoryConnection;
-import org.openrdf.repository.config.RepositoryConfig;
-import org.openrdf.repository.manager.LocalRepositoryManager;
-import org.openrdf.repository.manager.RemoteRepositoryManager;
-import org.openrdf.repository.manager.RepositoryManager;
-import org.openrdf.repository.sail.config.SailRepositoryConfig;
-import org.openrdf.sail.memory.config.MemoryStoreConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-
-import static com.marklogic.semantics.sesame.SesameTestBase.*;
 
 /**
  * test factory
  *
  * @author James Fuller
  */
-public class MarkLogicRepositoryManagerTest {
+public class MarkLogicRepositoryManagerTest extends SesameTestBase {
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -62,7 +61,7 @@ public class MarkLogicRepositoryManagerTest {
         RepositoryManager manager;
         manager = new LocalRepositoryManager(new File("/tmp/localmanager"));
         manager.initialize();
-        RepositoryConfig mlconf = new RepositoryConfig("jimtest1",new MarkLogicRepositoryConfig(host, port, user, password, "DIGEST"));
+        RepositoryConfig mlconf = new RepositoryConfig("jimtest1",new MarkLogicRepositoryConfig(host, port, user, password, "BASIC"));
 
         manager.addRepositoryConfig(new RepositoryConfig("test", new SailRepositoryConfig(
                 new MemoryStoreConfig(true))));
@@ -91,7 +90,7 @@ public class MarkLogicRepositoryManagerTest {
         RepositoryManager manager;
         manager = new RemoteRepositoryManager("http://localhost:8080/openrdf-sesame");
         manager.initialize();
-        RepositoryConfig mlconf = new RepositoryConfig("remotetest",new MarkLogicRepositoryConfig("localhost", 8200, "admin", "admin", "DIGEST"));
+        RepositoryConfig mlconf = new RepositoryConfig("remotetest",new MarkLogicRepositoryConfig("localhost", 8200, "admin", "admin", "BASIC"));
 
         manager.addRepositoryConfig((RepositoryConfig) mlconf);
 

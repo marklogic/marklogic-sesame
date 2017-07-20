@@ -21,6 +21,7 @@ import com.marklogic.client.impl.DatabaseClientImpl;
 import com.marklogic.client.io.FileHandle;
 import com.marklogic.client.semantics.GraphManager;
 import com.marklogic.client.semantics.RDFMimeTypes;
+import com.marklogic.semantics.sesame.SesameTestBase;
 import org.junit.*;
 
 import java.io.*;
@@ -29,7 +30,7 @@ import static com.marklogic.semantics.sesame.SesameTestBase.*;
 
 // minimal java api client test which illustrates CLOSE_WAIT
 
-public class MarkLogicQueryTest  {
+public class MarkLogicQueryTest extends SesameTestBase {
 
     public static DatabaseClient writerClient;
 
@@ -37,7 +38,7 @@ public class MarkLogicQueryTest  {
 
     @Before
     public void setUp() throws FileNotFoundException {
-        writerClient = DatabaseClientFactory.newClient(host, port, user, password, DatabaseClientFactory.Authentication.DIGEST);
+        writerClient = DatabaseClientFactory.newClient(host, port, user, password, DatabaseClientFactory.Authentication.BASIC);
     }
 
     @Test

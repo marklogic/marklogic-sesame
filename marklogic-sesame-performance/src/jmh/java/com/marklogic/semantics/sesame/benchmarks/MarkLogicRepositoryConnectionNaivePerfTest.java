@@ -3,12 +3,12 @@ package com.marklogic.semantics.sesame.benchmarks;
 import com.marklogic.semantics.sesame.MarkLogicRepository;
 import com.marklogic.semantics.sesame.MarkLogicRepositoryConnection;
 import org.openjdk.jmh.annotations.Benchmark;
-import org.openrdf.model.*;
-import org.openrdf.query.BindingSet;
-import org.openrdf.query.TupleQuery;
-import org.openrdf.query.TupleQueryResult;
-import org.openrdf.repository.RepositoryResult;
-import org.openrdf.rio.RDFFormat;
+import org.eclipse.rdf4j.model.*;
+import org.eclipse.rdf4j.query.BindingSet;
+import org.eclipse.rdf4j.query.TupleQuery;
+import org.eclipse.rdf4j.query.TupleQueryResult;
+import org.eclipse.rdf4j.repository.RepositoryResult;
+import org.eclipse.rdf4j.rio.RDFFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

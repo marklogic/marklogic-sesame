@@ -24,11 +24,11 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.openrdf.IsolationLevels;
-import org.openrdf.model.*;
-import org.openrdf.model.impl.StatementImpl;
-import org.openrdf.model.impl.URIImpl;
-import org.openrdf.repository.RepositoryResult;
+import org.eclipse.rdf4j.IsolationLevels;
+import org.eclipse.rdf4j.model.*;
+import org.eclipse.rdf4j.model.impl.StatementImpl;
+import org.eclipse.rdf4j.model.impl.URIImpl;
+import org.eclipse.rdf4j.repository.RepositoryResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -116,6 +116,7 @@ public class MarkLogicRepositoryCacheTest extends SesameTestBase {
     {
         conn.setIsolationLevel(IsolationLevels.SNAPSHOT);
 
+        conn.clear();
         assertEquals(conn.size(),0L);
 
         Resource context1 = conn.getValueFactory().createURI("http://marklogic.com/test/context1");

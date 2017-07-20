@@ -22,10 +22,10 @@ package com.marklogic.semantics.sesame;
 import com.marklogic.client.semantics.GraphPermissions;
 import com.marklogic.client.query.QueryDefinition;
 import com.marklogic.client.semantics.SPARQLRuleset;
-import info.aduna.iteration.Iteration;
-import org.openrdf.model.Statement;
-import org.openrdf.query.*;
-import org.openrdf.repository.RepositoryException;
+import org.eclipse.rdf4j.common.iteration.Iteration;
+import org.eclipse.rdf4j.model.Statement;
+import org.eclipse.rdf4j.query.*;
+import org.eclipse.rdf4j.repository.RepositoryException;
 
 /**
  * interface defining MarkLogic semantic features

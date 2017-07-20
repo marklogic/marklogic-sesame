@@ -28,19 +28,19 @@ import com.marklogic.client.semantics.SPARQLRuleset;
 import com.marklogic.semantics.sesame.MarkLogicSesameException;
 import com.marklogic.semantics.sesame.MarkLogicTransactionException;
 import org.apache.commons.io.input.ReaderInputStream;
-import org.openrdf.http.protocol.UnauthorizedException;
-import org.openrdf.model.Resource;
-import org.openrdf.model.URI;
-import org.openrdf.model.Value;
-import org.openrdf.model.ValueFactory;
-import org.openrdf.query.*;
-import org.openrdf.query.resultio.QueryResultIO;
-import org.openrdf.query.resultio.TupleQueryResultFormat;
-import org.openrdf.query.resultio.TupleQueryResultParser;
-import org.openrdf.repository.RepositoryException;
-import org.openrdf.repository.sparql.query.SPARQLQueryBindingSet;
-import org.openrdf.rio.*;
-import org.openrdf.rio.helpers.ParseErrorLogger;
+import org.eclipse.rdf4j.http.protocol.UnauthorizedException;
+import org.eclipse.rdf4j.model.Resource;
+import org.eclipse.rdf4j.model.URI;
+import org.eclipse.rdf4j.model.Value;
+import org.eclipse.rdf4j.model.ValueFactory;
+import org.eclipse.rdf4j.query.*;
+import org.eclipse.rdf4j.query.resultio.QueryResultIO;
+import org.eclipse.rdf4j.query.resultio.TupleQueryResultFormat;
+import org.eclipse.rdf4j.query.resultio.TupleQueryResultParser;
+import org.eclipse.rdf4j.repository.RepositoryException;
+import org.eclipse.rdf4j.repository.sparql.query.SPARQLQueryBindingSet;
+import org.eclipse.rdf4j.rio.*;
+import org.eclipse.rdf4j.rio.helpers.ParseErrorLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -217,7 +217,7 @@ public class MarkLogicClient {
 			logger.error(e.getLocalizedMessage());
 			throw new MarkLogicSesameException("Issue processing json.");
 		}
-		TupleQueryResultParser parser = QueryResultIO.createParser(format, getValueFactory());
+		TupleQueryResultParser parser = QueryResultIO.createTupleParser(format, getValueFactory());
 		MarkLogicBackgroundTupleResult tRes = new MarkLogicBackgroundTupleResult(parser,stream);
 		execute(tRes);
 		return tRes;
@@ -563,8 +563,8 @@ public class MarkLogicClient {
 	 * @return
 	 */
 	private Value skolemize(Value s) {
-		if (s instanceof org.openrdf.model.BNode) {
-			return getValueFactory().createURI("http://marklogic.com/semantics/blank/" + s.toString());
+		if (s instanceof org.eclipse.rdf4j.model.BNode) {
+			return getValueFactory().createIRI("http://marklogic.com/semantics/blank/" + s.toString());
 		} else {
 			return s;
 		}

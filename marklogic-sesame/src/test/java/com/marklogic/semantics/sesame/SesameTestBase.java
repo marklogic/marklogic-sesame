@@ -83,9 +83,9 @@ public class SesameTestBase {
         readerUser = props.getProperty("readerUser");
         readerPassword = props.getProperty("readerPassword");
 
-        adminClient = DatabaseClientFactory.newClient(host, port, adminUser, adminPassword, DatabaseClientFactory.Authentication.DIGEST);
-        writerClient = DatabaseClientFactory.newClient(host, port, writerUser, writerPassword, DatabaseClientFactory.Authentication.DIGEST);
-        readerClient = DatabaseClientFactory.newClient(host, port, readerUser, readerPassword, DatabaseClientFactory.Authentication.DIGEST);
+        adminClient = DatabaseClientFactory.newClient(host, port, adminUser, adminPassword, DatabaseClientFactory.Authentication.BASIC);
+        writerClient = DatabaseClientFactory.newClient(host, port, writerUser, writerPassword, DatabaseClientFactory.Authentication.BASIC);
+        readerClient = DatabaseClientFactory.newClient(host, port, readerUser, readerPassword, DatabaseClientFactory.Authentication.BASIC);
 
         rep = new MarkLogicRepository(adminClient);
         writerRep = new MarkLogicRepository(writerClient);

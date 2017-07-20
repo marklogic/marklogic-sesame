@@ -20,24 +20,23 @@
 package com.marklogic.semantics.sesame.config;
 
 import com.marklogic.semantics.sesame.MarkLogicRepositoryConnection;
+import com.marklogic.semantics.sesame.SesameTestBase;
+import org.eclipse.rdf4j.repository.Repository;
+import org.eclipse.rdf4j.repository.RepositoryConnection;
+import org.eclipse.rdf4j.repository.config.RepositoryFactory;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.openrdf.repository.Repository;
-import org.openrdf.repository.RepositoryConnection;
-import org.openrdf.repository.config.RepositoryFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static com.marklogic.semantics.sesame.SesameTestBase.*;
 
 /**
  * test factory
  *
  * @author James Fuller
  */
-public class MarkLogicRepositoryFactoryTest {
+public class MarkLogicRepositoryFactoryTest extends SesameTestBase {
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 

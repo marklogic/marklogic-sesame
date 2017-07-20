@@ -22,26 +22,26 @@ package com.marklogic.semantics.sesame;
 import com.marklogic.semantics.sesame.config.MarkLogicRepositoryConfig;
 import com.marklogic.semantics.sesame.config.MarkLogicRepositoryFactory;
 import com.marklogic.semantics.sesame.query.MarkLogicBooleanQuery;
-import info.aduna.iteration.CloseableIteration;
-import info.aduna.iteration.Iteration;
-import info.aduna.iteration.Iterations;
+import org.eclipse.rdf4j.common.iteration.CloseableIteration;
+import org.eclipse.rdf4j.common.iteration.Iteration;
+import org.eclipse.rdf4j.common.iteration.Iterations;
 import org.junit.*;
 import org.junit.rules.ExpectedException;
-import org.openrdf.OpenRDFException;
-import org.openrdf.model.*;
-import org.openrdf.model.impl.LinkedHashModel;
-import org.openrdf.model.vocabulary.RDF;
-import org.openrdf.model.vocabulary.XMLSchema;
-import org.openrdf.query.*;
-import org.openrdf.repository.Repository;
-import org.openrdf.repository.RepositoryConnection;
-import org.openrdf.repository.RepositoryException;
-import org.openrdf.repository.RepositoryResult;
-import org.openrdf.repository.sparql.SPARQLRepository;
-import org.openrdf.rio.RDFFormat;
-import org.openrdf.rio.RDFHandlerException;
-import org.openrdf.rio.helpers.RDFHandlerBase;
-import org.openrdf.rio.rdfxml.RDFXMLWriter;
+import org.eclipse.rdf4j.OpenRDFException;
+import org.eclipse.rdf4j.model.*;
+import org.eclipse.rdf4j.model.impl.LinkedHashModel;
+import org.eclipse.rdf4j.model.vocabulary.RDF;
+import org.eclipse.rdf4j.model.vocabulary.XMLSchema;
+import org.eclipse.rdf4j.query.*;
+import org.eclipse.rdf4j.repository.Repository;
+import org.eclipse.rdf4j.repository.RepositoryConnection;
+import org.eclipse.rdf4j.repository.RepositoryException;
+import org.eclipse.rdf4j.repository.RepositoryResult;
+import org.eclipse.rdf4j.repository.sparql.SPARQLRepository;
+import org.eclipse.rdf4j.rio.RDFFormat;
+import org.eclipse.rdf4j.rio.RDFHandlerException;
+import org.eclipse.rdf4j.rio.helpers.RDFHandlerBase;
+import org.eclipse.rdf4j.rio.rdfxml.RDFXMLWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -120,7 +120,7 @@ public class MarkLogicRepositoryConnectionTest extends SesameTestBase {
         String user = props.getProperty("validUsername");
         String pass = props.getProperty("validPassword");
 
-        rep = new MarkLogicRepository(host, port, user, pass, "DIGEST");
+        rep = new MarkLogicRepository(host, port, user, pass, "BASIC");
 
         Assert.assertNotNull("Expected repository to exist.", rep);
         Assert.assertFalse("Expected repository to not be initialized.", rep.isInitialized());
@@ -515,7 +515,7 @@ conn.sync();
         BooleanQuery booleanAliceQuery = conn.prepareBooleanQuery(QueryLanguage.SPARQL, checkAliceQuery);
         Assert.assertTrue(booleanAliceQuery.evaluate());
 
-        String checkBobQuery = "ASK { <http://example.org/people/bob> <http://example.org/ontology/age> '123123123123'^^<http://www.w3.org/2001/XMLSchema#double> .}";
+        String checkBobQuery = "ASK { <http://example.org/people/bob> <http://example.org/ontology/age> '1.23123123123E11'^^<http://www.w3.org/2001/XMLSchema#double> .}";
         BooleanQuery booleanBobQuery = conn.prepareBooleanQuery(QueryLanguage.SPARQL, checkBobQuery);
         Assert.assertTrue(booleanBobQuery.evaluate());
 
@@ -1224,7 +1224,7 @@ conn.sync();
         config.setPort(port);
         config.setUser(user);
         config.setPassword(password);
-        config.setAuth("DIGEST");
+        config.setAuth("BASIC");
 
         MarkLogicRepositoryFactory FACTORY = new MarkLogicRepositoryFactory();
 

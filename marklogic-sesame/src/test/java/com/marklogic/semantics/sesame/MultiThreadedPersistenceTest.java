@@ -15,10 +15,10 @@ import com.marklogic.client.DatabaseClient;
 import org.junit.After;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.openrdf.model.Resource;
-import org.openrdf.model.Statement;
-import org.openrdf.model.impl.ValueFactoryImpl;
-import org.openrdf.repository.RepositoryException;
+import org.eclipse.rdf4j.model.Resource;
+import org.eclipse.rdf4j.model.Statement;
+import org.eclipse.rdf4j.model.impl.ValueFactoryImpl;
+import org.eclipse.rdf4j.repository.RepositoryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,7 +52,7 @@ public class MultiThreadedPersistenceTest extends SesameTestBase {
 
     @Test
     public void multiThreadedPersist() throws RepositoryException, InterruptedException {
-        final PersistenceService persistenceService = new PersistenceService(SesameTestBase.host, SesameTestBase.port, SesameTestBase.adminUser, SesameTestBase.adminPassword, DatabaseClientFactory.Authentication.DIGEST.toString());
+        final PersistenceService persistenceService = new PersistenceService(SesameTestBase.host, SesameTestBase.port, SesameTestBase.adminUser, SesameTestBase.adminPassword, DatabaseClientFactory.Authentication.BASIC.toString());
 
         //persist data with multiple threads against the persistence service - simulate multiple concurrent requests against a tomcat deployed ingestion service
         //results in intermittent MarkLogicTransactionExceptions in executor threads
@@ -119,7 +119,7 @@ public class MultiThreadedPersistenceTest extends SesameTestBase {
 
     @Test
     public void singleConnectionMultiThreadedPersist() throws RepositoryException, InterruptedException {
-        final SingleConnectionPersistenceService persistenceService = new SingleConnectionPersistenceService(SesameTestBase.host, SesameTestBase.port, SesameTestBase.adminUser, SesameTestBase.adminPassword, DatabaseClientFactory.Authentication.DIGEST.toString());
+        final SingleConnectionPersistenceService persistenceService = new SingleConnectionPersistenceService(SesameTestBase.host, SesameTestBase.port, SesameTestBase.adminUser, SesameTestBase.adminPassword, DatabaseClientFactory.Authentication.BASIC.toString());
 
         //persist data with multiple threads against singleConnectionPersistence service - simulate multiple concurrent requests against a tomcat deployed ingestion service
         //results in intermittent MarkLogicTransactionExceptions in executor threads
@@ -187,7 +187,7 @@ public class MultiThreadedPersistenceTest extends SesameTestBase {
 
     @Test
     public void multipleConnectionMultiThreadedPersist() throws RepositoryException, InterruptedException {
-        final MultipleConnectionPersistenceService persistenceService = new MultipleConnectionPersistenceService(SesameTestBase.host, SesameTestBase.port, SesameTestBase.adminUser, SesameTestBase.adminPassword, DatabaseClientFactory.Authentication.DIGEST.toString());
+        final MultipleConnectionPersistenceService persistenceService = new MultipleConnectionPersistenceService(SesameTestBase.host, SesameTestBase.port, SesameTestBase.adminUser, SesameTestBase.adminPassword, DatabaseClientFactory.Authentication.BASIC.toString());
 
         //persist data with multiple threads against singleConnectionPersistence service - simulate multiple concurrent requests against a tomcat deployed ingestion service
         //results in intermittent MarkLogicTransactionExceptions in executor threads
@@ -227,7 +227,7 @@ public class MultiThreadedPersistenceTest extends SesameTestBase {
 
         public MultipleConnectionPersistenceService(String host, int port, String user, String password, String digest) {
             try {
-                DatabaseClient databaseClient = DatabaseClientFactory.newClient(host, port, user, password, DatabaseClientFactory.Authentication.valueOf("DIGEST"));
+                DatabaseClient databaseClient = DatabaseClientFactory.newClient(host, port, user, password, DatabaseClientFactory.Authentication.valueOf("BASIC"));
                 markLogicRepository = new MarkLogicRepository(databaseClient);
                 markLogicRepository.initialize();
             } catch (RepositoryException e) {

@@ -21,17 +21,16 @@ package com.marklogic.semantics.sesame;
 
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
-
+import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
+import org.eclipse.rdf4j.query.MalformedQueryException;
+import org.eclipse.rdf4j.query.UpdateExecutionException;
+import org.eclipse.rdf4j.repository.Repository;
+import org.eclipse.rdf4j.repository.RepositoryConnection;
+import org.eclipse.rdf4j.repository.RepositoryException;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.openrdf.model.impl.ValueFactoryImpl;
-import org.openrdf.query.MalformedQueryException;
-import org.openrdf.query.UpdateExecutionException;
-import org.openrdf.repository.Repository;
-import org.openrdf.repository.RepositoryConnection;
-import org.openrdf.repository.RepositoryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -84,7 +83,7 @@ public class MarkLogicRepositoryTest extends SesameTestBase {
         rep.initialize();
         Assert.assertTrue(rep.getDataDir() == null);
         Assert.assertTrue(rep.isWritable());
-        Assert.assertTrue(rep.getValueFactory() instanceof ValueFactoryImpl);
+        Assert.assertTrue(rep.getValueFactory() instanceof SimpleValueFactory);
         Assert.assertTrue(rep.getConnection() instanceof MarkLogicRepositoryConnection);
     }
 
@@ -99,7 +98,7 @@ public class MarkLogicRepositoryTest extends SesameTestBase {
         rep.initialize();
         Assert.assertTrue(rep.getDataDir() == null);
         Assert.assertTrue(rep.isWritable());
-        Assert.assertTrue(rep.getValueFactory() instanceof ValueFactoryImpl);
+        Assert.assertTrue(rep.getValueFactory() instanceof SimpleValueFactory);
         Assert.assertTrue(rep.getConnection() instanceof MarkLogicRepositoryConnection);
     }
 

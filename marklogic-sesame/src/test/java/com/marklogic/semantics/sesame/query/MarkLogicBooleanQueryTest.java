@@ -24,10 +24,10 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.openrdf.model.ValueFactory;
-import org.openrdf.query.BooleanQuery;
-import org.openrdf.query.QueryLanguage;
-import org.openrdf.repository.RepositoryException;
+import org.eclipse.rdf4j.model.ValueFactory;
+import org.eclipse.rdf4j.query.BooleanQuery;
+import org.eclipse.rdf4j.query.QueryLanguage;
+import org.eclipse.rdf4j.repository.RepositoryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -101,7 +101,7 @@ public class MarkLogicBooleanQueryTest extends SesameTestBase {
         Assert.assertEquals(true, results);
     }
 
-    @Test(expected=org.openrdf.query.QueryEvaluationException.class)
+    @Test(expected=org.eclipse.rdf4j.query.QueryEvaluationException.class)
     public void testBooleanQueryQueryEvaluationException()
             throws Exception {
         String queryString = "ASK GRAPH <http://example.org/test/g27> {<http://semanticbible.org/ns/2006/NTNames#Shelah1> ?p ?o}}";
@@ -109,7 +109,7 @@ public class MarkLogicBooleanQueryTest extends SesameTestBase {
         boolean results = booleanQuery.evaluate();
     }
 
-    @Test(expected=org.openrdf.query.QueryEvaluationException.class)
+    @Test(expected=org.eclipse.rdf4j.query.QueryEvaluationException.class)
     public void testBooleanQueryMalformedException()
             throws Exception {
         String queryString = "ASK1 GRAPH <http://example.org/test/g27> {<http://semanticbible.org/ns/2006/NTNames#Shelah1> ?p ?o}}";

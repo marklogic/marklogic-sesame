@@ -20,15 +20,15 @@ import com.marklogic.client.impl.SPARQLBindingImpl;
 import com.marklogic.client.semantics.SPARQLBinding;
 import com.marklogic.client.semantics.SPARQLQueryDefinition;
 import com.marklogic.semantics.sesame.MarkLogicSesameException;
-import org.openrdf.model.*;
-import org.openrdf.query.MalformedQueryException;
-import org.openrdf.query.UpdateExecutionException;
-import org.openrdf.query.parser.sparql.SPARQLUtil;
-import org.openrdf.repository.RepositoryException;
-import org.openrdf.repository.sparql.query.SPARQLQueryBindingSet;
-import org.openrdf.rio.RDFHandlerException;
-import org.openrdf.rio.RDFParseException;
-import org.openrdf.rio.Rio;
+import org.eclipse.rdf4j.model.*;
+import org.eclipse.rdf4j.query.MalformedQueryException;
+import org.eclipse.rdf4j.query.UpdateExecutionException;
+import org.eclipse.rdf4j.query.parser.sparql.SPARQLUtil;
+import org.eclipse.rdf4j.repository.RepositoryException;
+import org.eclipse.rdf4j.repository.sparql.query.SPARQLQueryBindingSet;
+import org.eclipse.rdf4j.rio.RDFHandlerException;
+import org.eclipse.rdf4j.rio.RDFParseException;
+import org.eclipse.rdf4j.rio.Rio;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,12 +79,12 @@ public class TripleWriteCache extends TripleCache {
                    entireQuery.append(" GRAPH <" + ctx + "> { ");
                }
                 for (Statement stmt : cache.filter(null, null, null, ctx)) {
-                    if (stmt.getSubject() instanceof org.openrdf.model.BNode) {
+                    if (stmt.getSubject() instanceof org.eclipse.rdf4j.model.BNode) {
                         entireQuery.append("<http://marklogic.com/semantics/blank/" + stmt.getSubject().stringValue() + "> ");
                     }else {
                         entireQuery.append("<" + stmt.getSubject().stringValue() + "> ");
                     }
-                    if (stmt.getPredicate() instanceof org.openrdf.model.BNode) {
+                    if (stmt.getPredicate() instanceof org.eclipse.rdf4j.model.BNode) {
                         entireQuery.append("<http://marklogic.com/semantics/blank/" + stmt.getPredicate().stringValue() + "> ");
                     }else{
                         entireQuery.append("<" + stmt.getPredicate().stringValue() + "> ");
@@ -95,13 +95,13 @@ public class TripleWriteCache extends TripleCache {
                         entireQuery.append("\"");
                         entireQuery.append(SPARQLUtil.encodeString(lit.getLabel()));
                         entireQuery.append("\"");
-                        if(null == lit.getLanguage()) {
+                        if(!lit.getLanguage().isPresent()) {
                             entireQuery.append("^^<" + lit.getDatatype().stringValue() + ">");
                         }else{
-                            entireQuery.append("@" + lit.getLanguage().toString());
+                            entireQuery.append("@" + lit.getLanguage().get());
                         }
                     } else {
-                        if (stmt.getObject() instanceof org.openrdf.model.BNode) {
+                        if (stmt.getObject() instanceof org.eclipse.rdf4j.model.BNode) {
                             entireQuery.append("<http://marklogic.com/semantics/blank/" + stmt.getObject().stringValue() + "> ");
                         }else {
                             entireQuery.append("<" + object.stringValue() + "> ");

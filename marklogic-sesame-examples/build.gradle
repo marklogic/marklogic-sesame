@@ -3,13 +3,18 @@ buildscript {
     repositories {
         mavenCentral()
         maven {url "http://developer.marklogic.com/maven2/"}
+        flatDir {
+            dirs 'C:\\Users\\Christoph\\IdeaProjects\\marklogic-sesame\\marklogic-sesame\\build\\libs'
+        }
+
     }
 }
 // this directive should be uncommented for development environments
 // otherwise the examples can run from centrally distributed marklogic-jena
 evaluationDependsOn(":marklogic-sesame")
 
-apply plugin: 'eclipse'
+//apply plugin: 'eclipse'
+apply plugin: 'idea'
 apply plugin: 'java'
 
 configure(allprojects){
@@ -18,7 +23,7 @@ configure(allprojects){
 }
 
 dependencies {
-  compile('com.marklogic:marklogic-sesame:1.0.2.1'){
+  compile('com.marklogic:marklogic-sesame:2.0.0'){
       changing=true
       exclude(group: 'org.slf4j')
       exclude(group: 'log4j')

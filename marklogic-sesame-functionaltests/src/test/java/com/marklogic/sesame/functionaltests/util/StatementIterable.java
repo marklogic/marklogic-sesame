@@ -2,7 +2,7 @@ package com.marklogic.sesame.functionaltests.util;
 
 import java.util.Iterator;
 
-import org.openrdf.model.Statement;
+import org.eclipse.rdf4j.model.Statement;
 
 public class StatementIterable implements Iterable{ 
 

@@ -11,8 +11,8 @@ buildscript {
 }
 
 apply plugin: "com.marklogic.ml-gradle"
-apply plugin: 'eclipse'
-//apply plugin: 'idea'
+//apply plugin: 'eclipse'
+apply plugin: 'idea'
 apply plugin: 'java'
 apply plugin: 'maven-publish'
 apply plugin: 'maven'
@@ -26,8 +26,8 @@ configure(allprojects){
             ext.logbackVersion = '1.0.9'
 }
 
-sourceCompatibility = "1.7"
-targetCompatibility = "1.7"
+sourceCompatibility = "1.8"
+targetCompatibility = "1.8"
 
 repositories {
     mavenLocal()
@@ -41,7 +41,7 @@ jacocoTestReport {
 }
 
 dependencies {
-    compile('org.openrdf.sesame:sesame-runtime:2.8.10')
+    compile('org.eclipse.rdf4j:rdf4j-runtime:2.2.1')
 
 //    compile('com.marklogic:java-client-api:3.0-SNAPSHOT') {
 //        exclude(group: 'org.slf4j')

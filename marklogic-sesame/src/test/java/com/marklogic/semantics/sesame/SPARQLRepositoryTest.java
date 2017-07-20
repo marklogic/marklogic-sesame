@@ -19,12 +19,12 @@
  */
 package com.marklogic.semantics.sesame;
 
+import org.eclipse.rdf4j.model.ValueFactory;
+import org.eclipse.rdf4j.repository.RepositoryConnection;
+import org.eclipse.rdf4j.repository.sparql.SPARQLConnection;
+import org.eclipse.rdf4j.repository.sparql.SPARQLRepository;
 import org.junit.*;
 import org.junit.rules.ExpectedException;
-import org.openrdf.model.ValueFactory;
-import org.openrdf.repository.RepositoryConnection;
-import org.openrdf.repository.sparql.SPARQLConnection;
-import org.openrdf.repository.sparql.SPARQLRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,7 +49,7 @@ public class SPARQLRepositoryTest extends SesameTestBase {
             throws Exception {
         logger.debug("setting up test");
         SPARQLRepository sr = new SPARQLRepository("http://"+host+":"+port+"/v1/graphs/sparql");
-        sr.setUsernameAndPassword("admin","admin");
+        sr.setUsernameAndPassword("admin","T4NZaxzumV30pxylWZ1ZM2VP");
         sr.initialize();
         f = sr.getValueFactory();
         conn = (SPARQLConnection) sr.getConnection();
@@ -76,8 +76,9 @@ public class SPARQLRepositoryTest extends SesameTestBase {
             throws Exception
     {
         SPARQLRepository sparqlRepo = new SPARQLRepository("http://"+host+":"+port+"/v1/graphs/sparql");
+
+        sparqlRepo.setUsernameAndPassword("admin","T4NZaxzumV30pxylWZ1ZM2VP");
         sparqlRepo.initialize();
-        sparqlRepo.setUsernameAndPassword("s-rest-writer","x");
         RepositoryConnection sparqlConn = sparqlRepo.getConnection();
         Assert.assertEquals(0, sparqlConn.size());
     }

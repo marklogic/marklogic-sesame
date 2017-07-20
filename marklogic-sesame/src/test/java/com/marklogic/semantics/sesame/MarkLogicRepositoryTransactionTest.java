@@ -19,15 +19,15 @@
  */
 package com.marklogic.semantics.sesame;
 
-import info.aduna.iteration.CloseableIteration;
+import org.eclipse.rdf4j.common.iteration.CloseableIteration;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.openrdf.IsolationLevels;
-import org.openrdf.model.*;
-import org.openrdf.repository.RepositoryException;
+import org.eclipse.rdf4j.IsolationLevels;
+import org.eclipse.rdf4j.model.*;
+import org.eclipse.rdf4j.repository.RepositoryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

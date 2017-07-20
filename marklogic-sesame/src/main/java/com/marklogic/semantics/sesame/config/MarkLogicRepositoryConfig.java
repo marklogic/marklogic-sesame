@@ -19,16 +19,12 @@
  */
 package com.marklogic.semantics.sesame.config;
 
-import org.openrdf.model.Graph;
-import org.openrdf.model.Resource;
-import org.openrdf.model.URI;
-import org.openrdf.model.ValueFactory;
-import org.openrdf.model.impl.URIImpl;
-import org.openrdf.model.impl.ValueFactoryImpl;
-import org.openrdf.model.util.GraphUtil;
-import org.openrdf.model.util.GraphUtilException;
-import org.openrdf.repository.config.RepositoryConfigException;
-import org.openrdf.repository.config.RepositoryImplConfigBase;
+import org.eclipse.rdf4j.model.*;
+import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
+import org.eclipse.rdf4j.model.util.GraphUtil;
+import org.eclipse.rdf4j.model.util.GraphUtilException;
+import org.eclipse.rdf4j.repository.config.AbstractRepositoryImplConfig;
+import org.eclipse.rdf4j.repository.config.RepositoryConfigException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,17 +33,20 @@ import org.slf4j.LoggerFactory;
  *
  * @author James Fuller
  */
-public class MarkLogicRepositoryConfig extends RepositoryImplConfigBase {
+public class MarkLogicRepositoryConfig extends AbstractRepositoryImplConfig {
 
 	private static final Logger logger = LoggerFactory.getLogger(MarkLogicRepositoryConfig.class);
 
-    public static final ValueFactory vf= new ValueFactoryImpl();
+    public static final ValueFactory vf = SimpleValueFactory.getInstance();
 
-    public static final URI QUERY_ENDPOINT = new URIImpl(
+    public static final IRI QUERY_ENDPOINT = vf.createIRI(
             "http://www.marklogic.com/v1/graphs/sparql");
 
-    public static final URI UPDATE_ENDPOINT = new URIImpl(
+    public static final IRI UPDATE_ENDPOINT = vf.createIRI(
             "http://www.marklogic.com/v1/graphs");
+
+    public static final IRI AUTH = vf.createIRI(
+            "http://www.marklogic.com/auth");
 
 	private String queryEndpointUrl;
 	private String updateEndpointUrl;
@@ -200,18 +199,20 @@ public class MarkLogicRepositoryConfig extends RepositoryImplConfigBase {
 	/**
 	 * export graph representation of config
      *
-	 * @Note - Graph is deprecating soon (in Sesame) to be replaced by Model
 	 */
-	public Resource export(Graph graph) {
+	public Resource export(Model graph) {
 		Resource implNode = super.export(graph);
 
-		ValueFactory vf = graph.getValueFactory();
 		if (getQueryEndpointUrl() != null) {
-			graph.add(implNode, QUERY_ENDPOINT, vf.createURI(getQueryEndpointUrl()));
+			graph.add(implNode, QUERY_ENDPOINT, vf.createIRI(getQueryEndpointUrl()));
 		}
 		if (getUpdateEndpointUrl() != null) {
-			graph.add(implNode, UPDATE_ENDPOINT, vf.createURI(getUpdateEndpointUrl()));
+			graph.add(implNode, UPDATE_ENDPOINT, vf.createIRI(getUpdateEndpointUrl()));
 		}
+
+        if (getAuth() != null) {
+            graph.add(implNode, AUTH, vf.createLiteral(getAuth()));
+        }
 
 		return implNode;
 	}
@@ -220,9 +221,8 @@ public class MarkLogicRepositoryConfig extends RepositoryImplConfigBase {
 	/**
 	 * parse graph representation of config
 	 *
-     * @Note - Graph is deprecating soon (in Sesame) to be replaced by Model
 	 */
-	public void parse(Graph graph, Resource implNode)
+	public void parse(Model graph, Resource implNode)
 			throws RepositoryConfigException {
 		super.parse(graph, implNode);
 
@@ -236,6 +236,11 @@ public class MarkLogicRepositoryConfig extends RepositoryImplConfigBase {
 			if (uri != null) {
 				setUpdateEndpointUrl(uri.stringValue());
 			}
+
+            String auth = GraphUtil.getOptionalObjectLiteral(graph, implNode, AUTH).stringValue();
+            if (auth != null) {
+                setAuth(auth);
+            }
 		} catch (GraphUtilException e) {
 			throw new RepositoryConfigException(e.getMessage(), e);
 		}

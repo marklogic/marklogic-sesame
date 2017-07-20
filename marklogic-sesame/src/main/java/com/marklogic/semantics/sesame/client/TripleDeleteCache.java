@@ -17,12 +17,12 @@
 package com.marklogic.semantics.sesame.client;
 
 import com.marklogic.semantics.sesame.MarkLogicSesameException;
-import org.openrdf.model.*;
-import org.openrdf.query.MalformedQueryException;
-import org.openrdf.query.UpdateExecutionException;
-import org.openrdf.query.parser.sparql.SPARQLUtil;
-import org.openrdf.repository.RepositoryException;
-import org.openrdf.repository.sparql.query.SPARQLQueryBindingSet;
+import org.eclipse.rdf4j.model.*;
+import org.eclipse.rdf4j.query.MalformedQueryException;
+import org.eclipse.rdf4j.query.UpdateExecutionException;
+import org.eclipse.rdf4j.query.parser.sparql.SPARQLUtil;
+import org.eclipse.rdf4j.repository.RepositoryException;
+import org.eclipse.rdf4j.repository.sparql.query.SPARQLQueryBindingSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,10 +79,10 @@ public class TripleDeleteCache extends TripleCache {
                         entireQuery.append("\"");
                         entireQuery.append(SPARQLUtil.encodeString(lit.getLabel()));
                         entireQuery.append("\"");
-                        if(null == lit.getLanguage()) {
+                        if(!lit.getLanguage().isPresent()) {
                             entireQuery.append("^^<" + lit.getDatatype().stringValue() + ">");
                         }else{
-                            entireQuery.append("@" + lit.getLanguage().toString());
+                            entireQuery.append("@" + lit.getLanguage().get());
                         }
                     } else {
                         entireQuery.append("<" + object.stringValue() + "> ");

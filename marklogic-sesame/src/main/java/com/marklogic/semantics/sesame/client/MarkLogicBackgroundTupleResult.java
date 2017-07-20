@@ -15,11 +15,11 @@
  */
 package com.marklogic.semantics.sesame.client;
 
-import org.openrdf.http.client.BackgroundTupleResult;
-import org.openrdf.http.client.QueueCursor;
-import org.openrdf.query.BindingSet;
-import org.openrdf.query.QueryEvaluationException;
-import org.openrdf.query.resultio.TupleQueryResultParser;
+import org.eclipse.rdf4j.http.client.BackgroundTupleResult;
+import org.eclipse.rdf4j.http.client.QueueCursor;
+import org.eclipse.rdf4j.query.BindingSet;
+import org.eclipse.rdf4j.query.QueryEvaluationException;
+import org.eclipse.rdf4j.query.resultio.TupleQueryResultParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

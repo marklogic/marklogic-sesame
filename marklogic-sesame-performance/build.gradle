@@ -14,7 +14,8 @@ plugins {
 }
 
 apply plugin: 'me.champeau.gradle.jmh'
-apply plugin: 'eclipse'
+//apply plugin: 'eclipse'
+//apply plugin: 'idea'
 apply plugin: 'java'
 apply plugin: 'maven'
 
@@ -29,7 +30,7 @@ repositories {
 }
 
 dependencies {
-    compile('com.marklogic:marklogic-sesame:1.0.2.1-SNAPSHOT')
+    compile('com.marklogic:marklogic-sesame:2.0.0')
 
     compile('org.slf4j:slf4j-api:1.7.10')
     compile "ch.qos.logback:logback-classic:$logbackVersion"

@@ -24,11 +24,11 @@ import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
 import com.marklogic.semantics.sesame.client.MarkLogicClient;
 import com.marklogic.semantics.sesame.client.MarkLogicClientDependent;
-import org.openrdf.model.ValueFactory;
-import org.openrdf.model.impl.ValueFactoryImpl;
-import org.openrdf.repository.Repository;
-import org.openrdf.repository.RepositoryException;
-import org.openrdf.repository.base.RepositoryBase;
+import org.eclipse.rdf4j.model.ValueFactory;
+import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
+import org.eclipse.rdf4j.repository.Repository;
+import org.eclipse.rdf4j.repository.RepositoryException;
+import org.eclipse.rdf4j.repository.base.AbstractRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,7 +46,7 @@ import java.net.URL;
  * @version 1.0.0
  *
  */
-public class MarkLogicRepository extends RepositoryBase implements Repository,MarkLogicClientDependent {
+public class MarkLogicRepository extends AbstractRepository implements Repository,MarkLogicClientDependent {
 
     private static final Logger logger = LoggerFactory.getLogger(MarkLogicRepository.class);
 
@@ -73,7 +73,7 @@ public class MarkLogicRepository extends RepositoryBase implements Repository,Ma
         String[] split = connectionString.getAuthority().split("@");
         String creds = split[0];
         String cred[] = creds.split(":");
-        this.f = new ValueFactoryImpl();
+        this.f = SimpleValueFactory.getInstance();
         this.quadMode = true;
         this.host = connectionString.getHost();
         this.port = connectionString.getPort();
@@ -95,7 +95,7 @@ public class MarkLogicRepository extends RepositoryBase implements Repository,Ma
      */
     public MarkLogicRepository(String host, int port, String user, String password, String auth) {
         super();
-        this.f = new ValueFactoryImpl();
+        this.f = SimpleValueFactory.getInstance();
         this.quadMode = true;
         this.host = host;
         this.port = port;
@@ -113,7 +113,7 @@ public class MarkLogicRepository extends RepositoryBase implements Repository,Ma
      */
     public MarkLogicRepository(DatabaseClient databaseClient) {
         super();
-        this.f = new ValueFactoryImpl();
+        this.f = SimpleValueFactory.getInstance();
 
         this.databaseClient = databaseClient;
         this.quadMode = true;
@@ -264,5 +264,9 @@ public class MarkLogicRepository extends RepositoryBase implements Repository,Ma
      */
     public void setQuadMode(boolean quadMode) {
         this.quadMode = quadMode;
+    }
+
+    public void setAuth(String auth){
+        this.auth = auth;
     }
 }
